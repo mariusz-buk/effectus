@@ -1,0 +1,5 @@
+# Lazarus project
+**/*.lps
+**/*.lpi
+src/backup
+.DS_Store

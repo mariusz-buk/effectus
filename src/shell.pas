@@ -52,11 +52,15 @@ var
 begin
   if ParamCount = 0 then begin
     TextColor(LightCyan);
+{$ifdef DARWIN}
+    WriteLn('Effectus ' + VERSION + ' (MacOS platform console version)');
+{$else}
 {$ifdef Unix}
     WriteLn('Effectus ' + VERSION + ' (Linux platform console version)');
 {$else}
     //WriteLn('Effectus ' + VERSION + ' (x86-win32/x64 platform console version)');
     WriteLn('Effectus ' + VERSION + ' (x86 (32-bit) Windows platform console version)');
+{$endif}
 {$endif}
     WriteLn('Action! language parser and cross-assembler to native code for Atari 8-bit home computers');
     TextColor(White);
