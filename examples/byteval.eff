@@ -1,0 +1,17 @@
+; Effectus example
+;-------------------------------------
+; Variable manipulation demo
+
+PROC MAIN()
+
+BYTE N1=764, N2, N3=[12]
+
+PUT(125)
+N2=14
+PRINT("Value of 764 is ") PRINTBE(N1)
+PRINT("Value of N2 is ") PRINTBE(N2)
+PRINT("Predeclared value of N3 is ") PRINTBE(N3)
+
+N1=255 WHILE N1=255 DO OD N1=255
+
+RETURN

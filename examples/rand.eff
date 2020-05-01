@@ -1,0 +1,37 @@
+; Effectus example
+;-------------------------------------
+; Random number generator demo
+; (Rand function)
+
+BYTE i
+CHAR key
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Random number generator demonstration")
+PrintE("(function Rand)")
+PutE()
+
+PrintE("Press any key to see random numbers!")
+key=GETD(7)
+
+PutE()
+PrintE("Selected number between 0 and 100")
+i=Rand(100)
+PrintBE(i)
+
+PutE()
+PrintE("Selected number between 0 and 255")
+i=Rand(255)
+PrintBE(i)
+
+PutE()
+PrintE("Selected number between 0 and 3")
+i=Rand(3)
+PrintBE(i)
+
+key=GETD(7)
+
+RETURN

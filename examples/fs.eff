@@ -1,0 +1,75 @@
+; Effectus example
+;-------------------------------------
+; Finescroll by greblus
+; Modification by Gury (keypress check)
+
+CHAR key
+int j=[0]
+int k=[0]
+byte hsc=54276 
+byte tmpl
+byte tmph 
+byte tmp
+byte array ndl=[112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
+
+proc chndl()
+  tmp=ndl(28)  
+  if tmp < 2 THEN
+   ndl(28)=255
+   tmp=ndl(29)-1
+   ndl(29)=tmp
+  else
+   tmp=ndl(28)-2
+   ndl(28)=tmp
+  fi
+return
+
+proc scrol()
+ hsc=j
+ j=j+1
+ if j=17 then
+  chndl()
+  j=0
+  k=k+1
+ fi
+ if k=14 then
+  ndl(28)=tmpl
+  ndl(29)=tmph
+  k=0
+ fi
+[$4C$E462]
+return 
+
+proc main()
+ int i 
+ card sav=88
+ byte clock=$14
+ byte nmi=$D40E
+ card dlist=560
+ card vvblkd=$0224
+ byte col0=708
+ byte col1=709
+
+ graphics(0)
+ dlist=ndl
+ sav=40000
+ col0=14 
+ col1=14
+
+ for i=1 to 23
+  do
+   PrintF("line: %i%E", i)
+  od
+
+ print("Action!")
+
+ tmpl=ndl(28)
+ tmph=ndl(29)
+ i=clock
+ while clock=i do od
+ nmi=0
+ vvblkd=scrol
+ nmi=$40
+
+ key=GETD(7)
+return

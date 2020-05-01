@@ -1,0 +1,34 @@
+; Effectus example
+;-------------------------------------
+; Using string manipulation PROCedures
+; SCopy, ScopyS and SAssign
+;
+; SBYTE ARRAY as temporary substitution
+; for string assignment (not original
+; Action! command)
+
+PROC MAIN()
+
+CHAR key
+SBYTE ARRAY STR01(21)
+SBYTE ARRAY STR02(15),
+      STR03(15)
+
+PUT(125)
+PUTE()
+
+SCOPY(STR01,"HELLO THERE: ATARIAN")
+SCOPYS(STR02,STR01,1,5)
+
+PRINT("STR01=") PRINTE(STR01)
+PRINT("STR02=") PRINTE(STR02)
+
+SCOPYS(STR03,STR01,7,11)
+PRINT("STR03=") PRINTE(STR03)
+
+SASSIGN(STR01,"ATARI",7,11)
+PRINT("STR01=") PRINTE(STR01)
+
+key=GETD(7)
+
+RETURN

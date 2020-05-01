@@ -1,0 +1,28 @@
+; Effectus example
+;-------------------------------------
+; Input numeric values
+; using InputB, InputI and InputC
+
+PROC Main()
+
+CHAR key
+BYTE n1 INT n2 CARD n3
+
+Put(125)
+
+PutE()
+PrintE("Enter BYTE value: ")
+n1=InputB()
+PrintE("Enter INT value: ")
+n2=InputI()
+PrintE("Enter CARD value: ")
+n3=InputC()
+
+;PrintF("%E%EAnd data entered is:%E%E")
+PrintBE(n1)
+PrintIE(n2)
+PrintCE(n3)
+
+key=GETD(7)
+
+RETURN

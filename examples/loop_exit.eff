@@ -1,0 +1,71 @@
+; Effectus example
+;-------------------------------------
+; Using EXIT command in loop statements
+
+PROC Main()
+
+CHAR key
+BYTE n
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Using EXIT command in loop statements FOR, WHILE and UNTIL")
+PutE()
+
+PrintE("Counting from 1 to 10...")
+PutE()
+
+FOR n=1 to 10
+DO
+  PrintB(n)
+  Put(44)
+  
+  IF n=7 THEN
+    EXIT
+  FI
+OD
+
+PutE()
+PrintE("Escaped from FOR loop!")
+
+PutE()
+PrintE("Counting from 1 to 20...")
+PutE()
+
+n=1
+n=n+1
+WHILE n<21
+DO     
+  PrintB(n)
+  Put(44)
+  
+  IF n=14 THEN
+    EXIT
+  FI
+  
+  n=n+1
+OD
+      
+PutE()                 
+PrintE("Escaped from WHILE loop!")
+
+PutE()
+PrintE("Counting from 1 to 6...")
+PutE()
+
+n=0
+
+DO
+  n==+1
+  PrintB(n)
+  Put(44)
+  EXIT
+UNTIL n=6
+OD
+
+PutE()
+PrintE("Escaped from UNTIL loop!")
+
+key=GETD(7)
+
+RETURN

@@ -1,0 +1,3 @@
+This is just an example of text file for testing purposes of Effectus I/O functions.›
+We can talk to the end of 255 characters, no problem :) Action! is superb language›
+Third line of our conversation... And it will end soon, but we can talk again later.›

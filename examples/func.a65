@@ -1,0 +1,729 @@
+; ------------------------------------------------------------
+; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; ------------------------------------------------------------
+
+STACKWIDTH	= 16
+CODEORIGIN	= $2000
+
+TRUE		= 1
+FALSE		= 0
+
+; ------------------------------------------------------------
+
+	org $80
+
+fxptr	.ds 2
+
+eax	.ds 4						;8 bytes (aex + edx) -> divREAL
+edx	.ds 4
+ecx	.ds 4
+bp	.ds 2
+bp2	.ds 2
+
+ztmp
+ztmp8	.ds 1
+ztmp9	.ds 1
+ztmp10	.ds 1
+ztmp11	.ds 1
+
+TMP	.ds 2
+
+STACKORIGIN	.ds STACKWIDTH*4
+
+.print 'ZPFREE: $0000..',fxptr-1,' / ',*,'..',$ff
+
+; ------------------------------------------------------------
+
+ax	= eax
+al	= eax
+ah	= eax+1
+
+cx	= ecx
+cl	= ecx
+ch	= ecx+1
+
+dx	= edx
+dl	= edx
+dh	= edx+1
+
+	org eax
+
+FP1MAN0	.ds 1
+FP1MAN1	.ds 1
+FP1MAN2	.ds 1
+FP1MAN3	.ds 1
+
+	org ztmp8
+
+FP1SGN	.ds 1
+FP1EXP	.ds 1
+
+	org edx
+
+FP2MAN0	.ds 1
+FP2MAN1	.ds 1
+FP2MAN2	.ds 1
+FP2MAN3	.ds 1
+
+	org ztmp10
+
+FP2SGN	.ds 1
+FP2EXP	.ds 1
+
+	org ecx
+
+FPMAN0	.ds 1
+FPMAN1	.ds 1
+FPMAN2	.ds 1
+FPMAN3	.ds 1
+
+	org bp2
+
+FPSGN	.ds 1
+FPEXP	.ds 1
+
+; ------------------------------------------------------------
+
+	org CODEORIGIN
+
+	STATICDATA
+
+; ------------------------------------------------------------
+
+RUNLIB
+	icl 'cpu6502.asm'
+
+.print 'RUNLIB: ',RUNLIB,'..',*
+
+; ------------------------------------------------------------
+
+START
+	tsx
+	stx MAIN.@halt+1
+
+	.ifdef fmulinit
+	fmulinit
+	eif
+
+VLEN	= VARDATASIZE-VARINITSIZE
+VADR	= DATAORIGIN+VARINITSIZE
+
+	ift VADR > $BFFF
+	ert 'Invalid memory address range ',VADR
+	eli (VLEN>0) && (VLEN<=256)
+	ldx #256-VLEN
+	lda #0
+	sta:rne VADR+VLEN-256,x+
+	eli VLEN>0
+	@fill #VADR #VLEN #0
+	eif
+
+	ldx #$0f
+	mva:rpl $340,x MAIN.IOCB@COPY,x-
+
+	inx		; X = 0 !!!
+	stx bp		; lo BP = 0
+
+	UNITINITIALIZATION
+
+.local	MAIN						; PROCEDURE
+
+	jmp l_00C8
+
+; ------------------------------------------------------------
+
+.local	SYSTEM						; UNIT
+
+; ------------------------------------------------------------
+
+M_PI_2	= $0648
+D_PI_2	= $0192
+D_PI_180	= $0004
+MGTIA	= $0000
+MVBXE	= $0080
+VBXE_XDLADR	= $0000
+VBXE_BCBADR	= $0100
+VBXE_MAPADR	= $1000
+VBXE_OVRADR	= $5000
+VBXE_WINDOW	= $B000
+IDLI	= $0000
+IVBL	= $0001
+CH_DELCHR	= $00FE
+CH_ENTER	= $009B
+CH_ESC	= $001B
+CH_CURS_UP	= $001C
+CH_CURS_DOWN	= $001D
+CH_CURS_LEFT	= $001E
+CH_CURS_RIGHT	= $001F
+CH_TAB	= $007F
+CH_EOL	= $009B
+CH_CLR	= $007D
+CH_BELL	= $00FD
+CH_DEL	= $007E
+CH_DELLINE	= $009C
+CH_INSLINE	= $009D
+COLOR_BLACK	= $0000
+COLOR_WHITE	= $000E
+COLOR_RED	= $0032
+COLOR_CYAN	= $0096
+COLOR_VIOLET	= $0068
+COLOR_GREEN	= $00C4
+COLOR_BLUE	= $0074
+COLOR_YELLOW	= $00EE
+COLOR_ORANGE	= $0028
+COLOR_BROWN	= $00E4
+COLOR_LIGHTRED	= $003C
+COLOR_GRAY1	= $0004
+COLOR_GRAY2	= $0006
+COLOR_GRAY3	= $000A
+COLOR_LIGHTGREEN	= $00CC
+COLOR_LIGHTBLUE	= $007C
+FMOPENREAD	= $0004
+FMOPENWRITE	= $0008
+FMOPENAPPEND	= $0009
+FMOPENREADWRITE	= $000C
+SCREENWIDTH	= DATAORIGIN+$0000
+SCREENHEIGHT	= DATAORIGIN+$0002
+DATESEPARATOR	= DATAORIGIN+$0004
+TVSYSTEM	= $D014
+adr.PALETTE	= $02C0
+.var PALETTE	= adr.PALETTE .word
+adr.HPALETTE	= $D012
+.var HPALETTE	= adr.HPALETTE .word
+FILEMODE	= DATAORIGIN+$0005
+SCREENMODE	= DATAORIGIN+$0006
+IORESULT	= DATAORIGIN+$0007
+EOLN	= DATAORIGIN+$0008
+RNDSEED	= DATAORIGIN+$0009
+
+.endl							; UNIT SYSTEM
+
+; ------------------------------------------------------------
+
+.local	DOS						; UNIT
+
+; ------------------------------------------------------------
+
+PALNTSC	= $D014
+
+.endl							; UNIT DOS
+
+; ------------------------------------------------------------
+
+.local	STRUTILS					; UNIT
+
+; ------------------------------------------------------------
+
+.endl							; UNIT STRUTILS
+
+; ------------------------------------------------------------
+
+.local	SYSUTILS					; UNIT
+
+; ------------------------------------------------------------
+
+FAREADONLY	= $0001
+FAHIDDEN	= $0002
+FASYSFILE	= $0004
+FAVOLUMEID	= $0008
+FADIRECTORY	= $0010
+FAARCHIVE	= $0020
+FAANYFILE	= $003F
+
+.endl							; UNIT SYSUTILS
+
+; ------------------------------------------------------------
+
+.local	ATARI						; UNIT
+
+; ------------------------------------------------------------
+
+RTCLOK	= $0012
+ATRACT	= $004D
+LMARGIN	= $0052
+RMARGIN	= $0053
+ROWCRS	= $0054
+COLCRS	= $0055
+DINDEX	= $0057
+SAVMSC	= $0058
+RAMTOP	= $006A
+VDSLST	= $0200
+SDLSTL	= $0230
+TXTROW	= $0290
+TXTCOL	= $0291
+TINDEX	= $0293
+TXTMSC	= $0294
+SDMCTL	= $022F
+GPRIOR	= $026F
+CRSINH	= $02F0
+CHACT	= $02F3
+CHBAS	= $02F4
+CH	= $02FC
+PCOLR0	= $02C0
+PCOLR1	= $02C1
+PCOLR2	= $02C2
+PCOLR3	= $02C3
+COLOR0	= $02C4
+COLOR1	= $02C5
+COLOR2	= $02C6
+COLOR3	= $02C7
+COLOR4	= $02C8
+COLBAKS	= $02C8
+HPOSP0	= $D000
+HPOSP1	= $D001
+HPOSP2	= $D002
+HPOSP3	= $D003
+HPOSM0	= $D004
+HPOSM1	= $D005
+HPOSM2	= $D006
+HPOSM3	= $D007
+SIZEP0	= $D008
+SIZEP1	= $D009
+SIZEP2	= $D00A
+SIZEP3	= $D00B
+SIZEM	= $D00C
+GRAFP0	= $D00D
+GRAFP1	= $D00E
+GRAFP2	= $D00F
+GRAFP3	= $D010
+GRAFM	= $D011
+P0PF	= $D004
+PAL	= $D014
+COLPM0	= $D012
+COLPM1	= $D013
+COLPM2	= $D014
+COLPM3	= $D015
+COLPF0	= $D016
+COLPF1	= $D017
+COLPF2	= $D018
+COLPF3	= $D019
+COLBK	= $D01A
+PRIOR	= $D01B
+GRACTL	= $D01D
+HITCLR	= $D01E
+AUDF1	= $D200
+AUDC1	= $D201
+AUDF2	= $D202
+AUDC2	= $D203
+AUDF3	= $D204
+AUDC3	= $D205
+AUDF4	= $D206
+AUDC4	= $D207
+AUDCTL	= $D208
+SKSTAT	= $D20F
+PORTB	= $D301
+DMACTL	= $D400
+CHACTL	= $D401
+DLISTL	= $D402
+HSCROL	= $D404
+VSCROL	= $D405
+PMBASE	= $D407
+CHBASE	= $D409
+WSYNC	= $D40A
+VCOUNT	= $D40B
+PENH	= $D40C
+PENV	= $D40D
+NMIEN	= $D40E
+
+.endl							; UNIT ATARI
+
+; ------------------------------------------------------------
+
+.local	CRT						; UNIT
+
+; ------------------------------------------------------------
+
+TEXTATTR	= DATAORIGIN+$000B
+CONSOL	= $D01F
+CN_START_SELECT_OPTION	= $0000
+CN_SELECT_OPTION	= $0001
+CN_START_OPTION	= $0002
+CN_OPTION	= $0003
+CN_START_SELECT	= $0004
+CN_SELECT	= $0005
+CN_START	= $0006
+CN_NONE	= $0007
+BW40	= $0000
+CO40	= $0001
+BW80	= $0002
+CO80	= $0003
+MONO	= $0007
+C40	= $0001
+C80	= $0003
+BLACK	= $0000
+BLUE	= $0001
+GREEN	= $0002
+CYAN	= $0003
+RED	= $0004
+MAGENTA	= $0005
+BROWN	= $0006
+LIGHTGRAY	= $0007
+DARKGRAY	= $0008
+LIGHTBLUE	= $0009
+LIGHTGREEN	= $000A
+LIGHTCYAN	= $000B
+LIGHTRED	= $000C
+LIGHTMAGENTA	= $000D
+YELLOW	= $000E
+WHITE	= $000F
+BLINK	= $0080
+
+.endl							; UNIT CRT
+
+; ------------------------------------------------------------
+
+.local	JOYSTICK					; UNIT
+
+; ------------------------------------------------------------
+
+JOY_NONE	= $000F
+JOY_UP	= $000E
+JOY_DOWN	= $000D
+JOY_LEFT	= $000B
+JOY_LEFT_UP	= $000A
+JOY_LEFT_DOWN	= $0009
+JOY_RIGHT	= $0007
+JOY_RIGHT_UP	= $0006
+JOY_RIGHT_DOWN	= $0005
+JOY_1	= $0278
+JOY_2	= $0279
+adr.STICK	= $0278
+.var STICK	= adr.STICK .word
+STICK0	= $0278
+STICK1	= $0279
+adr.STRIG	= $0284
+.var STRIG	= adr.STRIG .word
+STRIG0	= $0284
+STRIG1	= $0285
+adr.PADDL	= $0270
+.var PADDL	= adr.PADDL .word
+PADDL0	= $0270
+PADDL1	= $0271
+PADDL2	= $0272
+PADDL3	= $0273
+PADDL4	= $0274
+PADDL5	= $0275
+PADDL6	= $0276
+PADDL7	= $0277
+adr.PTRIG	= $027C
+.var PTRIG	= adr.PTRIG .word
+PTRIG0	= $027C
+PTRIG1	= $027D
+PTRIG2	= $027E
+PTRIG3	= $027F
+PTRIG4	= $0280
+PTRIG5	= $0281
+PTRIG6	= $0282
+PTRIG7	= $0283
+
+.endl							; UNIT JOYSTICK
+
+.local	SUMFUNC						; FUNCTION
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x NN2
+	mva :STACKORIGIN+STACKWIDTH,x NN2+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x NN1
+	mva :STACKORIGIN+STACKWIDTH,x NN1+1
+	dex						; sub bx, 1
+
+; optimize OK (examples\func.pas), line = 15
+
+	lda NN1
+	add NN2
+	sta RES
+	lda NN1+1
+	adc NN2+1
+	sta RES+1
+
+; optimize OK (examples\func.pas), line = 16
+
+	mva RES RESULT
+	mva RES+1 RESULT+1
+@exit
+
+; ------------------------------------------------------------
+
+; Push WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+
+	inx						; add bx, 1
+	mva RESULT :STACKORIGIN,x
+	mva RESULT+1 :STACKORIGIN+STACKWIDTH,x
+
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+
+; ------------------------------------------------------------
+
+NN1	= DATAORIGIN+$000C
+NN2	= DATAORIGIN+$000E
+RESULT	= DATAORIGIN+$0010
+RES	= DATAORIGIN+$0012
+
+@VarData	= NN1
+@VarDataSize	= 8
+
+	rts						; ret
+.endl
+
+.local	MAINPROC					; PROCEDURE
+
+; optimize FAIL (100, examples\func.pas), line = 24
+	@print #$7D
+
+; optimize FAIL (100, examples\func.pas), line = 25
+	@printSTRING #CODEORIGIN+$000D
+	@printEOL
+
+; optimize FAIL (100, examples\func.pas), line = 26
+	@printSTRING #CODEORIGIN+$0020
+	@printEOL
+
+; optimize FAIL (100, examples\func.pas), line = 27
+	@printSTRING #CODEORIGIN+$003E
+	@printEOL
+
+; optimize OK (examples\func.pas), line = 28
+
+	mva #$1E N1
+	mva #$00 N1+1
+
+; optimize OK (examples\func.pas), line = 29
+
+	mva #$78 N2
+	mva #$00 N2+1
+
+; optimize FAIL (100, examples\func.pas), line = 30
+	@printSTRING #CODEORIGIN+$0040
+	@printEOL
+
+; optimize FAIL (100, examples\func.pas), line = 31
+	@printSTRING #CODEORIGIN+$003D
+	@printEOL
+
+; optimize FAIL (100, examples\func.pas), line = 32
+	@printSTRING #CODEORIGIN+$0055
+
+; optimize FAIL ('SUMFUNC', examples\func.pas), line = 33
+	inx
+	mva N1 :STACKORIGIN,x
+	mva N1+1 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva N2 :STACKORIGIN,x
+	mva N2+1 :STACKORIGIN+STACKWIDTH,x
+	jsr SUMFUNC
+	mva :STACKORIGIN,x N3
+	mva :STACKORIGIN+STACKWIDTH,x N3+1
+	dex
+
+; optimize FAIL (100, examples\func.pas), line = 34
+	inx
+	mva N3 :STACKORIGIN,x
+	mva N3+1 :STACKORIGIN+STACKWIDTH,x
+	jsr @printWORD
+	dex
+	@printEOL
+
+; optimize OK (examples\func.pas), line = 35
+
+	mva #$FF N1
+	mva #$00 N1+1
+
+; optimize FAIL ('SUMFUNC', examples\func.pas), line = 36
+	inx
+	mva N1 :STACKORIGIN,x
+	mva N1+1 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$FF :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr SUMFUNC
+	mva :STACKORIGIN,x N3
+	mva :STACKORIGIN+STACKWIDTH,x N3+1
+	dex
+
+; optimize FAIL (100, examples\func.pas), line = 37
+	@printSTRING #CODEORIGIN+$0073
+
+; optimize FAIL (100, examples\func.pas), line = 38
+	inx
+	mva N3 :STACKORIGIN,x
+	mva N3+1 :STACKORIGIN+STACKWIDTH,x
+	jsr @printWORD
+	dex
+	@printEOL
+
+; optimize FAIL (100, examples\func.pas), line = 39
+	@printSTRING #CODEORIGIN+$003D
+	@printEOL
+
+; optimize FAIL (100, examples\func.pas), line = 40
+	@printSTRING #CODEORIGIN+$008E
+	@printEOL
+
+; --- WhileProlog
+l_016F
+
+; optimize OK (examples\func.pas), line = 41
+
+	ldy #$00
+	lda JOYSTICK.adr.STRIG,y
+	cmp #$01
+	jne l_017F
+	jmp l_016F
+l_017F
+
+; optimize FAIL (100, examples\func.pas), line = 43
+	@printSTRING #CODEORIGIN+$009D
+	@printEOL
+
+; optimize FAIL (100, examples\func.pas), line = 44
+	@printSTRING #CODEORIGIN+$00AE
+	@printEOL
+
+; ------------------------------------------------------------
+
+N1	= DATAORIGIN+$0014
+N2	= DATAORIGIN+$0016
+N3	= DATAORIGIN+$0018
+
+@VarData	= N1
+@VarDataSize	= 6
+
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+l_00C8
+
+; optimize FAIL ('MAINPROC', examples\func.pas), line = 48
+	jsr MAINPROC
+
+; ------------------------------------------------------------
+
+@exit
+
+@halt	ldx #0
+	txs
+
+	rts
+
+; ------------------------------------------------------------
+
+IOCB@COPY	:16 brk
+
+; ------------------------------------------------------------
+
+.local	@DEFINES
+ATARI
+.endl
+
+.endl							; MAIN
+
+; ------------------------------------------------------------
+; ------------------------------------------------------------
+
+.macro	UNITINITIALIZATION
+
+	.ifdef MAIN.SYSTEM.@UnitInit
+	jsr MAIN.SYSTEM.@UnitInit
+	eif
+
+	.ifdef MAIN.DOS.@UnitInit
+	jsr MAIN.DOS.@UnitInit
+	eif
+
+	.ifdef MAIN.STRUTILS.@UnitInit
+	jsr MAIN.STRUTILS.@UnitInit
+	eif
+
+	.ifdef MAIN.SYSUTILS.@UnitInit
+	jsr MAIN.SYSUTILS.@UnitInit
+	eif
+
+	.ifdef MAIN.ATARI.@UnitInit
+	jsr MAIN.ATARI.@UnitInit
+	eif
+
+	.ifdef MAIN.CRT.@UnitInit
+	jsr MAIN.CRT.@UnitInit
+	eif
+
+	.ifdef MAIN.JOYSTICK.@UnitInit
+	jsr MAIN.JOYSTICK.@UnitInit
+	eif
+.endm
+
+; ------------------------------------------------------------
+
+	ift .SIZEOF(MAIN.SYSTEM) > 0
+	.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+	eif
+
+	ift .SIZEOF(MAIN.DOS) > 0
+	.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+	eif
+
+	ift .SIZEOF(MAIN.STRUTILS) > 0
+	.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
+	eif
+
+	ift .SIZEOF(MAIN.SYSUTILS) > 0
+	.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
+	eif
+
+	ift .SIZEOF(MAIN.ATARI) > 0
+	.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+	eif
+
+	ift .SIZEOF(MAIN.CRT) > 0
+	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+	eif
+
+	ift .SIZEOF(MAIN.JOYSTICK) > 0
+	.print 'JOYSTICK: ',MAIN.JOYSTICK,'..',MAIN.JOYSTICK+.SIZEOF(MAIN.JOYSTICK)-1
+	eif
+
+	.print 'CODE: ',CODEORIGIN,'..',*-1
+
+; ------------------------------------------------------------
+
+DATAORIGIN
+.by  $28 $00 $18 $00 $2D $0C
+
+VARINITSIZE	= *-DATAORIGIN
+VARDATASIZE	= 26
+
+PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+
+	.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+
+	run START
+
+; ------------------------------------------------------------
+
+.macro	STATICDATA
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
+.by  $78 $61 $6D $70 $6C $65 $3A $00  $1C $55 $73 $69 $6E $67 $20 $6C  $6F $63 $61 $6C $20 $66 $75 $6E
+.by  $63 $74 $69 $6F $6E $73 $20 $28  $46 $55 $4E $43 $29 $00 $00 $00  $13 $43 $75 $73 $74 $6F $6D $20
+.by  $66 $75 $6E $63 $74 $69 $6F $6E  $20 $53 $75 $6D $00 $1C $6E $31  $3D $33 $30 $2C $6E $32 $3D $31
+.by  $32 $30 $2C $77 $69 $74 $68 $20  $73 $75 $6D $20 $6F $66 $20 $6E  $33 $3D $00 $19 $6E $31 $3D $32
+.by  $35 $35 $20 $77 $69 $74 $68 $20  $32 $35 $35 $20 $61 $64 $64 $65  $64 $20 $69 $73 $20 $00 $0D $50
+.by  $72 $65 $73 $73 $20 $74 $72 $69  $67 $67 $65 $72 $00 $0F $54 $72  $69 $67 $67 $65 $72 $20 $70 $72
+.by  $65 $73 $73 $65 $64 $00 $11 $50  $72 $6F $67 $72 $61 $6D $20 $66  $69 $6E $69 $73 $68 $65 $64 $21
+.by  $00
+.endm
+
+	end

@@ -1,0 +1,23 @@
+; Effectus example
+;-------------------------------------
+; Joystick demo
+; (using Stick and Strig functions)
+
+PROC MAIN()
+
+BYTE b,fire
+
+Put(125)
+
+fire=1
+
+WHILE fire>0
+DO
+  B=STICK(0)
+  PRINTBE(B)
+  fire=STRIG(0)
+OD
+
+PRINTE("TRIGGER WAS PRESSED!")
+
+RETURN

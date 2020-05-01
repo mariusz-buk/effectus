@@ -1,0 +1,38 @@
+; Effectus example
+;-------------------------------------
+; Device I/O demo using InputSD and
+; InputMD procedures to read text file
+;
+; Sample file on H1: device: TEST.TXT
+
+CHAR key
+SBYTE ARRAY str_buffer1(255)
+
+PROC Main()
+
+Put(125)
+PrintE("Device I/O demo")
+PrintE("using InputSD and InputMD procedures")
+PrintE("to read text file")
+PutE()
+PrintE("Sample file: TEST.TXT")
+
+Close(1)
+Open(1,"H1:TEST.TXT",4,0)
+
+PrintF("%EInputSD example:%E")
+InputSD(1,str_buffer1)
+PrintE(str_buffer1)
+
+Close(1)
+Open(1,"H1:TEST.TXT",4,0)
+
+PrintF("%EInputMD example:%E")
+InputMD(1,str_buffer1, 255)
+PrintE(str_buffer1)
+
+Close(1)
+
+key=GETD(7)
+
+RETURN

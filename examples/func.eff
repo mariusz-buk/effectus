@@ -1,0 +1,39 @@
+; Effectus example
+;-------------------------------------
+; Using custom/local FUNCtion
+
+CARD FUNC Sum(CARD nn1, nn2)
+CARD res
+
+res=nn1+nn2
+
+RETURN(res)
+
+PROC Main()
+CARD n1, n2, n3
+                                                              
+Put(125)
+PrintE("Effectus example:")
+PrintE("Using local functions (FUNC)")
+PutE()
+
+n1=30
+n2=120
+PrintE("Custom function Sum")
+PutE()
+Print("n1=30, n2=120, with sum of n3=")
+n3 = Sum(n1, n2)
+PrintCE(n3)
+
+n1=255
+n3=Sum(n1,255)
+Print("n1=255 with 255 added is ")
+PrintCE(n3)
+
+PutE()
+PrintE("Press trigger")
+WHILE Strig(0)=1 DO OD
+PrintE("Trigger pressed")
+PrintE("Program finished!")
+
+RETURN

@@ -1,0 +1,56 @@
+; Effectus example:
+; Record ARRAY demonstration
+
+TYPE rec = [
+            BYTE NUM1
+            INT NUM2, NUM3
+            ]
+
+DEFINE SIZE="5"
+
+BYTE ARRAY DATA(15)
+rec POINTER ENTRY
+CHAR KEY
+
+PROC MAIN()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Record ARRAY demonstration")
+PutE()
+
+ENTRY=DATA+0
+;ENTRY=DATA+(0*SIZE)
+ENTRY.NUM1=10
+ENTRY.NUM2=100
+ENTRY.NUM3=1000
+
+ENTRY=DATA+5
+ENTRY.NUM1=20
+ENTRY.NUM2=200
+ENTRY.NUM3=2000
+
+ENTRY=DATA+10
+ENTRY.NUM1=30
+ENTRY.NUM2=200
+ENTRY.NUM3=3000
+
+PrintE("Some data retrieved from the records")
+PutE()
+
+ENTRY=DATA+0
+Print("entry.num1 = ")
+PRINTBE(ENTRY.NUM1)
+
+ENTRY=DATA+5
+Print("entry.num2 = ")
+PRINTCE(ENTRY.NUM2)
+
+ENTRY=DATA+10
+Print("entry.num3 = ")
+PRINTIE(ENTRY.NUM3)
+
+PrintF("%E---------------------")
+KEY=GETD(7)
+
+RETURN

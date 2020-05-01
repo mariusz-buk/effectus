@@ -1,0 +1,37 @@
+; Effectus example
+;-------------------------------------
+; Graphics demo
+; (using Fill procedure)
+
+PROC MAIN()
+
+GRAPHICS(7)                    
+
+PRINTE("FILL TEST")
+
+SETCOLOR(4,0,15)
+
+COLOR=2
+PLOT(20,3)
+DRAWTO(120,3)
+DRAWTO(120,20)
+DRAWTO(20,20)
+DRAWTO(20,3)
+POKE(765,3)
+FILL(50,30)
+
+COLOR=3
+PLOT(50,35)
+DRAWTO(146,35)
+DRAWTO(146,70)
+DRAWTO(50,70)
+DRAWTO(50,35)
+POKE(765,1)
+FILL(65,50)
+
+Put(125)
+PRINTE("FILL TEST")
+
+DO OD
+
+RETURN

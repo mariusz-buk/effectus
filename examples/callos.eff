@@ -1,0 +1,42 @@
+; Effectus example
+;-------------------------------------
+; Calling OS routines by using PROC
+; memory assignment
+
+PROC Text()
+
+PrintE("Press two keys to scroll up!")
+
+RETURN
+
+; Scroll screen
+PROC SCROLL=$F7F7()
+
+; Keyclick sound
+PROC CLICK=$F983()
+
+; Read key
+PROC KBGET=$F302()
+
+; Cassette-beep sound
+PROC BEEPWAIT=$FDFC(BYTE times)
+
+PROC MAIN()
+BYTE N
+CHAR key
+
+PUT(125)
+POSITION(2,18)
+Text()
+BEEPWAIT(1)
+KBGET()
+
+FOR N=1 TO 20
+DO
+  CLICK()
+  SCROLL()
+OD
+
+key=GETD(7)
+
+RETURN

@@ -1,0 +1,18 @@
+; Effectus example
+;-------------------------------------
+; Loop effects by ascrnet
+; http://www.atariage.com/forums/topic/112501-effectus-new-atari-cross-compiler-alpha-stage/page__st__25
+
+; Demo Effectus
+
+PROC Main()
+  BYTE i
+  GRAPHICS(2)
+  DO
+    POSITION(7,5) 
+    i=RAND(255)
+    PRINTID(6,i)
+    POKE(710,i)
+  OD
+
+RETURN

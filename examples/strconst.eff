@@ -1,0 +1,21 @@
+; Effectus example
+;-------------------------------------
+; String manipulation demo
+;
+; SBYTE ARRAY as temporary substitution
+; for string assignment (not original
+; Action! command)
+
+PROC Main()
+
+CHAR key
+SBYTE ARRAY A="THIS IS A STRING CONSTANT"
+SBYTE ARRAY B="N1"
+
+PRINTE(A)
+B=A
+PrintE(B)
+
+key=GETD(7)
+
+RETURN

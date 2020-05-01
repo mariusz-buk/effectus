@@ -1,0 +1,37 @@
+; Effectus example
+;-------------------------------------
+; DEFINE declaration demo
+
+DEFINE Cls="PUT(125)"
+DEFINE max="3"
+DEFINE WriteLn="PrintBE"
+DEFINE Black="Poke(710,0)"
+DEFINE BorderRed="60"
+
+CHAR key
+
+PROC DEFINE_TEST()
+
+DEFINE NewLine="PUTE()"
+
+BYTE n
+
+Cls
+Black
+Poke(712, BorderRed)
+
+NewLine
+NewLine
+PrintE("DEFINE statement test")
+NewLine
+PutE()
+PrintE("Cls, Newline")
+NewLine 
+PrintE("Count from 1 to max")
+FOR n=1 to max DO
+  WriteLn(n)
+OD
+
+key=GETD(7)
+
+RETURN

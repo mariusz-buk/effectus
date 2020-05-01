@@ -1,0 +1,41 @@
+; Effectus example
+;-------------------------------------
+; Using CARD ARRAY as direct memory
+; assignment
+
+PROC Main()
+
+CHAR key
+BYTE i
+CARD mem
+CARD ARRAY arr=$8000
+
+Put(125)
+
+arr(0)=14
+arr(1)=230
+arr(2)=5100
+arr(3)=63000
+     
+PrintF("%EArray values:%E")
+FOR i=0 to 3 DO
+  PrintCE(arr(i))
+OD
+
+PrintF("%EArray values in descending order:%E")
+
+mem=PEEKC($8006)
+PrintCE(mem)
+
+mem=PEEKC($8004)
+PrintCE(mem)
+
+mem=PEEKC($8002)
+PrintCE(mem)
+
+mem=PEEKC($8000)
+PrintCE(mem)
+
+key=GETD(7)
+
+RETURN

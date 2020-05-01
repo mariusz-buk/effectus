@@ -1,0 +1,30 @@
+; Effectus example
+;--------------------------------------
+; Device I/O demo using PrintBD routine
+; Sample file: H1:TESTNUM.TXT
+
+PROC MAIN()
+
+BYTE I
+CHAR key
+
+PUT(125)
+PrintF("PrintBD example%E%E")
+
+CLOSE(1)
+OPEN(1,"H1:TESTNUM.TXT",8,0)
+
+PrintE("Write numbers to disk...")
+
+FOR I=1 TO 12
+DO
+  PRINTBD(1,I)
+OD
+
+CLOSE(1)
+
+PrintE("Done! (file H1:TESTNUM.TXT)")
+PrintF("%E%EPress any key to continue!")
+key=GETD(7)
+
+RETURN

@@ -1,0 +1,1826 @@
+; ------------------------------------------------------------
+; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; ------------------------------------------------------------
+
+STACKWIDTH	= 16
+CODEORIGIN	= $2000
+
+TRUE		= 1
+FALSE		= 0
+
+; ------------------------------------------------------------
+
+	org $80
+
+fxptr	.ds 2
+
+eax	.ds 4						;8 bytes (aex + edx) -> divREAL
+edx	.ds 4
+ecx	.ds 4
+bp	.ds 2
+bp2	.ds 2
+
+ztmp
+ztmp8	.ds 1
+ztmp9	.ds 1
+ztmp10	.ds 1
+ztmp11	.ds 1
+
+TMP	.ds 2
+
+STACKORIGIN	.ds STACKWIDTH*4
+
+.print 'ZPFREE: $0000..',fxptr-1,' / ',*,'..',$ff
+
+; ------------------------------------------------------------
+
+ax	= eax
+al	= eax
+ah	= eax+1
+
+cx	= ecx
+cl	= ecx
+ch	= ecx+1
+
+dx	= edx
+dl	= edx
+dh	= edx+1
+
+	org eax
+
+FP1MAN0	.ds 1
+FP1MAN1	.ds 1
+FP1MAN2	.ds 1
+FP1MAN3	.ds 1
+
+	org ztmp8
+
+FP1SGN	.ds 1
+FP1EXP	.ds 1
+
+	org edx
+
+FP2MAN0	.ds 1
+FP2MAN1	.ds 1
+FP2MAN2	.ds 1
+FP2MAN3	.ds 1
+
+	org ztmp10
+
+FP2SGN	.ds 1
+FP2EXP	.ds 1
+
+	org ecx
+
+FPMAN0	.ds 1
+FPMAN1	.ds 1
+FPMAN2	.ds 1
+FPMAN3	.ds 1
+
+	org bp2
+
+FPSGN	.ds 1
+FPEXP	.ds 1
+
+; ------------------------------------------------------------
+
+	org CODEORIGIN
+
+	STATICDATA
+
+; ------------------------------------------------------------
+
+RUNLIB
+	icl 'cpu6502.asm'
+
+.print 'RUNLIB: ',RUNLIB,'..',*
+
+; ------------------------------------------------------------
+
+START
+	tsx
+	stx MAIN.@halt+1
+
+	.ifdef fmulinit
+	fmulinit
+	eif
+
+VLEN	= VARDATASIZE-VARINITSIZE
+VADR	= DATAORIGIN+VARINITSIZE
+
+	ift VADR > $BFFF
+	ert 'Invalid memory address range ',VADR
+	eli (VLEN>0) && (VLEN<=256)
+	ldx #256-VLEN
+	lda #0
+	sta:rne VADR+VLEN-256,x+
+	eli VLEN>0
+	@fill #VADR #VLEN #0
+	eif
+
+	ldx #$0f
+	mva:rpl $340,x MAIN.IOCB@COPY,x-
+
+	inx		; X = 0 !!!
+	stx bp		; lo BP = 0
+
+	UNITINITIALIZATION
+
+.local	MAIN						; PROCEDURE
+
+	jmp l_001F
+
+; ------------------------------------------------------------
+
+.local	SYSTEM						; UNIT
+
+.local	POKE						; PROCEDURE | ASSEMBLER | REGISTER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x VALUE
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x A
+	mva :STACKORIGIN+STACKWIDTH,x A+1
+	dex						; sub bx, 1
+
+; ---------------------  ASM Block 021  ---------------------
+
+	ldy #0
+	mva value (edx),y
+
+
+; ------------------------------------------------------------
+
+A	= edx
+VALUE	= ecx
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+.local	MOVE_0040					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x COUNT
+	mva :STACKORIGIN+STACKWIDTH,x COUNT+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x DEST
+	mva :STACKORIGIN+STACKWIDTH,x DEST+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x SOURCE
+	mva :STACKORIGIN+STACKWIDTH,x SOURCE+1
+	dex						; sub bx, 1
+
+; ---------------------  ASM Block 032  ---------------------
+
+	jsr @move
+
+
+; ------------------------------------------------------------
+
+SOURCE	= edx
+DEST	= ecx
+COUNT	= eax
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+; ------------------------------------------------------------
+
+M_PI_2	= $0648
+D_PI_2	= $0192
+D_PI_180	= $0004
+MGTIA	= $0000
+MVBXE	= $0080
+VBXE_XDLADR	= $0000
+VBXE_BCBADR	= $0100
+VBXE_MAPADR	= $1000
+VBXE_OVRADR	= $5000
+VBXE_WINDOW	= $B000
+IDLI	= $0000
+IVBL	= $0001
+CH_DELCHR	= $00FE
+CH_ENTER	= $009B
+CH_ESC	= $001B
+CH_CURS_UP	= $001C
+CH_CURS_DOWN	= $001D
+CH_CURS_LEFT	= $001E
+CH_CURS_RIGHT	= $001F
+CH_TAB	= $007F
+CH_EOL	= $009B
+CH_CLR	= $007D
+CH_BELL	= $00FD
+CH_DEL	= $007E
+CH_DELLINE	= $009C
+CH_INSLINE	= $009D
+COLOR_BLACK	= $0000
+COLOR_WHITE	= $000E
+COLOR_RED	= $0032
+COLOR_CYAN	= $0096
+COLOR_VIOLET	= $0068
+COLOR_GREEN	= $00C4
+COLOR_BLUE	= $0074
+COLOR_YELLOW	= $00EE
+COLOR_ORANGE	= $0028
+COLOR_BROWN	= $00E4
+COLOR_LIGHTRED	= $003C
+COLOR_GRAY1	= $0004
+COLOR_GRAY2	= $0006
+COLOR_GRAY3	= $000A
+COLOR_LIGHTGREEN	= $00CC
+COLOR_LIGHTBLUE	= $007C
+FMOPENREAD	= $0004
+FMOPENWRITE	= $0008
+FMOPENAPPEND	= $0009
+FMOPENREADWRITE	= $000C
+SCREENWIDTH	= DATAORIGIN+$0000
+SCREENHEIGHT	= DATAORIGIN+$0002
+DATESEPARATOR	= DATAORIGIN+$0004
+TVSYSTEM	= $D014
+adr.PALETTE	= $02C0
+.var PALETTE	= adr.PALETTE .word
+adr.HPALETTE	= $D012
+.var HPALETTE	= adr.HPALETTE .word
+FILEMODE	= DATAORIGIN+$0005
+SCREENMODE	= DATAORIGIN+$0006
+IORESULT	= DATAORIGIN+$0007
+EOLN	= DATAORIGIN+$0008
+RNDSEED	= DATAORIGIN+$0009
+
+.endl							; UNIT SYSTEM
+
+; ------------------------------------------------------------
+
+.local	DOS						; UNIT
+
+; ------------------------------------------------------------
+
+PALNTSC	= $D014
+
+.endl							; UNIT DOS
+
+; ------------------------------------------------------------
+
+.local	STRUTILS					; UNIT
+
+; ------------------------------------------------------------
+
+.endl							; UNIT STRUTILS
+
+; ------------------------------------------------------------
+
+.local	SYSUTILS					; UNIT
+
+; ------------------------------------------------------------
+
+FAREADONLY	= $0001
+FAHIDDEN	= $0002
+FASYSFILE	= $0004
+FAVOLUMEID	= $0008
+FADIRECTORY	= $0010
+FAARCHIVE	= $0020
+FAANYFILE	= $003F
+
+.endl							; UNIT SYSUTILS
+
+; ------------------------------------------------------------
+
+.local	ATARI						; UNIT
+
+; ------------------------------------------------------------
+
+RTCLOK	= $0012
+ATRACT	= $004D
+LMARGIN	= $0052
+RMARGIN	= $0053
+ROWCRS	= $0054
+COLCRS	= $0055
+DINDEX	= $0057
+SAVMSC	= $0058
+RAMTOP	= $006A
+VDSLST	= $0200
+SDLSTL	= $0230
+TXTROW	= $0290
+TXTCOL	= $0291
+TINDEX	= $0293
+TXTMSC	= $0294
+SDMCTL	= $022F
+GPRIOR	= $026F
+CRSINH	= $02F0
+CHACT	= $02F3
+CHBAS	= $02F4
+CH	= $02FC
+PCOLR0	= $02C0
+PCOLR1	= $02C1
+PCOLR2	= $02C2
+PCOLR3	= $02C3
+COLOR0	= $02C4
+COLOR1	= $02C5
+COLOR2	= $02C6
+COLOR3	= $02C7
+COLOR4	= $02C8
+COLBAKS	= $02C8
+HPOSP0	= $D000
+HPOSP1	= $D001
+HPOSP2	= $D002
+HPOSP3	= $D003
+HPOSM0	= $D004
+HPOSM1	= $D005
+HPOSM2	= $D006
+HPOSM3	= $D007
+SIZEP0	= $D008
+SIZEP1	= $D009
+SIZEP2	= $D00A
+SIZEP3	= $D00B
+SIZEM	= $D00C
+GRAFP0	= $D00D
+GRAFP1	= $D00E
+GRAFP2	= $D00F
+GRAFP3	= $D010
+GRAFM	= $D011
+P0PF	= $D004
+PAL	= $D014
+COLPM0	= $D012
+COLPM1	= $D013
+COLPM2	= $D014
+COLPM3	= $D015
+COLPF0	= $D016
+COLPF1	= $D017
+COLPF2	= $D018
+COLPF3	= $D019
+COLBK	= $D01A
+PRIOR	= $D01B
+GRACTL	= $D01D
+HITCLR	= $D01E
+AUDF1	= $D200
+AUDC1	= $D201
+AUDF2	= $D202
+AUDC2	= $D203
+AUDF3	= $D204
+AUDC3	= $D205
+AUDF4	= $D206
+AUDC4	= $D207
+AUDCTL	= $D208
+SKSTAT	= $D20F
+PORTB	= $D301
+DMACTL	= $D400
+CHACTL	= $D401
+DLISTL	= $D402
+HSCROL	= $D404
+VSCROL	= $D405
+PMBASE	= $D407
+CHBASE	= $D409
+WSYNC	= $D40A
+VCOUNT	= $D40B
+PENH	= $D40C
+PENV	= $D40D
+NMIEN	= $D40E
+
+.endl							; UNIT ATARI
+
+; ------------------------------------------------------------
+
+.local	CRT						; UNIT
+
+; ------------------------------------------------------------
+
+TEXTATTR	= DATAORIGIN+$000B
+CONSOL	= $D01F
+CN_START_SELECT_OPTION	= $0000
+CN_SELECT_OPTION	= $0001
+CN_START_OPTION	= $0002
+CN_OPTION	= $0003
+CN_START_SELECT	= $0004
+CN_SELECT	= $0005
+CN_START	= $0006
+CN_NONE	= $0007
+BW40	= $0000
+CO40	= $0001
+BW80	= $0002
+CO80	= $0003
+MONO	= $0007
+C40	= $0001
+C80	= $0003
+BLACK	= $0000
+BLUE	= $0001
+GREEN	= $0002
+CYAN	= $0003
+RED	= $0004
+MAGENTA	= $0005
+BROWN	= $0006
+LIGHTGRAY	= $0007
+DARKGRAY	= $0008
+LIGHTBLUE	= $0009
+LIGHTGREEN	= $000A
+LIGHTCYAN	= $000B
+LIGHTRED	= $000C
+LIGHTMAGENTA	= $000D
+YELLOW	= $000E
+WHITE	= $000F
+BLINK	= $0080
+
+.endl							; UNIT CRT
+
+; ------------------------------------------------------------
+
+.local	TYPES						; UNIT
+
+; ------------------------------------------------------------
+
+.endl							; UNIT TYPES
+
+; ------------------------------------------------------------
+
+.local	GRAPH						; UNIT
+
+.local	INITGRAPH_0080					; PROCEDURE | OVERLOAD
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x MODE
+	dex						; sub bx, 1
+
+; optimize OK (GRAPH), line = 73
+
+	mva #$00 GRAPHRESULT
+
+; optimize OK (GRAPH), line = 75
+
+	mva MODE SYSTEM.SCREENMODE
+
+; ---------------------  ASM Block 074  ---------------------
+
+
+	txa:pha
+
+	mva #$2c @putchar.vbxe
+
+	lda mode
+	and #$0f
+	tay
+
+	ldx #$60	; 6*16
+	lda mode	; %00010000 with text window
+	and #$10
+	eor #$10
+	ora #2		; read
+
+	.nowarn @graphics
+	
+	
+tlshc	equ $ee6d
+
+	ldx dindex
+	ldy tlshc,x
+	lda #5
+shift	asl @
+	dey
+	bne shift
+
+	sta SCANLINE_WIDTH
+	
+
+; Fox/TQA
+
+dindex	equ $57
+tmccn	equ $ee7d
+tmrcn	equ $ee8d
+
+	ldx dindex
+	lda tmccn,x
+	ldy tmrcn,x
+	ldx #0
+	cmp #<320
+	sne:inx
+    
+; X:A = horizontal resolution
+; Y = vertical resolution
+
+	sta MAIN.SYSTEM.ScreenWidth
+	stx MAIN.SYSTEM.ScreenWidth+1
+	
+	sub #1
+	sta WIN_RIGHT
+	txa
+	sbc #0
+	sta WIN_RIGHT+1
+	
+	sty MAIN.SYSTEM.ScreenHeight
+	lda #0
+	sta MAIN.SYSTEM.ScreenHeight+1
+	
+	sta WIN_LEFT
+	sta WIN_LEFT+1
+	sta WIN_TOP
+	sta WIN_TOP+1
+
+	sta WIN_BOTTOM+1	
+	dey
+	sty WIN_BOTTOM
+
+	pla:tax
+
+
+; ------------------------------------------------------------
+
+MODE	= DATAORIGIN+$0029
+
+@VarData	= MODE
+@VarDataSize	= 1
+
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+.local	SETCOLOR					; PROCEDURE | ASSEMBLER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x COLOR
+	dex						; sub bx, 1
+
+; ---------------------  ASM Block 076  ---------------------
+
+	mva color @COMMAND.colscr
+	sta GetColor
+
+
+; ------------------------------------------------------------
+
+COLOR	= DATAORIGIN+$002A
+
+@VarData	= COLOR
+@VarDataSize	= 1
+
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+.local	PUTPIXEL_0095					; PROCEDURE | ASSEMBLER | OVERLOAD
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x Y
+	mva :STACKORIGIN+STACKWIDTH,x Y+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x X
+	mva :STACKORIGIN+STACKWIDTH,x X+1
+	dex						; sub bx, 1
+
+; ---------------------  ASM Block 077  ---------------------
+
+	txa:pha
+{
+	lda y+1
+	bmi stop
+	cmp MAIN.SYSTEM.ScreenHeight+1
+	bne sk0
+	lda y
+	cmp MAIN.SYSTEM.ScreenHeight
+sk0
+	bcs stop
+
+	lda x+1
+	bmi stop
+	cmp MAIN.SYSTEM.ScreenWidth+1
+	bne sk1
+	lda x
+	cmp MAIN.SYSTEM.ScreenWidth
+sk1
+	bcs stop
+
+	mwa x colcrs
+	mva y rowcrs
+
+	lda #@IDput
+
+	jsr @COMMAND
+
+stop	pla:tax
+
+
+; ------------------------------------------------------------
+
+X	= DATAORIGIN+$002B
+Y	= DATAORIGIN+$002D
+
+@VarData	= X
+@VarDataSize	= 4
+
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+.local	GETPIXEL					; FUNCTION | ASSEMBLER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x Y
+	mva :STACKORIGIN+STACKWIDTH,x Y+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x X
+	mva :STACKORIGIN+STACKWIDTH,x X+1
+	dex						; sub bx, 1
+
+; ---------------------  ASM Block 079  ---------------------
+
+	txa:pha
+
+	ldy #0
+
+	lda y+1
+	bmi stop
+	cmp MAIN.SYSTEM.ScreenHeight+1
+	bne sk0
+	lda y
+	cmp MAIN.SYSTEM.ScreenHeight
+sk0
+	bcs stop
+
+	lda x+1
+	bmi stop
+	cmp MAIN.SYSTEM.ScreenWidth+1
+	bne sk1
+	lda x
+	cmp MAIN.SYSTEM.ScreenWidth
+sk1
+	bcs stop
+
+	mwa x colcrs
+	mva y rowcrs
+
+	lda #@IDget
+
+	jsr @COMMAND
+	tay
+
+stop	sty Result
+
+	pla:tax
+
+@exit
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx						; add bx, 1
+	mva RESULT :STACKORIGIN,x
+
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+
+; ------------------------------------------------------------
+
+X	= DATAORIGIN+$002F
+Y	= DATAORIGIN+$0031
+RESULT	= DATAORIGIN+$0033
+
+@VarData	= X
+@VarDataSize	= 5
+
+	rts						; ret
+.endl
+
+.local	MOVETO						; PROCEDURE | ASSEMBLER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x Y
+	mva :STACKORIGIN+STACKWIDTH,x Y+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x X
+	mva :STACKORIGIN+STACKWIDTH,x X+1
+	dex						; sub bx, 1
+
+; ---------------------  ASM Block 080  ---------------------
+
+	lda y+1
+	bpl _0
+
+	lda #0
+	sta y
+	sta y+1
+_0
+	lda x+1
+	bpl _1
+
+	lda #0
+	sta x
+	sta x+1
+_1
+	cpw y main.system.ScreenHeight
+	bcc _2
+
+	sbw main.system.ScreenHeight #1 y
+_2
+	cpw x main.system.ScreenWidth
+	bcc _3
+
+	sbw main.system.ScreenWidth #1 x
+_3
+	mwa x CurrentX
+	mwa y CurrentY
+
+
+; ------------------------------------------------------------
+
+X	= DATAORIGIN+$0034
+Y	= DATAORIGIN+$0036
+
+@VarData	= X
+@VarDataSize	= 4
+
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+.local	LINETO						; PROCEDURE | ASSEMBLER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x Y
+	mva :STACKORIGIN+STACKWIDTH,x Y+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x X
+	mva :STACKORIGIN+STACKWIDTH,x X+1
+	dex						; sub bx, 1
+
+; ---------------------  ASM Block 081  ---------------------
+
+	lda y+1
+	bpl _0
+
+	lda #0
+	sta y
+	sta y+1
+_0
+	lda x+1
+	bpl _1
+
+	lda #0
+	sta x
+	sta x+1
+_1
+	cpw y main.system.ScreenHeight
+	bcc _2
+
+	sbw main.system.ScreenHeight #1 y
+_2
+	cpw x main.system.ScreenWidth
+	bcc _3
+
+	sbw main.system.ScreenWidth #1 x
+_3
+	txa:pha
+
+	mwa CurrentX colcrs
+	mva CurrentY rowcrs
+
+	lda #@IDput
+
+	jsr @COMMAND
+
+	lda x
+	sta colcrs
+	sta CurrentX
+	lda x+1
+	sta colcrs+1
+	sta CurrentX+1
+
+	mva y rowcrs
+	sta CurrentY
+	lda y+1
+	sta CurrentY+1
+
+	lda #@IDdraw
+
+	jsr @COMMAND
+
+	pla:tax
+
+
+; ------------------------------------------------------------
+
+X	= DATAORIGIN+$0038
+Y	= DATAORIGIN+$003A
+
+@VarData	= X
+@VarDataSize	= 4
+
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+.local	FLOODFILL					; PROCEDURE
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x NEWCOLOR
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x B
+	mva :STACKORIGIN+STACKWIDTH,x B+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x A
+	mva :STACKORIGIN+STACKWIDTH,x A+1
+	dex						; sub bx, 1
+
+	jmp l_00DD
+
+.local	FLOODFILLEXEC					; PROCEDURE
+
+; --- For
+
+; optimize OK (graph.inc), line = 659
+
+	mva #$00 I
+
+; optimize OK (graph.inc), line = 659
+
+; --- To
+l_00E9
+
+; --- ForToDoCondition
+
+; optimize OK (graph.inc), line = 659
+
+	lda I
+	cmp #$03
+	scc
+	jne l_00F7
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx						; add bx, 1
+	mva I :STACKORIGIN,x
+
+; GenerateCaseProlog
+	dex						; sub bx, 1
+
+; GenerateCaseEqualityCheck
+	lda :STACKORIGIN+1,x
+	jne l_0103
+
+@
+
+; optimize OK (graph.inc), line = 664
+
+	lda A
+	add #$01
+	sta XR
+	lda A+1
+	adc #$00
+	sta XR+1
+
+; optimize OK (graph.inc), line = 665
+
+	mva B YR
+	mva B+1 YR+1
+
+; optimize OK (graph.inc), line = 667
+
+	ldy #1
+	.LOCAL
+	lda XR+1
+	sub SYSTEM.SCREENWIDTH+1
+	bne L4
+	lda XR
+	cmp SYSTEM.SCREENWIDTH
+L1	beq L5
+	bcs L3
+	lda #$FF
+	jmp L5
+L3	lda #$01
+	jmp L5
+L4	bvc L5
+	eor #$FF
+	ora #$01
+L5
+	.ENDL
+	bmi @+
+	dey
+@
+	sty YES
+
+; GenerateCaseStatementEpilog
+	jmp a_0004
+l_0103
+
+; GenerateCaseEqualityCheck
+	lda :STACKORIGIN+1,x
+	cmp #1
+	jne l_0126
+
+@
+
+; optimize OK (graph.inc), line = 671
+
+	lda A
+	sub #$01
+	sta XR
+	lda A+1
+	sbc #$00
+	sta XR+1
+
+; optimize OK (graph.inc), line = 674
+
+	ldy #1
+	.LOCAL
+	lda XR+1
+	clv:sec
+	bne L4
+	lda XR
+L1	beq L5
+	bcs L3
+	lda #$FF
+	jmp L5
+L3	lda #$01
+	jmp L5
+L4	bvc L5
+	eor #$FF
+	ora #$01
+L5
+	.ENDL
+	bpl @+
+	dey
+@
+	sty YES
+
+; GenerateCaseStatementEpilog
+	jmp a_0004
+l_0126
+
+; GenerateCaseEqualityCheck
+	lda :STACKORIGIN+1,x
+	cmp #2
+	jne l_0143
+
+@
+
+; optimize OK (graph.inc), line = 678
+
+	mva A XR
+	mva A+1 XR+1
+
+; optimize OK (graph.inc), line = 679
+
+	lda B
+	add #$01
+	sta YR
+	lda B+1
+	adc #$00
+	sta YR+1
+
+; optimize OK (graph.inc), line = 681
+
+	ldy #1
+	.LOCAL
+	lda YR+1
+	sub SYSTEM.SCREENHEIGHT+1
+	bne L4
+	lda YR
+	cmp SYSTEM.SCREENHEIGHT
+L1	beq L5
+	bcs L3
+	lda #$FF
+	jmp L5
+L3	lda #$01
+	jmp L5
+L4	bvc L5
+	eor #$FF
+	ora #$01
+L5
+	.ENDL
+	bmi @+
+	dey
+@
+	sty YES
+
+; GenerateCaseStatementEpilog
+	jmp a_0004
+l_0143
+
+; GenerateCaseEqualityCheck
+	lda :STACKORIGIN+1,x
+	cmp #3
+	jne l_0166
+
+@
+
+; optimize OK (graph.inc), line = 686
+
+	lda B
+	sub #$01
+	sta YR
+	lda B+1
+	sbc #$00
+	sta YR+1
+
+; optimize OK (graph.inc), line = 688
+
+	ldy #1
+	.LOCAL
+	lda YR+1
+	clv:sec
+	bne L4
+	lda YR
+L1	beq L5
+	bcs L3
+	lda #$FF
+	jmp L5
+L3	lda #$01
+	jmp L5
+L4	bvc L5
+	eor #$FF
+	ora #$01
+L5
+	.ENDL
+	bpl @+
+	dey
+@
+	sty YES
+
+; GenerateCaseStatementEpilog
+	jmp a_0004
+l_0166
+
+; GenerateCaseEpilog
+a_0004
+
+; optimize OK (graph.inc), line = 694
+
+	lda YES
+	jeq l_018E
+
+; optimize FAIL ('GETPIXEL', graph.inc), line = 695
+	inx
+	mva XR :STACKORIGIN,x
+	mva XR+1 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva YR :STACKORIGIN,x
+	mva YR+1 :STACKORIGIN+STACKWIDTH,x
+	jsr GETPIXEL
+	dex
+	lda :STACKORIGIN+1,x
+	cmp OLDCOLOR
+	jne l_01A5
+
+; optimize FAIL ('PUTPIXEL_0095', graph.inc), line = 697
+	inx
+	mva XR :STACKORIGIN,x
+	mva XR+1 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva YR :STACKORIGIN,x
+	mva YR+1 :STACKORIGIN+STACKWIDTH,x
+	jsr PUTPIXEL_0095
+
+; optimize FAIL (0, graph.inc), line = 699
+	inw STACKENTRY
+
+; optimize OK (graph.inc), line = 701
+
+	lda STACKENTRY+1
+	sta :STACKORIGIN+STACKWIDTH+9
+	lda STACKENTRY
+	asl @
+	rol :STACKORIGIN+STACKWIDTH+9
+	asl @
+	rol :STACKORIGIN+STACKWIDTH+9
+	add FLOODFILLSTACK
+	sta :bp2
+	lda FLOODFILLSTACK+1
+	adc :STACKORIGIN+STACKWIDTH+9
+	sta :bp2+1
+	ldy #$00
+	lda YR
+	sta (:bp2),y
+	iny
+	lda YR+1
+	sta (:bp2),y
+	iny
+	lda XR
+	sta (:bp2),y
+	iny
+	lda XR+1
+	sta (:bp2),y
+l_01A5
+l_018E
+
+; --- ForToDoEpilog
+	inc I						; inc ptr byte [CounterAddress]
+
+	jne l_00E9
+
+l_00F7
+
+; ------------------------------------------------------------
+
+I	= DATAORIGIN+$084A
+XR	= DATAORIGIN+$084B
+YR	= DATAORIGIN+$084D
+YES	= DATAORIGIN+$084F
+@FORTMP_00E6	= $0003
+
+@VarData	= I
+@VarDataSize	= 6
+
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+l_00DD
+
+; optimize FAIL ('SETCOLOR', graph.inc), line = 712
+	inx
+	mva NEWCOLOR :STACKORIGIN,x
+	jsr SETCOLOR
+
+; optimize FAIL ('GETPIXEL', graph.inc), line = 714
+	inx
+	mva A :STACKORIGIN,x
+	mva A+1 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva B :STACKORIGIN,x
+	mva B+1 :STACKORIGIN+STACKWIDTH,x
+	jsr GETPIXEL
+	mva :STACKORIGIN,x OLDCOLOR
+	dex
+
+; optimize OK (graph.inc), line = 716
+
+	mva #$01 STACKENTRY
+	mva #$00 STACKENTRY+1
+
+; optimize OK (graph.inc), line = 717
+
+	mva #$01 STACKPOINTER
+	mva #$00 STACKPOINTER+1
+
+; optimize OK (graph.inc), line = 719
+
+	lda STACKENTRY+1
+	sta :STACKORIGIN+STACKWIDTH+9
+	lda STACKENTRY
+	asl @
+	rol :STACKORIGIN+STACKWIDTH+9
+	asl @
+	rol :STACKORIGIN+STACKWIDTH+9
+	add FLOODFILLSTACK
+	sta :bp2
+	lda FLOODFILLSTACK+1
+	adc :STACKORIGIN+STACKWIDTH+9
+	sta :bp2+1
+	ldy #$00
+	lda B
+	sta (:bp2),y
+	iny
+	lda B+1
+	sta (:bp2),y
+	iny
+	lda A
+	sta (:bp2),y
+	iny
+	lda A+1
+	sta (:bp2),y
+
+; optimize FAIL ('FLOODFILLEXEC', graph.inc), line = 721
+	jsr FLOODFILLEXEC
+
+; --- WhileProlog
+l_01EF
+
+; optimize OK (graph.inc), line = 723
+
+	lda STACKENTRY+1
+	cmp STACKPOINTER+1
+	bne @+
+	lda STACKENTRY
+	cmp STACKPOINTER
+@
+	seq
+	bcs @+
+	jmp l_01FE
+@
+
+; optimize FAIL (0, graph.inc), line = 725
+	inw STACKPOINTER
+
+; optimize OK (graph.inc), line = 727
+
+	lda STACKPOINTER+1
+	sta :STACKORIGIN+STACKWIDTH+9
+	lda STACKPOINTER
+	asl @
+	rol :STACKORIGIN+STACKWIDTH+9
+	asl @
+	rol :STACKORIGIN+STACKWIDTH+9
+	add FLOODFILLSTACK
+	sta :bp2
+	lda FLOODFILLSTACK+1
+	adc :STACKORIGIN+STACKWIDTH+9
+	sta :bp2+1
+	ldy #$00
+	lda (:bp2),y
+	sta C
+	iny
+	lda (:bp2),y
+	sta C+1
+	iny
+	lda (:bp2),y
+	sta C+2
+	iny
+	lda (:bp2),y
+	sta C+3
+
+; optimize OK (graph.inc), line = 729
+
+	lda C+3
+	sta A+1
+	lda C+2
+	sta A
+
+; optimize OK (graph.inc), line = 730
+
+	mva C B
+	mva C+1 B+1
+
+; optimize FAIL ('FLOODFILLEXEC', graph.inc), line = 732
+	jsr FLOODFILLEXEC
+
+; optimize OK (graph.inc), line = 734
+
+	lda STACKENTRY+1
+	cmp #$01
+	bne @+
+	lda STACKENTRY
+@
+	seq
+	bcs @+
+	jmp l_0222
+@
+
+; optimize OK (graph.inc), line = 736
+
+	lda STACKENTRY
+	sub STACKPOINTER
+	sta STACKENTRY
+	lda STACKENTRY+1
+	sbc STACKPOINTER+1
+	sta STACKENTRY+1
+
+; optimize OK (graph.inc), line = 738
+
+	lda STACKENTRY+1
+	cmp #$01
+	bne @+
+	lda STACKENTRY
+@
+	seq
+	bcs @+
+	jmp l_023E
+@
+
+	jmp @exit					; exit
+l_023E
+
+; optimize OK (graph.inc), line = 740
+
+	lda STACKPOINTER
+	add #$01
+	sta :STACKORIGIN+9
+	lda STACKPOINTER+1
+	adc #$00
+	asl :STACKORIGIN+9
+	rol @
+	asl :STACKORIGIN+9
+	rol @
+	sta :STACKORIGIN+STACKWIDTH+9
+	lda FLOODFILLSTACK
+	add :STACKORIGIN+9
+	sta :edx
+	lda FLOODFILLSTACK+1
+	adc :STACKORIGIN+STACKWIDTH+9
+	sta :edx+1
+	lda FLOODFILLSTACK
+	add #$04
+	sta :ecx
+	lda FLOODFILLSTACK+1
+	adc #$00
+	sta :ecx+1
+	lda STACKENTRY+1
+	sta :eax+1
+	lda STACKENTRY
+	asl @
+	rol :eax+1
+	asl @
+	rol :eax+1
+	sta :eax
+	jsr @move
+
+; optimize OK (graph.inc), line = 742
+
+	mva #$00 STACKPOINTER
+	sta STACKPOINTER+1
+l_0222
+	jmp l_01EF
+l_01FE
+
+; ------------------------------------------------------------
+
+A	= DATAORIGIN+$003C
+B	= DATAORIGIN+$003E
+NEWCOLOR	= DATAORIGIN+$0040
+FILLSTACKSIZE	= $0200
+STACKPOINTER	= DATAORIGIN+$0041
+STACKENTRY	= DATAORIGIN+$0043
+C	= DATAORIGIN+$0045
+OLDCOLOR	= DATAORIGIN+$0049
+adr.FLOODFILLSTACK	= DATAORIGIN+$004A
+.var FLOODFILLSTACK	= adr.FLOODFILLSTACK .word
+
+@VarData	= A
+@VarDataSize	= 2062
+
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+; ------------------------------------------------------------
+
+CURRENTDRIVER	= $FFFFFF80
+DETECT	= $0000
+CGA	= $0001
+MCGA	= $0002
+EGA	= $0003
+EGA64	= $0004
+EGAMONO	= $0005
+LOWRES	= $0006
+HERCMONO	= $0007
+VGA	= $0009
+VESA	= $000A
+D1BIT	= $000B
+D2BIT	= $000C
+D4BIT	= $000D
+D6BIT	= $000E
+D8BIT	= $000F
+D12BIT	= $0010
+M640X400	= $0018
+M640X480	= $0018
+GROK	= $0000
+GRNOINITGRAPH	= $FFFFFFFF
+GRNOTDETECTED	= $FFFFFFFE
+GRFILENOTFOUND	= $FFFFFFFD
+GRINVALIDDRIVER	= $FFFFFFFC
+GRNOLOADMEM	= $FFFFFFFB
+GRNOSCANMEM	= $FFFFFFFA
+GRNOFLOODMEM	= $FFFFFFF9
+GRFONTNOTFOUND	= $FFFFFFF8
+GRNOFONTMEM	= $FFFFFFF7
+GRINVALIDMODE	= $FFFFFFF6
+GRERROR	= $FFFFFFF5
+GRIOERROR	= $FFFFFFF4
+GRINVALIDFONT	= $FFFFFFF3
+GRINVALIDFONTNUM	= $FFFFFFF2
+GRINVALIDVERSION	= $FFFFFFEE
+CGAC0	= $0000
+CGAC1	= $0001
+CGAC2	= $0002
+CGAC3	= $0003
+CGAHI	= $0004
+MCGAC0	= $0000
+MCGAC1	= $0001
+MCGAC2	= $0002
+MCGAC3	= $0003
+MCGAMED	= $0004
+MCGAHI	= $0005
+EGALO	= $0000
+EGAHI	= $0001
+EGA64LO	= $0000
+EGA64HI	= $0001
+EGAMONOHI	= $0003
+VGALO	= $000A
+VGAMED	= $001F
+VGAHI	= $0018
+WIN_LEFT	= DATAORIGIN+$000C
+WIN_RIGHT	= DATAORIGIN+$000E
+WIN_TOP	= DATAORIGIN+$0010
+WIN_BOTTOM	= DATAORIGIN+$0012
+GRAPHRESULT	= DATAORIGIN+$0014
+GETCOLOR	= DATAORIGIN+$0015
+adr.LASTARCCOORDS	= DATAORIGIN+$0016
+.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
+LASTARCCOORDS.X	= DATAORIGIN+$0016
+LASTARCCOORDS.Y	= DATAORIGIN+$0018
+LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
+LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
+LASTARCCOORDS.XEND	= DATAORIGIN+$001E
+LASTARCCOORDS.YEND	= DATAORIGIN+$0020
+CURRENTX	= DATAORIGIN+$0022
+CURRENTY	= DATAORIGIN+$0024
+VIDEORAM	= DATAORIGIN+$0026
+SCANLINE_WIDTH	= DATAORIGIN+$0028
+
+.endl							; UNIT GRAPH
+
+.local	MAINPROC					; PROCEDURE
+
+; optimize FAIL ('GRAPH.INITGRAPH_0080', examples\fill.pas), line = 14
+	inx
+	mva #$07 :STACKORIGIN,x
+	jsr GRAPH.INITGRAPH_0080
+
+; optimize FAIL (100, examples\fill.pas), line = 15
+	@printSTRING #CODEORIGIN+$000D
+	@printEOL
+
+; optimize OK (examples\fill.pas), line = 16
+
+	lda #$0F
+	sta $02C8
+
+; optimize FAIL ('GRAPH.SETCOLOR', examples\fill.pas), line = 17
+	inx
+	mva #$02 :STACKORIGIN,x
+	jsr GRAPH.SETCOLOR
+
+; optimize FAIL ('GRAPH.PUTPIXEL_0095', examples\fill.pas), line = 18
+	inx
+	mva #$14 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$03 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.PUTPIXEL_0095
+
+; optimize FAIL ('GRAPH.MOVETO', examples\fill.pas), line = 19
+	inx
+	mva #$14 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$03 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.MOVETO
+
+; optimize FAIL ('GRAPH.LINETO', examples\fill.pas), line = 20
+	inx
+	mva #$78 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$03 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.LINETO
+
+; optimize FAIL ('GRAPH.LINETO', examples\fill.pas), line = 21
+	inx
+	mva #$78 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$14 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.LINETO
+
+; optimize FAIL ('GRAPH.LINETO', examples\fill.pas), line = 22
+	inx
+	mva #$14 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$14 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.LINETO
+
+; optimize FAIL ('GRAPH.LINETO', examples\fill.pas), line = 23
+	inx
+	mva #$14 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$03 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.LINETO
+
+; optimize OK (examples\fill.pas), line = 24
+
+	lda #$03
+	sta $02FD
+
+; optimize FAIL ('GRAPH.FLOODFILL', examples\fill.pas), line = 25
+	inx
+	mva #$32 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$1E :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$02 :STACKORIGIN,x
+	jsr GRAPH.FLOODFILL
+
+; optimize FAIL ('GRAPH.SETCOLOR', examples\fill.pas), line = 26
+	inx
+	mva #$03 :STACKORIGIN,x
+	jsr GRAPH.SETCOLOR
+
+; optimize FAIL ('GRAPH.PUTPIXEL_0095', examples\fill.pas), line = 27
+	inx
+	mva #$32 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$23 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.PUTPIXEL_0095
+
+; optimize FAIL ('GRAPH.MOVETO', examples\fill.pas), line = 28
+	inx
+	mva #$32 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$23 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.MOVETO
+
+; optimize FAIL ('GRAPH.LINETO', examples\fill.pas), line = 29
+	inx
+	mva #$92 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$23 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.LINETO
+
+; optimize FAIL ('GRAPH.LINETO', examples\fill.pas), line = 30
+	inx
+	mva #$92 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$46 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.LINETO
+
+; optimize FAIL ('GRAPH.LINETO', examples\fill.pas), line = 31
+	inx
+	mva #$32 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$46 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.LINETO
+
+; optimize FAIL ('GRAPH.LINETO', examples\fill.pas), line = 32
+	inx
+	mva #$32 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$23 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.LINETO
+
+; optimize OK (examples\fill.pas), line = 33
+
+	lda #$01
+	sta $02FD
+
+; optimize FAIL ('GRAPH.FLOODFILL', examples\fill.pas), line = 34
+	inx
+	mva #$41 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$32 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$03 :STACKORIGIN,x
+	jsr GRAPH.FLOODFILL
+
+; optimize FAIL (100, examples\fill.pas), line = 35
+	@print #$7D
+
+; optimize FAIL (100, examples\fill.pas), line = 36
+	@printSTRING #CODEORIGIN+$000D
+	@printEOL
+
+; --- RepeatUntilProlog
+l_02B5
+
+; optimize OK (examples\fill.pas), line = 38
+
+	lda #$00
+	jeq l_02B5
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+l_001F
+
+; optimize FAIL ('MAINPROC', examples\fill.pas), line = 42
+	jsr MAINPROC
+
+; ------------------------------------------------------------
+
+@exit
+
+@halt	ldx #0
+	txs
+
+	rts
+
+; ------------------------------------------------------------
+
+IOCB@COPY	:16 brk
+
+; ------------------------------------------------------------
+
+.local	@DEFINES
+ATARI
+.endl
+
+.endl							; MAIN
+
+; ------------------------------------------------------------
+; ------------------------------------------------------------
+
+.macro	UNITINITIALIZATION
+
+	.ifdef MAIN.SYSTEM.@UnitInit
+	jsr MAIN.SYSTEM.@UnitInit
+	eif
+
+	.ifdef MAIN.DOS.@UnitInit
+	jsr MAIN.DOS.@UnitInit
+	eif
+
+	.ifdef MAIN.STRUTILS.@UnitInit
+	jsr MAIN.STRUTILS.@UnitInit
+	eif
+
+	.ifdef MAIN.SYSUTILS.@UnitInit
+	jsr MAIN.SYSUTILS.@UnitInit
+	eif
+
+	.ifdef MAIN.ATARI.@UnitInit
+	jsr MAIN.ATARI.@UnitInit
+	eif
+
+	.ifdef MAIN.CRT.@UnitInit
+	jsr MAIN.CRT.@UnitInit
+	eif
+
+	.ifdef MAIN.TYPES.@UnitInit
+	jsr MAIN.TYPES.@UnitInit
+	eif
+
+	.ifdef MAIN.GRAPH.@UnitInit
+	jsr MAIN.GRAPH.@UnitInit
+	eif
+.endm
+
+; ------------------------------------------------------------
+
+	ift .SIZEOF(MAIN.SYSTEM) > 0
+	.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+	eif
+
+	ift .SIZEOF(MAIN.DOS) > 0
+	.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+	eif
+
+	ift .SIZEOF(MAIN.STRUTILS) > 0
+	.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
+	eif
+
+	ift .SIZEOF(MAIN.SYSUTILS) > 0
+	.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
+	eif
+
+	ift .SIZEOF(MAIN.ATARI) > 0
+	.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+	eif
+
+	ift .SIZEOF(MAIN.CRT) > 0
+	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+	eif
+
+	ift .SIZEOF(MAIN.TYPES) > 0
+	.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
+	eif
+
+	ift .SIZEOF(MAIN.GRAPH) > 0
+	.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
+	eif
+
+	.print 'CODE: ',CODEORIGIN,'..',*-1
+
+; ------------------------------------------------------------
+
+DATAORIGIN
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17
+
+VARINITSIZE	= *-DATAORIGIN
+VARDATASIZE	= 2128
+
+PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+
+	.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+
+	run START
+
+; ------------------------------------------------------------
+
+.macro	STATICDATA
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $09 $46 $49  $4C $4C $20 $54 $45 $53 $54 $00
+.endm
+
+	end

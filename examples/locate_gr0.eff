@@ -1,0 +1,28 @@
+; Effectus example
+;-------------------------------------
+; Using Locate in text mode 0
+
+PROC MAIN()
+
+CHAR key
+BYTE loc
+
+GRAPHICS(0)
+
+POSITION(3,3)
+PRINT("HELLO, ATARIAN")
+
+POSITION(3,5)
+PRINT("AT RI")
+
+PRINTF("%E%EPRESS ANY KEY TO CONTINUE!")
+KEY=GETD(7)
+
+LOC=LOCATE(10,3)
+PRINTB(LOC)
+POSITION(5,5)
+PUT(LOC)
+
+key=GetD(7)
+
+RETURN

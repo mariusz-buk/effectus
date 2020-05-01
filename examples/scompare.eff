@@ -1,0 +1,48 @@
+; Effectus example
+;-------------------------------------
+; Using SCompare function
+;
+; SBYTE ARRAY as temporary substitution
+; for string assignment (not original
+; Action! command)
+
+PROC Main()
+
+INT value
+CHAR key
+SBYTE ARRAY str1="ATARI"
+SBYTE ARRAY str2="HELLO"
+SBYTE ARRAY str3="ATARI"
+
+PutE()
+Print("str1=") PrintE(str1)
+Print("str2=") PrintE(str2)
+Print("str3=") PrintE(str3)
+
+value=SCompare(str1,str2)
+PrintE("Value of comparison by SCompare is:")
+PrintIE(value)
+
+PutE()
+
+IF value<0 THEN
+  PRINTE("str2 is greater than str1")
+ELSEIF value=0 THEN
+  PRINTE("str1 and str2 are equal")
+ELSE
+  PRINTE("str1 is greater than str2")
+FI
+
+PrintF("%EAgain...%E%E")
+
+IF SCOMPARE(STR1,STR2)<0 THEN
+  PRINTE("str2 is greater than str1")
+ELSEIF SCOMPARE(STR1,STR2)=0 THEN
+  PRINTE("str1 and str2 are equal")
+ELSE
+  PRINTE("str1 is greater than str2")
+FI
+
+key=GETD(7)
+
+RETURN

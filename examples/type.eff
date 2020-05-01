@@ -1,0 +1,35 @@
+; Effectus example
+;-------------------------------------
+; TYPE declaration demo
+
+TYPE REC = [
+  BYTE day, month CARD year
+  BYTE height
+]
+
+REC data
+BYTE weightData 
+CHAR key
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("TYPE declaration demonstration")
+PutE()
+
+data.day=12  
+data.month=4
+data.year=1975
+data.height=182
+weightData=data.height
+
+PrintE("Personal data")
+PrintE("-------------")
+PrintF("%EBirthday: %i.%i.%u%E", data.day, data.month, data.year)
+Print("Height: ")
+PrintIE(weightData)
+
+key=GETD(7)
+
+RETURN

@@ -1,0 +1,61 @@
+; Effectus example
+;-------------------------------------
+; PEEK and POKE demo
+
+BYTE n
+BYTE CH=764, COL=710
+
+PROC WaitForKey()
+
+WHILE CH=255 DO OD
+CH=255
+
+RETURN
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("PEEK demonstration")
+PutE()
+
+n=Peek(CH)
+PrintE("Shadow register 764 currently holds:")
+PutE() PrintBE(n)
+
+PutE()
+
+n=Peek(COL)
+PrintE("Shadow register 710 currently holds:")
+PutE() PrintBE(n)
+
+PutE()
+
+n=Peek(559)
+PrintE("Shadow register 559 currently holds:")
+PutE() PrintBE(n)
+
+PutE() PutE()
+
+PrintE("POKE demonstration")
+PrintE("Press any key to change color!")
+WaitForKey()
+COL=0
+
+PrintE("Press any key to change color again!")
+WaitForKey()
+Poke(710,230)
+
+PrintE("And again!")
+WaitForKey()
+n=65
+Poke(710,n)
+
+PrintE("Last time!")
+WaitForKey()
+n=184
+Poke(COL,n)
+
+WaitForKey()
+
+RETURN

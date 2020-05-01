@@ -1,0 +1,56 @@
+; Effectus example
+;-------------------------------------
+; Using BYTE ARRAY as direct memory
+; assignment
+
+PROC Main()
+
+CHAR key
+BYTE mem
+BYTE ARRAY arrD=28000
+BYTE ARRAY arrH=$0600
+BYTE ARRAY COL=708
+
+Put(125)
+
+COL(0)=154
+COL(1)=40
+COL(2)=78
+:COL(3)=132
+COL(4)=228
+
+arrD(0)=10
+arrD(1)=30 + arrD(0)-12*3*3 
+arrD(2)=60
+arrH(0)=20
+arrH(1)=40
+arrH(2)=150
+
+;PrintF("%EarrD array elements:%E")
+;PrintB(arrD(0))
+;Print(",")
+;PrintB(arrD(1))
+;Print(",")
+;PrintB(arrD(2))
+PrintF("%EarrD array elements:%E%U,%U,%U",arrD(0),arrD(1),arrD(2))
+
+PrintF("%E%EarrH array elements:%E")
+PrintB(arrH(0))
+Print(",")
+PrintB(arrH(1))
+Print(",")
+PrintBE(arrH(2))
+
+PrintF("%EPeeked values:%E")
+mem=Peek(28000)
+PrintBE(mem)
+mem=Peek($0600)
+PrintBE(mem)
+mem=Peek(28001)
+PrintBE(mem)
+mem=Peek($0601)
+PrintBE(mem)
+
+key=GetD(7)
+
+RETURN

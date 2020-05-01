@@ -1,0 +1,40 @@
+; Effectus example
+;-------------------------------------
+; Device I/O demo using GetD and EOF
+; routines
+; Sample file: H1:TESTNUM.TXT
+
+BYTE n, i
+CHAR KEY
+
+PROC Main()
+
+Put(125)
+PrintF("GetD and EOF example%E%E")
+
+Close(1)
+Open(1,"H1:TESTNUM.TXT",4,0)
+
+FOR i=1 to 15
+DO
+  n=GetD(1)
+  Put(n)
+OD
+
+Close(1)
+PRINTF("%EAll numbers read!%E%E")
+PRINTE("Read numbers again:")
+
+OPEN(1,"H1:TESTNUM.TXT",4,0)
+
+DO
+  n=GetD(1) Put(n)
+UNTIL EOF(1)
+OD
+
+CLOSE(1)
+PRINTF("%E%EAll numbers are read again!%E")
+
+KEY=GETD(7)
+
+RETURN

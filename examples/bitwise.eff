@@ -1,0 +1,63 @@
+; Effectus example
+;-------------------------------------
+; Logical (bitwise) manipulation demo
+
+CHAR key
+BYTE n,a,b
+
+PROC Main()
+
+Put(125)
+PrintE("Logical (bitwise) operators demo")
+
+PutE()
+Print("n=")
+n=2
+n=n+2
+PrintBE(n)
+
+PutE()
+Print("n==&2  Result: ")
+n==&2
+PrintBE(n)
+
+PutE()
+Print("n=n&40  Result: ")
+n=n&40
+PrintBE(n)
+
+PutE()
+Print("n=")
+n=2
+PrintBE(n)
+
+PutE()
+Print("n==!2  Result: ")
+n==!2
+PrintBE(n)
+
+PutE()
+Print("n==XOR 2  Result: ")
+n==XOR 2
+PrintBE(n)
+
+PutE()
+Print("n==!n  Result: ")
+n==!n
+PrintBE(n)
+
+PutE()
+PrintE("a=40")
+Print("b=a LSH 1  Result: ")
+a=40
+b = a LSH 1
+PrintBE(b)
+
+PutE()
+Print("b=a RSH 1  Result: ")
+b = a RSH 1
+PrintBE(b)
+
+key=GETD(7)
+  
+RETURN

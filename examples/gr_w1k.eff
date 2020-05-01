@@ -1,0 +1,29 @@
+; Effectus example
+;-------------------------------------
+; Graphics demonstration
+;
+; Graphics Program by w1k
+; http://atarionline.pl/forum/comments.php?DiscussionID=207&page=1#Item_0
+
+BYTE I
+CHAR KLAVESA
+
+PROC LINKA(BYTE X0,Y0,X1,Y1)
+ PLOT(X0,Y0)
+ DRAWTO(X1,Y1)
+ RETURN
+
+PROC DEMO()
+ FOR i=0 to 79
+  DO
+   LINKA(0,0,159,I)
+  OD
+RETURN
+
+PROC HLPROGRAM()
+ GRAPHICS(7)
+ COLOR=1
+ DEMO()
+ PRINTE("STLAC")
+ KLAVESA=GETD(7)
+RETURN

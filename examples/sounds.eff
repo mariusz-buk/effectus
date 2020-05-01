@@ -1,0 +1,59 @@
+; Effectus example
+;-------------------------------------
+; Sound demo
+; (using Sound and SndRst procedures)
+
+BYTE CH=764
+BYTE COL=710
+
+PROC WaitForKey()
+
+WHILE CH=255 DO OD
+CH=255
+
+RETURN
+
+PROC SpaceKey()
+
+WHILE CH<>33 DO OD
+CH=255
+
+RETURN
+
+PROC Main()
+
+Put(125)
+Poke(82,0)
+SetColor(2,0,0)
+
+PrintE("Effectus example:")
+PrintE("Sound demonstration")
+PutE()
+
+PrintE("Press space for first s. channel!")
+SpaceKey()
+COL=50
+Sound(0,100,10,10)
+PrintE("Press space for second s. channel!")
+SpaceKey()
+COL=100
+Sound(1,140,12,12)
+
+PrintE("Press space for third s. channel!")
+SpaceKey()
+COL=150
+Sound(2,200,14,6)
+PrintE("Press space for fourth s. channel!")
+SpaceKey()
+COL=180
+Sound(3,70,10,4)
+
+PutE()
+PrintE("**************+*********************")
+PrintE("Press any key to shut off the sound!")
+PrintE("***************+********************")
+WaitForKey()
+COL=240
+SndRst()  ; Reset all four sound channels
+
+RETURN

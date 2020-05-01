@@ -1,0 +1,31 @@
+; Effectus example
+;-------------------------------------
+; BYTE ARRAY demo
+
+MODULE
+
+CHAR key
+BYTE i
+BYTE ARRAY num(4)
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("ARRAYs demonstration")
+PutE()
+num(0)=35
+num(1)=10
+num(2)=155
+num(3)=246
+num(4)=170
+
+FOR i=0 TO 4 DO
+  Print("Element ") PrintB(i)
+  Print(" = ")
+  PrintBE(num(i))
+OD
+
+key=GETD(7)
+
+RETURN
