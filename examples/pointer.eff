@@ -1,8 +1,6 @@
-; Effectus example
-;-------------------------------------
-; Using pointer
+; Effectus example:
+; POINTER variable demonstration
 
-CHAR key
 CARD POINTER ptr
 INT i
 
@@ -10,7 +8,7 @@ PROC Main()
 
 Put(125)
 PrintE("Effectus example:")
-PrintE("POINT=ER variable demonstration")
+PrintE("POINTER variable demonstration")
 PutE()
 
 i=70
@@ -21,12 +19,16 @@ ptr=@I
 PrintE("Memory address of variable i: ")
 PrintCE(ptr)
 
+PrintE(" ")
+
 PrintE("New value of variable ptr and i: ")
 ptr^=251
 PrintC(ptr^)
-Print(" = ")
+Print(", ")
 PrintIE(i)
 
-key=GETD(7)
+PutE()
+PutE()
+PrintE("End of program")
 
 RETURN

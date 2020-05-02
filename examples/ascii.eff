@@ -1,0 +1,42 @@
+; Effectus example:
+; ASCII manipulation demonstration
+
+PROC MAIN()
+
+BYTE n,a,b
+BYTE ARRAY arr(5)
+
+Put(125)
+PrintE("ASCII manipulation demonstration")
+
+PutE()
+PutE()
+PrintE("Character Put test")
+Put('J)
+Put(' )
+Put('d)
+
+PutE()
+PutE()
+PrintE("Some math")
+a='A
+b='B
+Print("a=65, b=66, a+b=")
+
+n=a+b
+PRINTBE(n)
+
+PutE()
+PrintE("Array test")
+arr(1)='A
+PrintB(arr(1))
+arr(2)='2
+arr(3)='C
+arr(4)='4
+
+FOR n=2 TO 4 DO
+  Put(44)
+  PrintB(ARR(N))
+OD
+
+RETURN

@@ -1,34 +1,58 @@
-; Effectus example
-;-------------------------------------
-; Using string manipulation PROCedures
-; SCopy, ScopyS and SAssign
-;
-; SBYTE ARRAY as temporary substitution
-; for string assignment (not original
-; Action! command)
+; Effectus example:
+; SCopy, SCopyS, SAssign demonstration
 
-PROC MAIN()
+BYTE n1, n2
+BYTE ARRAY str1(15), str2(15)
+CHAR ARRAY str3(15)
+BYTE ARRAY str4(8), str5(5)
+BYTE ARRAY strA(15)="Old text"
 
-CHAR key
-SBYTE ARRAY STR01(21)
-SBYTE ARRAY STR02(15),
-      STR03(15)
+PROC Main()
 
-PUT(125)
-PUTE()
+Put(125)
+PrintE("Effectus example:")
+PrintE("SCopy demonstration")
+PutE()
+SCopy(str1, "Atari")
+Print("str1 = ")
+PrintE(str1)
+Scopy(str2,"Second string")
+Print("str2 = ")
+PrintE(str2)
+scopy(str3,"Third string")
+Print("str3 = ")
+PrintE(str3)
+PutE()
+PrintE("Variable str2 = str1")
+SCopy(str2, str1)
+PrintE(str2)
 
-SCOPY(STR01,"HELLO THERE: ATARIAN")
-SCOPYS(STR02,STR01,1,5)
+PutE()
+PrintE("SCopyS demonstration")
+PutE()
+PrintE("Original string: LATARIAN")
+SCopyS(str4, "LATARIAN", 2, 6)
+n1=2
+n2=5
+SCopyS(str5, str4, n1, n2)
+PutE()
+PrintE("Extracted strings:")
+PrintE(str4)
+PrintE(str5)
 
-PRINT("STR01=") PRINTE(STR01)
-PRINT("STR02=") PRINTE(STR02)
-
-SCOPYS(STR03,STR01,7,11)
-PRINT("STR03=") PRINTE(STR03)
-
-SASSIGN(STR01,"ATARI",7,11)
-PRINT("STR01=") PRINTE(STR01)
-
-key=GETD(7)
+PutE()
+PrintE("SAssign demonstration")
+PutE()
+Print("strA=")
+PrintE(strA)
+Scopy(str2, "Baracuda")
+Print("str2=")
+PrintE(str2)
+SAssign(Str2, strA, 1, 5)
+Print("New str2=")
+PrintE(str2)
+SAssign(Str2, "Test again", 6, 10)
+Print("New str2=")
+PrintE(str2)
 
 RETURN

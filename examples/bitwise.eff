@@ -1,8 +1,6 @@
-; Effectus example
-;-------------------------------------
-; Logical (bitwise) manipulation demo
+; Effectus example:
+; Logical (bitwise) operators demo
 
-CHAR key
 BYTE n,a,b
 
 PROC Main()
@@ -13,7 +11,6 @@ PrintE("Logical (bitwise) operators demo")
 PutE()
 Print("n=")
 n=2
-n=n+2
 PrintBE(n)
 
 PutE()
@@ -50,14 +47,15 @@ PutE()
 PrintE("a=40")
 Print("b=a LSH 1  Result: ")
 a=40
-b = a LSH 1
+b=a LSH 1
 PrintBE(b)
 
 PutE()
 Print("b=a RSH 1  Result: ")
-b = a RSH 1
+b=a RSH 1
 PrintBE(b)
 
-key=GETD(7)
-  
+PutE()
+Print("---------------------")
+
 RETURN

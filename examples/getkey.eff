@@ -1,0 +1,31 @@
+; Effectus example:
+; Device Input/Output demonstration
+
+PROC Main()
+BYTE key
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Device Input/Output demonstration")
+PutE()
+
+PrintE("Press any key to play with and") 
+PrintE("exit program by typing E key!")
+PutE()
+
+Close(1)
+Open(1,"K:",4,0)
+
+WHILE key<>69
+DO
+key=GetD(1)
+Put(key)
+OD
+
+Close(1)
+
+PutE()
+PutE()
+Print("End of program")
+
+RETURN

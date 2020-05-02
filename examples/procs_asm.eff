@@ -1,0 +1,50 @@
+; Effectus example:
+; Use of inline machine language in
+; PROCedures and in the body of the
+; program
+
+BYTE CH=764
+
+PROC PokeColor1=*()[$A9 $30 $8D 710 $0 $60]
+PROC PokeColor2=*()[$A9$60$8D$02C6$0$60]
+PROC PokeColor3=*()[
+                   $A9 $90
+                   $8D $02C6
+                   $0 $60
+                  ]
+proc Param=*(BYTE a)[$8D$02C6$0$60]
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Inline machine language usage in")
+PrintE("PROCedures")
+PutE()
+
+PokeColor1()
+PokeColor2()
+Param(120)
+PokeColor3()
+
+PrintE("Press any key to change color! (1)")
+CH=255
+WHILE CH=255 DO OD
+
+[$A9$50$8D$02C6$0$60]
+
+PrintE("Press any key to change color! (2)")
+CH=255
+WHILE CH=255 DO OD
+
+[
+ $A9 $90
+ $3E $02C6
+ $0 $60
+]
+
+PutE()
+PutE()
+PrintE("End of program")
+
+RETURN

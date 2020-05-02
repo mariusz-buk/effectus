@@ -1,11 +1,9 @@
-; Effectus example
-;-------------------------------------
-; Graphics mode 9 demo
-
-CHAR key
-BYTE i
+; Effectus example:
+; Graphics demonstration
 
 PROC Main()
+
+BYTE i
 
 Graphics(9)
 SetColor(4,8,0)
@@ -14,9 +12,9 @@ FOR i=0 TO 79
 DO
   color=i
   Plot(i,i)
-  Drawto(i, 191)
+  Drawto(i,191)
 OD
 
-key=GETD(7)
+DO OD
 
 RETURN

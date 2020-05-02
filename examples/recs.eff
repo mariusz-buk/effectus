@@ -1,16 +1,14 @@
 ; Effectus example:
 ; Record ARRAY demonstration
 
-TYPE rec = [
-            BYTE NUM1
-            INT NUM2, NUM3
-            ]
+TYPE rec = [BYTE NUM1
+            INT NUM2, NUM3]
 
 DEFINE SIZE="5"
 
 BYTE ARRAY DATA(15)
+
 rec POINTER ENTRY
-CHAR KEY
 
 PROC MAIN()
 
@@ -50,7 +48,8 @@ ENTRY=DATA+10
 Print("entry.num3 = ")
 PRINTIE(ENTRY.NUM3)
 
-PrintF("%E---------------------")
-KEY=GETD(7)
+PutE()
+PutE()
+PrintE("---------------------")
 
 RETURN

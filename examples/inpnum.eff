@@ -1,12 +1,11 @@
-; Effectus example
-;-------------------------------------
-; Input numeric values
-; using InputB, InputI and InputC
-
+; Effectus example:
+; InputB, InputI and InputC function
+; demonstration
 PROC Main()
 
-CHAR key
-BYTE n1 INT n2 CARD n3
+BYTE n1
+INT n2
+CARD n3
 
 Put(125)
 
@@ -18,11 +17,9 @@ n2=InputI()
 PrintE("Enter CARD value: ")
 n3=InputC()
 
-;PrintF("%E%EAnd data entered is:%E%E")
+PrintF("%E%EAnd data entered is:%E%E")
 PrintBE(n1)
 PrintIE(n2)
 PrintCE(n3)
-
-key=GETD(7)
 
 RETURN

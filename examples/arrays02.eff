@@ -1,0 +1,65 @@
+; Effectus example:
+; ARRAY elements demonstration 02
+
+BYTE n
+CARD i
+CARD ARRAY items(12)
+BYTE ARRAY str1="First text"
+BYTE ARRAY str2(20)="Second text"
+BYTE ARRAY bytes(4)
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("ARRAY usage demonstration")
+PutE()
+
+items(0)=21
+items(1)=1024
+items(2)=40678
+items(3)="Atari forever"
+items(4)="Fuji"
+items(11)="Dummy string"
+
+FOR n=1 to 4
+DO
+  bytes(n)=n  
+OD
+
+PrintE("CARD ARRAY items:")
+PutE()
+Print("items(0)=")
+PrintCE(items(0))
+i=items(1)
+Print("items(1)=")
+PrintCE(i)
+Print("items(2)=")
+PrintCE(items(2))
+Print("items(4)=")
+PrintE(items(4))
+Print("items(11)=")
+PrintE(items(11))
+Print("items(3)=")
+PrintE(items(3))
+
+PutE()
+
+PrintE("Byte count: ")
+FOR n=1 to 4
+DO
+  PrintB(bytes(n))
+  Print(",")
+OD
+
+PutE()
+PutE()
+PrintE("String examples:")
+PrintE(Str1)
+PrintE(Str2)
+
+PutE()
+PutE()
+PrintE("End of program")
+
+RETURN

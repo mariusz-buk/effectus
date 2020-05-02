@@ -1,17 +1,14 @@
-; Effectus example
-;-------------------------------------
-; Number to string conversion using
-; StrB, StrI and StrC procedures
-;
-; String to number conversion by using
-; ValB, ValI and ValC functions
+; Effectus example:
+;- Number to string conversion using
+;  StrB, StrI and StrC procedures
+;- String to number conversion by using
+;  ValB, ValI and ValC
 
-CHAR key
 BYTE num1
 INT num2
 CARD num3
-SBYTE ARRAY strnum1(6), strnum2(6)
-SBYTE ARRAY strnum3(6)
+BYTE ARRAY strnum1(6), strnum2(6)
+BYTE ARRAY strnum3(6)
 
 PROC Main()
 
@@ -26,9 +23,12 @@ StrC(65000,strnum1)
 StrI(3200,strnum2)
 StrB(178,strnum3)
 
-Print("strnum1 = ") PrintE(strnum1)
-Print("strnum2 = ") PrintE(strnum2)
-Print("strnum3 = ") PrintE(strnum3)
+Print("strnum1 = ")
+PrintE(strnum1)
+Print("strnum2 = ")
+PrintE(strnum2)
+Print("strnum3 = ")
+PrintE(strnum3)
 
 PutE()
 PrintE("String to number conversion by using")
@@ -40,10 +40,15 @@ Print("num1=")
 PrintBE(num1)
 
 num2=ValI("1500")
-Print("num2=") PrintIE(num2)
+Print("num2=")
+PrintIE(num2)
 
-num3=ValC("44611") Print("num3=") PrintCE(num3)
+num3=ValC("44611")
+Print("num3=")
+PrintCE(num3)
 
-key=GETD(7)
+PutE()
+PutE()
+PrintE(".....................................")
 
 RETURN

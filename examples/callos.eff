@@ -1,7 +1,5 @@
-; Effectus example
-;-------------------------------------
-; Calling OS routines by using PROC
-; memory assignment
+; Effectus example:
+; Calling OS routines demonstration
 
 PROC Text()
 
@@ -13,17 +11,21 @@ RETURN
 PROC SCROLL=$F7F7()
 
 ; Keyclick sound
-PROC CLICK=$F983()
+PROC CLICK =$F983 ()
 
 ; Read key
-PROC KBGET=$F302()
+PROC KBGET= $F302()
 
-; Cassette-beep sound
-PROC BEEPWAIT=$FDFC(BYTE times)
+; Casette-beep sound
+PROC BEEPWAIT = $FDFC (BYTE times)
+
+; Routines currently can't take the
+; same name like equates in the library,
+; so they must be renamed
+proc CIOV=$E4DF(byte areg, xreg)
 
 PROC MAIN()
 BYTE N
-CHAR key
 
 PUT(125)
 POSITION(2,18)
@@ -37,6 +39,6 @@ DO
   SCROLL()
 OD
 
-key=GETD(7)
+PrintE("End of program")
 
 RETURN

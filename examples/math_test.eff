@@ -1,0 +1,75 @@
+; Effectus example:
+; Arithmetics demonstration
+
+PROC Main()
+
+BYTE n1
+CARD n2, n3, n4
+INT n5
+CARD a,b,c,d,n
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Arithmetics demonstration")
+PutE()
+
+; 8-bit addition
+n1=10+30
+PrintF("10+30=%U.%E",n1)
+
+n2=1255
+n3=30000
+n4=n2+n3
+PrintF("%En2=%U, n3=%U.%E%U+%U=%U%E",n2,n3,n2,n3,n4)
+
+; 8-bit substraction
+n3=250-80
+PrintF("%E250-80=%U.%E",n3)
+
+n2=25500
+n3=1100
+n4=n2-n3
+PrintF("%En2=%U, n3=%U.%E%U-%U=%U%E",n2,n3,n2,n3,n4)
+
+; 8-bit multiplication
+n3=10*255
+PrintF("%E10*255=%U.%E",n3)
+
+n1=255
+n2=210
+n3=n1*n2
+PrintF("%En1=%U, n2=%U.%E%U*%U=%U%E",n1,n2,n1,n2,n3)
+
+; 8-bit division
+n3=200/40
+PrintF("%E200/40=%U.%E",n3)
+
+n5=1000
+n2=4
+n3=n5/n2
+PrintF("%En5=%U, n2=%U.%E%U/%U=%U%E",n5,n2,n5,n2,n3)
+
+a=10
+b=20
+c=30
+d=40
+n=4+a+b+c+2100+d
+printce(n)
+
+n=a+b
+n=c+n+20
+printce(n)
+
+n=d-a-b
+n=a
+n==+1
+
+printce(n)
+
+n=20000-1000-10000
+printce(n)
+
+PutE()
+PrintE("End of program")
+
+RETURN

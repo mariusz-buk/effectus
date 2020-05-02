@@ -1,0 +1,72 @@
+; Effectus example:
+; Loop demonstrations using
+; WHILE, UNTIL, DO OD
+
+BYTE COL=710, CH=764
+BYTE i
+CARD n
+
+PROC WaitForKey()
+
+WHILE CH=255 DO OD
+CH=255
+
+RETURN
+
+PROC Delay()
+
+n=0
+WHILE n<700 DO
+  n=n+1
+OD
+
+RETURN
+
+PROC Main()
+
+Put(125)
+COL=0
+
+PrintE("Loop demonstrations using")
+PrintE("WHILE statement")
+PutE()
+
+PrintE("Press any key to cycle through colors!")
+WaitForKey()
+
+i=0
+WHILE i<255 DO
+  COL=i
+  Delay()
+  i=i+1
+OD
+
+Put(125)
+COL=0
+PutE()
+PrintE("Loop demonstrations using")
+PrintE("UNTIL statement")
+PutE()
+PrintE("Count from 1 to 7:")
+n=0
+DO  
+  n==+1
+  PrintCE(n)
+UNTIL n>=7
+OD
+
+PutE()
+PrintE("Loop demonstrations using")
+PrintE("DO-OD statement")
+PutE()
+PrintE("Counting from 1 to 3 in a loop...")
+i=0
+DO
+  i=i+1
+  PrintBE(i)
+  IF i=3 THEN
+    EXIT
+  FI
+OD
+
+RETURN

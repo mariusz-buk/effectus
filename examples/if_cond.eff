@@ -1,0 +1,99 @@
+; Effectus example:
+; IF condition statement demonstration
+
+BYTE SCRX=82
+
+BYTE FUNC Mult(BYTE n)
+BYTE res1
+res1=n*2
+RETURN(res1)
+
+CARD FUNC Mult2(CARD n1, n2)
+CARD res2
+res2=n1*n2
+RETURN(res2)
+
+PROC MAIN()
+
+BYTE x1
+CARD x2,y1,y2
+BYTE A=[1],B=[2]
+INT i, j
+BYTE x=[5]
+
+Put(125)
+PrintE("IF condition statement demonstration")
+SCRX=0
+PutE()
+x1=1
+PrintE("x1=1")
+IF x1#2 THEN PrintE("This is line is shown because x1 <> 2!") FI
+
+; BYTE type function in IF condition
+PutE()
+x1=Mult(3)
+PrintBE(x1)
+IF Mult(3)=6 THEN
+  PrintE("TRUE: 3 * 2 = 6")
+ELSE
+  PrintE("FALSE: 3 * 2 NOT 6?")
+FI
+
+; CARD type function in IF condition
+PutE()
+y1=500
+y2=70
+x2=Mult2(y1,y2)
+PrintCE(x2)
+IF Mult2(y1,y2)<>x2 THEN
+  PrintE("FALSE: 130 * 55 IS NOT 35000")
+ELSE
+  PrintE("TRUE: 500 * 70 = 35000")
+FI
+
+PutE()
+IF A=1 THEN
+  PRINTE("A=1 (first condition)")
+  IF B=2 THEN
+    PRINTE("B=2 (nested condition)")
+  FI
+FI
+
+; IF multi-conditional operators demonstration
+PutE()
+i = 10
+j = 21
+PrintE("Variable values:")
+PrintF("i=%i and j=%I%E%E", i, j)
+
+IF i > 1 AND j < 21 THEN
+  PrintE("i > 1 and j < 21")
+FI
+IF i>1 AND j>20 THEN
+  PrintE("i > 1 and j > 20")
+FI
+IF i < 9 OR j = 21 THEN
+  PrintE("i < 9 or j = 21")
+FI
+IF i < 9 OR j < 21 THEN
+  PrintE("i < 9 or j < 21")
+FI
+IF j >= 21 THEN
+  PrintE("j >= 21")
+FI
+
+; ELSEIF demonstration
+PrintF("%Ex is assigned to ")
+PrintB(x)
+PrintE(" and the result is: ")
+IF x=1 THEN
+  Print("x=1")  
+ELSEIF x=5 THEN
+  Print("x=5")  
+ELSEIF x=6 THEN
+  Print("x=6")  
+ELSE
+  Print("x=?")  
+FI
+
+RETURN

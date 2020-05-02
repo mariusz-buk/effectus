@@ -1,0 +1,61 @@
+; Effectus example:
+; Arithmetics demonstration
+
+CARD n1, n2
+INT i
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Arithmetics demonstration")
+PutE()
+
+n2=4
+
+; Addition example
+n1=7
+n1==+2
+PrintCE(n1)
+
+; Subtraction example
+n1=240
+n1==-40
+PrintCE(n1)
+
+; Multiplication example
+n1=8
+n1==*10
+PrintCE(n1)
+
+; Division example
+n1=210
+n1==/70
+PrintCE(n1)
+
+n1==-1
+PrintCE(n1)
+
+n1=8
+n1==*n2
+PrintCE(n1)
+
+n1==/n2
+PrintCE(n1)
+
+; MOD examples
+PrintE("n1 = 10 MOD 4")
+Print("n1 = ")
+n1 = 10 MOD 4
+PrintCE(n1)
+PrintE("")
+PrintE("i = 255 MOD 10")
+Print("i = ")
+i = 255 MOD 10
+PrintIE(i)
+
+PutE()
+PutE()
+PrintE("End of program")
+
+RETURN

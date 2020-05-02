@@ -1,18 +1,16 @@
-; Effectus example
-;-------------------------------------
-; Graphics triangle demo
+; Effectus example:
+; Demonstration of using parameters
+; with multiple operands
+
+PROC Test()
 
 BYTE x,y,r
-CHAR key
-
-PROC Main()
-
-Graphics(7)
 
 x=80
 y=10
 r=60
 
+Graphics(7)
 Color=1
 Plot(x,y)
 DrawTo(x+r-10,y+r)
@@ -33,7 +31,5 @@ Color=3
 Drawto(x,y)
 
 PrintE("Triangle")
-
-key=GETD(7)
-
+        
 RETURN

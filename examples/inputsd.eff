@@ -1,38 +1,40 @@
-; Effectus example
-;-------------------------------------
-; Device I/O demo using InputSD and
-; InputMD procedures to read text file
 ;
-; Sample file on H1: device: TEST.TXT
+; Effectus example:
+;
+; Device Input/Output demonstration
+; using InputSD procedure for reading
+; text file
+; Sample file: TEST.TXT
+;
 
-CHAR key
-SBYTE ARRAY str_buffer1(255)
+MODULE
+
+BYTE ARRAY str_buffer1(255)
 
 PROC Main()
 
 Put(125)
-PrintE("Device I/O demo")
-PrintE("using InputSD and InputMD procedures")
-PrintE("to read text file")
+PrintE("Effectus example:")
 PutE()
+PrintE("Device Input/Output demonstration")
+PrintE("using InputSD procedure for reading")
+PrintE("text file")
+PrintE("---------------------")
 PrintE("Sample file: TEST.TXT")
+PutE()
 
 Close(1)
-Open(1,"H1:TEST.TXT",4,0)
+Open(1,"D1:TEST.TXT",4,0)
 
-PrintF("%EInputSD example:%E")
+PrintE("InputSD example:")
+PutE()
 InputSD(1,str_buffer1)
 PrintE(str_buffer1)
 
 Close(1)
-Open(1,"H1:TEST.TXT",4,0)
 
-PrintF("%EInputMD example:%E")
-InputMD(1,str_buffer1, 255)
-PrintE(str_buffer1)
-
-Close(1)
-
-key=GETD(7)
+PutE()
+PutE()
+PrintE("----------------------")
 
 RETURN

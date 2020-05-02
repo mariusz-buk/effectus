@@ -1,10 +1,8 @@
-; Effectus example
-;-------------------------------------
-; String input demo
-; (using InputS procedure)
+; Effectus example:
+; String input demonstration
+; using InputS procedure
 
-CHAR key
-SBYTE ARRAY name(13), surname(21)
+BYTE ARRAY name(13), surname(21)
 
 PROC Main()
 
@@ -14,18 +12,20 @@ PrintE("String input demonstration")
 PrintE("using InputS procedure")
 PutE()
 
-PrintE("Whats your name?")
+PrintE("What's your name?")
 InputS(name)
 PutE()
-PrintE("Whats your surname?")
+PrintE("What's your surname?")
 InputS(surname)
 PutE()
 Print("Thank you, ")
 Print(name)
-Put(32)
+Put(" ")
 PrintE(surname)
 PutE()
 
-key=GETD(7)
+PutE()
+PutE()
+PrintE("End of program")
 
 RETURN

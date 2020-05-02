@@ -1,0 +1,37 @@
+; Effectus example:
+; Joystick manipulation demonstration
+
+BYTE CH=764, i
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Joystick manipulation demonstration")
+PutE()
+PrintE("Move your joystick to see destination")
+PrintE("numbers or press trigger to fire!")
+PutE()
+PrintE("Press any key to exit!")
+
+CH=255
+WHILE CH=255
+DO
+  i=Stick(0)
+  IF i<>15 THEN
+    PrintBE(i)
+  FI
+  i=Strig(0)
+  IF i=0 THEN
+    PrintE("Fire!")
+  FI
+OD
+CH=255
+
+PutE()
+PrintE("All done!")
+PutE()
+PutE()
+PrintE("End of program")
+
+RETURN

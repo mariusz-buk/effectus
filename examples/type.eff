@@ -1,15 +1,11 @@
-; Effectus example
-;-------------------------------------
-; TYPE declaration demo
+; Effectus example:
+; TYPE declaration demonstration
 
-TYPE REC = [
-  BYTE day, month CARD year
-  BYTE height
-]
-
-REC data
-BYTE weightData 
-CHAR key
+TYPE rec=[INT x, y
+          CARD z
+          BYTE b]
+rec temp
+INT i, j
 
 PROC Main()
 
@@ -18,18 +14,28 @@ PrintE("Effectus example:")
 PrintE("TYPE declaration demonstration")
 PutE()
 
-data.day=12  
-data.month=4
-data.year=1975
-data.height=182
-weightData=data.height
+temp.x=50  
+temp.y=120
+temp.z=3700
+temp.b=200
 
-PrintE("Personal data")
-PrintE("-------------")
-PrintF("%EBirthday: %i.%i.%u%E", data.day, data.month, data.year)
-Print("Height: ")
-PrintIE(weightData)
+i=7
+temp.x=i
+j=temp.z
 
-key=GETD(7)
+PrintE("Members of variable temp of type rec  have these values:")
+PutE()
+Print("temp.x=")
+PrintIE(temp.x)
+Print("temp.y=")
+PrintIE(temp.y)
+Print("temp.z=")
+PrintCE(j)
+Print("temp.b=")
+PrintBE(temp.b)
+     
+PutE()
+PutE()
+PrintE("End of program")
 
 RETURN

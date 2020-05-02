@@ -1,0 +1,31 @@
+; Effectus example:
+; INCLUDE demonstration
+
+BYTE CH=764
+
+INCLUDE "lib_test.eff"
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("INCLUDE demonstration")
+PutE()
+
+PrintE("Press any key!")
+WaitForKey()
+PutE()
+PrintE("Press any key and see my greetings!")
+WaitForKey()
+PutE()
+PrintText()
+PutE()
+PrintE("And press any key for new color!")
+WaitForKey()
+ChangeColor()
+
+PutE()
+PutE()
+PrintE("End of program")
+
+RETURN

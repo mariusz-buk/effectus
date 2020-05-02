@@ -1,29 +1,27 @@
-; Effectus example
-;-------------------------------------
+; Effectus example:
+;
 ; Finescroll by greblus
-; Modification by Gury (keypress check)
 
-CHAR key
 int j=[0]
 int k=[0]
-byte hsc=54276 
+byte hsc=54276
 byte tmpl
 byte tmph 
 byte tmp
-byte array ndl=[112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
-
+byte array ndl = [112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
+ 
 proc chndl()
-  tmp=ndl(28)  
+  tmp=ndl(28)  ; (1)  
   if tmp < 2 THEN
-   ndl(28)=255
-   tmp=ndl(29)-1
-   ndl(29)=tmp
+   ndl(28)=255  ; (2)
+   tmp=ndl(29)-1  ; (3)
+   ndl(29)=tmp  ; (4)
   else
-   tmp=ndl(28)-2
-   ndl(28)=tmp
+   tmp=ndl(28)-2  ; (5)
+   ndl(28)=tmp  ; (6)
   fi
 return
-
+ 
 proc scrol()
  hsc=j
  j=j+1
@@ -39,7 +37,7 @@ proc scrol()
  fi
 [$4C$E462]
 return 
-
+ 
 proc main()
  int i 
  card sav=88
@@ -49,20 +47,20 @@ proc main()
  card vvblkd=$0224
  byte col0=708
  byte col1=709
-
+ 
  graphics(0)
  dlist=ndl
  sav=40000
  col0=14 
  col1=14
-
- for i=1 to 23
+ 
+ for i=1 to 23 
   do
-   PrintF("line: %i%E", i)
+   printf("line: %i%E", i)
   od
-
+ 
  print("Action!")
-
+ 
  tmpl=ndl(28)
  tmph=ndl(29)
  i=clock
@@ -70,6 +68,5 @@ proc main()
  nmi=0
  vvblkd=scrol
  nmi=$40
-
- key=GETD(7)
+ do od
 return

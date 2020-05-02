@@ -1,9 +1,7 @@
-; Effectus example
-;-------------------------------------
-; Using local PROCedures
+; Effectus example:
+; Using local procedures (PROC)
 
 CARD m1,m2
-CHAR key
 
 PROC PrintText()
 
@@ -20,7 +18,7 @@ RETURN
 ; Calculate the sum of two 8-bit
 ; numbers and print the result to the
 ; screen
-PROC SumBytes(BYTE n1,n2)
+PROC SumCalc1(BYTE n1,n2)
 BYTE total1
 
 total1=n1+n2
@@ -33,7 +31,7 @@ RETURN
 ; Calculate the sum of two 16-bit
 ; numbers and print the result to the
 ; screen
-PROC SumCards(CARD c1,c2)
+PROC SumCalc2(CARD c1,c2)
 CARD total2
 
 total2=c1+c2
@@ -43,12 +41,11 @@ PrintCE(total2)
 
 RETURN
 
-; Currently, mixed data types are not supported
 PROC Numbers(CARD e1, e2 BYTE e3 INT e4,e5)
 
 PrintF("%Ee1=%U, e2=%u",e1,e2)
 PrintF("%Ee3=%U",e3)
-PrintF("%Ee4=%i, e5=%I%E",e4,e5)
+PrintF("%Ee4=%i, e5=%I%E%E%E",e4,e5)
 
 RETURN
 
@@ -56,7 +53,7 @@ PROC Main()
 
 Put(125)
 PrintE("Effectus example:")
-PrintE("Using local PROCedures")
+PrintE("Using local procedures (PROC)")
 
 PrintText()
 
@@ -65,7 +62,7 @@ ShowNum(21)
 
 PutE()
 PrintE("Input parameters: 10 and 240")
-SumBytes(10,240)
+SumCalc1(10,240)
 
 PutE()
 
@@ -76,10 +73,10 @@ PrintC(m1)
 Print(" and ")
 PrintCE(m2)
 PrintE("held in variables m1 and m2")
-SumCards(m1,m2)
+SumCalc2(m1,m2)
 
 Numbers(10000,65200,201,32000,4651)
 
-key=GETD(7)
+PrintE("End of program")
 
 RETURN

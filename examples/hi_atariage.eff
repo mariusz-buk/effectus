@@ -1,24 +1,20 @@
-; Effectus example
-;-------------------------------------
-; Printing on device #6 allowing to
-; display text in gr. mode 1 and 2
+;
+; Effectus example:
+; Graphics demonstration
 ;
 ; Hi, AtariAge by ascrnet
 ; http://www.atariage.com/forums/topic/112501-effectus-new-atari-cross-compiler-alpha-stage/page__st__25
 ;
-; Demo Effectus
 
-CHAR key
+; Demo Effectus
 
 PROC Main()
   INT i
   GRAPHICS(2)
   POSITION(5,5) 
-  PRINTDE(6, "hi atariage")
+  PRINTD(6, "hi, atariage")
   FOR i=0 TO 2
   DO
           PRINTE("hi, AtariAge........")
   OD
-  
-  key=GETD(7)
 RETURN

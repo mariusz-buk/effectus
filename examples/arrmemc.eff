@@ -1,11 +1,9 @@
-; Effectus example
-;-------------------------------------
-; Using CARD ARRAY as direct memory
-; assignment
+; Effectus example:
+; CARD ARRAY usage demonstration using
+; direct memory assignment
 
 PROC Main()
 
-CHAR key
 BYTE i
 CARD mem
 CARD ARRAY arr=$8000
@@ -36,6 +34,5 @@ PrintCE(mem)
 mem=PEEKC($8000)
 PrintCE(mem)
 
-key=GETD(7)
 
 RETURN

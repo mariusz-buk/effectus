@@ -1,247 +1,107 @@
-==================
-   Effectus 0.4
-==================
+=================================================================
+Effectus - Atari MADS cross-assembler/parser for Action! language
+=================================================================
 
-This is new version of Effectus, done from scratch. This is new branch version, currently only
-for Windows platform. Other platforms will be supported when vital parts of the program will be
-more stable.
-
-The most important thing to consider was properly handling of Action! statements (declarations,
-commands, assignments...) and multi-line support.
-
-The next most important change is the way code is generated. I took Mad Pascal as the basis for
-generating source code listings, which are further compiled to binary code with Mad Assembler
-(Mads). Many thanks to Tomasz Biela (Tebe), author of these great tools. He made this all possible!
-Of course, many thanks to all others helping me with porting to other platforms, suggestions,
-testing and supporting the project in any way.
-
-The steps are as follows:
-- Action! code is parsed and appropriate Mad Pascal source code listing is generated
-- Mad Pascal compiles this code to *.a65 file prepared for compilation by Mad Assembler
-- Mad Assembler compiles *.a65 file to final binary code (*.xex)
-
-examples directory includes test examples, which can be basis for your further development and
-experimentation.
-
-------------------
-What is supported?
-------------------
-
-Data types
-----------
-
-BYTE, CHAR, INT, CARD
-
-Extended data type
-------------------
-
-BYTE ARRAY, CARD ARRAY, POINTER
-SBYTE ARRAY as temporary solution for BYTE ARRAY string definitions
-
-- Variable memory address assignment
-
-  Examples:
-  BYTE CH=764, COL=710, BYTE GRACTL=$D01D
-
-- TYPE declaration
-  
-  TYPE REC = [
-    BYTE day, month CARD year
-    BYTE height
-  ]
-
-- Declaring array variables pointing to memory address
-  
-  BYTE ARRAY arrD=28000
-  CARD ARRAY arr=$8000
-
-DEFINE declaration (constant substitutions for any statement)
-------------------
-
-Conditions and branches
------------------------
-
-- IF/THEN/ELSE, FOR, WHILE, UNTIL branches
-- infinite loop DO OD
-- EXIT statement to force exit from the branch
-
-Graphics
---------
-
-PROCedures: GRAPHICS, PLOT, DRAWTO, FILL, LOCATE
-Global variable Color for setting the color to draw on screen
-
-Sound
------
-
-PROCedures: SOUND, SNDRST
-
-String manipulation
--------------------
-
-PROCedures:
-  STRB, STRC, STRI, SCOPY, SCOPYS, SASSIGN, INPUTS,
-  PRINT, PRINTE, PRINTB, PRINTBE, PRINTI, PRINTIE, PRINTC, PRINTCE, PRINTF, PUT, PUTE
-
-FUNCtions:
-  GETD, INPUTB, INPUTC, INPUTI, SCOMPARE, VALB, VALC, VALI 
-
-Arithmetic manipulation
------------------------
-
-Bitwise manipulation
---------------------
-
-Bitwise/logical operators: AND (&), OR (%), XOR (!), LSH (left shift), RSH (right shift)
-
-Data manipulation
------------------
-
-PROCedures:
-  ZERO, SETBLOCK, MOVEBLOCK
-
-Device I/O support
-------------------
-
-PROCedures:
-  OPEN, CLOSE, PRINTD, PRINTDE, PRINTBD, PRINTBDE, PRINTCD, PRINTCDE, PRINTID, PRINTIDE
-  INPUTSD, INPUTMD
-
-FUNCtions:  
-  INPUTBD, INPUTCD, INPUTID
-
-- EOF (end of line) variable supported in IF, WHILE and UNTIL branch conditions
-- Printing to text modes by using PrintD and PrintDE is allowed
-
-Inline machine language
------------------------
-
-- Support for inline machine language directly in the body of code listing
-
-  Examples:
-    [$A9$21$8D$02C6$0$60]
-    [
-      $A9$90
-      $3E$02C6 $0 $60
-    ]
-
-- PROCedure machine language support
-- FUNCtion machine language support
-
-  Example:
-
-  PROC TEST=*(BYTE CURSOR,BACK,BORDER,X,Y,UPDOWN)
-  [
-    $8E 710  ; BACKGROUND COLOR
-    $8C 712  ; BORDER COLOR
-    $8D 752  ; CURSOR VISIBILITY 
-    $A5 $A5 $8D 755  ; CHARACTERS UPSIDE DOWN? 
-    $A5 $A3 $8D 85 0  ; COLUMN FOR TEXT
-    $A5 $A4 $8D 84 0  ; ROW FOR TEXT
-    $60]
-
-System manipulation
--------------------
-
-PROCedures:
-  POKE, POKEC
-
-PROCedures:
-  PEEK, PEEKC
-
-Misc
-----
-
-- Additional PROCedures: POSITION, SETCOLOR
-- Aditional FUNCtions: RAND, STICK, STRIG, Paddle, PTrig
-- Custom PROCedures and FUNCtions are supported
-  (parameters can be mixture of any scalar data type: BYTE, CARD, INT, CHAR)
-- Memory address calls through PROCedures are supported (OS calls can be accomplished)
-
-  Examples:
-  ; Scroll screen
-  PROC SCROLL=$F7F7()
-  ; Cassette-beep sound
-  PROC BEEPWAIT=$FDFC(BYTE times)
-
-Effectus directory structure
-----------------------------
-
-- root directory: effectus.exe, mads.exe, mp.exe, LICENSE-mads-mp, readme.txt, test.bat, del.bat
-- examples: Action!/Effectus examples
-- base: Mad Assembler library directory
-- lib: Mad Pascal library directory
-
-Command prompt execution
-------------------------
-
-effectus <filename> <parameters>
-
-Available options:
-  -i  program information about variables and custom PROCedures
-  -o: object code extension
-  -c  clear summarized log file
-
-- Effectus/Action! source code listing can reside on any path and resulting code
-  is also generated there
-
-- Log files are created on compile time
-
-What is missing?
-----------------
-
-Many things! But new features will eventually pop in.
-
-Not yet supported:
-  - INCLUDE files
-  - No proper error handling is done yet, so it happens that no errors show on the screen even if
-    something went wrong
-
-Wierd stuff
+Description
 -----------
 
-- BYTE ARRAY definition for using as string holder must be declared as SBYTE ARRAY
+The goal of Effectus project is to make it as compatible with Action! programming
+language as possible. The name Effectus comes from Latin word for "execution".
+Effectus compiles and produces MADS assembly language listing and binary files
+for execution on real 8-bit Atari or emulation software on PC.
 
-Bugs
-----
+Mad Assembler (MADS) is integrated directly into Effectus program starting from
+version 0.3, so there is no need to call MADS externally. The version of MADS
+cross-compiler source code used is 2.0.8. Generated assembly language listing can
+be further edited by you if necessary. You can configure Effectus with several
+parameters by typing them in command prompt shell or by using config.ini file,
+which can be edited.
 
-- Nested branches do not work correctly in some cases
-- Declaring variables allows freedom, but some considerations must be taken. For example,
-  proper syntax is:
+You can check for Effectus examples in \examples directory. Runtime and supporting
+libraries are contained in \lib directory. The libraries and their implementation
+can be changed, but keep in mind that the number and order of parameters should
+not be changed to ensure the proper functioning of Effectus application. It is
+advisable to keep config.ini configuration file in the same directory as Effectus
+binary, but if not, default configuration settings apply.
 
-  byte array ndl=[112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
+With this project, maintaining the compatibility with Action! language will be of
+HIGH priority.
 
-  and NOT like this:
-
-  byte array ndl=
-    [112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
-
-- TYPE declaration can be achieved in this manner:
-
-  TYPE REC = [
-    BYTE day, month CARD year
-    BYTE height
-  ]
-  
-  or
-  
-  TYPE REC =
-  [
-    BYTE day, month CARD year
-    BYTE height
-  ]
-
-  but NOT like this:
-
-  TYPE REC = [BYTE day, month CARD year
-              BYTE height]
-
-All this will be fixed at some point!
+Home of Effectus is at http://gury.atari8.info/effectus/
 
 
-Written by Bostjan Gorisek from Slovenia
-Page URL: http://gury.atari8.info/effectus/
-          http://freeweb.siol.net/diomedes/effectus/
+Credits
+-------
 
-Mad Pascal and MAD Assembler (MADS) are products written by Tomasz Biela (Tebe) from Poland
-Page URL: http://mads.atari8.info/
+I have to thank everybody who helped me with support and suggestions, especially
+the author of MADS, "Tebe", who helped me with many important suggestions to
+improve the code and "greblus" for compiling Effectus for Linux
+platform and making many tests with many suggestions, too.
+
+Special thanks go also to other people (mainly from AtariAge and atarionline.pl
+forums) for the additional help by testing and finding bugs in Effectus, plus
+providing new test examples: Cosi, w1k, Kaz, ascrnet, dwhyte, devwebcl, twh/f2,
+TXG/MNX and all others not listed here.
+
+
+Installation
+------------
+
+Program and its dependencies are archived in ZIP file. Extract (unzip) the files
+in directory of your choice. It is recommended to put config.ini file in the same
+directory as Effectus binary, but if not, the proper parameter values must be set
+as mentioned above. To run Effectus, type effectus in command prompt shell
+following the Effectus source code listing file with properly qualified pathname
+and optional parameters.
+
+
+Program usage
+-------------
+
+- win32 platform: effectus <filename> <parameters>
+
+Program parameters: 
+
+-a:address    Program starting address
+-e:extension  Source code extension
+-o:extension  Binary file extension
+-r:path       Effectus runtime library directory
+-l:path       Log filename (full pathname)
+-m:address    Machine language starting address
+-c            Clear log file
+-i            Effectus variable usage list
+-n:value      Maximum number of ARRAY elements
+
+
+Effectus source code information
+--------------------------------
+
+Effectus is compiled with Free Pascal Compiler version 3.0.4. Source code is
+available in src directory, including six files:
+
+- effectus.pas
+  (Main module calling all other components and showing all avaiable parameters)
+- decl.pas
+  (Variable declarations, constants, initializations...)
+- common.pas
+  (Common library with methods used in other units)
+- core.pas
+  (Core unit implementing the core functioning of Effectus parsing Action! code)
+- routines.pas
+  (Unit library implementing all supported Action! procedures and functions)
+- inifiles.pas
+  (Unit library with support for reading and writing INI files)
+- mads_unit.pas
+  (Firepower unit which runs it all... Tebe's Mad Assembler integrated in Effectus)
+
+Effectus binary is produced by typing this command in command prompt shell:
+
+c:\lazarus\fpc\3.0.4\bin\i386-win32\fpc -Mdelphi -vh -O3 effectus.pas
+(or any other destination where your copy of Free Pascal resides)
+
+Parameters may vary, but additional tests are necessary to be sure Effectus
+would work as expected.
+
+Enjoy using Effectus!
+
+Bostjan Gorisek (Gury)

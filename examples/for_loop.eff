@@ -1,0 +1,57 @@
+; Effectus example:
+; FOR loop demonstration
+
+BYTE i
+CARD m, n, j
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("FOR loop demonstration")
+
+PutE()
+PrintE("Count from 1 to 5:")
+FOR i=1 to 5
+DO
+  PrintBE(i)
+OD
+
+PutE()
+PrintE("Count from 1 to 3 by using variables:")
+
+m=1
+n=3
+
+FOR j=m to n
+DO
+  PrintCE(j)
+OD
+
+PutE()
+PrintE("Iterate through numbers")
+PrintE("from 1 to 10 with increment by 2")
+PutE()
+
+FOR n = 1 TO 10 STEP 2
+DO
+  PrintC(n)
+  Put("/")
+OD
+
+PutE()
+PutE()
+Print("Count to 25600: ")
+
+m = 0
+FOR n = 1 TO 25600
+DO
+  m = m + 1
+OD
+
+PrintCE(m)
+
+PutE()
+PrintE("End of program")
+
+RETURN

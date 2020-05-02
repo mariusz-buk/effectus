@@ -1,0 +1,41 @@
+; Effectus example:
+;
+; Device Input/Output demonstration
+; using InputSD routine for reading
+; text file
+; Sample file: TEST2.TXT
+
+BYTE ARRAY str_buffer1(39)
+BYTE ARRAY str_buffer2(39)
+BYTE ARRAY str_buffer3(39)
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Device Input/Output demonstration")
+PrintE("using InputSD procedure for reading")
+PrintE("text file")
+PrintE("----------------------")
+PrintE("Sample file: TEST2.TXT")
+PutE()
+
+Close(1)
+Open(1,"D:TEST2.TXT",4,0)
+
+PrintE("InputSD example:")
+PutE()
+InputSD(1,str_buffer1)
+PrintE(str_buffer1)
+InputSD(1,str_buffer2)
+PrintE(str_buffer2)
+InputSD(1,str_buffer3)
+PrintE(str_buffer3)
+
+Close(1)
+
+PutE()
+PutE()
+PrintE("----------------------")
+
+RETURN

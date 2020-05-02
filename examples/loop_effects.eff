@@ -1,5 +1,5 @@
 ; Effectus example
-;-------------------------------------
+;
 ; Loop effects by ascrnet
 ; http://www.atariage.com/forums/topic/112501-effectus-new-atari-cross-compiler-alpha-stage/page__st__25
 
@@ -14,5 +14,4 @@ PROC Main()
     PRINTID(6,i)
     POKE(710,i)
   OD
-
 RETURN

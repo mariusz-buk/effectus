@@ -1,7 +1,5 @@
-; Effectus example
-;-------------------------------------
-; Graphics demo
-; (using Fill procedure)
+; Effectus example:
+; Graphics Fill demonstration
 
 PROC MAIN()
 
@@ -29,6 +27,8 @@ DRAWTO(50,35)
 POKE(765,1)
 FILL(65,50)
 
+Put(125)
+PRINTE("FILL TEST")
 Put(125)
 PRINTE("FILL TEST")
 

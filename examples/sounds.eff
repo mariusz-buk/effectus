@@ -1,21 +1,24 @@
-; Effectus example
-;-------------------------------------
-; Sound demo
-; (using Sound and SndRst procedures)
+; Effectus example:
+; Sound demonstration
 
+BYTE i
 BYTE CH=764
 BYTE COL=710
 
 PROC WaitForKey()
 
-WHILE CH=255 DO OD
+WHILE CH=255
+DO
+OD
 CH=255
 
 RETURN
 
 PROC SpaceKey()
 
-WHILE CH<>33 DO OD
+WHILE CH<>33
+DO
+OD
 CH=255
 
 RETURN
@@ -55,5 +58,9 @@ PrintE("***************+********************")
 WaitForKey()
 COL=240
 SndRst()  ; Reset all four sound channels
+
+PutE()
+PutE()
+PrintE("End of program")
 
 RETURN

@@ -1,13 +1,15 @@
-; Effectus example
-;-------------------------------------
-; PEEK and POKE demo
+; Effectus example:
+; PEEK and POKE demonstration
 
+CARD num
 BYTE n
 BYTE CH=764, COL=710
 
 PROC WaitForKey()
 
-WHILE CH=255 DO OD
+WHILE CH=255
+DO
+OD
 CH=255
 
 RETURN
@@ -21,21 +23,25 @@ PutE()
 
 n=Peek(CH)
 PrintE("Shadow register 764 currently holds:")
-PutE() PrintBE(n)
+PutE()
+PrintBE(n)
 
 PutE()
 
 n=Peek(COL)
 PrintE("Shadow register 710 currently holds:")
-PutE() PrintBE(n)
+PutE()
+PrintBE(n)
 
 PutE()
 
 n=Peek(559)
 PrintE("Shadow register 559 currently holds:")
-PutE() PrintBE(n)
+PutE()
+PrintBE(n)
 
-PutE() PutE()
+PutE()
+PutE()
 
 PrintE("POKE demonstration")
 PrintE("Press any key to change color!")
@@ -56,6 +62,11 @@ WaitForKey()
 n=184
 Poke(COL,n)
 
-WaitForKey()
+PutE()
+PrintE("Thank you!")
+
+PutE()
+PutE()
+PrintE("End of program")
 
 RETURN

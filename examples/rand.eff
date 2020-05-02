@@ -1,10 +1,8 @@
-; Effectus example
-;-------------------------------------
-; Random number generator demo
-; (Rand function)
+; Effectus example:
+; Random number generator demonstration
+; (function Rand)
 
-BYTE i
-CHAR key
+BYTE i, CH=764
 
 PROC Main()
 
@@ -15,7 +13,11 @@ PrintE("(function Rand)")
 PutE()
 
 PrintE("Press any key to see random numbers!")
-key=GETD(7)
+CH=255
+WHILE CH=255
+DO
+OD
+CH=255
 
 PutE()
 PrintE("Selected number between 0 and 100")
@@ -32,6 +34,8 @@ PrintE("Selected number between 0 and 3")
 i=Rand(3)
 PrintBE(i)
 
-key=GETD(7)
+PutE()
+PutE()
+PrintE("End of program")
 
 RETURN

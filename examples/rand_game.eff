@@ -1,0 +1,62 @@
+; Effectus example:
+; Random Number game
+
+BYTE n=[4], i
+BYTE CH=764
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PrintE("Random Number game")
+PutE()
+
+PutE()
+PrintE("Select a number between 0 and 3")
+PrintE("by pressing corresponding key!")
+PutE()
+
+CH=255
+WHILE CH=255
+DO
+OD
+
+i=Rand(3)
+
+IF CH=50 THEN
+  n=0
+ELSEIF CH=31 THEN
+  n=1
+ELSEIF CH=30 THEN
+  n=2
+ELSEIF CH=26 THEN
+  n=3
+FI
+
+CH=255
+
+PutE()
+
+Print("You pressed ")
+
+IF n>3 THEN
+  Print("the wrong")
+ELSE
+  PrintB(n)
+FI
+
+Print(" key!")
+
+IF i=n THEN
+  PrintE(" You won!!!")
+ELSE
+  Print(" You lost, the number is ")
+  PrintB(i)
+  PrintE("!")
+FI
+  
+PutE()
+PutE()
+PrintE("End of game")
+
+RETURN

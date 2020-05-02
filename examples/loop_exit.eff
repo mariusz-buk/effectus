@@ -1,10 +1,8 @@
-; Effectus example
-;-------------------------------------
-; Using EXIT command in loop statements
+; Effectus example:
+;Using EXIT command in loop statements
 
 PROC Main()
 
-CHAR key
 BYTE n
 
 Put(125)
@@ -33,7 +31,6 @@ PrintE("Counting from 1 to 20...")
 PutE()
 
 n=1
-n=n+1
 WHILE n<21
 DO     
   PrintB(n)
@@ -55,7 +52,7 @@ PutE()
 
 n=0
 
-DO
+DO  
   n==+1
   PrintB(n)
   Put(44)
@@ -66,6 +63,8 @@ OD
 PutE()
 PrintE("Escaped from UNTIL loop!")
 
-key=GETD(7)
+PutE()
+PutE()
+PrintE("End of program")
 
 RETURN

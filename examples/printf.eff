@@ -1,37 +1,35 @@
-; Effectus example
-;-------------------------------------
-; PrintF demo
+; Effectus example:
+; PrintF demonstration
 
 BYTE x
 INT y
 CARD z
-CHAR key
 
 PROC Main()
 
 Put(125)
-PrintE("Effectus example")
-PrintE("PrintF demo")
+PrintE("Effectus example:")
+PrintE("PrintF demonstration")
 PutE()
 
 x=120
-y=-3200
+y=3200
 z=65001
 PrintF("The numbers are:%Ex=%U, y=%I, z=%U.%E", x, y, z)
 
 PrintF("%EProcent sign: ")
 PrintF("%%")
-PrintF("%E%%after")
-PrintF("%Ebefore%%")
-PrintF("%EProcent sign '%%' in one line format!")
 
-PrintF("%E%EHEX x (BYTE) %U=%H",X,X)
-PrintF("%EHEX y (INT) %I=%H",Y,Y)
-PrintF("%EHEX z (CARD) %U=%H",Z,Z)
+X=155
+PrintF("%E%EHEX (x) %U=%H",X,X)
+X=4
+PrintF("%EHEX (x) %U=%H",X,X)
+X=11
+PrintF("%EHEX (x) %U=%H",X,X)
 
 PrintF("%E%EFirst character: %C",65)
 PrintF("%ENumber one: %C",49)
 
-key=GETD(7)
+PrintF("%E%E%EEnd of program%E")
 
 RETURN

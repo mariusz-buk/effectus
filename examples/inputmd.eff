@@ -1,0 +1,40 @@
+;
+; Effectus example:
+;
+; Device Input/Output demonstration
+; using InputMD procedure for reading
+; text file
+; Sample file: TEST.TXT
+;
+
+MODULE
+
+BYTE ARRAY str_buffer1(254)
+
+PROC Main()
+
+Put(125)
+PrintE("Effectus example:")
+PutE()
+PrintE("Device Input/Output demonstration")
+PrintE("using InputMD procedure for reading")
+PrintE("text file")
+PrintE("---------------------")
+PrintE("Sample file: TEST.TXT")
+PutE()
+
+Close(1)
+Open(1,"D1:TEST.TXT",4,0)
+
+PrintE("InputMD example:")
+PutE()
+InputMD(1,str_buffer1,254)
+PrintE(str_buffer1)
+
+Close(1)
+
+PutE()
+PutE()
+PrintE("----------------------")
+
+RETURN
