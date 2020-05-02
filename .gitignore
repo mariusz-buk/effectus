@@ -3,3 +3,4 @@
 **/*.lpi
 src/backup
 .DS_Store
+geany
