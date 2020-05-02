@@ -50,7 +50,7 @@ begin
   for i := 1 to ParamCount do begin
     if ParamStr(i) = '-nc' then begin
       isCompileFalgSet := false;
-      Writeln('translation only');
+      WriteLn('Translation only...');
       break;
     end;
   end;
