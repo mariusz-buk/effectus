@@ -34,6 +34,10 @@ program Effectus;
 uses
   Classes, SySutils, Decl, Shell, Core;
 
+var
+  i : Byte;
+  isCompileFalgSet : boolean = true;
+
 begin
   CreateLists;
   ShellProc;
@@ -42,14 +46,24 @@ begin
   ReadSource(actionFilename);
   Writeln('Generating code...');
   GenerateCode;
-  Writeln('Compiling to native code...');
-  if Compile(FilenameSrc) then begin
-    Writeln('Compile error!');
-  end
-  else begin
-    Writeln('Compilation is successful!');
+  
+  for i := 1 to ParamCount do begin
+    if ParamStr(i) = '-nc' then begin
+      isCompileFalgSet := false;
+      Writeln('translation only');
+      break;
+    end;
   end;
-
-  if isInfo then ShellInfo;
+  if isCompileFalgSet then begin
+    Writeln('Compiling to native code...');
+    if Compile(FilenameSrc) then begin
+      Writeln('Compile error!');
+    end
+    else begin
+      Writeln('Compilation is successful!');
+    end;
+    if isInfo then ShellInfo;
+  end;
+  
   DestroyLists;
 end.

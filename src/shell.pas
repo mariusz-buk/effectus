@@ -90,6 +90,9 @@ begin
 
     TextColor(LightCyan); Write('-i            ');
     TextColor(LightGray); Writeln('Effectus variable usage list');
+    
+    TextColor(LightCyan); Write('-nc           ');
+    TextColor(LightGray); Writeln('Effectus only translate source to Mad Pascal');    
 
     DestroyLists;
     Halt(0);
@@ -122,8 +125,9 @@ begin
 //     end
     else if LeftStr(ParamStr(i), 2) = '-i' then
       isInfo := true
-     else if LeftStr(ParamStr(i), 2) = '-c' then
+    else if LeftStr(ParamStr(i), 2) = '-c' then
        isClearLog := true
+    else if LeftStr(ParamStr(i), 3) = '-nc' then      
     else
       Writeln(ParamStr(i) + ': Unknown parameter!')
   end;
