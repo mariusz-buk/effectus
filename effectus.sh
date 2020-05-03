@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-"${EFFECTUS_HOME}"/effectus $1
+"${EFFECTUS_HOME}"/effectus -nc $1
 
 name=${1::-4}
 filePAS="${name}.pas"
