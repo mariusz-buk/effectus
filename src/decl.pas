@@ -36,26 +36,52 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.4';  // Effectus version
+  VERSION = '0.4.1';  // Effectus version
 
 type
+  // Program support variables
+  TPrgPtr = record
+    isProcBegin : boolean;
+    isProcFirstBegin : boolean;
+    isBegin : boolean;
+    isProc : boolean;
+    isFunc : boolean;
+    isProcName : boolean;
+    isProcParams : boolean;
+    procParams : string;
+    strProcName : string;
+    strProcLocalName : string;
+    isProcAddr : boolean;
+    isFuncAsm : boolean;
+    strAsmDecl : string;
+    isVarArray : boolean;
+    isCheckVar : boolean;
+    strCheckProcName : string;
+    isStartBegin : boolean;
+
+    colorValue : string;  // color variable current value    
+    isByteBuffer : boolean;
+  end;
+
   { Machine language holder }
   TProcML = record
     Name : String;
-    ProcType : Byte;
+    //ProcType : Byte;
     Code : String;
-    Address : String[5];
+    //Address : String[5];
     isAsm : boolean;
     strAsm : string
   end;
 
+  // Variable handling
   TVarPtr = record
     dataType    : string;
     isVar       : boolean;
     isVarStart  : boolean;
     isDataType  : boolean;
-    isVarOver   : boolean;
+    isParamVarOver   : boolean;
     isVarEnd    : boolean;
+    isVarXY     : boolean;
 
     // ARRAY declaration flags
     arrayDataType : string;
@@ -64,6 +90,7 @@ type
     byteArray : string;         // BYTE ARRAY predefined values storage
     isCardArray : boolean;      // Is CARD ARRAY with predefined values?
     cardArray : string;         // CARD ARRAY predefined values storage
+    isByteArrayNoSpace : boolean;
 
     pointerDataType : string;
     isPointerDataType : boolean;
@@ -74,6 +101,7 @@ type
     typeDataTypeVar : string;
     isTypeRecVarLast : boolean;
     typeRecVarCnt : byte;
+    //typeVarName : string;
 
     // Temporary storage
     str01, str02 : string;
@@ -82,6 +110,7 @@ type
     isFunc : boolean;
   end;
 
+  // Branch suppport variables
   TBranchPtr = record
     isIfThen : boolean;
     isIfThenNext : boolean;
@@ -97,37 +126,20 @@ type
     isForToNext : boolean;
     isForOdNext : boolean;
     forCode : string;
+    forCnt : byte;
 
     isWhile : boolean;
     isWhileDoNext : boolean;
     isWhileOdNext : boolean;
     whileCode : string;
+    whileCnt : byte;
     
     isDoOd : boolean;
     isUntil : boolean;
     untilCode : string;
   end;
 
-  TPrgPtr = record
-    isProcBegin : boolean;
-    isProcFirstBegin : boolean;
-    isBegin : boolean;
-    isProc : boolean;
-    isFunc : boolean;
-    isProcName : boolean;
-    isProcParams : boolean;
-    procParams : string;
-    strProcName : string;
-    strProcLocalName : string;
-    isProcAddr : boolean;
-    isFuncAsm : boolean;
-    strAsmDecl : string;
-
-    colorValue : string;  // color variable current value
-    
-    isByteBuffer : boolean;
-  end;
-
+  // Device support variables
   TDevicePtr = record
     isOpen : boolean;
     isDevice : boolean;
@@ -135,9 +147,6 @@ type
     isGraphics : boolean;
     isGr0 : boolean;
   end;
-
-  Flag = (sFor, sWhile, sUntil, sNoTrim, sMemAddr, sProcAsm, sOd, sFi, sAsm);
-  TFlags = Set of Flag;
 
 var
   procs, funcs : TStringList;
@@ -155,17 +164,12 @@ var
   filenameSrc : string;
   procML : TProcML;
   CurLine : LongInt;
-  //aEOF : Array[0..7] of Integer;
   optOutput,
   optBinExt, //meditMADS_src_dir,
-  //meditMADS_rtl_dir,// meditMADS_bin_dir,
   meditMADS_log_dir : String;
-  //meditAddr, meditMLAddr, meditArrMax : Integer;
   actionFilename : String = '';
-  //flags2 : TFlags2;  
   isInfo : Boolean = False;  // Information about variables, procedures and functions
   myProcs, myFuncs : TStringList;
-  //operators : TStringList;
   oper : TStringList;
 
   dataValue : string;
@@ -178,6 +182,10 @@ var
   prgName : string;
   
   operators : TStringArray;
+  aList : TStringList;
+  
+  varCnt : byte = 0;
+  tempProc : string;
 
 procedure Init;
 procedure CreateLists;
@@ -202,13 +210,9 @@ begin
   myProcs.Clear;
   myFuncs.Clear;
   defineList.Clear;
+  aList.Clear;
 
   ProcCount := 0; FuncCount := 0;
-
-//   for i := 0 to 7 do begin
-//     isIOerror[i] := False;
-//     aEOF[i] := 0;
-//   end;
 
   // Action! keywords  
   keywords.Add('MODULE=0');
@@ -421,6 +425,7 @@ begin
   myFuncs := TStringList.Create;
   defineList := TStringList.Create;
   oper := TStringlist.create;
+  aList := TStringlist.create;
 end;
 
 {------------------------------------------------------------------------------
@@ -441,6 +446,7 @@ begin
   myFuncs.Free;
   defineList.Free;
   oper.Free;
+  aList.Free;
 end;
 
 end.

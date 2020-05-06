@@ -98,18 +98,6 @@
          code.Add(temp);
        end
        else if procName = 'SETBLOCK' then begin
-//          params := params2.Split(',');
-//          if High(params) > 0 then begin
-//            params2 := '';
-//            for j := 0 to High(params) do begin
-//              if j = 0 then begin
-//                params2 += 'pointer(' + params[j] + '),';
-//              end
-//              else begin
-//                params2 += params[j] + ',';
-//              end;
-//            end;
-//          end;
          temp := '  FillChar(' + params2 + ');';
          code.Add(temp);
        end
@@ -132,7 +120,7 @@
        end
        else if procName = 'PUT' then begin
          if params2[1] = '''' then begin
-           temp := Extract(2, params2, '''', []);
+           temp := Extract(2, params2, '''');
            temp := '  Write(' + QuotedStr(temp) + ');  // test put';
          end
          else begin
@@ -216,7 +204,7 @@
          end;
 
          temp := ExtractText(temp, '"', '"');
-         temp02 := QuotedStr(Extract(1, temp, '%', []));
+         temp02 := QuotedStr(Extract(1, temp, '%'));
          //temp02 := QuotedStr(ReplaceStr(temp02, '"', '')) + ', ';
 
          // "line: %i%E",i
@@ -266,7 +254,7 @@
              //temp02 += ', ' + QuotedStr('%') + QuotedStr(Copy(paramsEx[i], 1, 11));
            end
            else if UpperCase(paramsEx[i][1]) = 'E' then begin
-             temp03 := Extract(2, paramsEx[i], 'E', []);
+             temp03 := Extract(2, paramsEx[i], 'E');
              //temp02 += 'eol, ' + QuotedStr(Extract(2, paramsEx[i], 'E', []));
 //              if temp03 = '"' then
 //                temp02 += ', eol'
@@ -303,28 +291,29 @@
          end;
        end
        else if procName = 'PRINTD' then begin
-         params := params2.Split(',');
-         if High(params) > 0 then begin
+         //params := params2.Split(',');
+         //if High(params) > 0 then begin
            //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
            //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
-           temp := '  strBuffer := ' + params[1] + ';' + LineEnding;
+           temp03 := StringReplace(params2, ',', '{', []);
+           temp03 := Extract(2, temp03, '{');
+           temp := '  strBuffer := ' + temp03 + ';' + LineEnding;
            //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
            temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            code.Add(temp);
-         end;
+         //end;
        end
        else if procName = 'PRINTDE' then begin
-         params := params2.Split(',');
-         if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
+         //writeln('params2 = ', params2);
+         //params := params2.Split(',');  //, '"', '"', 1);
+         //if High(params) > 0 then begin
            //temp := '  strBuffer := Concat(' + params[1] + ', ' + QuotedStr('$9b') + ');' + LineEnding;
-           //params[1] :=params[1] + '#$9b';
-           temp := '  strBuffer := Concat(' + params[1] + ', #$9b);' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
+           temp03 := StringReplace(params2, ',', '{', []);
+           temp03 := Extract(2, temp03, '{');
+           temp := '  strBuffer := Concat(' + temp03 + ', #$9b);' + LineEnding;
            temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            code.Add(temp);
-         end;
+         //end;
        end
        else if procName = 'PRINTBD' then begin
          params := params2.Split(',');
