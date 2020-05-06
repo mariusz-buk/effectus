@@ -36,53 +36,16 @@ interface
 Uses
   SySUtils, Classes, StrUtils, decl;
 
-function Extract(offset : byte; str : string; delim : char; Flags : TFlags) : string;
+function Extract(offset : byte; str : string; delim : char) : string;
 function ExtractText(Str : String; Ch1, Ch2 : Char) : String;
 function Strip(Str : String; Ch : Char) : String;
 function ExtractFilenameWithoutExt(AFileName: String) : String;
-function ExtractEx(Str, Delimiter : String; Index : Integer; Flags : TFlags) : String;
 function Split(const str: string; const separator: string): TStringArray;
 procedure SplitText(const aDelimiter, s: String; aList: TStringList);
 function IsNumber(src : Char) : Boolean;
 procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringList);
 
 implementation
-
-{------------------------------------------------------------------------------
- Description: Extracts string delimited by Delimiter
- Parameters : Str - String value to be separated
-              Delimiter - Delimiter to be used as separator in Str
-              Index
-              Flags
- Returns    : Extracted text
- -----------------------------------------------------------------------------}
-function ExtractEx(Str, Delimiter : String; Index : Integer; Flags : TFlags) : String;
-var
-  buffer : String = '';
-  i, delimPos : Integer;
-  flag : Boolean = False;
-begin
-  for i := 1 to Length(Str) do begin
-    if (UpperCase(Copy(Str, i, Length(Delimiter))) = UpperCase(Delimiter))
-       and not Flag then
-    begin
-      Flag := True;
-      DelimPos := i;
-    end;
-    if (UpperCase(Copy(Str, i, Length(Delimiter))) = UpperCase(Delimiter)) then begin
-      if Index = 2 then begin
-        buffer := Copy(
-          Str, DelimPos + Length(Delimiter), Length(Str) - DelimPos + Length(Delimiter));
-      end;
-      Break;
-    end;
-    buffer += Str[i];
-  end;
-  if sNoTrim in Flags then
-    Result := buffer
-  else
-    Result := Trim(buffer);
-end;
 
 {------------------------------------------------------------------------------
  Description: Extracts string between characters Ch1 and Ch2
@@ -102,7 +65,7 @@ begin
   end;
 end;
 
-function Extract(offset : byte; str : string; delim : char; Flags : TFlags) : string;
+function Extract(offset : byte; str : string; delim : char) : string;
 var
   res : string;
 begin
@@ -111,9 +74,9 @@ begin
     res := ExtractDelimited(1, str, [delim]);
   end;
 
-  if sNoTrim in Flags then
-    Result := res
-  else
+  //if sNoTrim in Flags then
+  //  Result := res
+  //else
     Result := Trim(res);
 end;
 
@@ -194,6 +157,7 @@ var
   Item: String;
 begin
   s:=PChar(Source);
+  DelimitedList.Clear;
 
   repeat
     DelimiterIndex:=Pos(Delimiter, s);
