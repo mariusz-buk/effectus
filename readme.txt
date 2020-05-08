@@ -1,5 +1,5 @@
 ==================
-   Effectus 0.4
+  Effectus 0.4.1
 ==================
 
 This is new version of Effectus, done from scratch. This is new branch version, currently only
@@ -12,7 +12,8 @@ commands, assignments...) and multi-line support.
 The next most important change is the way code is generated. I took Mad Pascal as the basis for
 generating source code listings, which are further compiled to binary code with Mad Assembler
 (Mads). Many thanks to Tomasz Biela (Tebe), author of these great tools. He made this all possible!
-Of course, many thanks to all others helping me with porting to other platforms, suggestions,
+
+Many thanks also to all others helping me with porting to other platforms, suggestions,
 testing and supporting the project in any way.
 
 The steps are as follows:
@@ -242,6 +243,7 @@ All this will be fixed at some point!
 Written by Bostjan Gorisek from Slovenia
 Page URL: http://gury.atari8.info/effectus/
           http://freeweb.siol.net/diomedes/effectus/
+          https://github.com/mariusz-buk/effectus
 
 Mad Pascal and MAD Assembler (MADS) are products written by Tomasz Biela (Tebe) from Poland
 Page URL: http://mads.atari8.info/

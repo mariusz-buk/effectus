@@ -11,6 +11,7 @@ effectus examples\callos.eff
 effectus examples\define.eff
 effectus examples\diskget.eff
 effectus examples\fill.eff
+effectus examples\fillscr.eff
 effectus examples\fs.eff
 effectus examples\func.eff
 effectus examples\gr9.eff
@@ -33,6 +34,7 @@ effectus examples\proc_asm.eff
 effectus examples\procs.eff
 effectus examples\rand.eff
 effectus examples\recs.eff
+effectus examples\resieve.eff
 effectus examples\scompare.eff
 effectus examples\scope01.eff
 effectus examples\scope02.eff
