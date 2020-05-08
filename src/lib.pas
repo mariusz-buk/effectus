@@ -15,6 +15,7 @@
   http://www.freepascal.org/
   http://gury.atari8.info/effectus/
   http://freeweb.siol.net/diomedes/effectus/
+  https://github.com/mariusz-buk/effectus
   http://mads.atari8.info/mads.html
 
   This program is free software: you can redistribute it and/or modify it under the terms of

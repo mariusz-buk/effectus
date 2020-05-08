@@ -14,6 +14,7 @@
   References:
   http://www.freepascal.org/
   http://gury.atari8.info/effectus/
+  https://github.com/mariusz-buk/effectus
   http://mads.atari8.info/mads.html
 
   This program is free software: you can redistribute it and/or modify it under the terms of
@@ -59,7 +60,7 @@ type
     strCheckProcName : string;
     isStartBegin : boolean;
 
-    colorValue : string;  // color variable current value    
+    colorValue : string;  // color variable current value
     isByteBuffer : boolean;
   end;
 
@@ -133,7 +134,7 @@ type
     isWhileOdNext : boolean;
     whileCode : string;
     whileCnt : byte;
-    
+
     isDoOd : boolean;
     isUntil : boolean;
     untilCode : string;
@@ -153,14 +154,14 @@ var
   keywords : TStringList;
   vars : TStringList;  // Variables
   ProcParams : TStringList;  // PROCedure parameters
-  dataTypes : TStringList;  
+  dataTypes : TStringList;
   code : TStringList;
-  effCode : TStringList;  
+  effCode : TStringList;
   isClearLog : Boolean = False;
   ProcCount : LongInt;  // PROC statement count
   FuncCount : LongInt;  // FUNC statement count
   FuncList : TStringList;
-  defineList : TStringList; 
+  defineList : TStringList;
   filenameSrc : string;
   procML : TProcML;
   CurLine : LongInt;
@@ -180,10 +181,10 @@ var
   paramCntx : byte;
   paramTypes : string;
   prgName : string;
-  
+
   operators : TStringArray;
   aList : TStringList;
-  
+
   varCnt : byte = 0;
   tempProc : string;
 
@@ -382,7 +383,7 @@ begin
   procParams.Add('Color=0');
   //procParams.Add('EOF=0');
   procParams.Add('Locate=2;4;2');
-  
+
   procParams.Add('Rand=1;2');
   procParams.Add('Peek=1;4');
   procParams.Add('PeekC=1;4');

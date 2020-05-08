@@ -1,3 +1,34 @@
+{
+  Program: Effectus - Action! language parser and cross-assembler to native code
+           for Atari 8-bit home computers
+
+  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+
+  Unit file  : functions.inc
+  Description: Main project file
+
+  Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
+  for 8-bit Atari home computers from Action! language source code listings.
+  Program is compiled with Free Pascal 3.0.4.
+
+  References:
+  http://www.freepascal.org/
+  http://gury.atari8.info/effectus/
+  http://freeweb.siol.net/diomedes/effectus/
+  https://github.com/mariusz-buk/effectus
+  http://mads.atari8.info/mads.html
+
+  This program is free software: you can redistribute it and/or modify it under the terms of
+  the GNU General Public License as published by the Free Software Foundation, either version 3
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with this program.
+  If not, see <http://www.gnu.org/licenses/>.
+}
 
        if procName = 'RAND' then begin
          temp := '  ' + funcVar + ' := Random(' + params2 + ');';

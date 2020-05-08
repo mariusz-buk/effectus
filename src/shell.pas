@@ -15,6 +15,7 @@
   http://www.freepascal.org/
   http://gury.atari8.info/effectus/
   http://freeweb.siol.net/diomedes/effectus/
+  https://github.com/mariusz-buk/effectus
   http://mads.atari8.info/mads.html
 
   This program is free software: you can redistribute it and/or modify it under the terms of
@@ -58,8 +59,8 @@ begin
 {$ifdef Unix}
     WriteLn('Effectus ' + VERSION + ' (Linux platform console version)');
 {$else}
-    //WriteLn('Effectus ' + VERSION + ' (x86-win32/x64 platform console version)');
-    WriteLn('Effectus ' + VERSION + ' (x86 (32-bit) Windows platform console version)');
+    WriteLn('Effectus ' + VERSION + ' (x86_64-win64 64-bit Windows platform console version)');
+    //WriteLn('Effectus ' + VERSION + ' (i386-win32 32-bit Windows platform console version)');
 {$endif}
 {$endif}
     WriteLn('Action! language parser and cross-assembler to native code for Atari 8-bit home computers');
@@ -70,7 +71,11 @@ begin
     TextColor(LightCyan);
     WriteLn('Mad Pascal and MAD Assembler (MADS) are products written by Tomasz Biela (Tebe) from Poland');
     TextColor(White);
-    WriteLn('Page URL: http://mads.atari8.info/');
+    WriteLn('References:');
+    WriteLn('http://mads.atari8.info/');
+    WriteLn('http://freeweb.siol.net/diomedes/effectus/');
+    WriteLn('https://github.com/mariusz-buk/effectus');
+    //WriteLn('https://atariage.com/forums/topic/291426-effectus-action-cross-compiler-using-mad-assembler-mads/');
     WriteLn('');
     TextColor(LightGreen);
     WriteLn('Usage:');
@@ -394,6 +399,7 @@ begin
       devicePtr.isStick := false;
       prgPtr.isByteBuffer := false;
       for i := 0 to tempxy.Count - 1 do begin
+        tempxy.strings[i] := StringReplace(tempxy.strings[i], Chr(9), '', [rfReplaceAll]);
         effCode.add(tempxy.strings[i]);
 
         if (System.Pos('GETD(7)', UpperCase(tempxy.strings[i])) > 0)

@@ -15,6 +15,7 @@
   http://www.freepascal.org/
   http://gury.atari8.info/effectus/
   http://freeweb.siol.net/diomedes/effectus/
+  https://github.com/mariusz-buk/effectus
   http://mads.atari8.info/mads.html
 
   This program is free software: you can redistribute it and/or modify it under the terms of
@@ -83,7 +84,7 @@ begin
     end
     else if not isType then begin
       if not isVar then begin  //and not prgPtr.isVarArray then begin
-        isVar := true;        
+        isVar := true;
         code.Add('var');
       end;
     end;
@@ -196,14 +197,14 @@ begin
     else if isVarDecl then begin
       code.Add('  ' + xyDataType);  // + '  // ' + ExtractDelimited(3, vars.ValueFromIndex[i], [';']));  // + IntToStr(i));
     end;
-    
+
     buf := vars[i];
     vars[i] := Copy(buf, 1, Length(buf) - 1) + '1';
     //writeln('vars[i] = ', vars[i]); 
   end;
-  
-  if (vars.Count > 0) and varPtr.isVarXY and not procML.isAsm //and not varPtr.isTypeDataType
-     and (prgPtr.strProcName <> '') then
+
+  if (vars.Count > 0) and varPtr.isVarXY and not procML.isAsm
+     (*and not prgPtr.isStartBegin*) and (prgPtr.strProcName <> '') then
   begin
     code.Add('begin  // 1');
     prgPtr.isStartBegin := true;
@@ -214,14 +215,14 @@ begin
     end;
   end
   else if (vars.Count > 0) and not varPtr.isVarXY and prgPtr.isVarArray
-     and (prgPtr.strProcName <> '') then
+     and not prgPtr.isStartBegin and (prgPtr.strProcName <> '') then
   begin
     code.Add('begin  // 2');
     prgPtr.isStartBegin := true;
     prgPtr.isCheckVar := true;
     tempProc := prgPtr.strProcName;
   end
-  else if (prgPtr.strProcName <> '') and not procML.isAsm then begin
+  else if (prgPtr.strProcName <> '') and not procML.isAsm and not prgPtr.isStartBegin then begin
     code.Add('begin  // 3');
     prgPtr.isStartBegin := true;
   end;
@@ -441,7 +442,7 @@ var
   paramsAsm : string = '';
   asmOpcodeCnt : byte = 0;
   asmcnt : byte = 0;
-  k, i, j : byte;  
+  k, i, j : byte;
   offset : word;
   temp, temp02, temp03, temp04, temp05 : string;
   procName : string;
@@ -461,7 +462,7 @@ begin
 
   // Check for Action! keywords
   offset := keywords.IndexOfName(temp);
-  
+
   if (offset >= 0) and (offset < 65535) then begin
     if UpperCase(temp) = 'EXIT' then begin
       code.Add('  break;');
@@ -506,7 +507,8 @@ begin
         branchPtr.isElseNext := false;
         branchPtr.isElseIfNext := false;
       end
-      else if branchPtr.isEndIfNext and (UpperCase(temp) = 'FI') then begin
+      else if //branchPtr.isEndIfNext and 
+        (UpperCase(Trim(temp)) = 'FI') then begin
         code.Add('  end;  // if');
         branchPtr.isIfThen := false;
         branchPtr.isIfThenNext := false;
@@ -540,7 +542,7 @@ begin
       else if branchPtr.isForOdNext and (UpperCase(temp) = 'OD') then begin
         code.Add('  end;  // for');
         Dec(branchPtr.forCnt);
-        if branchPtr.forCnt = 0 then begin        
+        if branchPtr.forCnt = 0 then begin
           branchPtr.isFor := false;
           branchPtr.isForToNext := false;
           branchPtr.isForDoNext := false;
@@ -670,9 +672,9 @@ begin
       end
       else begin
         temp := aList[1][1];
-        params2 := Extract(2, aList[1], aList[1][1]);        
+        params2 := Extract(2, aList[1], aList[1][1]);
         temp02 := '';
-        // DL(4)==+1        
+        // DL(4)==+1
         if System.Pos('(', aList[0]) > 0 then begin
           temp02 := aList[0];
           aList[0] := Extract(1, aList[0], '(');
@@ -690,7 +692,7 @@ begin
             if temp02 <> '' then begin
               aList[0] := temp02;
               aList[0] := ReplaceStr(aList[0], '(', '[');
-              aList[0] := ReplaceStr(aList[0], ')', ']');              
+              aList[0] := ReplaceStr(aList[0], ')', ']');
             end;
             case temp[1] of
               '+' : begin
@@ -708,7 +710,8 @@ begin
                 end;
               end;
               else begin
-                code.Add('  ' + aList[0] + ' := ' + aList[0] + ' ' + temp[1] + ' ' + params2 + ';');
+                code.Add('  ' + aList[0] + ' := ' + aList[0] + ' ' +
+                         temp[1] + ' ' + params2 + ';');
               end;
             end;
           end;
@@ -752,7 +755,7 @@ begin
           // ENTRY.NUM1=30
           if (vars.IndexOfName(temp04) >= 0)
              and (ExtractDelimited(2, vars.ValueFromIndex[vars.IndexOfName(temp04)], [';']) = '3') then
-          begin          
+          begin
             if (vars.IndexOfName(temp04) >= 0) and (System.Pos('.', temp02) > 0) then
             begin
               //ENTRY.NUM1=30
@@ -901,7 +904,7 @@ begin
   // Start of inline machine language  
   else if (System.Pos('[', temp) > 0)
           and not procML.isAsm and not varPtr.isTypeDataType then
-  begin  
+  begin
     procML.isAsm := true;
     
     if prgPtr.isFuncAsm then begin
@@ -912,10 +915,13 @@ begin
       //  mva a4_par $a4
       //  mva a5_par $a5
       for i := 0 to vars.Count - 1 do begin
-        if UpperCase(ExtractDelimited(5, vars.ValueFromIndex[i], [';'])) = UpperCase(prgPtr.strProcLocalName) then begin
+        if UpperCase(ExtractDelimited(
+             5, vars.ValueFromIndex[i], [';'])) = UpperCase(prgPtr.strProcLocalName) then
+        begin
           if asmOpcodeCnt > 2 then begin
             asmOpcodeCnt := 3;
-            paramsAsm += '  ' + asmOpcode[asmOpcodeCnt] + ' ' + vars.Names[i] + ' $' + actionVar[asmcnt + 3] + LineEnding;
+            paramsAsm += '  ' + asmOpcode[asmOpcodeCnt] + ' ' + vars.Names[i] +
+                         ' $' + actionVar[asmcnt + 3] + LineEnding;
             Inc(asmcnt);
           end
           else begin
@@ -996,7 +1002,7 @@ begin
 //    end;
     //procML.strAsm += temp + ' ';
     Exit;
-  end  
+  end
   // Check for PROCedure
   else if (System.Pos('(', temp) > 0) and not varPtr.isFunc then begin
     // PROCedure name
@@ -1030,12 +1036,12 @@ begin
 
   if branchPtr.isWhileDoNext and not branchPtr.isWhileOdNext then begin
     temp := CheckEOF(temp);
-    // In case only one command exists in while condition then it must be checked automatically        
+    // In case only one command exists in while condition then it must be checked automatically
     // if condition is true (f.e. i > 0)
     if vars.IndexOfName(temp) >= 0 then begin
       temp += ' > 0'
     end;
-    branchPtr.whileCode += ' ' + temp; 
+    branchPtr.whileCode += ' ' + temp;
   end;
 
   // End of PROCedure or FUNCtion
@@ -1427,7 +1433,7 @@ begin
 //         //code.Add('asm');
 //       end
       if prgPtr.isProcBegin and not prgPtr.isFuncAsm then begin
-        code.Add('begin  // 5');
+        //code.Add('begin  // 5');
         prgPtr.isStartBegin := true;
       end
       else if prgPtr.isProcAddr then begin
@@ -1515,10 +1521,6 @@ begin
       end;
     end;
   end;
-
-//   if prgPtr.strProcName <> '' then begin  
-//     //code.Add('begin  // 41');
-//   end;
 end;
 
 {------------------------------------------------------------------------------
@@ -1564,12 +1566,12 @@ begin
     else if System.Pos(']', line) > 0 then begin
       varPtr.isTypeDataType := false;
 
-      temp := vars[vars.IndexOfName(varPtr.typeDataTypeVar)];      
+      temp := vars[vars.IndexOfName(varPtr.typeDataTypeVar)];
       temp += ';1';
       vars[vars.IndexOfName(varPtr.typeDataTypeVar)] := temp;
       //defineList.ValueFromIndex[defineList.IndexOfName(temp02)]
       //code.Add('  end;');
-      
+
       varPtr.typeDataTypeVar := '';
       line := ReplaceStr(line, ']', '');
     end; 
@@ -1602,7 +1604,7 @@ begin
     else if UpperCase(line) = 'INT' then begin
       varPtr.dataType := 'integer';
       varPtr.isDataType := true;
-    end    
+    end
     else if UpperCase(line) = 'CARD' then begin
       varPtr.dataType := 'word';
       varPtr.isDataType := true;
@@ -1667,7 +1669,7 @@ begin
           vars.Add(params[0] + '=' + varPtr.dataType + ';1;' + params[1] +
                    ';0;' + prgPtr.strProcName + ';0;0');
         end;
-      end      
+      end
       // String variable declaration
       else if varPtr.isArrayDataType and (varPtr.arrayDataType = 'string') then begin
         // String variable constant declaration
@@ -1675,7 +1677,7 @@ begin
           params := varDeclList[i].Split('=');
 
           // Check string dimension and extract string variable
-          temp := '0'; 
+          temp := '0';
           if System.Pos('(', params[0]) > 0 then begin
             temp := ExtractText(params[0], '(', ')');
             params[0] := Extract(1, params[0], '(');
@@ -1708,7 +1710,7 @@ begin
         end
         // Predeclared value is expected
         else if System.Pos('[', params[1]) > 0 then begin
-          temp := '0'; 
+          temp := '0';
           varPtr.isByteArray := true;
           varPtr.byteArray := Extract(2, params[1], '[');
           //writeln('BYTE ARRAY Predeclared value ', varPtr.byteArray);
@@ -1720,7 +1722,7 @@ begin
             varPtr.str01 := params[0] + '=' + varPtr.dataType + ';4;';
             //varPtr.str02 := ';0;' + prgPtr.strProcName;
             varPtr.str02 := ';' + prgPtr.strProcName;
-            
+
             params := varPtr.byteArray.Split('$');
             varPtr.byteArray := '';
             if High(params) > 0 then begin
@@ -1731,7 +1733,7 @@ begin
                 end;
               end;
             end;
-            
+
             //writeln('vars.add 9 = ', varPtr.str01 + varPtr.byteArray + varPtr.str02 +
             //        ';' + prgPtr.strProcName + ';0;0');
             vars.Add(varPtr.str01 + varPtr.byteArray + varPtr.str02 +
@@ -1740,7 +1742,7 @@ begin
             Exit;
           end;
         end
-        
+
         // BYTE ARRAY COL=708
         else if Length(params[1]) > 0 then begin
           temp02 := params[1];
@@ -2084,11 +2086,13 @@ begin
                   code.Add('begin  // 6');
                   prgPtr.isStartBegin := true;
                 end
-                else if not prgPtr.isCheckVar and not prgPtr.isFuncAsm then begin
+                else if not prgPtr.isCheckVar and not prgPtr.isFuncAsm
+                        and not prgPtr.isStartBegin then
+                begin
                   //and (prgPtr.strCheckProcName = prgPtr.strProcName) then begin
                   code.Add('begin  // 7');
                   prgPtr.isStartBegin := true;
-                end; 
+                end;
               end;
               // Action! source code listing line
               Src(a[j], i);
