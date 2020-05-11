@@ -14,8 +14,8 @@ testing and supporting the project in any way.
 
 The steps are as follows:
 - Action! code is parsed and appropriate Mad Pascal source code listing is generated
-- Mad Pascal compiles this code to *.a65 file prepared for compilation by Mad Assembler
-- Mad Assembler compiles *.a65 file to final binary code (*.xex)
+- Mad Pascal compiles this code to \*.a65 file prepared for compilation by Mad Assembler
+- Mad Assembler compiles \*.a65 file to final binary code (\*.xex)
 
 examples directory includes test examples, which can be basis for your further development and
 experimentation.
