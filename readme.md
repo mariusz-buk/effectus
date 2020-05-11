@@ -24,11 +24,11 @@ experimentation.
 
 ### Data types
 
-```BYTE, CHAR, INT, CARD```
+``BYTE``, ``CHAR``, ``INT``, ``CARD``
 
 ### Extended data type
 
-``BYTE ARRAY, CARD ARRAY, POINTER``\
+``BYTE ARRAY``, ``CARD ARRAY``, ``POINTER``\
 ``SBYTE ARRAY`` as temporary solution for ``BYTE ARRAY`` string definitions
 
 - Variable memory address assignment
