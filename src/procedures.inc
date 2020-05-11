@@ -1,3 +1,34 @@
+{
+  Program: Effectus - Action! language parser and cross-assembler to native code
+           for Atari 8-bit home computers
+
+  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+
+  Unit file  : procedures.inc
+  Description: Main project file
+
+  Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
+  for 8-bit Atari home computers from Action! language source code listings.
+  Program is compiled with Free Pascal 3.0.4.
+
+  References:
+  http://www.freepascal.org/
+  http://gury.atari8.info/effectus/
+  http://freeweb.siol.net/diomedes/effectus/
+  https://github.com/mariusz-buk/effectus
+  http://mads.atari8.info/mads.html
+
+  This program is free software: you can redistribute it and/or modify it under the terms of
+  the GNU General Public License as published by the Free Software Foundation, either version 3
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with this program.
+  If not, see <http://www.gnu.org/licenses/>.
+}
 
        if procName = 'PRINT' then begin
          temp := '  Write(' + params2 + ');';
@@ -98,18 +129,6 @@
          code.Add(temp);
        end
        else if procName = 'SETBLOCK' then begin
-//          params := params2.Split(',');
-//          if High(params) > 0 then begin
-//            params2 := '';
-//            for j := 0 to High(params) do begin
-//              if j = 0 then begin
-//                params2 += 'pointer(' + params[j] + '),';
-//              end
-//              else begin
-//                params2 += params[j] + ',';
-//              end;
-//            end;
-//          end;
          temp := '  FillChar(' + params2 + ');';
          code.Add(temp);
        end
@@ -132,7 +151,7 @@
        end
        else if procName = 'PUT' then begin
          if params2[1] = '''' then begin
-           temp := Extract(2, params2, '''', []);
+           temp := Extract(2, params2, '''');
            temp := '  Write(' + QuotedStr(temp) + ');  // test put';
          end
          else begin
@@ -180,7 +199,7 @@
        end
        else if procName = 'SETCOLOR' then begin
          params := params2.Split(',');
-         temp := '  Poke(708 + ' + params[0] + ', ' + params[1] + '*16 + ' + params[2] + ');'; 
+         temp := '  Poke(708 + ' + params[0] + ', ' + params[1] + '*16 + ' + params[2] + ');';
          code.Add(temp);
        end
        else if procName = 'INPUTS' then begin
@@ -216,7 +235,7 @@
          end;
 
          temp := ExtractText(temp, '"', '"');
-         temp02 := QuotedStr(Extract(1, temp, '%', []));
+         temp02 := QuotedStr(Extract(1, temp, '%'));
          //temp02 := QuotedStr(ReplaceStr(temp02, '"', '')) + ', ';
 
          // "line: %i%E",i
@@ -226,7 +245,7 @@
            if UpperCase(paramsEx[i][1]) = 'I' then begin
              Inc(cnt); 
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
-             params[cnt] := ReplaceStr(params[cnt], ')', ']');              
+             params[cnt] := ReplaceStr(params[cnt], ')', ']');
              //temp02 += params[i] + ', ' + QuotedStr(Extract(2, paramsEx[i], 'i', []));
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
@@ -234,19 +253,19 @@
              Inc(cnt);
              //writeln('params[cnt] = ', cnt, ' ', params[cnt]);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
-             params[cnt] := ReplaceStr(params[cnt], ')', ']');              
+             params[cnt] := ReplaceStr(params[cnt], ')', ']');
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'S' then begin
              Inc(cnt); 
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
-             params[cnt] := ReplaceStr(params[cnt], ')', ']');              
+             params[cnt] := ReplaceStr(params[cnt], ')', ']');
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'H' then begin
              Inc(cnt); 
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
-             params[cnt] := ReplaceStr(params[cnt], ')', ']');              
+             params[cnt] := ReplaceStr(params[cnt], ')', ']');
              temp02 += ', ' + QuotedStr('$') + ', HexStr(' + params[cnt] + ', 4), ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'C' then begin
@@ -266,7 +285,7 @@
              //temp02 += ', ' + QuotedStr('%') + QuotedStr(Copy(paramsEx[i], 1, 11));
            end
            else if UpperCase(paramsEx[i][1]) = 'E' then begin
-             temp03 := Extract(2, paramsEx[i], 'E', []);
+             temp03 := Extract(2, paramsEx[i], 'E');
              //temp02 += 'eol, ' + QuotedStr(Extract(2, paramsEx[i], 'E', []));
 //              if temp03 = '"' then
 //                temp02 += ', eol'
@@ -303,28 +322,28 @@
          end;
        end
        else if procName = 'PRINTD' then begin
-         params := params2.Split(',');
-         if High(params) > 0 then begin
+         //params := params2.Split(',');
+         //if High(params) > 0 then begin
            //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
            //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
-           temp := '  strBuffer := ' + params[1] + ';' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
-           code.Add(temp);
-         end;
+         temp03 := StringReplace(params2, ',', '{', []);
+         temp03 := Extract(2, temp03, '{');
+         temp := '  strBuffer := ' + temp03 + ';' + LineEnding;
+         //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
+         temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+         code.Add(temp);
+         //end;
        end
        else if procName = 'PRINTDE' then begin
-         params := params2.Split(',');
-         if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
+         //params := params2.Split(',');  //, '"', '"', 1);
+         //if High(params) > 0 then begin
            //temp := '  strBuffer := Concat(' + params[1] + ', ' + QuotedStr('$9b') + ');' + LineEnding;
-           //params[1] :=params[1] + '#$9b';
-           temp := '  strBuffer := Concat(' + params[1] + ', #$9b);' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
-           code.Add(temp);
-         end;
+         temp03 := StringReplace(params2, ',', '{', []);
+         temp03 := Extract(2, temp03, '{');
+         temp := '  strBuffer := Concat(' + temp03 + ', #$9b);' + LineEnding;
+         temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+         code.Add(temp);
+         //end;
        end
        else if procName = 'PRINTBD' then begin
          params := params2.Split(',');
