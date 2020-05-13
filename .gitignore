@@ -1,6 +1,9 @@
 # Lazarus project
 **/*.lps
 **/*.lpi
+**/*.o
+**/*.ppu
 src/backup
 .DS_Store
 geany
+/.idea/
