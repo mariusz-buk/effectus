@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -446,24 +446,15 @@ BLINK	= $0080
 	iny
 	lda #$00
 	sta (:bp2),y
-	iny
-	sta (:bp2),y
-	iny
-	sta (:bp2),y
 
 ; optimize OK (examples\recs.pas), line = 31
 
 	mwa ENTRY :bp2
-	ldy #$05
+	ldy #$03
 	lda #$E8
 	sta (:bp2),y
 	iny
 	lda #$03
-	sta (:bp2),y
-	iny
-	lda #$00
-	sta (:bp2),y
-	iny
 	sta (:bp2),y
 
 ; optimize OK (examples\recs.pas), line = 32
@@ -474,7 +465,7 @@ BLINK	= $0080
 ; optimize OK (examples\recs.pas), line = 33
 
 	lda ENTRY
-	add #$2D
+	add #$19
 	sta ENTRY
 	scc
 	inc ENTRY+1
@@ -495,24 +486,15 @@ BLINK	= $0080
 	iny
 	lda #$00
 	sta (:bp2),y
-	iny
-	sta (:bp2),y
-	iny
-	sta (:bp2),y
 
 ; optimize OK (examples\recs.pas), line = 36
 
 	mwa ENTRY :bp2
-	ldy #$05
+	ldy #$03
 	lda #$D0
 	sta (:bp2),y
 	iny
 	lda #$07
-	sta (:bp2),y
-	iny
-	lda #$00
-	sta (:bp2),y
-	iny
 	sta (:bp2),y
 
 ; optimize OK (examples\recs.pas), line = 37
@@ -523,7 +505,7 @@ BLINK	= $0080
 ; optimize OK (examples\recs.pas), line = 38
 
 	lda ENTRY
-	add #$5A
+	add #$32
 	sta ENTRY
 	scc
 	inc ENTRY+1
@@ -539,29 +521,20 @@ BLINK	= $0080
 
 	mwa ENTRY :bp2
 	ldy #$01
-	lda #$C8
+	lda #$2C
 	sta (:bp2),y
 	iny
-	lda #$00
-	sta (:bp2),y
-	iny
-	sta (:bp2),y
-	iny
+	lda #$01
 	sta (:bp2),y
 
 ; optimize OK (examples\recs.pas), line = 41
 
 	mwa ENTRY :bp2
-	ldy #$05
+	ldy #$03
 	lda #$B8
 	sta (:bp2),y
 	iny
 	lda #$0B
-	sta (:bp2),y
-	iny
-	lda #$00
-	sta (:bp2),y
-	iny
 	sta (:bp2),y
 
 ; optimize FAIL (100, examples\recs.pas), line = 42
@@ -599,7 +572,7 @@ BLINK	= $0080
 ; optimize OK (examples\recs.pas), line = 49
 
 	lda ENTRY
-	add #$2D
+	add #$19
 	sta ENTRY
 	scc
 	inc ENTRY+1
@@ -614,11 +587,7 @@ BLINK	= $0080
 	mva (:bp2),y :STACKORIGIN,x
 	iny
 	mva (:bp2),y :STACKORIGIN+STACKWIDTH,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH*2,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH*3,x
-	jsr @printINT
+	jsr @printWORD
 	dex
 	@printEOL
 
@@ -630,7 +599,7 @@ BLINK	= $0080
 ; optimize OK (examples\recs.pas), line = 53
 
 	lda ENTRY
-	add #$5A
+	add #$32
 	sta ENTRY
 	scc
 	inc ENTRY+1
@@ -645,11 +614,7 @@ BLINK	= $0080
 	mva (:bp2),y :STACKORIGIN,x
 	iny
 	mva (:bp2),y :STACKORIGIN+STACKWIDTH,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH*2,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH*3,x
-	jsr @printINT
+	jsr @printWORD
 	dex
 	@printEOL
 
@@ -680,7 +645,7 @@ adr.DATA	= DATAORIGIN+$000D
 ENTRY	= DATAORIGIN+$001D
 ENTRY.NUM1	= DATAORIGIN+$0000
 ENTRY.NUM2	= DATAORIGIN+$0001
-ENTRY.NUM3	= DATAORIGIN+$0005
+ENTRY.NUM3	= DATAORIGIN+$0003
 KEY	= DATAORIGIN+$001F
 @exit
 

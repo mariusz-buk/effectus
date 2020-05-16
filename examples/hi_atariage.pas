@@ -24,18 +24,17 @@ var
 procedure MAINProc;
 var
   i : integer;
-begin
+begin  // 1
   assign(f, 'S:'); rewrite(f, 1);
   InitGraph(2);
   GotoXY(5 + 1,  5 + 1);
-  strBuffer := Concat( 'hi atariage', #$9b);
+  strBuffer := Concat('hi atariage', #$9b);
   Blockwrite(f, strBuffer[1], Length(strBuffer));
-  i := 0;
   for  i:=0 TO 2 do begin
   Writeln('hi,AtariAge........');
-  end;
+  end;  // for
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

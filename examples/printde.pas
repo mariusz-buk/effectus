@@ -16,18 +16,18 @@ procedure MAINProc;
 var
   TEXT_BUF : string[10];
   KEY : char;
-begin
+begin  // 2
   Assign(f,  'S:');
   Rewrite(f, 1);
   Writeln('PRINTING STRING VALUES TO CHANNEL 1');
   Writeln('ON S: DEVICE');
   Writeln('');
-  strBuffer := Concat( 'TEST1', #$9b);
+  strBuffer := Concat('TEST1', #$9b);
   Blockwrite(f, strBuffer[1], Length(strBuffer));
   TEXT_BUF :=  'TEST2';
-  strBuffer := Concat( TEXT_BUF, #$9b);
+  strBuffer := Concat(TEXT_BUF, #$9b);
   Blockwrite(f, strBuffer[1], Length(strBuffer));
-  strBuffer :=  'TEST3';
+  strBuffer := 'TEST3';
   Blockwrite(f, strBuffer[1], Length(strBuffer));
   strBuffer := IntToStr( 10);
   Blockwrite(f, strBuffer[1], Length(strBuffer));
@@ -47,7 +47,7 @@ begin
   Writeln('');
   Close(f);
   KEY := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

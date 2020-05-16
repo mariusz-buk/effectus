@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -430,179 +430,175 @@ BLINK	= $0080
 ; optimize FAIL (100, examples\loop_exit.pas), line = 21
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
+; --- For
 
 ; optimize OK (examples\loop_exit.pas), line = 22
 
 	mva #$01 N
-; --- For
 
-; optimize OK (examples\loop_exit.pas), line = 23
-
-	sta N
-
-; optimize OK (examples\loop_exit.pas), line = 23
+; optimize OK (examples\loop_exit.pas), line = 22
 
 ; --- To
-l_0164
+l_0160
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\loop_exit.pas), line = 23
+; optimize OK (examples\loop_exit.pas), line = 22
 
 	lda N
 	cmp #$0A
 	scc
-	jne l_0172
+	jne l_016E
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 24
+; optimize FAIL (100, examples\loop_exit.pas), line = 23
 	inx
 	mva N :STACKORIGIN,x
 	jsr @printBYTE
 	dex
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 25
+; optimize FAIL (100, examples\loop_exit.pas), line = 24
 	@print #$2C
 
-; optimize OK (examples\loop_exit.pas), line = 26
+; optimize OK (examples\loop_exit.pas), line = 25
 
 	lda N
 	cmp #$07
-	jne l_0192
+	jne l_018E
 
-	jmp b_0164					; break
-l_0192
+	jmp b_0160					; break
+l_018E
 
 ; --- ForToDoEpilog
 	inc N						; inc ptr byte [CounterAddress]
 
-	jne l_0164
+	jne l_0160
 
-l_0172
-b_0164
+l_016E
+b_0160
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 30
+; optimize FAIL (100, examples\loop_exit.pas), line = 29
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 31
+; optimize FAIL (100, examples\loop_exit.pas), line = 30
 	@printSTRING #CODEORIGIN+$0077
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 32
+; optimize FAIL (100, examples\loop_exit.pas), line = 31
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 33
+; optimize FAIL (100, examples\loop_exit.pas), line = 32
 	@printSTRING #CODEORIGIN+$008F
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 34
+; optimize FAIL (100, examples\loop_exit.pas), line = 33
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
 
-; optimize OK (examples\loop_exit.pas), line = 35
+; optimize OK (examples\loop_exit.pas), line = 34
 
 	mva #$01 N
 
-; optimize OK (examples\loop_exit.pas), line = 36
+; optimize OK (examples\loop_exit.pas), line = 35
 
 	inc N
 
 ; --- WhileProlog
-l_01B8
+l_01B4
 
-; optimize OK (examples\loop_exit.pas), line = 37
+; optimize OK (examples\loop_exit.pas), line = 36
 
 	lda N
 	cmp #$15
-	jcs l_01C7
+	jcs l_01C3
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 38
+; optimize FAIL (100, examples\loop_exit.pas), line = 37
 	inx
 	mva N :STACKORIGIN,x
 	jsr @printBYTE
 	dex
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 39
+; optimize FAIL (100, examples\loop_exit.pas), line = 38
 	@print #$2C
 
-; optimize OK (examples\loop_exit.pas), line = 40
+; optimize OK (examples\loop_exit.pas), line = 39
 
 	lda N
 	cmp #$0E
-	jne l_01E7
+	jne l_01E3
 
-	jmp b_01B8					; break
-l_01E7
+	jmp b_01B4					; break
+l_01E3
 
-; optimize OK (examples\loop_exit.pas), line = 43
+; optimize OK (examples\loop_exit.pas), line = 42
 
 	inc N
-	jmp l_01B8
-l_01C7
-b_01B8
+	jmp l_01B4
+l_01C3
+b_01B4
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 45
+; optimize FAIL (100, examples\loop_exit.pas), line = 44
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 46
+; optimize FAIL (100, examples\loop_exit.pas), line = 45
 	@printSTRING #CODEORIGIN+$00A9
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 47
+; optimize FAIL (100, examples\loop_exit.pas), line = 46
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 48
+; optimize FAIL (100, examples\loop_exit.pas), line = 47
 	@printSTRING #CODEORIGIN+$00C3
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 49
+; optimize FAIL (100, examples\loop_exit.pas), line = 48
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
 
-; optimize OK (examples\loop_exit.pas), line = 50
+; optimize OK (examples\loop_exit.pas), line = 49
 
 	mva #$00 N
 
 ; --- RepeatUntilProlog
-l_0209
+l_0205
 
-; optimize FAIL (0, examples\loop_exit.pas), line = 52
+; optimize FAIL (0, examples\loop_exit.pas), line = 51
 	inc N
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 53
+; optimize FAIL (100, examples\loop_exit.pas), line = 52
 	inx
 	mva N :STACKORIGIN,x
 	jsr @printBYTE
 	dex
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 54
+; optimize FAIL (100, examples\loop_exit.pas), line = 53
 	@print #$2C
 
-	jmp b_0209					; break
+	jmp b_0205					; break
 
-; optimize OK (examples\loop_exit.pas), line = 56
+; optimize OK (examples\loop_exit.pas), line = 55
 
 	mva #$06 N
 
-; optimize OK (examples\loop_exit.pas), line = 57
+; optimize OK (examples\loop_exit.pas), line = 56
 
 	lda N
 	cmp #$06
-	jne l_0209
-b_0209
+	jne l_0205
+b_0205
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 58
+; optimize FAIL (100, examples\loop_exit.pas), line = 57
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 59
+; optimize FAIL (100, examples\loop_exit.pas), line = 58
 	@printSTRING #CODEORIGIN+$00DC
 	@printEOL
 
-; optimize FAIL ('CRT.READKEY', examples\loop_exit.pas), line = 60
+; optimize FAIL ('CRT.READKEY', examples\loop_exit.pas), line = 59
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -611,7 +607,7 @@ b_0209
 
 KEY	= DATAORIGIN+$000D
 N	= DATAORIGIN+$000E
-@FORTMP_0161	= $000A
+@FORTMP_015D	= $000A
 
 @VarData	= KEY
 @VarDataSize	= 2
@@ -624,7 +620,7 @@ N	= DATAORIGIN+$000E
 .endl
 l_00FD
 
-; optimize FAIL ('MAINPROC', examples\loop_exit.pas), line = 64
+; optimize FAIL ('MAINPROC', examples\loop_exit.pas), line = 63
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

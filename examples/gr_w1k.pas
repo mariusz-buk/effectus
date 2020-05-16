@@ -15,28 +15,27 @@ var
   KLAVESA : char;
 
 procedure LINKAProc(X0 : byte; Y0 : byte; X1 : byte; Y1 : byte);
-begin
+begin  // 1
   PutPixel(X0, Y0);
   MoveTo(X0, Y0);
   LineTo(X1, Y1);
-end;
+end;  // 4
 
 procedure DEMOProc;
-begin
-  i := 0;
+begin  // 6
   for  i:=0 to 79 do begin
   LINKAProc(0, 0, 159, I);
-  end;
-end;
+  end;  // for
+end;  // 4
 
 procedure HLPROGRAMProc;
-begin
+begin  // 6
   InitGraph(7);
   SetColor(1);
   DEMOProc;
   Writeln('STLAC');
   KLAVESA := ReadKey;
-end;
+end;  // 4
 
 begin
   HLPROGRAMProc;

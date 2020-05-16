@@ -18,22 +18,21 @@ procedure MAINProc;
 var
   I : byte;
   key : char;
-begin
+begin  // 2
   Write(Chr(125));
   Write('PrintBD example', eol, '', eol, '');
   Assign(f,  'H1:TESTNUM.TXT');
   Rewrite(f, 1);
   Writeln('Write numbers to disk...');
-  I := 1;
   for  I:=1 TO 12 do begin
   strBuffer := IntToStr( I);
   Blockwrite(f, strBuffer[1], Length(strBuffer));
-  end;
+  end;  // for
   Close(f);
-  Writeln('Done! (file H1:TESTNUM.TXT)');
+  Writeln('Done!(file H1:TESTNUM.TXT)');
   Write('', eol, '', eol, 'Press any key to continue!');
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

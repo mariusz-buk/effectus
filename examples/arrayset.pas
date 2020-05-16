@@ -11,35 +11,35 @@ uses
 var
   key : char;
   I : byte;
+var
   BYTES : array[0..3] of byte = (10, 20, 30, 40);
+var
   CARDS : array[0..3] of word = (540, 1300, 26800, 65300);
 
 procedure MAINProc;
-begin
+begin  // 6
   Write(Chr(125));
   Writeln('EFFECTUS EXAMPLE:');
   Writeln('ARRAYS DEMONSTRATION');
   Writeln('');
   Writeln('BYTE ARRAY VALUES:');
-  I := 0;
   for  I:=0 TO 3 do begin
   Write(BYTES[I]);
   if I<3 then begin
   Write(',');
-  end;
-  end;
+  end;  // if
+  end;  // for
   Writeln('');
   Writeln('');
   Writeln('CARD ARRAY VALUES:');
-  I := 0;
   for  I:=0 TO 3 do begin
   Write(CARDS[I]);
   if I<3 then begin
   Write(',');
-  end;
-  end;
+  end;  // if
+  end;  // for
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

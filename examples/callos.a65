@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -560,44 +560,40 @@ TIMES	= DATAORIGIN+$000F
 
 ; optimize FAIL ('KBGETPROC', examples\callos.pas), line = 58
 	jsr KBGETPROC
+; --- For
 
 ; optimize OK (examples\callos.pas), line = 59
 
 	mva #$01 N
-; --- For
 
-; optimize OK (examples\callos.pas), line = 60
-
-	sta N
-
-; optimize OK (examples\callos.pas), line = 60
+; optimize OK (examples\callos.pas), line = 59
 
 ; --- To
-l_00B2
+l_00AE
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\callos.pas), line = 60
+; optimize OK (examples\callos.pas), line = 59
 
 	lda N
 	cmp #$14
 	scc
-	jne l_00C0
+	jne l_00BC
 
-; optimize FAIL ('CLICKPROC', examples\callos.pas), line = 61
+; optimize FAIL ('CLICKPROC', examples\callos.pas), line = 60
 	jsr CLICKPROC
 
-; optimize FAIL ('SCROLLPROC', examples\callos.pas), line = 62
+; optimize FAIL ('SCROLLPROC', examples\callos.pas), line = 61
 	jsr SCROLLPROC
 
 ; --- ForToDoEpilog
 	inc N						; inc ptr byte [CounterAddress]
 
-	jne l_00B2
+	jne l_00AE
 
-l_00C0
+l_00BC
 
-; optimize FAIL ('CRT.READKEY', examples\callos.pas), line = 64
+; optimize FAIL ('CRT.READKEY', examples\callos.pas), line = 63
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -606,7 +602,7 @@ l_00C0
 
 N	= DATAORIGIN+$0010
 KEY	= DATAORIGIN+$0011
-@FORTMP_00AF	= $0014
+@FORTMP_00AB	= $0014
 
 @VarData	= N
 @VarDataSize	= 2
@@ -619,7 +615,7 @@ KEY	= DATAORIGIN+$0011
 .endl
 l_0032
 
-; optimize FAIL ('MAINPROC', examples\callos.pas), line = 68
+; optimize FAIL ('MAINPROC', examples\callos.pas), line = 67
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

@@ -14,7 +14,7 @@ var
   key : char;
 
 procedure MAINProc;
-begin
+begin  // 1
   InitGraph(7);
   x := 80;
   y := 10;
@@ -39,7 +39,7 @@ begin
   LineTo(x, y);
   Writeln('Triangle');
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

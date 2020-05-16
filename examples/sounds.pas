@@ -13,22 +13,22 @@ var
   COL : byte absolute 710;
 
 procedure WAITFORKEYProc;
-begin
+begin  // 1
   CH := 255;
  WHILE CH=255 do begin
-  end;
+  end;  // while
   CH := 255;
-end;
+end;  // 4
 
 procedure SPACEKEYProc;
-begin
+begin  // 6
  WHILE CH<>33 do begin
-  end;
+  end;  // while
   CH := 255;
-end;
+end;  // 4
 
 procedure MAINProc;
-begin
+begin  // 6
   Write(Chr(125));
   Poke(82, 0);
   Poke(708 + 2,  0*16 +  0);
@@ -61,7 +61,7 @@ begin
   Sound(1, 0, 0, 0);
   Sound(2, 0, 0, 0);
   Sound(3, 0, 0, 0);
-end;
+end;  // 4
 
 begin
   MAINProc;

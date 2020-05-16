@@ -1,4 +1,4 @@
-mads 2.1.0 build 4 (27 Oct 19)
+mads 2.1.0
   3726 					opt l+
     95
     96 				.print 'RUNLIB: ',RUNLIB,'..',*
@@ -600,16 +600,16 @@ Macro: UNITINITIALIZATION [Source: pmgdemo.a65]
    686
    687 2221			.local	MAINPROC					; PROCEDURE
    688
-   689 				; optimize OK (examples\pmgdemo.pas), line = 28
+   689 				; optimize OK (examples\pmgdemo.pas), line = 29
    690
    691 2221 A9 00 8D 1D D0		mva #$00 GRACTL
    692
-   693 				; optimize FAIL ('GRAPH.INITGRAPH_007C', examples\pmgdemo.pas), line = 30
+   693 				; optimize FAIL ('GRAPH.INITGRAPH_007C', examples\pmgdemo.pas), line = 31
    694 2226 E8				inx
    695 2227 A9 00 95 98			mva #$00 :STACKORIGIN,x
    696 222B 20 A6 21			jsr GRAPH.INITGRAPH_007C
    697
-   698 				; optimize OK (examples\pmgdemo.pas), line = 32
+   698 				; optimize OK (examples\pmgdemo.pas), line = 33
    699
    700 222E A5 6A			lda RAMTOP
    701 2230 38 E9 10			sub #$10
@@ -618,11 +618,11 @@ Macro: UNITINITIALIZATION [Source: pmgdemo.a65]
    704 2238 E9 00			sbc #$00
    705 223A 8D 12 23			sta PGMMEM+1
    706
-   707 				; optimize OK (examples\pmgdemo.pas), line = 34
+   707 				; optimize OK (examples\pmgdemo.pas), line = 35
    708
    709 223D AD 11 23 8D 07 D4		mva PGMMEM PMBASE
    710
-   711 				; optimize OK (examples\pmgdemo.pas), line = 36
+   711 				; optimize OK (examples\pmgdemo.pas), line = 37
    712
    713 2243 A9 00			lda #$00
    714 2245 85 82			sta :eax
@@ -633,15 +633,15 @@ Macro: UNITINITIALIZATION [Source: pmgdemo.a65]
    719 2251 A5 83			lda :eax+1
    720 2253 8D 12 23			sta PGMMEM+1
    721
-   722 				; optimize OK (examples\pmgdemo.pas), line = 38
+   722 				; optimize OK (examples\pmgdemo.pas), line = 39
    723
    724 2256 A9 2E 8D 2F 02		mva #$2E SDMCTL
    725
-   726 				; optimize OK (examples\pmgdemo.pas), line = 40
+   726 				; optimize OK (examples\pmgdemo.pas), line = 41
    727
    728 225B A9 00 8D 08 D0		mva #$00 SIZEP0
    729
-   730 				; optimize OK (examples\pmgdemo.pas), line = 42
+   730 				; optimize OK (examples\pmgdemo.pas), line = 43
    731
    732 2260 AD 11 23			lda PGMMEM
    733 2263 85 86			sta :edx
@@ -652,7 +652,7 @@ Macro: UNITINITIALIZATION [Source: pmgdemo.a65]
    738 226F A9 00			lda #$00
    739 2271 91 86 88 10 FB		sta:rpl (:edx),y-
    740
-   741 				; optimize OK (examples\pmgdemo.pas), line = 44
+   741 				; optimize OK (examples\pmgdemo.pas), line = 45
    742
    743 2276 AD 12 23			lda PGMMEM+1
    744 2279 18 69 02			add #$02
@@ -672,24 +672,24 @@ Macro: UNITINITIALIZATION [Source: pmgdemo.a65]
    758 229A 85 83			sta :eax+1
    759 229C 20 9B 20			jsr @move
    760
-   761 				; optimize OK (examples\pmgdemo.pas), line = 46
+   761 				; optimize OK (examples\pmgdemo.pas), line = 47
    762
    763 229F A9 03 8D 1D D0		mva #$03 GRACTL
    764
-   765 				; optimize OK (examples\pmgdemo.pas), line = 47
+   765 				; optimize OK (examples\pmgdemo.pas), line = 48
    766
    767 22A4 A9 32 8D C0 02		mva #$32 PCOLR0
    768
-   769 				; optimize OK (examples\pmgdemo.pas), line = 48
+   769 				; optimize OK (examples\pmgdemo.pas), line = 49
    770
    771 22A9 A9 78 8D 00 D0		mva #$78 HPOSP0
    772
-   773 				; optimize FAIL ('CRT.READKEY', examples\pmgdemo.pas), line = 49
+   773 				; optimize FAIL ('CRT.READKEY', examples\pmgdemo.pas), line = 50
    774 22AE 20 95 21			jsr CRT.READKEY
    775 22B1 B5 98 8D 01 23		mva :STACKORIGIN,x KEY
    776 22B6 CA				dex
    777
-   778 				; optimize OK (examples\pmgdemo.pas), line = 51
+   778 				; optimize OK (examples\pmgdemo.pas), line = 52
    779
    780 22B7 A9 00 8D 1D D0		mva #$00 GRACTL
    781
@@ -719,7 +719,7 @@ Macro: UNITINITIALIZATION [Source: pmgdemo.a65]
    804 				.endl
    805 22BF			l_0014
    806
-   807 				; optimize FAIL ('MAINPROC', examples\pmgdemo.pas), line = 55
+   807 				; optimize FAIL ('MAINPROC', examples\pmgdemo.pas), line = 56
    808 22BF 20 21 22			jsr MAINPROC
    809
    810 				; ------------------------------------------------------------

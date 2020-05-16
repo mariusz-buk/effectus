@@ -1,4 +1,4 @@
-mads 2.1.0 build 4 (27 Oct 19)
+mads 2.1.0
   3726 					opt l+
     95
     96 				.print 'RUNLIB: ',RUNLIB,'..',*
@@ -8,7 +8,7 @@ mads 2.1.0 build 4 (27 Oct 19)
     99
    100 2140			START
    101 2140 BA				tsx
-   102 2141 8E 0C 23			stx MAIN.@halt+1
+   102 2141 8E 06 23			stx MAIN.@halt+1
    103
    104 					.ifdef fmulinit
    105 					fmulinit
@@ -28,7 +28,7 @@ mads 2.1.0 build 4 (27 Oct 19)
    119 					eif
    120
    121 214E A2 0F			ldx #$0f
-   122 2150 BD 40 03 9D 0F 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   122 2150 BD 40 03 9D 09 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
    123
    124 2159 E8				inx		; X = 0 !!!
    125 215A 86 8E			stx bp		; lo BP = 0
@@ -38,7 +38,7 @@ Macro: UNITINITIALIZATION [Source: arrmem.a65]
    128
    129 215C			.local	MAIN						; PROCEDURE
    130
-   131 215C 4C 08 23			jmp l_0052
+   131 215C 4C 02 23			jmp l_0052
    132
    133 				; ------------------------------------------------------------
    134
@@ -617,139 +617,132 @@ Macro: UNITINITIALIZATION [Source: arrmem.a65]
    625 22F8 20 7A 21			jsr CRT.READKEY
    626 22FB B5 98 8D 2D 23		mva :STACKORIGIN,x KEY
    627 2300 CA				dex
-   628
-   629 				; ------------------------------------------------------------
-   630
-   631 = 232D			KEY	= DATAORIGIN+$000E
-   632 = 232E			MEM	= DATAORIGIN+$000F
-   633 = 6D60			adr.ARRD	= $6D60
-   634 2301			.var ARRD	= adr.ARRD .word
-   635 = 0600			adr.ARRH	= $0600
-   636 2301			.var ARRH	= adr.ARRH .word
-   637 = 02C4			adr.COL	= $02C4
-   638 2301			.var COL	= adr.COL .word
-   639
-   640 = 232D			@VarData	= KEY
-   641 = 0302			@VarDataSize	= 770
-   642
-   643 2301			@exit
-   644 					.ifdef @new
-   645 					@FreeMem #@VarData #@VarDataSize
-   646 					eif
-   647 2301 60				rts						; ret
-   648 = 2302 60 6D		ARRD
-   648 = 2304 00 06		ARRH
-   648 = 2306 C4 02		COL
-   648 				.endl
-   649 2308			l_0052
+   628 2301			@exit
+   629 					.ifdef @new
+   630 					@FreeMem #@VarData #@VarDataSize
+   631 					eif
+   632 2301 60				rts						; ret
+   633 				.endl
+   634 2302			l_0052
+   635
+   636 				; optimize FAIL ('MAINPROC', examples\arrmem.pas), line = 57
+   637 2302 20 8B 21			jsr MAINPROC
+   638
+   639 				; ------------------------------------------------------------
+   640
+   641 = 232D			KEY	= DATAORIGIN+$000E
+   642 = 232E			MEM	= DATAORIGIN+$000F
+   643 = 6D60			adr.ARRD	= $6D60
+   644 2305			.var ARRD	= adr.ARRD .word
+   645 = 0600			adr.ARRH	= $0600
+   646 2305			.var ARRH	= adr.ARRH .word
+   647 = 02C4			adr.COL	= $02C4
+   648 2305			.var COL	= adr.COL .word
+   649 2305			@exit
    650
-   651 				; optimize FAIL ('MAINPROC', examples\arrmem.pas), line = 57
-   652 2308 20 8B 21			jsr MAINPROC
+   651 2305 A2 00		@halt	ldx #0
+   652 2307 9A				txs
    653
-   654 				; ------------------------------------------------------------
+   654 2308 60				rts
    655
-   656 230B			@exit
+   656 				; ------------------------------------------------------------
    657
-   658 230B A2 00		@halt	ldx #0
-   659 230D 9A				txs
-   660
-   661 230E 60				rts
-   662
-   663 				; ------------------------------------------------------------
-   664
-   665 230F 00 00 00 00 00 00 + IOCB@COPY	:16 brk
-   666
-   667 				; ------------------------------------------------------------
-   668
-   669 231F			.local	@DEFINES
-   670 231F			ATARI
-   671 				.endl
-   672
-   673 				.endl							; MAIN
-   674
-   675 				; ------------------------------------------------------------
-   676 				; ------------------------------------------------------------
-   677
-   678 				.macro	UNITINITIALIZATION
-   679 				
-   680 					.ifdef MAIN.SYSTEM.@UnitInit
-   681 					jsr MAIN.SYSTEM.@UnitInit
-   682 					eif
-   683 				
-   684 					.ifdef MAIN.DOS.@UnitInit
-   685 					jsr MAIN.DOS.@UnitInit
-   686 					eif
-   687 				
-   688 					.ifdef MAIN.STRUTILS.@UnitInit
-   689 					jsr MAIN.STRUTILS.@UnitInit
-   690 					eif
-   691 				
-   692 					.ifdef MAIN.SYSUTILS.@UnitInit
-   693 					jsr MAIN.SYSUTILS.@UnitInit
-   694 					eif
-   695 				
-   696 					.ifdef MAIN.ATARI.@UnitInit
-   697 					jsr MAIN.ATARI.@UnitInit
-   698 					eif
-   699 				
-   700 					.ifdef MAIN.CRT.@UnitInit
-   701 					jsr MAIN.CRT.@UnitInit
+   658 2309 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+   659
+   660 				; ------------------------------------------------------------
+   661
+   662 2319			.local	@DEFINES
+   663 2319			ATARI
+   664 				.endl
+   665
+   666 = 2319 60 6D		ARRD
+   666 = 231B 00 06		ARRH
+   666 = 231D C4 02		COL
+   666 				.endl							; MAIN
+   667
+   668 				; ------------------------------------------------------------
+   669 				; ------------------------------------------------------------
+   670
+   671 				.macro	UNITINITIALIZATION
+   672 				
+   673 					.ifdef MAIN.SYSTEM.@UnitInit
+   674 					jsr MAIN.SYSTEM.@UnitInit
+   675 					eif
+   676 				
+   677 					.ifdef MAIN.DOS.@UnitInit
+   678 					jsr MAIN.DOS.@UnitInit
+   679 					eif
+   680 				
+   681 					.ifdef MAIN.STRUTILS.@UnitInit
+   682 					jsr MAIN.STRUTILS.@UnitInit
+   683 					eif
+   684 				
+   685 					.ifdef MAIN.SYSUTILS.@UnitInit
+   686 					jsr MAIN.SYSUTILS.@UnitInit
+   687 					eif
+   688 				
+   689 					.ifdef MAIN.ATARI.@UnitInit
+   690 					jsr MAIN.ATARI.@UnitInit
+   691 					eif
+   692 				
+   693 					.ifdef MAIN.CRT.@UnitInit
+   694 					jsr MAIN.CRT.@UnitInit
+   695 					eif
+   696 				.endm
+   697
+   698 				; ------------------------------------------------------------
+   699
+   700 					ift .SIZEOF(MAIN.SYSTEM) > 0
+   701 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+   701 				SYSTEM: $215F..$2179
    702 					eif
-   703 				.endm
-   704
-   705 				; ------------------------------------------------------------
-   706
-   707 					ift .SIZEOF(MAIN.SYSTEM) > 0
-   708 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-   708 				SYSTEM: $215F..$2179
-   709 					eif
-   710
-   711 					ift .SIZEOF(MAIN.DOS) > 0
-   712 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-   713 					eif
-   714
-   715 					ift .SIZEOF(MAIN.STRUTILS) > 0
-   716 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-   717 					eif
-   718
-   719 					ift .SIZEOF(MAIN.SYSUTILS) > 0
-   720 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-   721 					eif
-   722
-   723 					ift .SIZEOF(MAIN.ATARI) > 0
-   724 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
-   725 					eif
-   726
-   727 					ift .SIZEOF(MAIN.CRT) > 0
-   728 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-   728 				CRT: $217A..$218A
-   729 					eif
+   703
+   704 					ift .SIZEOF(MAIN.DOS) > 0
+   705 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+   706 					eif
+   707
+   708 					ift .SIZEOF(MAIN.STRUTILS) > 0
+   709 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
+   710 					eif
+   711
+   712 					ift .SIZEOF(MAIN.SYSUTILS) > 0
+   713 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
+   714 					eif
+   715
+   716 					ift .SIZEOF(MAIN.ATARI) > 0
+   717 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+   718 					eif
+   719
+   720 					ift .SIZEOF(MAIN.CRT) > 0
+   721 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+   721 				CRT: $217A..$218A
+   722 					eif
+   723
+   724 					.print 'CODE: ',CODEORIGIN,'..',*-1
+   724 				CODE: $2000..$231E
+   725
+   726 				; ------------------------------------------------------------
+   727
+   728 231F			DATAORIGIN
+   729 231F 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
    730
-   731 					.print 'CODE: ',CODEORIGIN,'..',*-1
-   731 				CODE: $2000..$231E
-   732
-   733 				; ------------------------------------------------------------
-   734
-   735 231F			DATAORIGIN
-   736 231F 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
+   731 = 0006			VARINITSIZE	= *-DATAORIGIN
+   732 = 0010			VARDATASIZE	= 16
+   733
+   734 = 232F			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+   735
+   736 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+   736 				DATA: $231F..$232F
    737
-   738 = 0006			VARINITSIZE	= *-DATAORIGIN
-   739 = 0010			VARDATASIZE	= 16
-   740
-   741 = 232F			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
-   742
-   743 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-   743 				DATA: $231F..$232F
-   744
-   745 02E0-02E1> 40 21			run START
-   746
-   747 				; ------------------------------------------------------------
+   738 02E0-02E1> 40 21			run START
+   739
+   740 				; ------------------------------------------------------------
+   741
+   742 				.macro	STATICDATA
+   743 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $00 $00 $14  $61 $72 $72 $44 $20 $61 $72 $72
+   744 				.by  $61 $79 $20 $65 $6C $65 $6D $65  $6E $74 $73 $3A $00 $14 $61 $72  $72 $48 $20 $61 $72 $72 $61 $79
+   745 				.by  $20 $65 $6C $65 $6D $65 $6E $74  $73 $3A $00 $0E $50 $65 $65 $6B  $65 $64 $20 $76 $61 $6C $75 $65
+   746 				.by  $73 $3A $00
+   747 				.endm
    748
-   749 				.macro	STATICDATA
-   750 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $00 $00 $14  $61 $72 $72 $44 $20 $61 $72 $72
-   751 				.by  $61 $79 $20 $65 $6C $65 $6D $65  $6E $74 $73 $3A $00 $14 $61 $72  $72 $48 $20 $61 $72 $72 $61 $79
-   752 				.by  $20 $65 $6C $65 $6D $65 $6E $74  $73 $3A $00 $0E $50 $65 $65 $6B  $65 $64 $20 $76 $61 $6C $75 $65
-   753 				.by  $73 $3A $00
-   754 				.endm
-   755
-   756 					end
+   749 					end

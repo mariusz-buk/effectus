@@ -12,23 +12,23 @@ var
   cvar : word;
 
 procedure TEST01Proc;
-begin
+begin  // 1
   Writeln('Hello there 01');
-end;
+end;  // 4
 
 procedure Test02Proc(n : byte);
 var
   ii : integer;
-begin
+begin  // 1
   Writeln('Hello there 02');
   Write(Chr(n));
   Writeln('ello there 03');
   ii := -1230;
   Writeln(ii);
-end;
+end;  // 4
 
 procedure Test03Proc(n : byte; cc : word);
-begin
+begin  // 6
   Writeln(n);
   Writeln(cc);
   cvar := 65000;
@@ -36,13 +36,13 @@ begin
   cc := 50000;
   Writeln(n);
   Writeln(cc);
-end;
+end;  // 4
 
 procedure MAINProc;
 var
   X : word;
   Y : word;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Hello world');
   X := 30;
@@ -55,7 +55,7 @@ begin
   TEST02Proc(72);
   TEST03Proc(7, 2355);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

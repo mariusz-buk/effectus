@@ -12,17 +12,17 @@ var
   n1 : byte = 14;
 
 procedure CHANGEProc;
-begin
+begin  // 1
   n1 := 10;
   Writeln(n1);
-end;
+end;  // 4
 
 procedure MAINProc;
-begin
+begin  // 6
   Writeln(n1);
   CHANGEProc;
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

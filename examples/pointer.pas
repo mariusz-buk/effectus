@@ -13,7 +13,7 @@ var
   i : integer;
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Effectus example:');
   Writeln('POINT=ER variable demonstration');
@@ -30,7 +30,7 @@ begin
   Write('=');
   Writeln(i);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

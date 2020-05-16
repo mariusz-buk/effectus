@@ -14,7 +14,7 @@ var
   surname : string[21];
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Effectus example:');
   Writeln('String input demonstration');
@@ -32,7 +32,7 @@ begin
   Writeln(surname);
   Writeln('');
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

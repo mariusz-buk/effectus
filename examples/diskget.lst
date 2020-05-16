@@ -1,4 +1,4 @@
-mads 2.1.0 build 4 (27 Oct 19)
+mads 2.1.0
   3726 					opt l+
     95
     96 				.print 'RUNLIB: ',RUNLIB,'..',*
@@ -8,14 +8,14 @@ mads 2.1.0 build 4 (27 Oct 19)
     99
    100 244A			START
    101 244A BA				tsx
-   102 244B 8E DF 27			stx MAIN.@halt+1
+   102 244B 8E DC 27			stx MAIN.@halt+1
    103
    104 					.ifdef fmulinit
    105 					fmulinit
    106 					eif
    107
    108 = 022D			VLEN	= VARDATASIZE-VARINITSIZE
-   109 = 27FC			VADR	= DATAORIGIN+VARINITSIZE
+   109 = 27F9			VADR	= DATAORIGIN+VARINITSIZE
    110
    111 					ift VADR > $BFFF
    112 					ert 'Invalid memory address range ',VADR
@@ -26,14 +26,14 @@ mads 2.1.0 build 4 (27 Oct 19)
    117 					eli VLEN>0
    118 					@fill #VADR #VLEN #0
    118 				 MWA #VADR @FILL.PTR1\ MWA #VLEN @FILL.PTR3\ MVA #0 @FILL.PTR2\ JSR @FILL
-   118 244E A9 FC 85 86 A9 27 +  MWA #VADR @FILL.PTR1
+   118 244E A9 F9 85 86 A9 27 +  MWA #VADR @FILL.PTR1
    118 2456 A9 2D 85 8A A9 02 +  MWA #VLEN @FILL.PTR3
    118 245E A9 00 85 82		 MVA #0 @FILL.PTR2
    118 2462 20 DC 23		 JSR @FILL
    119 					eif
    120
    121 2465 A2 0F			ldx #$0f
-   122 2467 BD 40 03 9D E2 27 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   122 2467 BD 40 03 9D DF 27 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
    123
    124 2470 E8				inx		; X = 0 !!!
    125 2471 86 8E			stx bp		; lo BP = 0
@@ -44,7 +44,7 @@ Source: diskget.a65
    128
    129 2473			.local	MAIN						; PROCEDURE
    130
-   131 2473 4C CD 27			jmp l_0081
+   131 2473 4C CA 27			jmp l_0081
    132
    133 				; ------------------------------------------------------------
    134
@@ -56,15 +56,15 @@ Source: diskget.a65
    140
    141 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
    142 				; as Pointer
-   143 2476 B5 98 8D 01 28		mva :STACKORIGIN,x F
-   144 247B B5 A8 8D 02 28		mva :STACKORIGIN+STACKWIDTH,x F+1
+   143 2476 B5 98 8D FE 27		mva :STACKORIGIN,x F
+   144 247B B5 A8 8D FF 27		mva :STACKORIGIN+STACKWIDTH,x F+1
    145 2480 CA				dex						; sub bx, 1
    146
    147 				; ---------------------  ASM Block 015  ---------------------
    148
    149 2481 8A 48			txa:pha
    150
-   151 2483 AD 01 28 85 90 AD + 	mwa f :bp2
+   151 2483 AD FE 27 85 90 AD + 	mwa f :bp2
    152
    153 248D A0 04			ldy #s@file.chanel
    154 248F B1 90			lda (:bp2),y
@@ -73,7 +73,7 @@ Source: diskget.a65
    157 2494 9D 42 03			sta iccmd,x
    158 2497 20 56 E4			jsr ciov
    159
-   160 249A 8C FD 27			sty IOResult
+   160 249A 8C FA 27			sty IOResult
    161
    162 249D BD 4C 03 85 82		mva icax3,x eax
    163 24A2 BD 4D 03 85 83		mva icax4,x eax+1
@@ -92,10 +92,10 @@ Source: diskget.a65
    176
    177 24BF 20 AD 22			jsr idivEAX_ECX.main
    178
-   179 24C2 A5 82 8D 03 28		mva eax Result
-   180 24C7 A5 83 8D 04 28		mva eax+1 Result+1
-   181 24CC A5 84 8D 05 28		mva eax+2 Result+2
-   182 24D1 A5 85 8D 06 28		mva eax+3 Result+3
+   179 24C2 A5 82 8D 00 28		mva eax Result
+   180 24C7 A5 83 8D 01 28		mva eax+1 Result+1
+   181 24CC A5 84 8D 02 28		mva eax+2 Result+2
+   182 24D1 A5 85 8D 03 28		mva eax+3 Result+3
    183
    184 24D6 68 AA			pla:tax
    185
@@ -107,10 +107,10 @@ Source: diskget.a65
    191 				; as Pointer
    192
    193 24D8 E8				inx						; add bx, 1
-   194 24D9 AD 03 28 95 98		mva RESULT :STACKORIGIN,x
-   195 24DE AD 04 28 95 A8		mva RESULT+1 :STACKORIGIN+STACKWIDTH,x
-   196 24E3 AD 05 28 95 B8		mva RESULT+2 :STACKORIGIN+STACKWIDTH*2,x
-   197 24E8 AD 06 28 95 C8		mva RESULT+3 :STACKORIGIN+STACKWIDTH*3,x
+   194 24D9 AD 00 28 95 98		mva RESULT :STACKORIGIN,x
+   195 24DE AD 01 28 95 A8		mva RESULT+1 :STACKORIGIN+STACKWIDTH,x
+   196 24E3 AD 02 28 95 B8		mva RESULT+2 :STACKORIGIN+STACKWIDTH*2,x
+   197 24E8 AD 03 28 95 C8		mva RESULT+3 :STACKORIGIN+STACKWIDTH*3,x
    198
    199 					.ifdef @new
    200 					@FreeMem #@VarData #@VarDataSize
@@ -118,10 +118,10 @@ Source: diskget.a65
    202
    203 				; ------------------------------------------------------------
    204
-   205 = 2801			F	= DATAORIGIN+$000B
-   206 = 2803			RESULT	= DATAORIGIN+$000D
+   205 = 27FE			F	= DATAORIGIN+$000B
+   206 = 2800			RESULT	= DATAORIGIN+$000D
    207
-   208 = 2801			@VarData	= F
+   208 = 27FE			@VarData	= F
    209 = 0006			@VarDataSize	= 6
    210
    211 24ED 60				rts						; ret
@@ -133,25 +133,25 @@ Source: diskget.a65
    217
    218 				; Generate Assignment for CARDINAL / INTEGER / REAL / SINGLE
    219 				; as Pointer
-   220 24EE B5 98 8D 09 28		mva :STACKORIGIN,x A
-   221 24F3 B5 A8 8D 0A 28		mva :STACKORIGIN+STACKWIDTH,x A+1
-   222 24F8 B5 B8 8D 0B 28		mva :STACKORIGIN+STACKWIDTH*2,x A+2
-   223 24FD B5 C8 8D 0C 28		mva :STACKORIGIN+STACKWIDTH*3,x A+3
+   220 24EE B5 98 8D 06 28		mva :STACKORIGIN,x A
+   221 24F3 B5 A8 8D 07 28		mva :STACKORIGIN+STACKWIDTH,x A+1
+   222 24F8 B5 B8 8D 08 28		mva :STACKORIGIN+STACKWIDTH*2,x A+2
+   223 24FD B5 C8 8D 09 28		mva :STACKORIGIN+STACKWIDTH*3,x A+3
    224 2502 CA				dex						; sub bx, 1
    225
    226 				; ------------------------------------------------------------
    227
    228 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
    229 				; as Pointer
-   230 2503 B5 98 8D 07 28		mva :STACKORIGIN,x F
-   231 2508 B5 A8 8D 08 28		mva :STACKORIGIN+STACKWIDTH,x F+1
+   230 2503 B5 98 8D 04 28		mva :STACKORIGIN,x F
+   231 2508 B5 A8 8D 05 28		mva :STACKORIGIN+STACKWIDTH,x F+1
    232 250D CA				dex						; sub bx, 1
    233
    234 				; ---------------------  ASM Block 016  ---------------------
    235
    236 250E 8A 48			txa:pha
    237
-   238 2510 AD 07 28 85 90 AD + 	mwa f :bp2
+   238 2510 AD 04 28 85 90 AD + 	mwa f :bp2
    239
    240 251A A0 04			ldy #s@file.chanel
    241 251C B1 90			lda (:bp2),y
@@ -169,10 +169,10 @@ Source: diskget.a65
    253 2531 85 84			sta eax+2
    254 2533 85 85			sta eax+3
    255
-   256 2535 AD 09 28 85 8A		mva a ecx
-   257 253A AD 0A 28 85 8B		mva a+1 ecx+1
-   258 253F AD 0B 28 85 8C		mva a+2 ecx+2
-   259 2544 AD 0C 28 85 8D		mva a+3 ecx+3
+   256 2535 AD 06 28 85 8A		mva a ecx
+   257 253A AD 07 28 85 8B		mva a+1 ecx+1
+   258 253F AD 08 28 85 8C		mva a+2 ecx+2
+   259 2544 AD 09 28 85 8D		mva a+3 ecx+3
    260
    261 2549 20 67 22			jsr imulECX
    262
@@ -182,17 +182,17 @@ Source: diskget.a65
    266
    267 255B 20 56 E4			jsr ciov
    268
-   269 255E 8C FD 27			sty IOResult
+   269 255E 8C FA 27			sty IOResult
    270
    271 2561 68 AA			pla:tax
    272
    273
    274 				; ------------------------------------------------------------
    275
-   276 = 2807			F	= DATAORIGIN+$0011
-   277 = 2809			A	= DATAORIGIN+$0013
+   276 = 2804			F	= DATAORIGIN+$0011
+   277 = 2806			A	= DATAORIGIN+$0013
    278
-   279 = 2807			@VarData	= F
+   279 = 2804			@VarData	= F
    280 = 0006			@VarDataSize	= 6
    281
    282 2563			@exit
@@ -208,25 +208,25 @@ Source: diskget.a65
    292
    293 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
    294 				; as Pointer
-   295 2564 B5 98 8D 0D 28		mva :STACKORIGIN,x F
-   296 2569 B5 A8 8D 0E 28		mva :STACKORIGIN+STACKWIDTH,x F+1
+   295 2564 B5 98 8D 0A 28		mva :STACKORIGIN,x F
+   296 2569 B5 A8 8D 0B 28		mva :STACKORIGIN+STACKWIDTH,x F+1
    297 256E CA				dex						; sub bx, 1
    298
    299 				; optimize FAIL ('FILEPOS', SYSTEM), line = 1295
    300 256F E8				inx
-   301 2570 AD 0D 28 95 98		mva F :STACKORIGIN,x
-   302 2575 AD 0E 28 95 A8		mva F+1 :STACKORIGIN+STACKWIDTH,x
+   301 2570 AD 0A 28 95 98		mva F :STACKORIGIN,x
+   302 2575 AD 0B 28 95 A8		mva F+1 :STACKORIGIN+STACKWIDTH,x
    303 257A 20 76 24			jsr FILEPOS
-   304 257D B5 98 8D 10 28		mva :STACKORIGIN,x I
-   305 2582 B5 A8 8D 11 28		mva :STACKORIGIN+STACKWIDTH,x I+1
-   306 2587 B5 B8 8D 12 28		mva :STACKORIGIN+STACKWIDTH*2,x I+2
-   307 258C B5 C8 8D 13 28		mva :STACKORIGIN+STACKWIDTH*3,x I+3
+   304 257D B5 98 8D 0D 28		mva :STACKORIGIN,x I
+   305 2582 B5 A8 8D 0E 28		mva :STACKORIGIN+STACKWIDTH,x I+1
+   306 2587 B5 B8 8D 0F 28		mva :STACKORIGIN+STACKWIDTH*2,x I+2
+   307 258C B5 C8 8D 10 28		mva :STACKORIGIN+STACKWIDTH*3,x I+3
    308 2591 CA				dex
    309 				; BlockRead
    310
    311 				; optimize OK (SYSTEM), line = 1297
    312
-   313 2592 AD 0D 28 85 90 AD + 	mwa F :bp2
+   313 2592 AD 0A 28 85 90 AD + 	mwa F :bp2
    314 259C A0 06			ldy #s@file.buffer
    315 259E AD 01 26			lda BF
    316 25A1 91 90			sta (:bp2),y
@@ -247,31 +247,31 @@ Source: diskget.a65
    331 25B6 38				sec
    332 					@readfile F, #7
    332 				 LDY F+1\ LDA F\ LDX# 7\ JSR @READFILE
-   332 25B7 AC 0E 28		 LDY F+1
-   332 25BA AD 0D 28		 LDA F
+   332 25B7 AC 0B 28		 LDY F+1
+   332 25BA AD 0A 28		 LDA F
    332 25BD A2 07		 LDX# 7
    332 25BF 20 4E 21		 JSR @READFILE
    333 25C2 68 AA			pla:tax
    334
    335 				; optimize FAIL ('SEEK', SYSTEM), line = 1299
    336 25C4 E8				inx
-   337 25C5 AD 0D 28 95 98		mva F :STACKORIGIN,x
-   338 25CA AD 0E 28 95 A8		mva F+1 :STACKORIGIN+STACKWIDTH,x
+   337 25C5 AD 0A 28 95 98		mva F :STACKORIGIN,x
+   338 25CA AD 0B 28 95 A8		mva F+1 :STACKORIGIN+STACKWIDTH,x
    339 25CF E8				inx
-   340 25D0 AD 10 28 95 98		mva I :STACKORIGIN,x
-   341 25D5 AD 11 28 95 A8		mva I+1 :STACKORIGIN+STACKWIDTH,x
-   342 25DA AD 12 28 95 B8		mva I+2 :STACKORIGIN+STACKWIDTH*2,x
-   343 25DF AD 13 28 95 C8		mva I+3 :STACKORIGIN+STACKWIDTH*3,x
+   340 25D0 AD 0D 28 95 98		mva I :STACKORIGIN,x
+   341 25D5 AD 0E 28 95 A8		mva I+1 :STACKORIGIN+STACKWIDTH,x
+   342 25DA AD 0F 28 95 B8		mva I+2 :STACKORIGIN+STACKWIDTH*2,x
+   343 25DF AD 10 28 95 C8		mva I+3 :STACKORIGIN+STACKWIDTH*3,x
    344 25E4 20 EE 24			jsr SEEK
    345
    346 				; ---------------------  ASM Block 017  ---------------------
    347
-   348 25E7 AD 0D 28 85 90 AD + 	mwa f :bp2
+   348 25E7 AD 0A 28 85 90 AD + 	mwa f :bp2
    349
    350 25F1 A0 05			ldy #s@file.status
    351 25F3 B1 90			lda (:bp2),y
    352 25F5 29 01			and #e@file.eof
-   353 25F7 8D 0F 28			sta Result
+   353 25F7 8D 0C 28			sta Result
    354
    355 25FA			@exit
    356
@@ -281,7 +281,7 @@ Source: diskget.a65
    360 				; as Pointer
    361
    362 25FA E8				inx						; add bx, 1
-   363 25FB AD 0F 28 95 98		mva RESULT :STACKORIGIN,x
+   363 25FB AD 0C 28 95 98		mva RESULT :STACKORIGIN,x
    364
    365 					.ifdef @new
    366 					@FreeMem #@VarData #@VarDataSize
@@ -289,17 +289,17 @@ Source: diskget.a65
    368
    369 				; ------------------------------------------------------------
    370
-   371 = 280D			F	= DATAORIGIN+$0017
-   372 = 280F			RESULT	= DATAORIGIN+$0019
-   373 = 2810			I	= DATAORIGIN+$001A
-   374 = 2814			adr.BF	= DATAORIGIN+$001E
+   371 = 280A			F	= DATAORIGIN+$0017
+   372 = 280C			RESULT	= DATAORIGIN+$0019
+   373 = 280D			I	= DATAORIGIN+$001A
+   374 = 2811			adr.BF	= DATAORIGIN+$001E
    375 2600			.var BF	= adr.BF .word
    376
-   377 = 280D			@VarData	= F
+   377 = 280A			@VarData	= F
    378 = 0107			@VarDataSize	= 263
    379
    380 2600 60				rts						; ret
-   381 = 2601 14 28		BF
+   381 = 2601 11 28		BF
    381 				.endl
    382
    383 				; ------------------------------------------------------------
@@ -350,19 +350,19 @@ Source: diskget.a65
    428 = 0008			FMOPENWRITE	= $0008
    429 = 0009			FMOPENAPPEND	= $0009
    430 = 000C			FMOPENREADWRITE	= $000C
-   431 = 27F6			SCREENWIDTH	= DATAORIGIN+$0000
-   432 = 27F8			SCREENHEIGHT	= DATAORIGIN+$0002
-   433 = 27FA			DATESEPARATOR	= DATAORIGIN+$0004
+   431 = 27F3			SCREENWIDTH	= DATAORIGIN+$0000
+   432 = 27F5			SCREENHEIGHT	= DATAORIGIN+$0002
+   433 = 27F7			DATESEPARATOR	= DATAORIGIN+$0004
    434 = D014			TVSYSTEM	= $D014
    435 = 02C0			adr.PALETTE	= $02C0
    436 2603			.var PALETTE	= adr.PALETTE .word
    437 = D012			adr.HPALETTE	= $D012
    438 2603			.var HPALETTE	= adr.HPALETTE .word
-   439 = 27FB			FILEMODE	= DATAORIGIN+$0005
-   440 = 27FC			SCREENMODE	= DATAORIGIN+$0006
-   441 = 27FD			IORESULT	= DATAORIGIN+$0007
-   442 = 27FE			EOLN	= DATAORIGIN+$0008
-   443 = 27FF			RNDSEED	= DATAORIGIN+$0009
+   439 = 27F8			FILEMODE	= DATAORIGIN+$0005
+   440 = 27F9			SCREENMODE	= DATAORIGIN+$0006
+   441 = 27FA			IORESULT	= DATAORIGIN+$0007
+   442 = 27FB			EOLN	= DATAORIGIN+$0008
+   443 = 27FC			RNDSEED	= DATAORIGIN+$0009
    444
    445 = 2603 C0 02		PALETTE
    445 = 2605 12 D0		HPALETTE
@@ -509,7 +509,7 @@ Source: diskget.a65
    585
    586 2609 20 CC 23			@GetKey
    587
-   588 260C 8D 15 29			sta Result
+   588 260C 8D 12 29			sta Result
    589
    590 260F 68 AA			pla:tax
    591
@@ -521,7 +521,7 @@ Source: diskget.a65
    597 				; as Pointer
    598
    599 2611 E8				inx						; add bx, 1
-   600 2612 AD 15 29 95 98		mva RESULT :STACKORIGIN,x
+   600 2612 AD 12 29 95 98		mva RESULT :STACKORIGIN,x
    601
    602 					.ifdef @new
    603 					@FreeMem #@VarData #@VarDataSize
@@ -529,9 +529,9 @@ Source: diskget.a65
    605
    606 				; ------------------------------------------------------------
    607
-   608 = 2915			RESULT	= DATAORIGIN+$011F
+   608 = 2912			RESULT	= DATAORIGIN+$011F
    609
-   610 = 2915			@VarData	= RESULT
+   610 = 2912			@VarData	= RESULT
    611 = 0001			@VarDataSize	= 1
    612
    613 2617 60				rts						; ret
@@ -539,7 +539,7 @@ Source: diskget.a65
    615
    616 				; ------------------------------------------------------------
    617
-   618 = 2914			TEXTATTR	= DATAORIGIN+$011E
+   618 = 2911			TEXTATTR	= DATAORIGIN+$011E
    619 = D01F			CONSOL	= $D01F
    620 = 0000			CN_START_SELECT_OPTION	= $0000
    621 = 0001			CN_SELECT_OPTION	= $0001
@@ -612,7 +612,7 @@ Source: diskget.a65
    667
    668 				; optimize OK (examples\diskget.pas), line = 26
    669
-   670 263C AD F2 27 85 90 AD + 	mwa F :bp2
+   670 263C AD EF 27 85 90 AD + 	mwa F :bp2
    671 2646 A0 00			ldy #s@file.pfname
    672 2648 A9 25			lda #$25
    673 264A 91 90			sta (:bp2),y
@@ -640,404 +640,401 @@ Source: diskget.a65
    695 2664 38				sec
    696 					@openfile F, MAIN.SYSTEM.FileMode
    696 				 LDY F+1\ LDA F\ LDX MAIN.SYSTEM.FILEMODE\ JSR @OPENFILE
-   696 2665 AC F3 27		 LDY F+1
-   696 2668 AD F2 27		 LDA F
-   696 266B AE FB 27		 LDX MAIN.SYSTEM.FILEMODE
+   696 2665 AC F0 27		 LDY F+1
+   696 2668 AD EF 27		 LDA F
+   696 266B AE F8 27		 LDX MAIN.SYSTEM.FILEMODE
    696 266E 20 7A 20		 JSR @OPENFILE
    697 2671 68 AA			pla:tax
    698
-   699 				; optimize OK (examples\diskget.pas), line = 28
+   699 				; --- For
    700
-   701 2673 A9 01 8D 27 2A		mva #$01 I
-   702 				; --- For
-   703
-   704 				; optimize OK (examples\diskget.pas), line = 29
-   705
-   706 2678 8D 27 2A			sta I
-   707
-   708 				; optimize OK (examples\diskget.pas), line = 29
+   701 				; optimize OK (examples\diskget.pas), line = 28
+   702
+   703 2673 A9 01 8D 24 2A		mva #$01 I
+   704
+   705 				; optimize OK (examples\diskget.pas), line = 28
+   706
+   707 				; --- To
+   708 2678			l_011F
    709
-   710 				; --- To
-   711 267B			l_0123
-   712
-   713 				; --- ForToDoCondition
-   714
-   715 				; optimize OK (examples\diskget.pas), line = 29
-   716
-   717 267B AD 27 2A			lda I
-   718 267E C9 0F			cmp #$0F
-   719 2680 90 02			scc
-   720 2682 D0 3F			jne l_0131
-   721
-   722 				; BlockRead
-   723
-   724 				; optimize OK (examples\diskget.pas), line = 30
-   725
-   726 2684 AD F2 27 85 90 AD + 	mwa F :bp2
-   727 268E A0 06			ldy #s@file.buffer
-   728 2690 A9 26			lda <N
-   729 2692 91 90			sta (:bp2),y
-   730 2694 C8				iny
-   731 2695 A9 2A			lda >N
-   732 2697 91 90			sta (:bp2),y
-   733
-   734 				; optimize OK (examples\diskget.pas), line = 30
-   735
-   736 2699 A0 08			ldy #s@file.nrecord
-   737 269B A9 01			lda #$01
-   738 269D 91 90			sta (:bp2),y
-   739 269F C8				iny
-   740 26A0 A9 00			lda #$00
-   741 26A2 91 90			sta (:bp2),y
-   742
-   743 26A4 8A 48			txa:pha
-   744 26A6 38				sec
-   745 					@readfile F, #7
-   745 				 LDY F+1\ LDA F\ LDX# 7\ JSR @READFILE
-   745 26A7 AC F3 27		 LDY F+1
-   745 26AA AD F2 27		 LDA F
-   745 26AD A2 07		 LDX# 7
-   745 26AF 20 4E 21		 JSR @READFILE
-   746 26B2 68 AA			pla:tax
-   747
-   748 				; optimize FAIL (100, examples\diskget.pas), line = 31
-   749 26B4 E8				inx
-   750 26B5 AD 26 2A 95 98		mva N :STACKORIGIN,x
-   751 26BA 20 F5 22			@printCHAR
-   752 26BD CA				dex
+   710 				; --- ForToDoCondition
+   711
+   712 				; optimize OK (examples\diskget.pas), line = 28
+   713
+   714 2678 AD 24 2A			lda I
+   715 267B C9 0F			cmp #$0F
+   716 267D 90 02			scc
+   717 267F D0 3F			jne l_012D
+   718
+   719 				; BlockRead
+   720
+   721 				; optimize OK (examples\diskget.pas), line = 29
+   722
+   723 2681 AD EF 27 85 90 AD + 	mwa F :bp2
+   724 268B A0 06			ldy #s@file.buffer
+   725 268D A9 23			lda <N
+   726 268F 91 90			sta (:bp2),y
+   727 2691 C8				iny
+   728 2692 A9 2A			lda >N
+   729 2694 91 90			sta (:bp2),y
+   730
+   731 				; optimize OK (examples\diskget.pas), line = 29
+   732
+   733 2696 A0 08			ldy #s@file.nrecord
+   734 2698 A9 01			lda #$01
+   735 269A 91 90			sta (:bp2),y
+   736 269C C8				iny
+   737 269D A9 00			lda #$00
+   738 269F 91 90			sta (:bp2),y
+   739
+   740 26A1 8A 48			txa:pha
+   741 26A3 38				sec
+   742 					@readfile F, #7
+   742 				 LDY F+1\ LDA F\ LDX# 7\ JSR @READFILE
+   742 26A4 AC F0 27		 LDY F+1
+   742 26A7 AD EF 27		 LDA F
+   742 26AA A2 07		 LDX# 7
+   742 26AC 20 4E 21		 JSR @READFILE
+   743 26AF 68 AA			pla:tax
+   744
+   745 				; optimize FAIL (100, examples\diskget.pas), line = 30
+   746 26B1 E8				inx
+   747 26B2 AD 23 2A 95 98		mva N :STACKORIGIN,x
+   748 26B7 20 F5 22			@printCHAR
+   749 26BA CA				dex
+   750
+   751 				; --- ForToDoEpilog
+   752 26BB EE 24 2A			inc I						; inc ptr byte [CounterAddress]
    753
-   754 				; --- ForToDoEpilog
-   755 26BE EE 27 2A			inc I						; inc ptr byte [CounterAddress]
-   756
-   757 26C1 D0 B8			jne l_0123
+   754 26BE D0 B8			jne l_011F
+   755
+   756 26C0			l_012D
+   757 				; CloseFile
    758
-   759 26C3			l_0131
-   760 				; CloseFile
-   761
-   762 26C3 8A 48			txa:pha
-   763 26C5 38				sec
-   764 					@closefile F
-   764 				 LDY F+1\ LDA F\ JSR @CLOSEFILE
-   764 26C6 AC F3 27		 LDY F+1
-   764 26C9 AD F2 27		 LDA F
-   764 26CC 20 21 21		 JSR @CLOSEFILE
-   765 26CF 68 AA			pla:tax
-   766
-   767 				; optimize FAIL (100, examples\diskget.pas), line = 34
-   768 					@printSTRING #CODEORIGIN+$0022
-   768 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
-   768 26D1 A0 20		 LDY> CODEORIGIN+$0022
-   768 26D3 A9 22		 LDA< CODEORIGIN+$0022
-   768 26D5 20 08 23		 JSR @PRINTSTRING
-   769 					@print #$9B
-   769 				 LDY# $9B\ JSR @PRINT
-   769 26D8 A0 9B		 LDY# $9B
-   769 26DA 20 FF 22		 JSR @PRINT
-   770 					@printSTRING #CODEORIGIN+$0035
-   770 				 LDY> CODEORIGIN+$0035\ LDA< CODEORIGIN+$0035\ JSR @PRINTSTRING
-   770 26DD A0 20		 LDY> CODEORIGIN+$0035
-   770 26DF A9 35		 LDA< CODEORIGIN+$0035
-   770 26E1 20 08 23		 JSR @PRINTSTRING
-   771 					@print #$9B
-   771 				 LDY# $9B\ JSR @PRINT
-   771 26E4 A0 9B		 LDY# $9B
-   771 26E6 20 FF 22		 JSR @PRINT
-   772 					@printSTRING #CODEORIGIN+$0022
-   772 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
-   772 26E9 A0 20		 LDY> CODEORIGIN+$0022
-   772 26EB A9 22		 LDA< CODEORIGIN+$0022
-   772 26ED 20 08 23		 JSR @PRINTSTRING
-   773 					@print #$9B
-   773 				 LDY# $9B\ JSR @PRINT
-   773 26F0 A0 9B		 LDY# $9B
-   773 26F2 20 FF 22		 JSR @PRINT
-   774 					@printSTRING #CODEORIGIN+$0022
-   774 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
-   774 26F5 A0 20		 LDY> CODEORIGIN+$0022
-   774 26F7 A9 22		 LDA< CODEORIGIN+$0022
-   774 26F9 20 08 23		 JSR @PRINTSTRING
-   775
-   776 				; optimize FAIL (100, examples\diskget.pas), line = 35
-   777 					@printSTRING #CODEORIGIN+$0048
-   777 				 LDY> CODEORIGIN+$0048\ LDA< CODEORIGIN+$0048\ JSR @PRINTSTRING
-   777 26FC A0 20		 LDY> CODEORIGIN+$0048
-   777 26FE A9 48		 LDA< CODEORIGIN+$0048
-   777 2700 20 08 23		 JSR @PRINTSTRING
-   778 2703 20 FA 22			@printEOL
-   779 				; AssignFile
-   780
-   781 				; optimize OK (examples\diskget.pas), line = 36
-   782
-   783 2706 AD F2 27 85 90 AD + 	mwa F :bp2
-   784 2710 A0 00			ldy #s@file.pfname
-   785 2712 A9 25			lda #$25
-   786 2714 91 90			sta (:bp2),y
-   787 2716 C8				iny
-   788 2717 A9 20			lda #$20
-   789 2719 91 90			sta (:bp2),y
-   790
-   791 				; optimize OK (examples\diskget.pas), line = 36
-   792
-   793 271B A0 05			ldy #s@file.status
-   794 271D A9 00			lda #$00
-   795 271F 91 90			sta (:bp2),y
-   796 				; Reset
-   797
-   798 				; optimize OK (examples\diskget.pas), line = 37
-   799
-   800 2721 A0 02			ldy #s@file.record
-   801 2723 A9 01			lda #$01
-   802 2725 91 90			sta (:bp2),y
-   803 2727 C8				iny
-   804 2728 A9 00			lda #$00
-   805 272A 91 90			sta (:bp2),y
-   806
-   807 272C 8A 48			txa:pha
-   808 272E 38				sec
-   809 					@openfile F, MAIN.SYSTEM.FileMode
-   809 				 LDY F+1\ LDA F\ LDX MAIN.SYSTEM.FILEMODE\ JSR @OPENFILE
-   809 272F AC F3 27		 LDY F+1
-   809 2732 AD F2 27		 LDA F
-   809 2735 AE FB 27		 LDX MAIN.SYSTEM.FILEMODE
-   809 2738 20 7A 20		 JSR @OPENFILE
-   810 273B 68 AA			pla:tax
-   811
-   812 				; --- RepeatUntilProlog
-   813 273D			l_0174
-   814 				; BlockRead
-   815
-   816 				; optimize OK (examples\diskget.pas), line = 39
-   817
-   818 273D AD F2 27 85 90 AD + 	mwa F :bp2
-   819 2747 A0 06			ldy #s@file.buffer
-   820 2749 A9 26			lda <N
-   821 274B 91 90			sta (:bp2),y
-   822 274D C8				iny
-   823 274E A9 2A			lda >N
-   824 2750 91 90			sta (:bp2),y
-   825
-   826 				; optimize OK (examples\diskget.pas), line = 39
-   827
-   828 2752 A0 08			ldy #s@file.nrecord
-   829 2754 A9 01			lda #$01
-   830 2756 91 90			sta (:bp2),y
-   831 2758 C8				iny
-   832 2759 A9 00			lda #$00
-   833 275B 91 90			sta (:bp2),y
-   834
-   835 275D 8A 48			txa:pha
-   836 275F 38				sec
-   837 					@readfile F, #7
-   837 				 LDY F+1\ LDA F\ LDX# 7\ JSR @READFILE
-   837 2760 AC F3 27		 LDY F+1
-   837 2763 AD F2 27		 LDA F
-   837 2766 A2 07		 LDX# 7
-   837 2768 20 4E 21		 JSR @READFILE
-   838 276B 68 AA			pla:tax
-   839
-   840 				; optimize FAIL (100, examples\diskget.pas), line = 40
-   841 276D E8				inx
-   842 276E AD 26 2A 95 98		mva N :STACKORIGIN,x
-   843 2773 20 F5 22			@printCHAR
-   844 2776 CA				dex
-   845
-   846 				; optimize FAIL ('SYSTEM.EOF', examples\diskget.pas), line = 41
-   847 2777 E8				inx
-   848 2778 AD F2 27 95 98		mva F :STACKORIGIN,x
-   849 277D AD F3 27 95 A8		mva F+1 :STACKORIGIN+STACKWIDTH,x
-   850 2782 20 64 25			jsr SYSTEM.EOF
-   851 2785 CA				dex
-   852 2786 B5 99			lda :STACKORIGIN+1,x
-   853 2788 F0 B3			jeq l_0174
-   854 				; CloseFile
-   855
-   856 278A 8A 48			txa:pha
-   857 278C 38				sec
-   858 					@closefile F
-   858 				 LDY F+1\ LDA F\ JSR @CLOSEFILE
-   858 278D AC F3 27		 LDY F+1
-   858 2790 AD F2 27		 LDA F
-   858 2793 20 21 21		 JSR @CLOSEFILE
-   859 2796 68 AA			pla:tax
-   860
-   861 				; optimize FAIL (100, examples\diskget.pas), line = 43
-   862 					@printSTRING #CODEORIGIN+$0022
-   862 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
-   862 2798 A0 20		 LDY> CODEORIGIN+$0022
-   862 279A A9 22		 LDA< CODEORIGIN+$0022
-   862 279C 20 08 23		 JSR @PRINTSTRING
-   863 					@print #$9B
-   863 				 LDY# $9B\ JSR @PRINT
-   863 279F A0 9B		 LDY# $9B
-   863 27A1 20 FF 22		 JSR @PRINT
-   864 					@printSTRING #CODEORIGIN+$0022
-   864 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
-   864 27A4 A0 20		 LDY> CODEORIGIN+$0022
-   864 27A6 A9 22		 LDA< CODEORIGIN+$0022
-   864 27A8 20 08 23		 JSR @PRINTSTRING
-   865 					@print #$9B
-   865 				 LDY# $9B\ JSR @PRINT
-   865 27AB A0 9B		 LDY# $9B
-   865 27AD 20 FF 22		 JSR @PRINT
-   866 					@printSTRING #CODEORIGIN+$005D
-   866 				 LDY> CODEORIGIN+$005D\ LDA< CODEORIGIN+$005D\ JSR @PRINTSTRING
-   866 27B0 A0 20		 LDY> CODEORIGIN+$005D
-   866 27B2 A9 5D		 LDA< CODEORIGIN+$005D
-   866 27B4 20 08 23		 JSR @PRINTSTRING
-   867 					@print #$9B
-   867 				 LDY# $9B\ JSR @PRINT
-   867 27B7 A0 9B		 LDY# $9B
-   867 27B9 20 FF 22		 JSR @PRINT
-   868 					@printSTRING #CODEORIGIN+$0022
-   868 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
-   868 27BC A0 20		 LDY> CODEORIGIN+$0022
-   868 27BE A9 22		 LDA< CODEORIGIN+$0022
-   868 27C0 20 08 23		 JSR @PRINTSTRING
-   869
-   870 				; optimize FAIL ('CRT.READKEY', examples\diskget.pas), line = 44
-   871 27C3 20 07 26			jsr CRT.READKEY
-   872 27C6 B5 98 8D 28 2A		mva :STACKORIGIN,x KEY
-   873 27CB CA				dex
-   874
-   875 				; ------------------------------------------------------------
-   876
-   877 = 000F			@FORTMP_0120	= $000F
-   878 27CC			@exit
-   879 					.ifdef @new
-   880 					@FreeMem #@VarData #@VarDataSize
-   881 					eif
-   882 27CC 60				rts						; ret
-   883 				.endl
-   884 27CD			l_0081
-   885
-   886 				; optimize FAIL ('MAINPROC', examples\diskget.pas), line = 48
-   887 27CD 20 18 26			jsr MAINPROC
-   888 				; CloseFile
-   889
-   890 27D0 8A 48			txa:pha
-   891 27D2 38				sec
-   892 					@closefile F
-   892 				 LDY F+1\ LDA F\ JSR @CLOSEFILE
-   892 27D3 AC F3 27		 LDY F+1
-   892 27D6 AD F2 27		 LDA F
-   892 27D9 20 21 21		 JSR @CLOSEFILE
-   893 27DC 68 AA			pla:tax
-   894
-   895 				; ------------------------------------------------------------
-   896
-   897 = 2916			INTVALUE	= DATAORIGIN+$0120
-   898 27DE			.var F	= DATAORIGIN+$0124 .word
-   899 = 2926			adr.STRBUFFER	= DATAORIGIN+$0130
-   900 27DE			.var STRBUFFER	= adr.STRBUFFER .word
-   901 = 2A26			N	= DATAORIGIN+$0230
-   902 = 2A27			I	= DATAORIGIN+$0231
-   903 = 2A28			KEY	= DATAORIGIN+$0232
-   904 27DE			@exit
+   759 26C0 8A 48			txa:pha
+   760 26C2 38				sec
+   761 					@closefile F
+   761 				 LDY F+1\ LDA F\ JSR @CLOSEFILE
+   761 26C3 AC F0 27		 LDY F+1
+   761 26C6 AD EF 27		 LDA F
+   761 26C9 20 21 21		 JSR @CLOSEFILE
+   762 26CC 68 AA			pla:tax
+   763
+   764 				; optimize FAIL (100, examples\diskget.pas), line = 33
+   765 					@printSTRING #CODEORIGIN+$0022
+   765 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
+   765 26CE A0 20		 LDY> CODEORIGIN+$0022
+   765 26D0 A9 22		 LDA< CODEORIGIN+$0022
+   765 26D2 20 08 23		 JSR @PRINTSTRING
+   766 					@print #$9B
+   766 				 LDY# $9B\ JSR @PRINT
+   766 26D5 A0 9B		 LDY# $9B
+   766 26D7 20 FF 22		 JSR @PRINT
+   767 					@printSTRING #CODEORIGIN+$0035
+   767 				 LDY> CODEORIGIN+$0035\ LDA< CODEORIGIN+$0035\ JSR @PRINTSTRING
+   767 26DA A0 20		 LDY> CODEORIGIN+$0035
+   767 26DC A9 35		 LDA< CODEORIGIN+$0035
+   767 26DE 20 08 23		 JSR @PRINTSTRING
+   768 					@print #$9B
+   768 				 LDY# $9B\ JSR @PRINT
+   768 26E1 A0 9B		 LDY# $9B
+   768 26E3 20 FF 22		 JSR @PRINT
+   769 					@printSTRING #CODEORIGIN+$0022
+   769 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
+   769 26E6 A0 20		 LDY> CODEORIGIN+$0022
+   769 26E8 A9 22		 LDA< CODEORIGIN+$0022
+   769 26EA 20 08 23		 JSR @PRINTSTRING
+   770 					@print #$9B
+   770 				 LDY# $9B\ JSR @PRINT
+   770 26ED A0 9B		 LDY# $9B
+   770 26EF 20 FF 22		 JSR @PRINT
+   771 					@printSTRING #CODEORIGIN+$0022
+   771 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
+   771 26F2 A0 20		 LDY> CODEORIGIN+$0022
+   771 26F4 A9 22		 LDA< CODEORIGIN+$0022
+   771 26F6 20 08 23		 JSR @PRINTSTRING
+   772
+   773 				; optimize FAIL (100, examples\diskget.pas), line = 34
+   774 					@printSTRING #CODEORIGIN+$0048
+   774 				 LDY> CODEORIGIN+$0048\ LDA< CODEORIGIN+$0048\ JSR @PRINTSTRING
+   774 26F9 A0 20		 LDY> CODEORIGIN+$0048
+   774 26FB A9 48		 LDA< CODEORIGIN+$0048
+   774 26FD 20 08 23		 JSR @PRINTSTRING
+   775 2700 20 FA 22			@printEOL
+   776 				; AssignFile
+   777
+   778 				; optimize OK (examples\diskget.pas), line = 35
+   779
+   780 2703 AD EF 27 85 90 AD + 	mwa F :bp2
+   781 270D A0 00			ldy #s@file.pfname
+   782 270F A9 25			lda #$25
+   783 2711 91 90			sta (:bp2),y
+   784 2713 C8				iny
+   785 2714 A9 20			lda #$20
+   786 2716 91 90			sta (:bp2),y
+   787
+   788 				; optimize OK (examples\diskget.pas), line = 35
+   789
+   790 2718 A0 05			ldy #s@file.status
+   791 271A A9 00			lda #$00
+   792 271C 91 90			sta (:bp2),y
+   793 				; Reset
+   794
+   795 				; optimize OK (examples\diskget.pas), line = 36
+   796
+   797 271E A0 02			ldy #s@file.record
+   798 2720 A9 01			lda #$01
+   799 2722 91 90			sta (:bp2),y
+   800 2724 C8				iny
+   801 2725 A9 00			lda #$00
+   802 2727 91 90			sta (:bp2),y
+   803
+   804 2729 8A 48			txa:pha
+   805 272B 38				sec
+   806 					@openfile F, MAIN.SYSTEM.FileMode
+   806 				 LDY F+1\ LDA F\ LDX MAIN.SYSTEM.FILEMODE\ JSR @OPENFILE
+   806 272C AC F0 27		 LDY F+1
+   806 272F AD EF 27		 LDA F
+   806 2732 AE F8 27		 LDX MAIN.SYSTEM.FILEMODE
+   806 2735 20 7A 20		 JSR @OPENFILE
+   807 2738 68 AA			pla:tax
+   808
+   809 				; --- RepeatUntilProlog
+   810 273A			l_0170
+   811 				; BlockRead
+   812
+   813 				; optimize OK (examples\diskget.pas), line = 38
+   814
+   815 273A AD EF 27 85 90 AD + 	mwa F :bp2
+   816 2744 A0 06			ldy #s@file.buffer
+   817 2746 A9 23			lda <N
+   818 2748 91 90			sta (:bp2),y
+   819 274A C8				iny
+   820 274B A9 2A			lda >N
+   821 274D 91 90			sta (:bp2),y
+   822
+   823 				; optimize OK (examples\diskget.pas), line = 38
+   824
+   825 274F A0 08			ldy #s@file.nrecord
+   826 2751 A9 01			lda #$01
+   827 2753 91 90			sta (:bp2),y
+   828 2755 C8				iny
+   829 2756 A9 00			lda #$00
+   830 2758 91 90			sta (:bp2),y
+   831
+   832 275A 8A 48			txa:pha
+   833 275C 38				sec
+   834 					@readfile F, #7
+   834 				 LDY F+1\ LDA F\ LDX# 7\ JSR @READFILE
+   834 275D AC F0 27		 LDY F+1
+   834 2760 AD EF 27		 LDA F
+   834 2763 A2 07		 LDX# 7
+   834 2765 20 4E 21		 JSR @READFILE
+   835 2768 68 AA			pla:tax
+   836
+   837 				; optimize FAIL (100, examples\diskget.pas), line = 39
+   838 276A E8				inx
+   839 276B AD 23 2A 95 98		mva N :STACKORIGIN,x
+   840 2770 20 F5 22			@printCHAR
+   841 2773 CA				dex
+   842
+   843 				; optimize FAIL ('SYSTEM.EOF', examples\diskget.pas), line = 40
+   844 2774 E8				inx
+   845 2775 AD EF 27 95 98		mva F :STACKORIGIN,x
+   846 277A AD F0 27 95 A8		mva F+1 :STACKORIGIN+STACKWIDTH,x
+   847 277F 20 64 25			jsr SYSTEM.EOF
+   848 2782 CA				dex
+   849 2783 B5 99			lda :STACKORIGIN+1,x
+   850 2785 F0 B3			jeq l_0170
+   851 				; CloseFile
+   852
+   853 2787 8A 48			txa:pha
+   854 2789 38				sec
+   855 					@closefile F
+   855 				 LDY F+1\ LDA F\ JSR @CLOSEFILE
+   855 278A AC F0 27		 LDY F+1
+   855 278D AD EF 27		 LDA F
+   855 2790 20 21 21		 JSR @CLOSEFILE
+   856 2793 68 AA			pla:tax
+   857
+   858 				; optimize FAIL (100, examples\diskget.pas), line = 42
+   859 					@printSTRING #CODEORIGIN+$0022
+   859 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
+   859 2795 A0 20		 LDY> CODEORIGIN+$0022
+   859 2797 A9 22		 LDA< CODEORIGIN+$0022
+   859 2799 20 08 23		 JSR @PRINTSTRING
+   860 					@print #$9B
+   860 				 LDY# $9B\ JSR @PRINT
+   860 279C A0 9B		 LDY# $9B
+   860 279E 20 FF 22		 JSR @PRINT
+   861 					@printSTRING #CODEORIGIN+$0022
+   861 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
+   861 27A1 A0 20		 LDY> CODEORIGIN+$0022
+   861 27A3 A9 22		 LDA< CODEORIGIN+$0022
+   861 27A5 20 08 23		 JSR @PRINTSTRING
+   862 					@print #$9B
+   862 				 LDY# $9B\ JSR @PRINT
+   862 27A8 A0 9B		 LDY# $9B
+   862 27AA 20 FF 22		 JSR @PRINT
+   863 					@printSTRING #CODEORIGIN+$005D
+   863 				 LDY> CODEORIGIN+$005D\ LDA< CODEORIGIN+$005D\ JSR @PRINTSTRING
+   863 27AD A0 20		 LDY> CODEORIGIN+$005D
+   863 27AF A9 5D		 LDA< CODEORIGIN+$005D
+   863 27B1 20 08 23		 JSR @PRINTSTRING
+   864 					@print #$9B
+   864 				 LDY# $9B\ JSR @PRINT
+   864 27B4 A0 9B		 LDY# $9B
+   864 27B6 20 FF 22		 JSR @PRINT
+   865 					@printSTRING #CODEORIGIN+$0022
+   865 				 LDY> CODEORIGIN+$0022\ LDA< CODEORIGIN+$0022\ JSR @PRINTSTRING
+   865 27B9 A0 20		 LDY> CODEORIGIN+$0022
+   865 27BB A9 22		 LDA< CODEORIGIN+$0022
+   865 27BD 20 08 23		 JSR @PRINTSTRING
+   866
+   867 				; optimize FAIL ('CRT.READKEY', examples\diskget.pas), line = 43
+   868 27C0 20 07 26			jsr CRT.READKEY
+   869 27C3 B5 98 8D 25 2A		mva :STACKORIGIN,x KEY
+   870 27C8 CA				dex
+   871
+   872 				; ------------------------------------------------------------
+   873
+   874 = 000F			@FORTMP_011C	= $000F
+   875 27C9			@exit
+   876 					.ifdef @new
+   877 					@FreeMem #@VarData #@VarDataSize
+   878 					eif
+   879 27C9 60				rts						; ret
+   880 				.endl
+   881 27CA			l_0081
+   882
+   883 				; optimize FAIL ('MAINPROC', examples\diskget.pas), line = 47
+   884 27CA 20 18 26			jsr MAINPROC
+   885 				; CloseFile
+   886
+   887 27CD 8A 48			txa:pha
+   888 27CF 38				sec
+   889 					@closefile F
+   889 				 LDY F+1\ LDA F\ JSR @CLOSEFILE
+   889 27D0 AC F0 27		 LDY F+1
+   889 27D3 AD EF 27		 LDA F
+   889 27D6 20 21 21		 JSR @CLOSEFILE
+   890 27D9 68 AA			pla:tax
+   891
+   892 				; ------------------------------------------------------------
+   893
+   894 = 2913			INTVALUE	= DATAORIGIN+$0120
+   895 27DB			.var F	= DATAORIGIN+$0124 .word
+   896 = 2923			adr.STRBUFFER	= DATAORIGIN+$0130
+   897 27DB			.var STRBUFFER	= adr.STRBUFFER .word
+   898 = 2A23			N	= DATAORIGIN+$0230
+   899 = 2A24			I	= DATAORIGIN+$0231
+   900 = 2A25			KEY	= DATAORIGIN+$0232
+   901 27DB			@exit
+   902
+   903 27DB A2 00		@halt	ldx #0
+   904 27DD 9A				txs
    905
-   906 27DE A2 00		@halt	ldx #0
-   907 27E0 9A				txs
-   908
-   909 27E1 60				rts
-   910
-   911 				; ------------------------------------------------------------
-   912
-   913 27E2 00 00 00 00 00 00 + IOCB@COPY	:16 brk
-   914
-   915 				; ------------------------------------------------------------
-   916
-   917 27F2			.local	@DEFINES
-   918 27F2			ATARI
-   919 				.endl
-   920
-   921 = 27F2 1A 29		F
-   921 = 27F4 26 29		STRBUFFER
-   921 				.endl							; MAIN
+   906 27DE 60				rts
+   907
+   908 				; ------------------------------------------------------------
+   909
+   910 27DF 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+   911
+   912 				; ------------------------------------------------------------
+   913
+   914 27EF			.local	@DEFINES
+   915 27EF			ATARI
+   916 				.endl
+   917
+   918 = 27EF 17 29		F
+   918 = 27F1 23 29		STRBUFFER
+   918 				.endl							; MAIN
+   919
+   920 				; ------------------------------------------------------------
+   921 				; ------------------------------------------------------------
    922
-   923 				; ------------------------------------------------------------
-   924 				; ------------------------------------------------------------
-   925
-   926 				.macro	UNITINITIALIZATION
-   927 				
-   928 					.ifdef MAIN.SYSTEM.@UnitInit
-   929 					jsr MAIN.SYSTEM.@UnitInit
-   930 					eif
-   931 				
-   932 					.ifdef MAIN.DOS.@UnitInit
-   933 					jsr MAIN.DOS.@UnitInit
-   934 					eif
-   935 				
-   936 					.ifdef MAIN.STRUTILS.@UnitInit
-   937 					jsr MAIN.STRUTILS.@UnitInit
-   938 					eif
-   939 				
-   940 					.ifdef MAIN.SYSUTILS.@UnitInit
-   941 					jsr MAIN.SYSUTILS.@UnitInit
-   942 					eif
-   943 				
-   944 					.ifdef MAIN.ATARI.@UnitInit
-   945 					jsr MAIN.ATARI.@UnitInit
-   946 					eif
-   947 				
-   948 					.ifdef MAIN.CRT.@UnitInit
-   949 					jsr MAIN.CRT.@UnitInit
-   950 					eif
-   951 				.endm
-   952
-   953 				; ------------------------------------------------------------
-   954
-   955 					ift .SIZEOF(MAIN.SYSTEM) > 0
-   956 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-   956 				SYSTEM: $2476..$2606
-   957 					eif
-   958
-   959 					ift .SIZEOF(MAIN.DOS) > 0
-   960 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-   961 					eif
-   962
-   963 					ift .SIZEOF(MAIN.STRUTILS) > 0
-   964 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-   965 					eif
-   966
-   967 					ift .SIZEOF(MAIN.SYSUTILS) > 0
-   968 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-   969 					eif
-   970
-   971 					ift .SIZEOF(MAIN.ATARI) > 0
-   972 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
-   973 					eif
-   974
-   975 					ift .SIZEOF(MAIN.CRT) > 0
-   976 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-   976 				CRT: $2607..$2617
-   977 					eif
-   978
-   979 					.print 'CODE: ',CODEORIGIN,'..',*-1
-   979 				CODE: $2000..$27F5
-   980
-   981 				; ------------------------------------------------------------
+   923 				.macro	UNITINITIALIZATION
+   924 				
+   925 					.ifdef MAIN.SYSTEM.@UnitInit
+   926 					jsr MAIN.SYSTEM.@UnitInit
+   927 					eif
+   928 				
+   929 					.ifdef MAIN.DOS.@UnitInit
+   930 					jsr MAIN.DOS.@UnitInit
+   931 					eif
+   932 				
+   933 					.ifdef MAIN.STRUTILS.@UnitInit
+   934 					jsr MAIN.STRUTILS.@UnitInit
+   935 					eif
+   936 				
+   937 					.ifdef MAIN.SYSUTILS.@UnitInit
+   938 					jsr MAIN.SYSUTILS.@UnitInit
+   939 					eif
+   940 				
+   941 					.ifdef MAIN.ATARI.@UnitInit
+   942 					jsr MAIN.ATARI.@UnitInit
+   943 					eif
+   944 				
+   945 					.ifdef MAIN.CRT.@UnitInit
+   946 					jsr MAIN.CRT.@UnitInit
+   947 					eif
+   948 				.endm
+   949
+   950 				; ------------------------------------------------------------
+   951
+   952 					ift .SIZEOF(MAIN.SYSTEM) > 0
+   953 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+   953 				SYSTEM: $2476..$2606
+   954 					eif
+   955
+   956 					ift .SIZEOF(MAIN.DOS) > 0
+   957 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+   958 					eif
+   959
+   960 					ift .SIZEOF(MAIN.STRUTILS) > 0
+   961 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
+   962 					eif
+   963
+   964 					ift .SIZEOF(MAIN.SYSUTILS) > 0
+   965 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
+   966 					eif
+   967
+   968 					ift .SIZEOF(MAIN.ATARI) > 0
+   969 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+   970 					eif
+   971
+   972 					ift .SIZEOF(MAIN.CRT) > 0
+   973 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+   973 				CRT: $2607..$2617
+   974 					eif
+   975
+   976 					.print 'CODE: ',CODEORIGIN,'..',*-1
+   976 				CODE: $2000..$27F2
+   977
+   978 				; ------------------------------------------------------------
+   979
+   980 27F3			DATAORIGIN
+   981 27F3 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
    982
-   983 27F6			DATAORIGIN
-   984 27F6 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
+   983 = 0006			VARINITSIZE	= *-DATAORIGIN
+   984 = 0233			VARDATASIZE	= 563
    985
-   986 = 0006			VARINITSIZE	= *-DATAORIGIN
-   987 = 0233			VARDATASIZE	= 563
-   988
-   989 = 2A29			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
-   990
-   991 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-   991 				DATA: $27F6..$2A29
-   992
-   993 02E0-02E1> 4A 24			run START
-   994
-   995 				; ------------------------------------------------------------
-   996
-   997 				.macro	STATICDATA
-   998 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $14 $47 $65  $74 $44 $20 $61 $6E $64 $20 $45
-   999 				.by  $4F $46 $20 $65 $78 $61 $6D $70  $6C $65 $00 $00 $00 $0E $48 $31  $3A $54 $45 $53 $54 $4E $55 $4D
-  1000 				.by  $2E $54 $58 $54 $00 $11 $41 $6C  $6C $20 $6E $75 $6D $62 $65 $72  $73 $20 $72 $65 $61 $64 $21 $00
-  1001 				.by  $13 $52 $65 $61 $64 $20 $6E $75  $6D $62 $65 $72 $73 $20 $61 $67  $61 $69 $6E $3A $00 $1B $41 $6C
-  1002 				.by  $6C $20 $6E $75 $6D $62 $65 $72  $73 $20 $61 $72 $65 $20 $72 $65  $61 $64 $20 $61 $67 $61 $69 $6E
-  1003 				.by  $21 $00
-  1004 				.endm
-  1005
-  1006 					end
+   986 = 2A26			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+   987
+   988 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+   988 				DATA: $27F3..$2A26
+   989
+   990 02E0-02E1> 4A 24			run START
+   991
+   992 				; ------------------------------------------------------------
+   993
+   994 				.macro	STATICDATA
+   995 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $14 $47 $65  $74 $44 $20 $61 $6E $64 $20 $45
+   996 				.by  $4F $46 $20 $65 $78 $61 $6D $70  $6C $65 $00 $00 $00 $0E $48 $31  $3A $54 $45 $53 $54 $4E $55 $4D
+   997 				.by  $2E $54 $58 $54 $00 $11 $41 $6C  $6C $20 $6E $75 $6D $62 $65 $72  $73 $20 $72 $65 $61 $64 $21 $00
+   998 				.by  $13 $52 $65 $61 $64 $20 $6E $75  $6D $62 $65 $72 $73 $20 $61 $67  $61 $69 $6E $3A $00 $1B $41 $6C
+   999 				.by  $6C $20 $6E $75 $6D $62 $65 $72  $73 $20 $61 $72 $65 $20 $72 $65  $61 $64 $20 $61 $67 $61 $69 $6E
+  1000 				.by  $21 $00
+  1001 				.endm
+  1002
+  1003 					end

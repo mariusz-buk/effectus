@@ -5,9 +5,10 @@ src/backup
 .DS_Store
 geany
 /src/lib/
+/src/effectus
 **/*.ppu
 **/*.o
-/src/effectus
+/src/lib
 **/efflog.txt
 **/effectus.txt
 /lib/.a65

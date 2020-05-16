@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -518,31 +518,27 @@ BLINK	= $0080
 	@printSTRING #CODEORIGIN+$000F
 	@print #$9B
 	@printSTRING #CODEORIGIN+$000C
+; --- For
 
 ; optimize OK (examples\arrmemc.pas), line = 25
 
 	mva #$00 I
-; --- For
 
-; optimize OK (examples\arrmemc.pas), line = 26
-
-	sta I
-
-; optimize OK (examples\arrmemc.pas), line = 26
+; optimize OK (examples\arrmemc.pas), line = 25
 
 ; --- To
-l_00CF
+l_00CB
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\arrmemc.pas), line = 26
+; optimize OK (examples\arrmemc.pas), line = 25
 
 	lda I
 	cmp #$03
 	scc
-	jne l_00DD
+	jne l_00D9
 
-; optimize FAIL (100, examples\arrmemc.pas), line = 27
+; optimize FAIL (100, examples\arrmemc.pas), line = 26
 	inx
 	mva I :STACKORIGIN,x
 	mva #$00 :STACKORIGIN+STACKWIDTH,x
@@ -564,25 +560,25 @@ l_00CF
 ; --- ForToDoEpilog
 	inc I						; inc ptr byte [CounterAddress]
 
-	jne l_00CF
+	jne l_00CB
 
-l_00DD
+l_00D9
 
-; optimize FAIL (100, examples\arrmemc.pas), line = 29
+; optimize FAIL (100, examples\arrmemc.pas), line = 28
 	@printSTRING #CODEORIGIN+$000C
 	@print #$9B
 	@printSTRING #CODEORIGIN+$001E
 	@print #$9B
 	@printSTRING #CODEORIGIN+$000C
 
-; optimize OK (examples\arrmemc.pas), line = 30
+; optimize OK (examples\arrmemc.pas), line = 29
 
 	lda $8006
 	sta MEM
 	lda $8006+1
 	sta MEM+1
 
-; optimize FAIL (100, examples\arrmemc.pas), line = 31
+; optimize FAIL (100, examples\arrmemc.pas), line = 30
 	inx
 	mva MEM :STACKORIGIN,x
 	mva MEM+1 :STACKORIGIN+STACKWIDTH,x
@@ -590,14 +586,14 @@ l_00DD
 	dex
 	@printEOL
 
-; optimize OK (examples\arrmemc.pas), line = 32
+; optimize OK (examples\arrmemc.pas), line = 31
 
 	lda $8004
 	sta MEM
 	lda $8004+1
 	sta MEM+1
 
-; optimize FAIL (100, examples\arrmemc.pas), line = 33
+; optimize FAIL (100, examples\arrmemc.pas), line = 32
 	inx
 	mva MEM :STACKORIGIN,x
 	mva MEM+1 :STACKORIGIN+STACKWIDTH,x
@@ -605,14 +601,14 @@ l_00DD
 	dex
 	@printEOL
 
-; optimize OK (examples\arrmemc.pas), line = 34
+; optimize OK (examples\arrmemc.pas), line = 33
 
 	lda $8002
 	sta MEM
 	lda $8002+1
 	sta MEM+1
 
-; optimize FAIL (100, examples\arrmemc.pas), line = 35
+; optimize FAIL (100, examples\arrmemc.pas), line = 34
 	inx
 	mva MEM :STACKORIGIN,x
 	mva MEM+1 :STACKORIGIN+STACKWIDTH,x
@@ -620,14 +616,14 @@ l_00DD
 	dex
 	@printEOL
 
-; optimize OK (examples\arrmemc.pas), line = 36
+; optimize OK (examples\arrmemc.pas), line = 35
 
 	lda $8000
 	sta MEM
 	lda $8000+1
 	sta MEM+1
 
-; optimize FAIL (100, examples\arrmemc.pas), line = 37
+; optimize FAIL (100, examples\arrmemc.pas), line = 36
 	inx
 	mva MEM :STACKORIGIN,x
 	mva MEM+1 :STACKORIGIN+STACKWIDTH,x
@@ -635,7 +631,7 @@ l_00DD
 	dex
 	@printEOL
 
-; optimize FAIL ('CRT.READKEY', examples\arrmemc.pas), line = 38
+; optimize FAIL ('CRT.READKEY', examples\arrmemc.pas), line = 37
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -647,7 +643,7 @@ I	= DATAORIGIN+$0010
 MEM	= DATAORIGIN+$0011
 adr.ARR	= $8000
 .var ARR	= adr.ARR .word
-@FORTMP_00CC	= $0003
+@FORTMP_00C8	= $0003
 
 @VarData	= KEY
 @VarDataSize	= 516
@@ -660,7 +656,7 @@ adr.ARR	= $8000
 .endl
 l_0048
 
-; optimize FAIL ('MAINPROC', examples\arrmemc.pas), line = 42
+; optimize FAIL ('MAINPROC', examples\arrmemc.pas), line = 41
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

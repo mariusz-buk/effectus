@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -500,34 +500,30 @@ BLINK	= $0080
 ; optimize OK (examples\atascii.pas), line = 41
 
 	mva #$34 adr.ARR+$04
+; --- For
 
 ; optimize OK (examples\atascii.pas), line = 42
 
 	mva #$02 N
-; --- For
 
-; optimize OK (examples\atascii.pas), line = 43
-
-	sta N
-
-; optimize OK (examples\atascii.pas), line = 43
+; optimize OK (examples\atascii.pas), line = 42
 
 ; --- To
-l_0128
+l_0136
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\atascii.pas), line = 43
+; optimize OK (examples\atascii.pas), line = 42
 
 	lda N
 	cmp #$04
 	scc
-	jne l_0136
+	jne l_0144
 
-; optimize FAIL (100, examples\atascii.pas), line = 44
+; optimize FAIL (100, examples\atascii.pas), line = 43
 	@print #$2C
 
-; optimize FAIL (100, examples\atascii.pas), line = 45
+; optimize FAIL (100, examples\atascii.pas), line = 44
 	inx
 	ldy N
 	mva adr.ARR,y :STACKORIGIN,x
@@ -537,11 +533,11 @@ l_0128
 ; --- ForToDoEpilog
 	inc N						; inc ptr byte [CounterAddress]
 
-	jne l_0128
+	jne l_0136
 
-l_0136
+l_0144
 
-; optimize FAIL ('CRT.READKEY', examples\atascii.pas), line = 47
+; optimize FAIL ('CRT.READKEY', examples\atascii.pas), line = 46
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -554,7 +550,7 @@ A	= DATAORIGIN+$000F
 B	= DATAORIGIN+$0010
 adr.ARR	= DATAORIGIN+$0011
 .var ARR	= adr.ARR .word
-@FORTMP_0125	= $0004
+@FORTMP_0133	= $0004
 
 @VarData	= KEY
 @VarDataSize	= 10
@@ -567,7 +563,7 @@ adr.ARR	= DATAORIGIN+$0011
 .endl
 l_0073
 
-; optimize FAIL ('MAINPROC', examples\atascii.pas), line = 51
+; optimize FAIL ('MAINPROC', examples\atascii.pas), line = 50
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

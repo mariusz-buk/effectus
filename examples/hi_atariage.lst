@@ -1,4 +1,4 @@
-mads 2.1.0 build 4 (27 Oct 19)
+mads 2.1.0
   3726 					opt l+
     95
     96 				.print 'RUNLIB: ',RUNLIB,'..',*
@@ -8,14 +8,14 @@ mads 2.1.0 build 4 (27 Oct 19)
     99
    100 2476			START
    101 2476 BA				tsx
-   102 2477 8E F6 26			stx MAIN.@halt+1
+   102 2477 8E E8 26			stx MAIN.@halt+1
    103
    104 					.ifdef fmulinit
    105 					fmulinit
    106 					eif
    107
    108 = 012C			VLEN	= VARDATASIZE-VARINITSIZE
-   109 = 2924			VADR	= DATAORIGIN+VARINITSIZE
+   109 = 2916			VADR	= DATAORIGIN+VARINITSIZE
    110
    111 					ift VADR > $BFFF
    112 					ert 'Invalid memory address range ',VADR
@@ -26,14 +26,14 @@ mads 2.1.0 build 4 (27 Oct 19)
    117 					eli VLEN>0
    118 					@fill #VADR #VLEN #0
    118 				 MWA #VADR @FILL.PTR1\ MWA #VLEN @FILL.PTR3\ MVA #0 @FILL.PTR2\ JSR @FILL
-   118 247A A9 24 85 86 A9 29 +  MWA #VADR @FILL.PTR1
+   118 247A A9 16 85 86 A9 29 +  MWA #VADR @FILL.PTR1
    118 2482 A9 2C 85 8A A9 01 +  MWA #VLEN @FILL.PTR3
    118 248A A9 00 85 82		 MVA #0 @FILL.PTR2
    118 248E 20 DB 23		 JSR @FILL
    119 					eif
    120
    121 2491 A2 0F			ldx #$0f
-   122 2493 BD 40 03 9D F9 26 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   122 2493 BD 40 03 9D EB 26 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
    123
    124 249C E8				inx		; X = 0 !!!
    125 249D 86 8E			stx bp		; lo BP = 0
@@ -44,7 +44,7 @@ Source: hi_atariage.a65
    128
    129 249F			.local	MAIN						; PROCEDURE
    130
-   131 249F 4C E4 26			jmp l_003A
+   131 249F 4C D6 26			jmp l_003A
    132
    133 				; ------------------------------------------------------------
    134
@@ -56,7 +56,7 @@ Source: hi_atariage.a65
    140
    141 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
    142 				; as Pointer
-   143 24A2 B5 98 8D 18 28		mva :STACKORIGIN,x B
+   143 24A2 B5 98 8D 0A 28		mva :STACKORIGIN,x B
    144 24A7 CA				dex						; sub bx, 1
    145
    146 				; ------------------------------------------------------------
@@ -69,10 +69,10 @@ Source: hi_atariage.a65
    153 					@move A #adr.A #256
    153 				 MWA A @MOVE.PTR1\ MWA #ADR.A @MOVE.PTR2\ MWA #256 @MOVE.PTR3\ JSR @MOVE
    153 24B3 AD 09 25 85 86 AD +  MWA A @MOVE.PTR1
-   153 24BD A9 18 85 8A A9 27 +  MWA #ADR.A @MOVE.PTR2
+   153 24BD A9 0A 85 8A A9 27 +  MWA #ADR.A @MOVE.PTR2
    153 24C5 A9 00 85 82 A9 01 +  MWA #256 @MOVE.PTR3
    153 24CD 20 86 23		 JSR @MOVE
-   154 24D0 A9 18 8D 09 25 A9 + 	mwa #adr.A A
+   154 24D0 A9 0A 8D 09 25 A9 + 	mwa #adr.A A
    155
    156 				; ---------------------  ASM Block 044  ---------------------
    157
@@ -80,15 +80,15 @@ Source: hi_atariage.a65
    159 					@addString #adr.a
    159 				 LDY> ADR.A\ LDA< ADR.A\ JSR @ADDSTRING
    159 24DF A0 27		 LDY> ADR.A
-   159 24E1 A9 18		 LDA< ADR.A
+   159 24E1 A9 0A		 LDA< ADR.A
    159 24E3 20 23 24		 JSR @ADDSTRING
    160 24E6 EE 00 04			inc @buf
    161 24E9 AC 00 04			ldy @buf
-   162 24EC AD 18 28			lda b
+   162 24EC AD 0A 28			lda b
    163 24EF 99 00 04			sta @buf,y
    164 				;	@move #@buf #adr.Result #256
    165 24F2 A0 00			ldy #0
-   166 24F4 B9 00 04 99 19 28 + 	mva:rne @buf,y adr.Result,y+
+   166 24F4 B9 00 04 99 0B 28 + 	mva:rne @buf,y adr.Result,y+
    167
    168 24FD			@exit
    169
@@ -107,18 +107,18 @@ Source: hi_atariage.a65
    182
    183 				; ------------------------------------------------------------
    184
-   185 = 2718			adr.A	= DATAORIGIN+$000B
+   185 = 270A			adr.A	= DATAORIGIN+$000B
    186 2508			.var A	= adr.A .word
-   187 = 2818			B	= DATAORIGIN+$010B
-   188 = 2819			adr.RESULT	= DATAORIGIN+$010C
+   187 = 280A			B	= DATAORIGIN+$010B
+   188 = 280B			adr.RESULT	= DATAORIGIN+$010C
    189 2508			.var RESULT	= adr.RESULT .word
    190
    191 = 2509			@VarData	= A
    192 = 0201			@VarDataSize	= 513
    193
    194 2508 60				rts						; ret
-   195 = 2509 18 27		A
-   195 = 250B 19 28		RESULT
+   195 = 2509 0A 27		A
+   195 = 250B 0B 28		RESULT
    195 				.endl
    196
    197 				; ------------------------------------------------------------
@@ -169,19 +169,19 @@ Source: hi_atariage.a65
    242 = 0008			FMOPENWRITE	= $0008
    243 = 0009			FMOPENAPPEND	= $0009
    244 = 000C			FMOPENREADWRITE	= $000C
-   245 = 270D			SCREENWIDTH	= DATAORIGIN+$0000
-   246 = 270F			SCREENHEIGHT	= DATAORIGIN+$0002
-   247 = 2711			DATESEPARATOR	= DATAORIGIN+$0004
+   245 = 26FF			SCREENWIDTH	= DATAORIGIN+$0000
+   246 = 2701			SCREENHEIGHT	= DATAORIGIN+$0002
+   247 = 2703			DATESEPARATOR	= DATAORIGIN+$0004
    248 = D014			TVSYSTEM	= $D014
    249 = 02C0			adr.PALETTE	= $02C0
    250 250D			.var PALETTE	= adr.PALETTE .word
    251 = D012			adr.HPALETTE	= $D012
    252 250D			.var HPALETTE	= adr.HPALETTE .word
-   253 = 2712			FILEMODE	= DATAORIGIN+$0005
-   254 = 2713			SCREENMODE	= DATAORIGIN+$0006
-   255 = 2714			IORESULT	= DATAORIGIN+$0007
-   256 = 2715			EOLN	= DATAORIGIN+$0008
-   257 = 2716			RNDSEED	= DATAORIGIN+$0009
+   253 = 2704			FILEMODE	= DATAORIGIN+$0005
+   254 = 2705			SCREENMODE	= DATAORIGIN+$0006
+   255 = 2706			IORESULT	= DATAORIGIN+$0007
+   256 = 2707			EOLN	= DATAORIGIN+$0008
+   257 = 2708			RNDSEED	= DATAORIGIN+$0009
    258
    259 = 250D C0 02		PALETTE
    259 = 250F 12 D0		HPALETTE
@@ -328,7 +328,7 @@ Source: hi_atariage.a65
    399
    400 2513 20 2E 23			@GetKey
    401
-   402 2516 8D 1A 29			sta Result
+   402 2516 8D 0C 29			sta Result
    403
    404 2519 68 AA			pla:tax
    405
@@ -340,7 +340,7 @@ Source: hi_atariage.a65
    411 				; as Pointer
    412
    413 251B E8				inx						; add bx, 1
-   414 251C AD 1A 29 95 98		mva RESULT :STACKORIGIN,x
+   414 251C AD 0C 29 95 98		mva RESULT :STACKORIGIN,x
    415
    416 					.ifdef @new
    417 					@FreeMem #@VarData #@VarDataSize
@@ -348,9 +348,9 @@ Source: hi_atariage.a65
    419
    420 				; ------------------------------------------------------------
    421
-   422 = 291A			RESULT	= DATAORIGIN+$020D
+   422 = 290C			RESULT	= DATAORIGIN+$020D
    423
-   424 = 291A			@VarData	= RESULT
+   424 = 290C			@VarData	= RESULT
    425 = 0001			@VarDataSize	= 1
    426
    427 2521 60				rts						; ret
@@ -362,24 +362,24 @@ Source: hi_atariage.a65
    433
    434 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
    435 				; as Pointer
-   436 2522 B5 98 8D 1C 29		mva :STACKORIGIN,x Y
+   436 2522 B5 98 8D 0E 29		mva :STACKORIGIN,x Y
    437 2527 CA				dex						; sub bx, 1
    438
    439 				; ------------------------------------------------------------
    440
    441 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
    442 				; as Pointer
-   443 2528 B5 98 8D 1B 29		mva :STACKORIGIN,x X
+   443 2528 B5 98 8D 0D 29		mva :STACKORIGIN,x X
    444 252D CA				dex						; sub bx, 1
    445
    446 				; ---------------------  ASM Block 068  ---------------------
    447
-   448 252E AC 1B 29			ldy x
+   448 252E AC 0D 29			ldy x
    449 2531 F0 03			beq @+
    450 2533 88				dey
    451 2534 84 55			sty colcrs
    452
-   453 2536 AC 1C 29		@	ldy y
+   453 2536 AC 0E 29		@	ldy y
    454 2539 F0 03			beq @+
    455 253B 88				dey
    456 253C 84 54			sty rowcrs
@@ -388,10 +388,10 @@ Source: hi_atariage.a65
    459
    460 				; ------------------------------------------------------------
    461
-   462 = 291B			X	= DATAORIGIN+$020E
-   463 = 291C			Y	= DATAORIGIN+$020F
+   462 = 290D			X	= DATAORIGIN+$020E
+   463 = 290E			Y	= DATAORIGIN+$020F
    464
-   465 = 291B			@VarData	= X
+   465 = 290D			@VarData	= X
    466 = 0002			@VarDataSize	= 2
    467
    468 253E			@exit
@@ -403,7 +403,7 @@ Source: hi_atariage.a65
    474
    475 				; ------------------------------------------------------------
    476
-   477 = 2919			TEXTATTR	= DATAORIGIN+$020C
+   477 = 290B			TEXTATTR	= DATAORIGIN+$020C
    478 = D01F			CONSOL	= $D01F
    479 = 0000			CN_START_SELECT_OPTION	= $0000
    480 = 0001			CN_SELECT_OPTION	= $0001
@@ -458,16 +458,16 @@ Source: hi_atariage.a65
    529
    530 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
    531 				; as Pointer
-   532 253F B5 98 8D 3A 29		mva :STACKORIGIN,x MODE
+   532 253F B5 98 8D 2C 29		mva :STACKORIGIN,x MODE
    533 2544 CA				dex						; sub bx, 1
    534
    535 				; optimize OK (GRAPH), line = 73
    536
-   537 2545 A9 00 8D 25 29		mva #$00 GRAPHRESULT
+   537 2545 A9 00 8D 17 29		mva #$00 GRAPHRESULT
    538
    539 				; optimize OK (GRAPH), line = 75
    540
-   541 254A AD 3A 29 8D 13 27		mva MODE SYSTEM.SCREENMODE
+   541 254A AD 2C 29 8D 05 27		mva MODE SYSTEM.SCREENMODE
    542
    543 				; ---------------------  ASM Block 074  ---------------------
    544
@@ -476,12 +476,12 @@ Source: hi_atariage.a65
    547
    548 2552 A9 2C 8D 1B 23		mva #$2c @putchar.vbxe
    549
-   550 2557 AD 3A 29			lda mode
+   550 2557 AD 2C 29			lda mode
    551 255A 29 0F			and #$0f
    552 255C A8				tay
    553
    554 255D A2 60			ldx #$60	; 6*16
-   555 255F AD 3A 29			lda mode	; %00010000 with text window
+   555 255F AD 2C 29			lda mode	; %00010000 with text window
    556 2562 29 10			and #$10
    557 2564 49 10			eor #$10
    558 2566 09 02			ora #2		; read
@@ -499,7 +499,7 @@ Source: hi_atariage.a65
    569 2573 88				dey
    570 2574 D0 FC			bne shift
    571
-   572 2576 8D 39 29			sta SCANLINE_WIDTH
+   572 2576 8D 2B 29			sta SCANLINE_WIDTH
    573 					
    574
    575 				; Fox/TQA
@@ -518,36 +518,36 @@ Source: hi_atariage.a65
    588 				; X:A = horizontal resolution
    589 				; Y = vertical resolution
    590
-   591 2588 8D 0D 27			sta MAIN.SYSTEM.ScreenWidth
-   592 258B 8E 0E 27			stx MAIN.SYSTEM.ScreenWidth+1
+   591 2588 8D FF 26			sta MAIN.SYSTEM.ScreenWidth
+   592 258B 8E 00 27			stx MAIN.SYSTEM.ScreenWidth+1
    593 					
    594 258E 38 E9 01			sub #1
-   595 2591 8D 1F 29			sta WIN_RIGHT
+   595 2591 8D 11 29			sta WIN_RIGHT
    596 2594 8A				txa
    597 2595 E9 00			sbc #0
-   598 2597 8D 20 29			sta WIN_RIGHT+1
+   598 2597 8D 12 29			sta WIN_RIGHT+1
    599 					
-   600 259A 8C 0F 27			sty MAIN.SYSTEM.ScreenHeight
+   600 259A 8C 01 27			sty MAIN.SYSTEM.ScreenHeight
    601 259D A9 00			lda #0
-   602 259F 8D 10 27			sta MAIN.SYSTEM.ScreenHeight+1
+   602 259F 8D 02 27			sta MAIN.SYSTEM.ScreenHeight+1
    603 					
-   604 25A2 8D 1D 29			sta WIN_LEFT
-   605 25A5 8D 1E 29			sta WIN_LEFT+1
-   606 25A8 8D 21 29			sta WIN_TOP
-   607 25AB 8D 22 29			sta WIN_TOP+1
+   604 25A2 8D 0F 29			sta WIN_LEFT
+   605 25A5 8D 10 29			sta WIN_LEFT+1
+   606 25A8 8D 13 29			sta WIN_TOP
+   607 25AB 8D 14 29			sta WIN_TOP+1
    608
-   609 25AE 8D 24 29			sta WIN_BOTTOM+1	
+   609 25AE 8D 16 29			sta WIN_BOTTOM+1	
    610 25B1 88				dey
-   611 25B2 8C 23 29			sty WIN_BOTTOM
+   611 25B2 8C 15 29			sty WIN_BOTTOM
    612
    613 25B5 68 AA			pla:tax
    614
    615
    616 				; ------------------------------------------------------------
    617
-   618 = 293A			MODE	= DATAORIGIN+$022D
+   618 = 292C			MODE	= DATAORIGIN+$022D
    619
-   620 = 293A			@VarData	= MODE
+   620 = 292C			@VarData	= MODE
    621 = 0001			@VarDataSize	= 1
    622
    623 25B7			@exit
@@ -613,26 +613,26 @@ Source: hi_atariage.a65
    683 = 000A			VGALO	= $000A
    684 = 001F			VGAMED	= $001F
    685 = 0018			VGAHI	= $0018
-   686 = 291D			WIN_LEFT	= DATAORIGIN+$0210
-   687 = 291F			WIN_RIGHT	= DATAORIGIN+$0212
-   688 = 2921			WIN_TOP	= DATAORIGIN+$0214
-   689 = 2923			WIN_BOTTOM	= DATAORIGIN+$0216
-   690 = 2925			GRAPHRESULT	= DATAORIGIN+$0218
-   691 = 2926			GETCOLOR	= DATAORIGIN+$0219
-   692 = 2927			adr.LASTARCCOORDS	= DATAORIGIN+$021A
+   686 = 290F			WIN_LEFT	= DATAORIGIN+$0210
+   687 = 2911			WIN_RIGHT	= DATAORIGIN+$0212
+   688 = 2913			WIN_TOP	= DATAORIGIN+$0214
+   689 = 2915			WIN_BOTTOM	= DATAORIGIN+$0216
+   690 = 2917			GRAPHRESULT	= DATAORIGIN+$0218
+   691 = 2918			GETCOLOR	= DATAORIGIN+$0219
+   692 = 2919			adr.LASTARCCOORDS	= DATAORIGIN+$021A
    693 25B8			.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-   694 = 2927			LASTARCCOORDS.X	= DATAORIGIN+$021A
-   695 = 2929			LASTARCCOORDS.Y	= DATAORIGIN+$021C
-   696 = 292B			LASTARCCOORDS.XSTART	= DATAORIGIN+$021E
-   697 = 292D			LASTARCCOORDS.YSTART	= DATAORIGIN+$0220
-   698 = 292F			LASTARCCOORDS.XEND	= DATAORIGIN+$0222
-   699 = 2931			LASTARCCOORDS.YEND	= DATAORIGIN+$0224
-   700 = 2933			CURRENTX	= DATAORIGIN+$0226
-   701 = 2935			CURRENTY	= DATAORIGIN+$0228
-   702 = 2937			VIDEORAM	= DATAORIGIN+$022A
-   703 = 2939			SCANLINE_WIDTH	= DATAORIGIN+$022C
+   694 = 2919			LASTARCCOORDS.X	= DATAORIGIN+$021A
+   695 = 291B			LASTARCCOORDS.Y	= DATAORIGIN+$021C
+   696 = 291D			LASTARCCOORDS.XSTART	= DATAORIGIN+$021E
+   697 = 291F			LASTARCCOORDS.YSTART	= DATAORIGIN+$0220
+   698 = 2921			LASTARCCOORDS.XEND	= DATAORIGIN+$0222
+   699 = 2923			LASTARCCOORDS.YEND	= DATAORIGIN+$0224
+   700 = 2925			CURRENTX	= DATAORIGIN+$0226
+   701 = 2927			CURRENTY	= DATAORIGIN+$0228
+   702 = 2929			VIDEORAM	= DATAORIGIN+$022A
+   703 = 292B			SCANLINE_WIDTH	= DATAORIGIN+$022C
    704
-   705 = 25B8 27 29		LASTARCCOORDS
+   705 = 25B8 19 29		LASTARCCOORDS
    705 				.endl							; UNIT GRAPH
    706
    707 25BA			.local	MAINPROC					; PROCEDURE
@@ -641,7 +641,7 @@ Source: hi_atariage.a65
    710
    711 				; optimize OK (examples\hi_atariage.pas), line = 28
    712
-   713 25BA AD 09 27 85 90 AD + 	mwa F :bp2
+   713 25BA AD FB 26 85 90 AD + 	mwa F :bp2
    714 25C4 A0 00			ldy #s@file.pfname
    715 25C6 A9 0D			lda #$0D
    716 25C8 91 90			sta (:bp2),y
@@ -669,8 +669,8 @@ Source: hi_atariage.a65
    738 25E2 38				sec
    739 					@openfile F, #8
    739 				 LDY F+1\ LDA F\ LDX# 8\ JSR @OPENFILE
-   739 25E3 AC 0A 27		 LDY F+1
-   739 25E6 AD 09 27		 LDA F
+   739 25E3 AC FC 26		 LDY F+1
+   739 25E6 AD FB 26		 LDA F
    739 25E9 A2 08		 LDX# 8
    739 25EB 20 33 20		 JSR @OPENFILE
    740 25EE 68 AA			pla:tax
@@ -696,30 +696,30 @@ Source: hi_atariage.a65
    760 2611 20 A2 24			jsr SYSTEM.CONCAT_0060
    761 					@moveSTRING STRBUFFER
    761 				 LDY STRBUFFER+1\ LDA STRBUFFER\ JSR @MOVESTRING
-   761 2614 AC 0C 27		 LDY STRBUFFER+1
-   761 2617 AD 0B 27		 LDA STRBUFFER
+   761 2614 AC FE 26		 LDY STRBUFFER+1
+   761 2617 AD FD 26		 LDA STRBUFFER
    761 261A 20 3E 23		 JSR @MOVESTRING
    762 261D CA				dex						; sub bx, 1
    763 				; BlockWrite
    764
    765 				; optimize OK (examples\hi_atariage.pas), line = 32
    766
-   767 261E AD 09 27 85 90 AD + 	mwa F :bp2
+   767 261E AD FB 26 85 90 AD + 	mwa F :bp2
    768 2628 A0 06			ldy #s@file.buffer
-   769 262A AD 0B 27			lda STRBUFFER
+   769 262A AD FD 26			lda STRBUFFER
    770 262D 18 69 01			add #$01
    771 2630 91 90			sta (:bp2),y
    772 2632 C8				iny
-   773 2633 AD 0C 27			lda STRBUFFER+1
+   773 2633 AD FE 26			lda STRBUFFER+1
    774 2636 69 00			adc #$00
    775 2638 91 90			sta (:bp2),y
    776
    777 				; optimize OK (examples\hi_atariage.pas), line = 32
    778
-   779 263A AD 0B 27 85 90 AD + 	mwa STRBUFFER :bp2
+   779 263A AD FD 26 85 90 AD + 	mwa STRBUFFER :bp2
    780 2644 A0 00			ldy #0
    781 2646 B1 90			lda (:bp2),y
-   782 2648 AC 09 27 84 90 AC + 	mwy F :bp2
+   782 2648 AC FB 26 84 90 AC + 	mwy F :bp2
    783 2652 A0 08			ldy #s@file.nrecord
    784 2654 91 90			sta (:bp2),y
    785 2656 C8				iny
@@ -730,259 +730,253 @@ Source: hi_atariage.a65
    790 265D 38				sec
    791 					@readfile F, #11
    791 				 LDY F+1\ LDA F\ LDX# 11\ JSR @READFILE
-   791 265E AC 0A 27		 LDY F+1
-   791 2661 AD 09 27		 LDA F
+   791 265E AC FC 26		 LDY F+1
+   791 2661 AD FB 26		 LDA F
    791 2664 A2 0B		 LDX# 11
    791 2666 20 07 21		 JSR @READFILE
    792 2669 68 AA			pla:tax
    793
-   794 				; optimize OK (examples\hi_atariage.pas), line = 33
+   794 				; --- For
    795
-   796 266B A9 00 8D 4C 2A		mva #$00 I
-   797 2670 8D 4D 2A			sta I+1
-   798 2673 8D 4E 2A			sta I+2
-   799 2676 8D 4F 2A			sta I+3
-   800 				; --- For
-   801
-   802 				; optimize OK (examples\hi_atariage.pas), line = 34
-   803
-   804 2679 A9 00 8D 4C 2A		mva #$00 I
-   805 267E 8D 4D 2A			sta I+1
-   806 2681 8D 4E 2A			sta I+2
-   807 2684 8D 4F 2A			sta I+3
-   808
-   809 				; optimize OK (examples\hi_atariage.pas), line = 34
-   810
-   811 				; --- To
-   812 2687			l_0110
-   813
-   814 				; --- ForToDoCondition
-   815
-   816 				; optimize OK (examples\hi_atariage.pas), line = 34
-   817
-   818 2687				.LOCAL
-   819 2687 AD 4F 2A			lda I+3
-   820 268A B8 38			clv:sec
-   821 268C E9 00			sbc #$00
-   822 268E D0 21			bne L4
-   823 2690 AD 4E 2A			lda I+2
-   824 2693 C9 00			cmp #$00
-   825 2695 D0 0C			bne L1
-   826 2697 AD 4D 2A			lda I+1
-   827 269A C9 00			cmp #$00
-   828 269C D0 05			bne L1
-   829 269E AD 4C 2A			lda I
-   830 26A1 C9 02			cmp #$02
-   831 26A3 F0 12		L1	beq L5
-   832 26A5 B0 05			bcs L3
-   833 26A7 A9 FF			lda #$FF
-   834 26A9 4C B7 26			jmp L5
-   835 26AC A9 01		L3	lda #$01
-   836 26AE 4C B7 26			jmp L5
-   837 26B1 50 04		L4	bvc L5
-   838 26B3 49 FF			eor #$FF
-   839 26B5 09 01			ora #$01
-   840 26B7			L5
-   841 					.ENDL
-   842 26B7 30 02			smi
-   843 26B9 D0 1F			jne l_011A
-   844
-   845 				; optimize FAIL (100, examples\hi_atariage.pas), line = 35
-   846 					@printSTRING #CODEORIGIN+$001E
-   846 				 LDY> CODEORIGIN+$001E\ LDA< CODEORIGIN+$001E\ JSR @PRINTSTRING
-   846 26BB A0 20		 LDY> CODEORIGIN+$001E
-   846 26BD A9 1E		 LDA< CODEORIGIN+$001E
-   846 26BF 20 2E 22		 JSR @PRINTSTRING
-   847 26C2 20 20 22			@printEOL
-   848
-   849 				; --- ForToDoEpilog
-   850 26C5 EE 4C 2A D0 0D EE + 	ind I						; inc ptr dword [CounterAddress]
-   851 26D7 4C 87 26			jmp l_0110
-   852 26DA			l_011A
-   853
-   854 				; optimize FAIL ('CRT.READKEY', examples\hi_atariage.pas), line = 37
-   855 26DA 20 11 25			jsr CRT.READKEY
-   856 26DD B5 98 8D 4B 2A		mva :STACKORIGIN,x KEY
-   857 26E2 CA				dex
-   858
-   859 				; ------------------------------------------------------------
+   796 				; optimize OK (examples\hi_atariage.pas), line = 33
+   797
+   798 266B A9 00 8D 3E 2A		mva #$00 I
+   799 2670 8D 3F 2A			sta I+1
+   800 2673 8D 40 2A			sta I+2
+   801 2676 8D 41 2A			sta I+3
+   802
+   803 				; optimize OK (examples\hi_atariage.pas), line = 33
+   804
+   805 				; --- To
+   806 2679			l_010C
+   807
+   808 				; --- ForToDoCondition
+   809
+   810 				; optimize OK (examples\hi_atariage.pas), line = 33
+   811
+   812 2679				.LOCAL
+   813 2679 AD 41 2A			lda I+3
+   814 267C B8 38			clv:sec
+   815 267E E9 00			sbc #$00
+   816 2680 D0 21			bne L4
+   817 2682 AD 40 2A			lda I+2
+   818 2685 C9 00			cmp #$00
+   819 2687 D0 0C			bne L1
+   820 2689 AD 3F 2A			lda I+1
+   821 268C C9 00			cmp #$00
+   822 268E D0 05			bne L1
+   823 2690 AD 3E 2A			lda I
+   824 2693 C9 02			cmp #$02
+   825 2695 F0 12		L1	beq L5
+   826 2697 B0 05			bcs L3
+   827 2699 A9 FF			lda #$FF
+   828 269B 4C A9 26			jmp L5
+   829 269E A9 01		L3	lda #$01
+   830 26A0 4C A9 26			jmp L5
+   831 26A3 50 04		L4	bvc L5
+   832 26A5 49 FF			eor #$FF
+   833 26A7 09 01			ora #$01
+   834 26A9			L5
+   835 					.ENDL
+   836 26A9 30 02			smi
+   837 26AB D0 1F			jne l_0116
+   838
+   839 				; optimize FAIL (100, examples\hi_atariage.pas), line = 34
+   840 					@printSTRING #CODEORIGIN+$001E
+   840 				 LDY> CODEORIGIN+$001E\ LDA< CODEORIGIN+$001E\ JSR @PRINTSTRING
+   840 26AD A0 20		 LDY> CODEORIGIN+$001E
+   840 26AF A9 1E		 LDA< CODEORIGIN+$001E
+   840 26B1 20 2E 22		 JSR @PRINTSTRING
+   841 26B4 20 20 22			@printEOL
+   842
+   843 				; --- ForToDoEpilog
+   844 26B7 EE 3E 2A D0 0D EE + 	ind I						; inc ptr dword [CounterAddress]
+   845 26C9 4C 79 26			jmp l_010C
+   846 26CC			l_0116
+   847
+   848 				; optimize FAIL ('CRT.READKEY', examples\hi_atariage.pas), line = 36
+   849 26CC 20 11 25			jsr CRT.READKEY
+   850 26CF B5 98 8D 3D 2A		mva :STACKORIGIN,x KEY
+   851 26D4 CA				dex
+   852
+   853 				; ------------------------------------------------------------
+   854
+   855 = 2A3E			I	= DATAORIGIN+$033F
+   856 = 0002			@FORTMP_0109	= $0002
+   857
+   858 = 2A3E			@VarData	= I
+   859 = 0004			@VarDataSize	= 4
    860
-   861 = 2A4C			I	= DATAORIGIN+$033F
-   862 = 0002			@FORTMP_010D	= $0002
-   863
-   864 = 2A4C			@VarData	= I
-   865 = 0004			@VarDataSize	= 4
-   866
-   867 26E3			@exit
-   868 					.ifdef @new
-   869 					@FreeMem #@VarData #@VarDataSize
-   870 					eif
-   871 26E3 60				rts						; ret
-   872 				.endl
-   873 26E4			l_003A
-   874
-   875 				; optimize FAIL ('MAINPROC', examples\hi_atariage.pas), line = 41
-   876 26E4 20 BA 25			jsr MAINPROC
-   877 				; CloseFile
-   878
-   879 26E7 8A 48			txa:pha
-   880 26E9 38				sec
-   881 					@closefile F
-   881 				 LDY F+1\ LDA F\ JSR @CLOSEFILE
-   881 26EA AC 0A 27		 LDY F+1
-   881 26ED AD 09 27		 LDA F
-   881 26F0 20 DA 20		 JSR @CLOSEFILE
-   882 26F3 68 AA			pla:tax
-   883
-   884 				; ------------------------------------------------------------
-   885
-   886 = 293B			INTVALUE	= DATAORIGIN+$022E
-   887 26F5			.var F	= DATAORIGIN+$0232 .word
-   888 = 294B			adr.STRBUFFER	= DATAORIGIN+$023E
-   889 26F5			.var STRBUFFER	= adr.STRBUFFER .word
-   890 = 2A4B			KEY	= DATAORIGIN+$033E
-   891 26F5			@exit
-   892
-   893 26F5 A2 00		@halt	ldx #0
-   894 26F7 9A				txs
+   861 26D5			@exit
+   862 					.ifdef @new
+   863 					@FreeMem #@VarData #@VarDataSize
+   864 					eif
+   865 26D5 60				rts						; ret
+   866 				.endl
+   867 26D6			l_003A
+   868
+   869 				; optimize FAIL ('MAINPROC', examples\hi_atariage.pas), line = 40
+   870 26D6 20 BA 25			jsr MAINPROC
+   871 				; CloseFile
+   872
+   873 26D9 8A 48			txa:pha
+   874 26DB 38				sec
+   875 					@closefile F
+   875 				 LDY F+1\ LDA F\ JSR @CLOSEFILE
+   875 26DC AC FC 26		 LDY F+1
+   875 26DF AD FB 26		 LDA F
+   875 26E2 20 DA 20		 JSR @CLOSEFILE
+   876 26E5 68 AA			pla:tax
+   877
+   878 				; ------------------------------------------------------------
+   879
+   880 = 292D			INTVALUE	= DATAORIGIN+$022E
+   881 26E7			.var F	= DATAORIGIN+$0232 .word
+   882 = 293D			adr.STRBUFFER	= DATAORIGIN+$023E
+   883 26E7			.var STRBUFFER	= adr.STRBUFFER .word
+   884 = 2A3D			KEY	= DATAORIGIN+$033E
+   885 26E7			@exit
+   886
+   887 26E7 A2 00		@halt	ldx #0
+   888 26E9 9A				txs
+   889
+   890 26EA 60				rts
+   891
+   892 				; ------------------------------------------------------------
+   893
+   894 26EB 00 00 00 00 00 00 + IOCB@COPY	:16 brk
    895
-   896 26F8 60				rts
+   896 				; ------------------------------------------------------------
    897
-   898 				; ------------------------------------------------------------
-   899
-   900 26F9 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+   898 26FB			.local	@DEFINES
+   899 26FB			ATARI
+   900 				.endl
    901
-   902 				; ------------------------------------------------------------
+   902 = 26FB 31 29		F
+   902 = 26FD 3D 29		STRBUFFER
+   902 				.endl							; MAIN
    903
-   904 2709			.local	@DEFINES
-   905 2709			ATARI
-   906 				.endl
-   907
-   908 = 2709 3F 29		F
-   908 = 270B 4B 29		STRBUFFER
-   908 				.endl							; MAIN
-   909
-   910 				; ------------------------------------------------------------
-   911 				; ------------------------------------------------------------
-   912
-   913 				.macro	UNITINITIALIZATION
-   914 				
-   915 					.ifdef MAIN.SYSTEM.@UnitInit
-   916 					jsr MAIN.SYSTEM.@UnitInit
-   917 					eif
-   918 				
-   919 					.ifdef MAIN.DOS.@UnitInit
-   920 					jsr MAIN.DOS.@UnitInit
-   921 					eif
-   922 				
-   923 					.ifdef MAIN.STRUTILS.@UnitInit
-   924 					jsr MAIN.STRUTILS.@UnitInit
-   925 					eif
-   926 				
-   927 					.ifdef MAIN.SYSUTILS.@UnitInit
-   928 					jsr MAIN.SYSUTILS.@UnitInit
-   929 					eif
-   930 				
-   931 					.ifdef MAIN.ATARI.@UnitInit
-   932 					jsr MAIN.ATARI.@UnitInit
-   933 					eif
-   934 				
-   935 					.ifdef MAIN.CRT.@UnitInit
-   936 					jsr MAIN.CRT.@UnitInit
-   937 					eif
-   938 				
-   939 					.ifdef MAIN.TYPES.@UnitInit
-   940 					jsr MAIN.TYPES.@UnitInit
-   941 					eif
-   942 				
-   943 					.ifdef MAIN.GRAPH.@UnitInit
-   944 					jsr MAIN.GRAPH.@UnitInit
-   945 					eif
-   946 				.endm
+   904 				; ------------------------------------------------------------
+   905 				; ------------------------------------------------------------
+   906
+   907 				.macro	UNITINITIALIZATION
+   908 				
+   909 					.ifdef MAIN.SYSTEM.@UnitInit
+   910 					jsr MAIN.SYSTEM.@UnitInit
+   911 					eif
+   912 				
+   913 					.ifdef MAIN.DOS.@UnitInit
+   914 					jsr MAIN.DOS.@UnitInit
+   915 					eif
+   916 				
+   917 					.ifdef MAIN.STRUTILS.@UnitInit
+   918 					jsr MAIN.STRUTILS.@UnitInit
+   919 					eif
+   920 				
+   921 					.ifdef MAIN.SYSUTILS.@UnitInit
+   922 					jsr MAIN.SYSUTILS.@UnitInit
+   923 					eif
+   924 				
+   925 					.ifdef MAIN.ATARI.@UnitInit
+   926 					jsr MAIN.ATARI.@UnitInit
+   927 					eif
+   928 				
+   929 					.ifdef MAIN.CRT.@UnitInit
+   930 					jsr MAIN.CRT.@UnitInit
+   931 					eif
+   932 				
+   933 					.ifdef MAIN.TYPES.@UnitInit
+   934 					jsr MAIN.TYPES.@UnitInit
+   935 					eif
+   936 				
+   937 					.ifdef MAIN.GRAPH.@UnitInit
+   938 					jsr MAIN.GRAPH.@UnitInit
+   939 					eif
+   940 				.endm
+   941
+   942 				; ------------------------------------------------------------
+   943
+   944 					ift .SIZEOF(MAIN.SYSTEM) > 0
+   945 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+   945 				SYSTEM: $24A2..$2510
+   946 					eif
    947
-   948 				; ------------------------------------------------------------
-   949
-   950 					ift .SIZEOF(MAIN.SYSTEM) > 0
-   951 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-   951 				SYSTEM: $24A2..$2510
-   952 					eif
-   953
-   954 					ift .SIZEOF(MAIN.DOS) > 0
-   955 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-   956 					eif
-   957
-   958 					ift .SIZEOF(MAIN.STRUTILS) > 0
-   959 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-   960 					eif
-   961
-   962 					ift .SIZEOF(MAIN.SYSUTILS) > 0
-   963 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-   964 					eif
-   965
-   966 					ift .SIZEOF(MAIN.ATARI) > 0
-   967 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
-   968 					eif
-   969
-   970 					ift .SIZEOF(MAIN.CRT) > 0
-   971 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-   971 				CRT: $2511..$253E
-   972 					eif
-   973
-   974 					ift .SIZEOF(MAIN.TYPES) > 0
-   975 					.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
-   976 					eif
+   948 					ift .SIZEOF(MAIN.DOS) > 0
+   949 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+   950 					eif
+   951
+   952 					ift .SIZEOF(MAIN.STRUTILS) > 0
+   953 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
+   954 					eif
+   955
+   956 					ift .SIZEOF(MAIN.SYSUTILS) > 0
+   957 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
+   958 					eif
+   959
+   960 					ift .SIZEOF(MAIN.ATARI) > 0
+   961 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+   962 					eif
+   963
+   964 					ift .SIZEOF(MAIN.CRT) > 0
+   965 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+   965 				CRT: $2511..$253E
+   966 					eif
+   967
+   968 					ift .SIZEOF(MAIN.TYPES) > 0
+   969 					.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
+   970 					eif
+   971
+   972 					ift .SIZEOF(MAIN.GRAPH) > 0
+   973 					.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
+   973 				GRAPH: $253F..$25B9
+   974 					eif
+   975
+   976 					.print 'CODE: ',CODEORIGIN,'..',*-1
+   976 				CODE: $2000..$26FE
    977
-   978 					ift .SIZEOF(MAIN.GRAPH) > 0
-   979 					.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
-   979 				GRAPH: $253F..$25B9
-   980 					eif
-   981
-   982 					.print 'CODE: ',CODEORIGIN,'..',*-1
-   982 				CODE: $2000..$270C
-   983
-   984 				; ------------------------------------------------------------
-   985
-   986 270D			DATAORIGIN
-   987 270D 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   988 2725 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   989 273D 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   990 2755 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   991 276D 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   992 2785 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   993 279D 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   994 27B5 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   995 27CD 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   996 27E5 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   997 27FD 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   998 2815 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   999 282D 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1000 2845 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1001 285D 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1002 2875 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1003 288D 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1004 28A5 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1005 28BD 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1006 28D5 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1007 28ED 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1008 2905 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1009 291D 00 00 27 00 00 00 + .by  $00 $00 $27 $00 $00 $00 $17
-  1010
-  1011 = 0217			VARINITSIZE	= *-DATAORIGIN
-  1012 = 0343			VARDATASIZE	= 835
+   978 				; ------------------------------------------------------------
+   979
+   980 26FF			DATAORIGIN
+   981 26FF 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   982 2717 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   983 272F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   984 2747 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   985 275F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   986 2777 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   987 278F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   988 27A7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   989 27BF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   990 27D7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   991 27EF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   992 2807 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   993 281F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   994 2837 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   995 284F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   996 2867 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   997 287F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   998 2897 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   999 28AF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1000 28C7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1001 28DF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1002 28F7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1003 290F 00 00 27 00 00 00 + .by  $00 $00 $27 $00 $00 $00 $17
+  1004
+  1005 = 0217			VARINITSIZE	= *-DATAORIGIN
+  1006 = 0343			VARDATASIZE	= 835
+  1007
+  1008 = 2A42			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+  1009
+  1010 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+  1010 				DATA: $26FF..$2A42
+  1011
+  1012 02E0-02E1> 76 24			run START
   1013
-  1014 = 2A50			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+  1014 				; ------------------------------------------------------------
   1015
-  1016 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-  1016 				DATA: $270D..$2A50
-  1017
-  1018 02E0-02E1> 76 24			run START
-  1019
-  1020 				; ------------------------------------------------------------
+  1016 				.macro	STATICDATA
+  1017 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $02 $53 $3A  $00 $0B $68 $69 $20 $61 $74 $61
+  1018 				.by  $72 $69 $61 $67 $65 $00 $13 $68  $69 $2C $41 $74 $61 $72 $69 $41  $67 $65 $2E $2E $2E $2E $2E $2E
+  1019 				.by  $2E $2E $00
+  1020 				.endm
   1021
-  1022 				.macro	STATICDATA
-  1023 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $02 $53 $3A  $00 $0B $68 $69 $20 $61 $74 $61
-  1024 				.by  $72 $69 $61 $67 $65 $00 $13 $68  $69 $2C $41 $74 $61 $72 $69 $41  $67 $65 $2E $2E $2E $2E $2E $2E
-  1025 				.by  $2E $2E $00
-  1026 				.endm
-  1027
-  1028 					end
+  1022 					end

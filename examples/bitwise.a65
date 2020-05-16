@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -128,7 +128,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_00BE
+	jmp l_00BD
 
 ; ------------------------------------------------------------
 
@@ -416,11 +416,11 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 20
-	@printSTRING #CODEORIGIN+$002F
+	@printSTRING #CODEORIGIN+$002E
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 21
-	@printSTRING #CODEORIGIN+$0031
+	@printSTRING #CODEORIGIN+$0030
 
 ; optimize OK (examples\bitwise.pas), line = 22
 
@@ -440,11 +440,11 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 25
-	@printSTRING #CODEORIGIN+$002E
+	@printSTRING #CODEORIGIN+$002D
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 26
-	@printSTRING #CODEORIGIN+$0035
+	@printSTRING #CODEORIGIN+$0034
 
 ; optimize OK (examples\bitwise.pas), line = 27
 
@@ -460,11 +460,11 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 29
-	@printSTRING #CODEORIGIN+$002E
+	@printSTRING #CODEORIGIN+$002D
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 30
-	@printSTRING #CODEORIGIN+$0045
+	@printSTRING #CODEORIGIN+$0044
 
 ; optimize OK (examples\bitwise.pas), line = 31
 
@@ -480,11 +480,11 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 33
-	@printSTRING #CODEORIGIN+$002E
+	@printSTRING #CODEORIGIN+$002D
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 34
-	@printSTRING #CODEORIGIN+$0031
+	@printSTRING #CODEORIGIN+$0030
 
 ; optimize OK (examples\bitwise.pas), line = 35
 
@@ -498,11 +498,11 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 37
-	@printSTRING #CODEORIGIN+$002E
+	@printSTRING #CODEORIGIN+$002D
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 38
-	@printSTRING #CODEORIGIN+$0056
+	@printSTRING #CODEORIGIN+$0055
 
 ; optimize OK (examples\bitwise.pas), line = 39
 
@@ -518,11 +518,11 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 41
-	@printSTRING #CODEORIGIN+$002E
+	@printSTRING #CODEORIGIN+$002D
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 42
-	@printSTRING #CODEORIGIN+$0066
+	@printSTRING #CODEORIGIN+$0065
 
 ; optimize OK (examples\bitwise.pas), line = 43
 
@@ -538,11 +538,11 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 45
-	@printSTRING #CODEORIGIN+$002E
+	@printSTRING #CODEORIGIN+$002D
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 46
-	@printSTRING #CODEORIGIN+$0079
+	@printSTRING #CODEORIGIN+$0078
 
 ; optimize OK (examples\bitwise.pas), line = 47
 
@@ -558,15 +558,15 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 49
-	@printSTRING #CODEORIGIN+$002E
+	@printSTRING #CODEORIGIN+$002D
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 50
-	@printSTRING #CODEORIGIN+$0089
+	@printSTRING #CODEORIGIN+$0088
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 51
-	@printSTRING #CODEORIGIN+$008F
+	@printSTRING #CODEORIGIN+$008E
 
 ; optimize OK (examples\bitwise.pas), line = 52
 
@@ -586,11 +586,11 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 55
-	@printSTRING #CODEORIGIN+$002E
+	@printSTRING #CODEORIGIN+$002D
 	@printEOL
 
 ; optimize FAIL (100, examples\bitwise.pas), line = 56
-	@printSTRING #CODEORIGIN+$00A3
+	@printSTRING #CODEORIGIN+$00A2
 
 ; optimize OK (examples\bitwise.pas), line = 57
 
@@ -615,7 +615,7 @@ BLINK	= $0080
 	eif
 	rts						; ret
 .endl
-l_00BE
+l_00BD
 
 ; optimize FAIL ('MAINPROC', examples\bitwise.pas), line = 63
 	jsr MAINPROC
@@ -720,14 +720,14 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $20 $4C $6F  $67 $69 $63 $61 $6C $20 $28 $62
-.by  $69 $74 $77 $69 $73 $65 $29 $20  $6F $70 $65 $72 $61 $74 $6F $72  $73 $20 $64 $65 $6D $6F $00 $00
-.by  $00 $02 $6E $3D $00 $0E $6E $3D  $3D $26 $32 $20 $52 $65 $73 $75  $6C $74 $3A $20 $00 $0F $6E $3D
-.by  $6E $26 $34 $30 $20 $52 $65 $73  $75 $6C $74 $3A $20 $00 $0E $6E  $3D $3D $21 $32 $20 $52 $65 $73
-.by  $75 $6C $74 $3A $20 $00 $11 $6E  $3D $3D $58 $4F $52 $20 $32 $20  $52 $65 $73 $75 $6C $74 $3A $20
-.by  $00 $0E $6E $3D $3D $21 $6E $20  $52 $65 $73 $75 $6C $74 $3A $20  $00 $04 $61 $3D $34 $30 $00 $12
-.by  $62 $3D $61 $20 $4C $53 $48 $20  $31 $20 $52 $65 $73 $75 $6C $74  $3A $20 $00 $12 $62 $3D $61 $20
-.by  $52 $53 $48 $20 $31 $20 $52 $65  $73 $75 $6C $74 $3A $20 $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $1F $4C $6F  $67 $69 $63 $61 $6C $28 $62 $69
+.by  $74 $77 $69 $73 $65 $29 $20 $6F  $70 $65 $72 $61 $74 $6F $72 $73  $20 $64 $65 $6D $6F $00 $00 $00
+.by  $02 $6E $3D $00 $0E $6E $3D $3D  $26 $32 $20 $52 $65 $73 $75 $6C  $74 $3A $20 $00 $0F $6E $3D $6E
+.by  $26 $34 $30 $20 $52 $65 $73 $75  $6C $74 $3A $20 $00 $0E $6E $3D  $3D $21 $32 $20 $52 $65 $73 $75
+.by  $6C $74 $3A $20 $00 $11 $6E $3D  $3D $58 $4F $52 $20 $32 $20 $52  $65 $73 $75 $6C $74 $3A $20 $00
+.by  $0E $6E $3D $3D $21 $6E $20 $52  $65 $73 $75 $6C $74 $3A $20 $00  $04 $61 $3D $34 $30 $00 $12 $62
+.by  $3D $61 $20 $4C $53 $48 $20 $31  $20 $52 $65 $73 $75 $6C $74 $3A  $20 $00 $12 $62 $3D $61 $20 $52
+.by  $53 $48 $20 $31 $20 $52 $65 $73  $75 $6C $74 $3A $20 $00
 .endm
 
 	end

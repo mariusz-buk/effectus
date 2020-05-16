@@ -21,7 +21,7 @@ PROC SIEVE()
     DO
     FLAGS(I)='T
   OD
-
+      
   FOR I=0 TO 8190
     DO
     IF FLAGS(I)='T THEN

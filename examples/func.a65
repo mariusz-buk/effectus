@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -128,7 +128,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_00C8
+	jmp l_00C7
 
 ; ------------------------------------------------------------
 
@@ -491,7 +491,7 @@ RES	= DATAORIGIN+$0012
 	@printEOL
 
 ; optimize FAIL (100, examples\func.pas), line = 27
-	@printSTRING #CODEORIGIN+$003E
+	@printSTRING #CODEORIGIN+$003D
 	@printEOL
 
 ; optimize OK (examples\func.pas), line = 28
@@ -505,15 +505,15 @@ RES	= DATAORIGIN+$0012
 	mva #$00 N2+1
 
 ; optimize FAIL (100, examples\func.pas), line = 30
-	@printSTRING #CODEORIGIN+$0040
+	@printSTRING #CODEORIGIN+$003F
 	@printEOL
 
 ; optimize FAIL (100, examples\func.pas), line = 31
-	@printSTRING #CODEORIGIN+$003D
+	@printSTRING #CODEORIGIN+$003C
 	@printEOL
 
 ; optimize FAIL (100, examples\func.pas), line = 32
-	@printSTRING #CODEORIGIN+$0055
+	@printSTRING #CODEORIGIN+$0054
 
 ; optimize FAIL ('SUMFUNC', examples\func.pas), line = 33
 	inx
@@ -553,7 +553,7 @@ RES	= DATAORIGIN+$0012
 	dex
 
 ; optimize FAIL (100, examples\func.pas), line = 37
-	@printSTRING #CODEORIGIN+$0073
+	@printSTRING #CODEORIGIN+$0072
 
 ; optimize FAIL (100, examples\func.pas), line = 38
 	inx
@@ -564,31 +564,31 @@ RES	= DATAORIGIN+$0012
 	@printEOL
 
 ; optimize FAIL (100, examples\func.pas), line = 39
-	@printSTRING #CODEORIGIN+$003D
+	@printSTRING #CODEORIGIN+$003C
 	@printEOL
 
 ; optimize FAIL (100, examples\func.pas), line = 40
-	@printSTRING #CODEORIGIN+$008E
+	@printSTRING #CODEORIGIN+$008D
 	@printEOL
 
 ; --- WhileProlog
-l_016F
+l_016E
 
 ; optimize OK (examples\func.pas), line = 41
 
 	ldy #$00
 	lda JOYSTICK.adr.STRIG,y
 	cmp #$01
-	jne l_017F
-	jmp l_016F
-l_017F
+	jne l_017E
+	jmp l_016E
+l_017E
 
 ; optimize FAIL (100, examples\func.pas), line = 43
-	@printSTRING #CODEORIGIN+$009D
+	@printSTRING #CODEORIGIN+$009C
 	@printEOL
 
 ; optimize FAIL (100, examples\func.pas), line = 44
-	@printSTRING #CODEORIGIN+$00AE
+	@printSTRING #CODEORIGIN+$00AD
 	@printEOL
 
 ; ------------------------------------------------------------
@@ -606,7 +606,7 @@ N3	= DATAORIGIN+$0018
 	eif
 	rts						; ret
 .endl
-l_00C8
+l_00C7
 
 ; optimize FAIL ('MAINPROC', examples\func.pas), line = 48
 	jsr MAINPROC
@@ -716,14 +716,13 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
 .macro	STATICDATA
 .by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
-.by  $78 $61 $6D $70 $6C $65 $3A $00  $1C $55 $73 $69 $6E $67 $20 $6C  $6F $63 $61 $6C $20 $66 $75 $6E
-.by  $63 $74 $69 $6F $6E $73 $20 $28  $46 $55 $4E $43 $29 $00 $00 $00  $13 $43 $75 $73 $74 $6F $6D $20
-.by  $66 $75 $6E $63 $74 $69 $6F $6E  $20 $53 $75 $6D $00 $1C $6E $31  $3D $33 $30 $2C $6E $32 $3D $31
-.by  $32 $30 $2C $77 $69 $74 $68 $20  $73 $75 $6D $20 $6F $66 $20 $6E  $33 $3D $00 $19 $6E $31 $3D $32
-.by  $35 $35 $20 $77 $69 $74 $68 $20  $32 $35 $35 $20 $61 $64 $64 $65  $64 $20 $69 $73 $20 $00 $0D $50
-.by  $72 $65 $73 $73 $20 $74 $72 $69  $67 $67 $65 $72 $00 $0F $54 $72  $69 $67 $67 $65 $72 $20 $70 $72
-.by  $65 $73 $73 $65 $64 $00 $11 $50  $72 $6F $67 $72 $61 $6D $20 $66  $69 $6E $69 $73 $68 $65 $64 $21
-.by  $00
+.by  $78 $61 $6D $70 $6C $65 $3A $00  $1B $55 $73 $69 $6E $67 $20 $6C  $6F $63 $61 $6C $20 $66 $75 $6E
+.by  $63 $74 $69 $6F $6E $73 $28 $46  $55 $4E $43 $29 $00 $00 $00 $13  $43 $75 $73 $74 $6F $6D $20 $66
+.by  $75 $6E $63 $74 $69 $6F $6E $20  $53 $75 $6D $00 $1C $6E $31 $3D  $33 $30 $2C $6E $32 $3D $31 $32
+.by  $30 $2C $77 $69 $74 $68 $20 $73  $75 $6D $20 $6F $66 $20 $6E $33  $3D $00 $19 $6E $31 $3D $32 $35
+.by  $35 $20 $77 $69 $74 $68 $20 $32  $35 $35 $20 $61 $64 $64 $65 $64  $20 $69 $73 $20 $00 $0D $50 $72
+.by  $65 $73 $73 $20 $74 $72 $69 $67  $67 $65 $72 $00 $0F $54 $72 $69  $67 $67 $65 $72 $20 $70 $72 $65
+.by  $73 $73 $65 $64 $00 $11 $50 $72  $6F $67 $72 $61 $6D $20 $66 $69  $6E $69 $73 $68 $65 $64 $21 $00
 .endm
 
 	end

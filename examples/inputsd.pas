@@ -20,7 +20,7 @@ var
   str_buffer1 : string[255];
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Device I/O demo');
   Writeln('using InputSD and InputMD procedures');
@@ -40,7 +40,7 @@ begin
   Writeln(str_buffer1);
   Close(f);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

@@ -13,14 +13,14 @@ type
   month : byte;
   year : word;
   height : byte;
-  end;
+  end;  // type
 var
   data : REC;
   weightData : byte;
   key : char;
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Effectus example:');
   Writeln('TYPE declaration demonstration');
@@ -36,7 +36,7 @@ begin
   Write('Height: ');
   Writeln(weightData);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

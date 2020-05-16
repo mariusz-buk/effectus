@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -408,97 +408,89 @@ BLINK	= $0080
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\arrayset.pas), line = 19
+; optimize FAIL (100, examples\arrayset.pas), line = 21
 	@print #$7D
 
-; optimize FAIL (100, examples\arrayset.pas), line = 20
+; optimize FAIL (100, examples\arrayset.pas), line = 22
 	@printSTRING #CODEORIGIN+$000D
 	@printEOL
 
-; optimize FAIL (100, examples\arrayset.pas), line = 21
+; optimize FAIL (100, examples\arrayset.pas), line = 23
 	@printSTRING #CODEORIGIN+$0020
 	@printEOL
 
-; optimize FAIL (100, examples\arrayset.pas), line = 22
+; optimize FAIL (100, examples\arrayset.pas), line = 24
 	@printSTRING #CODEORIGIN+$0036
 	@printEOL
 
-; optimize FAIL (100, examples\arrayset.pas), line = 23
+; optimize FAIL (100, examples\arrayset.pas), line = 25
 	@printSTRING #CODEORIGIN+$0038
 	@printEOL
-
-; optimize OK (examples\arrayset.pas), line = 24
-
-	mva #$00 I
 ; --- For
 
-; optimize OK (examples\arrayset.pas), line = 25
+; optimize OK (examples\arrayset.pas), line = 26
 
-	sta I
+	mva #$00 I
 
-; optimize OK (examples\arrayset.pas), line = 25
+; optimize OK (examples\arrayset.pas), line = 26
 
 ; --- To
-l_00CB
+l_00C7
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\arrayset.pas), line = 25
+; optimize OK (examples\arrayset.pas), line = 26
 
 	lda I
 	cmp #$03
 	scc
-	jne l_00D9
+	jne l_00D5
 
-; optimize FAIL (100, examples\arrayset.pas), line = 26
+; optimize FAIL (100, examples\arrayset.pas), line = 27
 	inx
 	ldy I
 	mva adr.BYTES,y :STACKORIGIN,x
 	jsr @printBYTE
 	dex
 
-; optimize OK (examples\arrayset.pas), line = 27
+; optimize OK (examples\arrayset.pas), line = 28
 
 	lda I
 	cmp #$03
-	jcs l_00F6
+	jcs l_00F2
 
-; optimize FAIL (100, examples\arrayset.pas), line = 28
+; optimize FAIL (100, examples\arrayset.pas), line = 29
 	@print #$2C
-l_00F6
+l_00F2
 
 ; --- ForToDoEpilog
 	inc I						; inc ptr byte [CounterAddress]
 
-	jne l_00CB
+	jne l_00C7
 
-l_00D9
-
-; optimize FAIL (100, examples\arrayset.pas), line = 31
-	@printSTRING #CODEORIGIN+$0035
-	@printEOL
+l_00D5
 
 ; optimize FAIL (100, examples\arrayset.pas), line = 32
 	@printSTRING #CODEORIGIN+$0035
 	@printEOL
 
 ; optimize FAIL (100, examples\arrayset.pas), line = 33
-	@printSTRING #CODEORIGIN+$004C
+	@printSTRING #CODEORIGIN+$0035
 	@printEOL
 
-; optimize OK (examples\arrayset.pas), line = 34
-
-	mva #$00 I
+; optimize FAIL (100, examples\arrayset.pas), line = 34
+	@printSTRING #CODEORIGIN+$004C
+	@printEOL
 ; --- For
 
 ; optimize OK (examples\arrayset.pas), line = 35
 
-	sta I
+	mva #$00 I
 
 ; optimize OK (examples\arrayset.pas), line = 35
 
 ; --- To
-l_0114
+l_010C
 
 ; --- ForToDoCondition
 
@@ -507,7 +499,7 @@ l_0114
 	lda I
 	cmp #$03
 	scc
-	jne l_0122
+	jne l_011A
 
 ; optimize FAIL (100, examples\arrayset.pas), line = 36
 	inx
@@ -523,18 +515,18 @@ l_0114
 
 	lda I
 	cmp #$03
-	jcs l_013E
+	jcs l_0136
 
 ; optimize FAIL (100, examples\arrayset.pas), line = 38
 	@print #$2C
-l_013E
+l_0136
 
 ; --- ForToDoEpilog
 	inc I						; inc ptr byte [CounterAddress]
 
-	jne l_0114
+	jne l_010C
 
-l_0122
+l_011A
 
 ; optimize FAIL ('CRT.READKEY', examples\arrayset.pas), line = 41
 	jsr CRT.READKEY
@@ -543,8 +535,8 @@ l_0122
 
 ; ------------------------------------------------------------
 
-@FORTMP_00C8	= $0003
-@FORTMP_0111	= $0003
+@FORTMP_00C4	= $0003
+@FORTMP_0109	= $0003
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize

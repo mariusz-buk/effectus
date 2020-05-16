@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -696,32 +696,29 @@ BLINK	= $0080
 	@openfile F, MAIN.SYSTEM.FileMode
 	pla:tax
 
+; --- For
+
 ; optimize OK (examples\diskget.pas), line = 28
 
 	mva #$01 I
-; --- For
 
-; optimize OK (examples\diskget.pas), line = 29
-
-	sta I
-
-; optimize OK (examples\diskget.pas), line = 29
+; optimize OK (examples\diskget.pas), line = 28
 
 ; --- To
-l_0123
+l_011F
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\diskget.pas), line = 29
+; optimize OK (examples\diskget.pas), line = 28
 
 	lda I
 	cmp #$0F
 	scc
-	jne l_0131
+	jne l_012D
 
 ; BlockRead
 
-; optimize OK (examples\diskget.pas), line = 30
+; optimize OK (examples\diskget.pas), line = 29
 
 	mwa F :bp2
 	ldy #s@file.buffer
@@ -731,7 +728,7 @@ l_0123
 	lda >N
 	sta (:bp2),y
 
-; optimize OK (examples\diskget.pas), line = 30
+; optimize OK (examples\diskget.pas), line = 29
 
 	ldy #s@file.nrecord
 	lda #$01
@@ -745,7 +742,7 @@ l_0123
 	@readfile F, #7
 	pla:tax
 
-; optimize FAIL (100, examples\diskget.pas), line = 31
+; optimize FAIL (100, examples\diskget.pas), line = 30
 	inx
 	mva N :STACKORIGIN,x
 	@printCHAR
@@ -754,9 +751,9 @@ l_0123
 ; --- ForToDoEpilog
 	inc I						; inc ptr byte [CounterAddress]
 
-	jne l_0123
+	jne l_011F
 
-l_0131
+l_012D
 ; CloseFile
 
 	txa:pha
@@ -764,7 +761,7 @@ l_0131
 	@closefile F
 	pla:tax
 
-; optimize FAIL (100, examples\diskget.pas), line = 34
+; optimize FAIL (100, examples\diskget.pas), line = 33
 	@printSTRING #CODEORIGIN+$0022
 	@print #$9B
 	@printSTRING #CODEORIGIN+$0035
@@ -773,12 +770,12 @@ l_0131
 	@print #$9B
 	@printSTRING #CODEORIGIN+$0022
 
-; optimize FAIL (100, examples\diskget.pas), line = 35
+; optimize FAIL (100, examples\diskget.pas), line = 34
 	@printSTRING #CODEORIGIN+$0048
 	@printEOL
 ; AssignFile
 
-; optimize OK (examples\diskget.pas), line = 36
+; optimize OK (examples\diskget.pas), line = 35
 
 	mwa F :bp2
 	ldy #s@file.pfname
@@ -788,14 +785,14 @@ l_0131
 	lda #$20
 	sta (:bp2),y
 
-; optimize OK (examples\diskget.pas), line = 36
+; optimize OK (examples\diskget.pas), line = 35
 
 	ldy #s@file.status
 	lda #$00
 	sta (:bp2),y
 ; Reset
 
-; optimize OK (examples\diskget.pas), line = 37
+; optimize OK (examples\diskget.pas), line = 36
 
 	ldy #s@file.record
 	lda #$01
@@ -810,10 +807,10 @@ l_0131
 	pla:tax
 
 ; --- RepeatUntilProlog
-l_0174
+l_0170
 ; BlockRead
 
-; optimize OK (examples\diskget.pas), line = 39
+; optimize OK (examples\diskget.pas), line = 38
 
 	mwa F :bp2
 	ldy #s@file.buffer
@@ -823,7 +820,7 @@ l_0174
 	lda >N
 	sta (:bp2),y
 
-; optimize OK (examples\diskget.pas), line = 39
+; optimize OK (examples\diskget.pas), line = 38
 
 	ldy #s@file.nrecord
 	lda #$01
@@ -837,20 +834,20 @@ l_0174
 	@readfile F, #7
 	pla:tax
 
-; optimize FAIL (100, examples\diskget.pas), line = 40
+; optimize FAIL (100, examples\diskget.pas), line = 39
 	inx
 	mva N :STACKORIGIN,x
 	@printCHAR
 	dex
 
-; optimize FAIL ('SYSTEM.EOF', examples\diskget.pas), line = 41
+; optimize FAIL ('SYSTEM.EOF', examples\diskget.pas), line = 40
 	inx
 	mva F :STACKORIGIN,x
 	mva F+1 :STACKORIGIN+STACKWIDTH,x
 	jsr SYSTEM.EOF
 	dex
 	lda :STACKORIGIN+1,x
-	jeq l_0174
+	jeq l_0170
 ; CloseFile
 
 	txa:pha
@@ -858,7 +855,7 @@ l_0174
 	@closefile F
 	pla:tax
 
-; optimize FAIL (100, examples\diskget.pas), line = 43
+; optimize FAIL (100, examples\diskget.pas), line = 42
 	@printSTRING #CODEORIGIN+$0022
 	@print #$9B
 	@printSTRING #CODEORIGIN+$0022
@@ -867,14 +864,14 @@ l_0174
 	@print #$9B
 	@printSTRING #CODEORIGIN+$0022
 
-; optimize FAIL ('CRT.READKEY', examples\diskget.pas), line = 44
+; optimize FAIL ('CRT.READKEY', examples\diskget.pas), line = 43
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
 
 ; ------------------------------------------------------------
 
-@FORTMP_0120	= $000F
+@FORTMP_011C	= $000F
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
@@ -883,7 +880,7 @@ l_0174
 .endl
 l_0081
 
-; optimize FAIL ('MAINPROC', examples\diskget.pas), line = 48
+; optimize FAIL ('MAINPROC', examples\diskget.pas), line = 47
 	jsr MAINPROC
 ; CloseFile
 

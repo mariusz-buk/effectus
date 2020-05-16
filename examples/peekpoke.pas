@@ -13,15 +13,15 @@ var
   COL : byte absolute 710;
 
 procedure WAITFORKEYProc;
-begin
+begin  // 1
   CH := 255;
  WHILE CH=255 do begin
-  end;
+  end;  // while
   CH := 255;
-end;
+end;  // 4
 
 procedure MAINProc;
-begin
+begin  // 6
   Write(Chr(125));
   Writeln('Effectus example:');
   Writeln('PEEK demonstration');
@@ -58,7 +58,7 @@ begin
   n := 184;
   Poke(COL, n);
   WAITFORKEYProc;
-end;
+end;  // 4
 
 begin
   MAINProc;

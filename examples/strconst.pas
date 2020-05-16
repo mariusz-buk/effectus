@@ -17,12 +17,12 @@ var
   key : char;
   A : string = 'THIS IS A STRING CONSTANT';
   B : string = 'N1';
-begin
+begin  // 2
   Writeln(A);
   B := A;
   Writeln(B);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

@@ -15,7 +15,7 @@ var
   B : byte;
   C : word;
   I : integer;
-begin
+begin  // 2
   B := StrToInt('120');
   C := StrToInt('65000');
   I := StrToInt('-3400');
@@ -23,7 +23,7 @@ begin
   Writeln(C);
   Writeln(I);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

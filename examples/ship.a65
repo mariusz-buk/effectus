@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -1169,26 +1169,21 @@ C	= DATAORIGIN+$0038
 
 	lda #$78
 	sta $02C5
+; --- For
 
 ; optimize OK (examples\ship.pas), line = 59
 
 	mva #$02 I
 	mva #$00 I+1
-; --- For
 
-; optimize OK (examples\ship.pas), line = 60
-
-	mva #$02 I
-	mva #$00 I+1
-
-; optimize OK (examples\ship.pas), line = 60
+; optimize OK (examples\ship.pas), line = 59
 
 ; --- To
-l_020B
+l_0207
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\ship.pas), line = 60
+; optimize OK (examples\ship.pas), line = 59
 
 	lda I+1
 	cmp #$00
@@ -1197,9 +1192,9 @@ l_020B
 	cmp #$96
 @
 	scc
-	jne l_0217
+	jne l_0213
 
-; optimize FAIL ('PLOTSHIPPROC', examples\ship.pas), line = 61
+; optimize FAIL ('PLOTSHIPPROC', examples\ship.pas), line = 60
 	inx
 	mva I :STACKORIGIN,x
 	mva I+1 :STACKORIGIN+STACKWIDTH,x
@@ -1209,7 +1204,7 @@ l_020B
 	mva #$01 :STACKORIGIN,x
 	jsr PLOTSHIPPROC
 
-; optimize FAIL ('ERASESHIPPROC', examples\ship.pas), line = 63
+; optimize FAIL ('ERASESHIPPROC', examples\ship.pas), line = 62
 	inx
 	mva I :STACKORIGIN,x
 	mva I+1 :STACKORIGIN+STACKWIDTH,x
@@ -1222,29 +1217,24 @@ l_020B
 ; --- ForToDoEpilog
 	inw I						; inc ptr word [CounterAddress]
 
-	jne l_020B
+	jne l_0207
 
-l_0217
+l_0213
+; --- For
 
-; optimize OK (examples\ship.pas), line = 66
+; optimize OK (examples\ship.pas), line = 65
 
 	mva #$00 I
 	sta I+1
-; --- For
 
-; optimize OK (examples\ship.pas), line = 67
-
-	sta I
-	sta I+1
-
-; optimize OK (examples\ship.pas), line = 67
+; optimize OK (examples\ship.pas), line = 65
 
 ; --- To
-l_0233
+l_022B
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\ship.pas), line = 67
+; optimize OK (examples\ship.pas), line = 65
 
 	lda I+1
 	cmp #$7F
@@ -1253,20 +1243,20 @@ l_0233
 	cmp #$FF
 @
 	scc
-	jne l_023F
+	jne l_0237
 
 ; --- ForToDoEpilog
 	inw I						; inc ptr word [CounterAddress]
 
-	jne l_0233
+	jne l_022B
 
-l_023F
+l_0237
 
 ; ------------------------------------------------------------
 
 I	= DATAORIGIN+$0039
-@FORTMP_0208	= $0096
-@FORTMP_0230	= $7FFF
+@FORTMP_0204	= $0096
+@FORTMP_0228	= $7FFF
 
 @VarData	= I
 @VarDataSize	= 2
@@ -1279,7 +1269,7 @@ I	= DATAORIGIN+$0039
 .endl
 l_0014
 
-; optimize FAIL ('MAINPROC', examples\ship.pas), line = 72
+; optimize FAIL ('MAINPROC', examples\ship.pas), line = 70
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

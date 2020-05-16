@@ -20,16 +20,15 @@ var
   KEY : char;
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Write('GetD and EOF example', eol, '', eol, '');
   Assign(f,  'H1:TESTNUM.TXT');
   Reset(f, 1);
-  i := 1;
   for  i:=1 to 15 do begin
   BlockRead(f, n, 1);
   Write(Chr(n));
-  end;
+  end;  // for
   Close(f);
   Write('', eol, 'All numbers read!', eol, '', eol, '');
   Writeln('Read numbers again:');
@@ -42,7 +41,7 @@ begin
   Close(f);
   Write('', eol, '', eol, 'All numbers are read again!', eol, '');
   KEY := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

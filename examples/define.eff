@@ -3,16 +3,16 @@
 ; DEFINE declaration demo
 
 DEFINE Cls="PUT(125)"
-DEFINE max="3"
 DEFINE WriteLn="PrintBE"
 DEFINE Black="Poke(710,0)"
 DEFINE BorderRed="60"
+DEFINE ForLoop="FOR n=1 to"
+DEFINE max="3"
+DEFINE NewLine="PUTE()"
 
 CHAR key
 
 PROC DEFINE_TEST()
-
-DEFINE NewLine="PUTE()"
 
 BYTE n
 
@@ -28,7 +28,7 @@ PutE()
 PrintE("Cls, Newline")
 NewLine 
 PrintE("Count from 1 to max")
-FOR n=1 to max DO
+ForLoop max DO
   WriteLn(n)
 OD
 

@@ -22,7 +22,7 @@ var
   str1 : string = 'ATARI';
   str2 : string = 'HELLO';
   str3 : string = 'ATARI';
-begin
+begin  // 2
   Writeln('');
   Write('str1=');
   Writeln(str1);
@@ -42,7 +42,7 @@ begin
   end
   else begin
   Writeln('str1 is greater than str2');
-  end;
+  end;  // if
   Write('', eol, 'Again...', eol, '', eol, '');
     intValue  := -1;
   if    intValue =-1  then begin
@@ -54,9 +54,9 @@ begin
   end
   else begin
   Writeln('str1 is greater than str2');
-  end;
+  end;  // if
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

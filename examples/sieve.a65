@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -420,26 +420,21 @@ BLINK	= $0080
 
 	sta COUNT
 	sta COUNT+1
+; --- For
 
 ; optimize OK (examples\sieve.pas), line = 26
 
 	sta I
 	sta I+1
-; --- For
 
-; optimize OK (examples\sieve.pas), line = 27
-
-	sta I
-	sta I+1
-
-; optimize OK (examples\sieve.pas), line = 27
+; optimize OK (examples\sieve.pas), line = 26
 
 ; --- To
-l_008A
+l_0086
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\sieve.pas), line = 27
+; optimize OK (examples\sieve.pas), line = 26
 
 	lda I+1
 	cmp #$1F
@@ -448,9 +443,9 @@ l_008A
 	cmp #$FE
 @
 	scc
-	jne l_0096
+	jne l_0092
 
-; optimize OK (examples\sieve.pas), line = 28
+; optimize OK (examples\sieve.pas), line = 27
 
 	lda FLAGS
 	add I
@@ -464,29 +459,24 @@ l_008A
 ; --- ForToDoEpilog
 	inw I						; inc ptr word [CounterAddress]
 
-	jne l_008A
+	jne l_0086
 
-l_0096
+l_0092
+; --- For
 
-; optimize OK (examples\sieve.pas), line = 30
+; optimize OK (examples\sieve.pas), line = 29
 
 	mva #$00 I
 	sta I+1
-; --- For
 
-; optimize OK (examples\sieve.pas), line = 31
-
-	sta I
-	sta I+1
-
-; optimize OK (examples\sieve.pas), line = 31
+; optimize OK (examples\sieve.pas), line = 29
 
 ; --- To
-l_00AE
+l_00A6
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\sieve.pas), line = 31
+; optimize OK (examples\sieve.pas), line = 29
 
 	lda I+1
 	cmp #$1F
@@ -495,9 +485,9 @@ l_00AE
 	cmp #$FE
 @
 	scc
-	jne l_00BA
+	jne l_00B2
 
-; optimize OK (examples\sieve.pas), line = 32
+; optimize OK (examples\sieve.pas), line = 30
 
 	lda FLAGS
 	add I
@@ -507,9 +497,9 @@ l_00AE
 	sta :bp+1
 	lda (:bp),y
 	cmp #$54
-	jne l_00CE
+	jne l_00C6
 
-; optimize OK (examples\sieve.pas), line = 33
+; optimize OK (examples\sieve.pas), line = 31
 
 	lda I
 	add I
@@ -523,7 +513,7 @@ l_00AE
 	scc
 	inc PRIME+1
 
-; optimize OK (examples\sieve.pas), line = 34
+; optimize OK (examples\sieve.pas), line = 32
 
 	lda I
 	add PRIME
@@ -533,9 +523,9 @@ l_00AE
 	sta K+1
 
 ; --- WhileProlog
-l_00E8
+l_00E0
 
-; optimize OK (examples\sieve.pas), line = 35
+; optimize OK (examples\sieve.pas), line = 33
 
 	lda K+1
 	cmp #$1F
@@ -544,10 +534,10 @@ l_00E8
 	cmp #$FE
 @
 	bcc @+
-	jne l_00F6
+	jne l_00EE
 @
 
-; optimize OK (examples\sieve.pas), line = 36
+; optimize OK (examples\sieve.pas), line = 34
 
 	lda FLAGS
 	add K
@@ -558,7 +548,7 @@ l_00E8
 	lda #$46
 	sta (:bp),y
 
-; optimize OK (examples\sieve.pas), line = 37
+; optimize OK (examples\sieve.pas), line = 35
 
 	lda K
 	add PRIME
@@ -566,30 +556,30 @@ l_00E8
 	lda K+1
 	adc PRIME+1
 	sta K+1
-	jmp l_00E8
-l_00F6
+	jmp l_00E0
+l_00EE
 
-; optimize FAIL (0, examples\sieve.pas), line = 39
+; optimize FAIL (0, examples\sieve.pas), line = 37
 	inw COUNT
-l_00CE
+l_00C6
 
 ; --- ForToDoEpilog
 	inw I						; inc ptr word [CounterAddress]
 
-	jne l_00AE
+	jne l_00A6
 
-l_00BA
+l_00B2
 
-; optimize OK (examples\sieve.pas), line = 42
+; optimize OK (examples\sieve.pas), line = 40
 
 	mva RTCLOK TIME
 	mva #$00 TIME+1
 
-; optimize OK (examples\sieve.pas), line = 43
+; optimize OK (examples\sieve.pas), line = 41
 
 	mva #$22 SDMCTL
 
-; optimize FAIL (100, examples\sieve.pas), line = 44
+; optimize FAIL (100, examples\sieve.pas), line = 42
 	@printSTRING #CODEORIGIN+$000D
 	@print #$9B
 	@print #$20
@@ -600,7 +590,7 @@ l_00BA
 	dex
 	@printSTRING #CODEORIGIN+$000F
 
-; optimize FAIL (100, examples\sieve.pas), line = 45
+; optimize FAIL (100, examples\sieve.pas), line = 43
 	@printSTRING #CODEORIGIN+$000C
 	@print #$9B
 	@print #$20
@@ -611,15 +601,15 @@ l_00BA
 	dex
 	@printSTRING #CODEORIGIN+$001B
 
-; optimize FAIL ('CRT.READKEY', examples\sieve.pas), line = 46
+; optimize FAIL ('CRT.READKEY', examples\sieve.pas), line = 44
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
 
 ; ------------------------------------------------------------
 
-@FORTMP_0087	= $1FFE
-@FORTMP_00AB	= $1FFE
+@FORTMP_0083	= $1FFE
+@FORTMP_00A3	= $1FFE
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
@@ -628,7 +618,7 @@ l_00BA
 .endl
 l_002C
 
-; optimize FAIL ('SIEVEPROC', examples\sieve.pas), line = 50
+; optimize FAIL ('SIEVEPROC', examples\sieve.pas), line = 48
 	jsr SIEVEPROC
 
 ; ------------------------------------------------------------

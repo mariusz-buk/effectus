@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -686,16 +686,16 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize OK (examples\pmgdemo.pas), line = 28
+; optimize OK (examples\pmgdemo.pas), line = 29
 
 	mva #$00 GRACTL
 
-; optimize FAIL ('GRAPH.INITGRAPH_007C', examples\pmgdemo.pas), line = 30
+; optimize FAIL ('GRAPH.INITGRAPH_007C', examples\pmgdemo.pas), line = 31
 	inx
 	mva #$00 :STACKORIGIN,x
 	jsr GRAPH.INITGRAPH_007C
 
-; optimize OK (examples\pmgdemo.pas), line = 32
+; optimize OK (examples\pmgdemo.pas), line = 33
 
 	lda RAMTOP
 	sub #$10
@@ -704,11 +704,11 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
 	sbc #$00
 	sta PGMMEM+1
 
-; optimize OK (examples\pmgdemo.pas), line = 34
+; optimize OK (examples\pmgdemo.pas), line = 35
 
 	mva PGMMEM PMBASE
 
-; optimize OK (examples\pmgdemo.pas), line = 36
+; optimize OK (examples\pmgdemo.pas), line = 37
 
 	lda #$00
 	sta :eax
@@ -719,15 +719,15 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
 	lda :eax+1
 	sta PGMMEM+1
 
-; optimize OK (examples\pmgdemo.pas), line = 38
+; optimize OK (examples\pmgdemo.pas), line = 39
 
 	mva #$2E SDMCTL
 
-; optimize OK (examples\pmgdemo.pas), line = 40
+; optimize OK (examples\pmgdemo.pas), line = 41
 
 	mva #$00 SIZEP0
 
-; optimize OK (examples\pmgdemo.pas), line = 42
+; optimize OK (examples\pmgdemo.pas), line = 43
 
 	lda PGMMEM
 	sta :edx
@@ -738,7 +738,7 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
 	lda #$00
 	sta:rpl (:edx),y-
 
-; optimize OK (examples\pmgdemo.pas), line = 44
+; optimize OK (examples\pmgdemo.pas), line = 45
 
 	lda PGMMEM+1
 	add #$02
@@ -758,24 +758,24 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
 	sta :eax+1
 	jsr @move
 
-; optimize OK (examples\pmgdemo.pas), line = 46
+; optimize OK (examples\pmgdemo.pas), line = 47
 
 	mva #$03 GRACTL
 
-; optimize OK (examples\pmgdemo.pas), line = 47
+; optimize OK (examples\pmgdemo.pas), line = 48
 
 	mva #$32 PCOLR0
 
-; optimize OK (examples\pmgdemo.pas), line = 48
+; optimize OK (examples\pmgdemo.pas), line = 49
 
 	mva #$78 HPOSP0
 
-; optimize FAIL ('CRT.READKEY', examples\pmgdemo.pas), line = 49
+; optimize FAIL ('CRT.READKEY', examples\pmgdemo.pas), line = 50
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
 
-; optimize OK (examples\pmgdemo.pas), line = 51
+; optimize OK (examples\pmgdemo.pas), line = 52
 
 	mva #$00 GRACTL
 
@@ -804,7 +804,7 @@ PGMMEM	= DATAORIGIN+$003B
 .endl
 l_0014
 
-; optimize FAIL ('MAINPROC', examples\pmgdemo.pas), line = 55
+; optimize FAIL ('MAINPROC', examples\pmgdemo.pas), line = 56
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

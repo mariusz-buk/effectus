@@ -11,7 +11,6 @@ uses
 procedure MAINProc;
 // REGISTER VARIABLES
 // PLAYER 0 BITMAP
-// P/M memory storage
 var
   key : char;
   PMBASE : byte absolute $D407;
@@ -21,9 +20,11 @@ var
   PCOLR0 : byte absolute $2C0;
   HPOSP0 : byte absolute $D000;
   RAMTOP : byte absolute $6A;
+// P/M memory storage
+var
   P0 : array[0..14] of byte = (0, 0, 28, 28, 8, 28, 58, 89, 24, 40, 76, 68, 68, 0, 0);
   PGMMEM : word;
-begin
+begin  // 1
 // TURN OFF P/M GRAPHICS
   GRACTL := 0;
 // GRAPHICS MODE 0
@@ -49,7 +50,7 @@ begin
   key := ReadKey;
 // TURN OFF P/M GRAPHICS
   GRACTL := 0;
-end;
+end;  // 4
 
 begin
   MAINProc;

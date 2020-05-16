@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -128,7 +128,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_00EA
+	jmp l_00E7
 
 ; ------------------------------------------------------------
 
@@ -581,7 +581,7 @@ BLINK	= $0080
 ; optimize FAIL (100, examples\printf.pas), line = 32
 	@printSTRING #CODEORIGIN+$002B
 	@print #$9B
-	@printSTRING #CODEORIGIN+$00A5
+	@printSTRING #CODEORIGIN+$00A4
 	inx
 	mva Y :STACKORIGIN,x
 	mva Y+1 :STACKORIGIN+STACKWIDTH,x
@@ -608,7 +608,7 @@ BLINK	= $0080
 ; optimize FAIL (100, examples\printf.pas), line = 33
 	@printSTRING #CODEORIGIN+$002B
 	@print #$9B
-	@printSTRING #CODEORIGIN+$00B3
+	@printSTRING #CODEORIGIN+$00B1
 	inx
 	mva Z :STACKORIGIN,x
 	mva Z+1 :STACKORIGIN+STACKWIDTH,x
@@ -634,14 +634,14 @@ BLINK	= $0080
 	@print #$9B
 	@printSTRING #CODEORIGIN+$002B
 	@print #$9B
-	@printSTRING #CODEORIGIN+$00C2
+	@printSTRING #CODEORIGIN+$00BF
 	@print #$41
 	@printSTRING #CODEORIGIN+$002B
 
 ; optimize FAIL (100, examples\printf.pas), line = 35
 	@printSTRING #CODEORIGIN+$002B
 	@print #$9B
-	@printSTRING #CODEORIGIN+$00D5
+	@printSTRING #CODEORIGIN+$00D2
 	@print #$31
 	@printSTRING #CODEORIGIN+$002B
 
@@ -655,7 +655,7 @@ BLINK	= $0080
 	eif
 	rts						; ret
 .endl
-l_00EA
+l_00E7
 
 ; optimize FAIL ('MAINPROC', examples\printf.pas), line = 40
 	jsr MAINPROC
@@ -766,10 +766,10 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 .by  $00 $03 $2C $7A $3D $00 $0E $50  $72 $6F $63 $65 $6E $74 $20 $73  $69 $67 $6E $3A $20 $00 $06 $25
 .by  $61 $66 $74 $65 $72 $00 $06 $62  $65 $66 $6F $72 $65 $00 $0E $50  $72 $6F $63 $65 $6E $74 $20 $73
 .by  $69 $67 $6E $20 $27 $00 $16 $25  $27 $20 $69 $6E $20 $6F $6E $65  $20 $6C $69 $6E $65 $20 $66 $6F
-.by  $72 $6D $61 $74 $21 $00 $0D $48  $45 $58 $20 $78 $20 $28 $42 $59  $54 $45 $29 $20 $00 $0C $48 $45
-.by  $58 $20 $79 $20 $28 $49 $4E $54  $29 $20 $00 $0D $48 $45 $58 $20  $7A $20 $28 $43 $41 $52 $44 $29
-.by  $20 $00 $11 $46 $69 $72 $73 $74  $20 $63 $68 $61 $72 $61 $63 $74  $65 $72 $3A $20 $00 $0C $4E $75
-.by  $6D $62 $65 $72 $20 $6F $6E $65  $3A $20 $00
+.by  $72 $6D $61 $74 $21 $00 $0C $48  $45 $58 $20 $78 $28 $42 $59 $54  $45 $29 $20 $00 $0B $48 $45 $58
+.by  $20 $79 $28 $49 $4E $54 $29 $20  $00 $0C $48 $45 $58 $20 $7A $28  $43 $41 $52 $44 $29 $20 $00 $11
+.by  $46 $69 $72 $73 $74 $20 $63 $68  $61 $72 $61 $63 $74 $65 $72 $3A  $20 $00 $0C $4E $75 $6D $62 $65
+.by  $72 $20 $6F $6E $65 $3A $20 $00
 .endm
 
 	end

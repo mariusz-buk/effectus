@@ -19,7 +19,7 @@ var
   STR01 : string[21];
   STR02 : string[15];
   STR03 : string[15];
-begin
+begin  // 2
   Write(Chr(125));
   Writeln('');
   STR01 :=  'HELLO THERE: ATARIAN';
@@ -35,7 +35,7 @@ begin
   Write('STR01=');
   Writeln(STR01);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

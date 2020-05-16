@@ -11,19 +11,19 @@ uses
 function SumFunc(nn1 : word; nn2 : word) : word;
 var
   res : word;
-begin
+begin  // 2
   res := nn1+nn2;
   result := res;
-end;
+end;  // 3
 procedure MAINProc;
 var
   n1 : word;
   n2 : word;
   n3 : word;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Effectus example:');
-  Writeln('Using local functions (FUNC)');
+  Writeln('Using local functions(FUNC)');
   Writeln('');
   n1 := 30;
   n2 := 120;
@@ -39,10 +39,10 @@ begin
   Writeln('');
   Writeln('Press trigger');
  WHILE Strig[0]=1 do begin
-  end;
+  end;  // while
   Writeln('Trigger pressed');
   Writeln('Program finished!');
-end;
+end;  // 4
 
 begin
   MAINProc;

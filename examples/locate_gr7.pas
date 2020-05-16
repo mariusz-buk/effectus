@@ -12,7 +12,7 @@ procedure MAINProc;
 var
   key : char;
   loc : byte;
-begin
+begin  // 2
   InitGraph(7);
   SetColor(1);
   PutPixel(10, 10);
@@ -28,7 +28,7 @@ begin
   PutPixel(60, 60);
   MoveTo(60, 60);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;
