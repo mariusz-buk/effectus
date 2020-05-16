@@ -1,5 +1,5 @@
 ==================
-  Effectus 0.4.1
+  Effectus 0.4.2
 ==================
 
 This is new version of Effectus, done from scratch. This is new branch version, currently only
@@ -179,9 +179,10 @@ Command prompt execution
 effectus <filename> <parameters>
 
 Available options:
-  -i  program information about variables and custom PROCedures
-  -o: object code extension
+  -i  information about declared variables, PROCedures, FUNCtions and DEFINE constants
+  -o: binary file extension
   -c  clear summarized log file
+  -nc Effectus only translate source to Mad Pascal
 
 - Effectus/Action! source code listing can reside on any path and resulting code
   is also generated there
@@ -198,17 +199,18 @@ Not yet supported:
   - No proper error handling is done yet, so it happens that no errors show on the screen even if
     something went wrong
 
-Wierd stuff
------------
-
-- BYTE ARRAY definition for using as string holder must be declared as SBYTE ARRAY
-
 Bugs
 ----
 
-- Nested branches do not work correctly in some cases
-- Declaring variables allows freedom, but some considerations must be taken. For example,
-  proper syntax is:
+- Variables are now allowed in inline machine language block
+- Declared strings have to be of non-standard type temporarily called SBYTE ARRAY because of
+  the way Action! handles bytes. Effectus will have to immitate it like Action! does,
+  byte by byte, which are concatenated together to form a string.
+- FUNCtion does not return a value after executing machine language code
+- PROC/FUNC parameter types missing: BYTE ARRAY, CARD ARRAY, POINTER
+- Pointers are not yet fully supported
+- TYPE and BYTE/CARD ARRAY structure has some rules to follow to be compiled correctly.
+  For example, the proper syntax is:
 
   byte array ndl=[112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
 

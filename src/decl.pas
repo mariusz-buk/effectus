@@ -37,7 +37,7 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.4.1';  // Effectus version
+  VERSION = '0.4.2';  // Effectus version
 
 type
   // Program support variables
@@ -158,15 +158,15 @@ var
   code : TStringList;
   effCode : TStringList;
   isClearLog : Boolean = False;
-  ProcCount : LongInt;  // PROC statement count
-  FuncCount : LongInt;  // FUNC statement count
+  //ProcCount : LongInt;  // PROC statement count
+  //FuncCount : LongInt;  // FUNC statement count
   FuncList : TStringList;
   defineList : TStringList;
   filenameSrc : string;
   procML : TProcML;
   CurLine : LongInt;
   optOutput,
-  optBinExt, //meditMADS_src_dir,
+  optBinExt,
   meditMADS_log_dir : String;
   actionFilename : String = '';
   isInfo : Boolean = False;  // Information about variables, procedures and functions
@@ -187,6 +187,16 @@ var
 
   varCnt : byte = 0;
   tempProc : string;
+  
+const
+  _VAR_SCALAR     = '0';
+  _VAR_MEM_ADDR   = '1';
+  _VAR_STRING     = '2';
+  _VAR_POINTER    = '3';
+  _VAR_BYTE_ARRAY = '4';
+  _VAR_CARD_ARRAY = '5';
+  _VAR_SCALAR_DEFAULT = '6';
+  _VAR_TYPE_REC   = '7';
 
 procedure Init;
 procedure CreateLists;
@@ -213,8 +223,6 @@ begin
   defineList.Clear;
   aList.Clear;
 
-  ProcCount := 0; FuncCount := 0;
-
   // Action! keywords  
   keywords.Add('MODULE=0');
   keywords.Add('PROC=0');
@@ -225,7 +233,7 @@ begin
   keywords.Add('DEFINE=0');
   keywords.Add('EXIT=0');
   keywords.Add('BREAK=0');
-  //keywords.Add('TYPE=0');
+
   // Branches
   keywords.Add('IF=1');
   keywords.Add('THEN=1');
@@ -239,14 +247,8 @@ begin
   keywords.Add('UNTIL=1');
   keywords.Add('DO=1');
   keywords.Add('OD=1');
-  // Conditional operators
-//   keywords.Add('AND=2');
-//   keywords.Add('OR=2');
-//   keywords.Add('RSH=2');
-//   keywords.Add('LSH=2');
-//   keywords.Add('MOD=2');
-//   keywords.Add('XOR=2');
 
+  // Data types
   dataTypes.Add('BYTE=1');
   dataTypes.Add('CHAR=1');
   dataTypes.Add('INT=1');

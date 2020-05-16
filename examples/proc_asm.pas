@@ -17,7 +17,7 @@ procedure PokeTestProc(d : byte); assembler;
   lda d
     .by $8D $C6 $02 $60 
   };
-end;
+end;  // 2
 procedure TESTProc(CURSOR : byte; BACK : byte; BORDER : byte; X : byte; Y : byte; UPDOWN : byte); assembler;
   asm
   {
@@ -29,13 +29,13 @@ procedure TESTProc(CURSOR : byte; BACK : byte; BORDER : byte; X : byte; Y : byte
   mva UPDOWN $a5
     .by $8E $C6 $02 $8C $C8 $02 $8D $F0 $02 $A5 $A5 $8D $F3 $02 $A5 $A3 $8D $55 $00 $A5 $A4 $8D $54 $00 $60 
   };
-end;
+end;  // 2
 procedure MAINProc;
 var
   n1 : word;
   n2 : word;
   n3 : word;
-begin
+begin  // 1
   Write(Chr(125));
   Write('', eol, 'Press any key to see some effect!', eol, '');
   KEY := ReadKey;
@@ -45,7 +45,7 @@ begin
   KEY := ReadKey;
   POKETESTProc(144);
   KEY := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

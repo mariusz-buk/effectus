@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -968,26 +968,21 @@ SCANLINE_WIDTH	= DATAORIGIN+$002A
 	mva :STACKORIGIN,x K
 	mva :STACKORIGIN+STACKWIDTH,x K+1
 	dex
+; --- For
 
 ; optimize OK (examples\butterfly.pas), line = 38
 
 	mva #$01 I
 	mva #$00 I+1
-; --- For
 
-; optimize OK (examples\butterfly.pas), line = 39
-
-	mva #$01 I
-	mva #$00 I+1
-
-; optimize OK (examples\butterfly.pas), line = 39
+; optimize OK (examples\butterfly.pas), line = 38
 
 ; --- To
-l_010D
+l_0109
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\butterfly.pas), line = 39
+; optimize OK (examples\butterfly.pas), line = 38
 
 	lda I+1
 	cmp #$24
@@ -996,9 +991,9 @@ l_010D
 	cmp #$B8
 @
 	scc
-	jne l_0119
+	jne l_0115
 
-; optimize FAIL ('GRAPH.PUTPIXEL_0087', examples\butterfly.pas), line = 40
+; optimize FAIL ('GRAPH.PUTPIXEL_0087', examples\butterfly.pas), line = 39
 	inx
 	mva X :STACKORIGIN,x
 	mva X+1 :STACKORIGIN+STACKWIDTH,x
@@ -1007,7 +1002,7 @@ l_010D
 	mva Y+1 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.PUTPIXEL_0087
 
-; optimize FAIL ('GRAPH.MOVETO', examples\butterfly.pas), line = 41
+; optimize FAIL ('GRAPH.MOVETO', examples\butterfly.pas), line = 40
 	inx
 	mva X :STACKORIGIN,x
 	mva X+1 :STACKORIGIN+STACKWIDTH,x
@@ -1016,7 +1011,7 @@ l_010D
 	mva Y+1 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.MOVETO
 
-; optimize FAIL ('GRAPH.LINETO', examples\butterfly.pas), line = 42
+; optimize FAIL ('GRAPH.LINETO', examples\butterfly.pas), line = 41
 	inx
 	mva J :STACKORIGIN,x
 	mva J+1 :STACKORIGIN+STACKWIDTH,x
@@ -1025,7 +1020,7 @@ l_010D
 	mva K+1 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.LINETO
 
-; optimize FAIL ('GRAPH.PUTPIXEL_0087', examples\butterfly.pas), line = 43
+; optimize FAIL ('GRAPH.PUTPIXEL_0087', examples\butterfly.pas), line = 42
 	inx
 	mva J :STACKORIGIN,x
 	mva J+1 :STACKORIGIN+STACKWIDTH,x
@@ -1034,7 +1029,7 @@ l_010D
 	mva Y+1 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.PUTPIXEL_0087
 
-; optimize FAIL ('GRAPH.MOVETO', examples\butterfly.pas), line = 44
+; optimize FAIL ('GRAPH.MOVETO', examples\butterfly.pas), line = 43
 	inx
 	mva J :STACKORIGIN,x
 	mva J+1 :STACKORIGIN+STACKWIDTH,x
@@ -1043,7 +1038,7 @@ l_010D
 	mva Y+1 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.MOVETO
 
-; optimize FAIL ('GRAPH.LINETO', examples\butterfly.pas), line = 45
+; optimize FAIL ('GRAPH.LINETO', examples\butterfly.pas), line = 44
 	inx
 	mva X :STACKORIGIN,x
 	mva X+1 :STACKORIGIN+STACKWIDTH,x
@@ -1052,7 +1047,7 @@ l_010D
 	mva K+1 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.LINETO
 
-; optimize OK (examples\butterfly.pas), line = 46
+; optimize OK (examples\butterfly.pas), line = 45
 
 	lda X
 	add A
@@ -1061,7 +1056,7 @@ l_010D
 	adc A+1
 	sta X+1
 
-; optimize OK (examples\butterfly.pas), line = 47
+; optimize OK (examples\butterfly.pas), line = 46
 
 	lda Y
 	add B
@@ -1070,7 +1065,7 @@ l_010D
 	adc B+1
 	sta Y+1
 
-; optimize OK (examples\butterfly.pas), line = 48
+; optimize OK (examples\butterfly.pas), line = 47
 
 	lda J
 	add C
@@ -1079,7 +1074,7 @@ l_010D
 	adc C+1
 	sta J+1
 
-; optimize OK (examples\butterfly.pas), line = 49
+; optimize OK (examples\butterfly.pas), line = 48
 
 	lda K
 	add D
@@ -1088,7 +1083,7 @@ l_010D
 	adc D+1
 	sta K+1
 
-; optimize FAIL ('SYSTEM.RANDOM_0014', examples\butterfly.pas), line = 50
+; optimize FAIL ('SYSTEM.RANDOM_0014', examples\butterfly.pas), line = 49
 	inx
 	mva #$32 :STACKORIGIN,x
 	jsr SYSTEM.RANDOM_0014
@@ -1097,7 +1092,7 @@ l_010D
 	mva :STACKORIGIN+STACKWIDTH,x Q+1
 	dex
 
-; optimize OK (examples\butterfly.pas), line = 51
+; optimize OK (examples\butterfly.pas), line = 50
 
 	lda Q+1
 	cmp #$00
@@ -1107,14 +1102,14 @@ l_010D
 @
 	seq
 	bcs @+
-	jmp l_0155
+	jmp l_0151
 @
 
-; optimize FAIL (0, examples\butterfly.pas), line = 52
+; optimize FAIL (0, examples\butterfly.pas), line = 51
 	inw COL
-l_0155
+l_0151
 
-; optimize OK (examples\butterfly.pas), line = 54
+; optimize OK (examples\butterfly.pas), line = 53
 
 	lda COL+1
 	cmp #$00
@@ -1124,22 +1119,22 @@ l_0155
 @
 	seq
 	bcs @+
-	jmp l_016D
+	jmp l_0169
 @
 
-; optimize OK (examples\butterfly.pas), line = 55
+; optimize OK (examples\butterfly.pas), line = 54
 
 	mva #$01 COL
 	mva #$00 COL+1
-l_016D
+l_0169
 
-; optimize FAIL ('GRAPH.SETCOLOR', examples\butterfly.pas), line = 57
+; optimize FAIL ('GRAPH.SETCOLOR', examples\butterfly.pas), line = 56
 	inx
 	mva COL :STACKORIGIN,x
 	mva COL+1 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.SETCOLOR
 
-; optimize OK (examples\butterfly.pas), line = 58
+; optimize OK (examples\butterfly.pas), line = 57
 
 	lda X+1
 	cmp #$00
@@ -1147,28 +1142,28 @@ l_016D
 	lda X
 	cmp #$4F
 @
-	jcc l_0188
+	jcc l_0184
+
+; optimize OK (examples\butterfly.pas), line = 58
+
+	lda #$00
+	sub A
+	sta A
+	lda #$00
+	sbc A+1
+	sta A+1
 
 ; optimize OK (examples\butterfly.pas), line = 59
 
-	lda #$00
-	sub A
-	sta A
-	lda #$00
-	sbc A+1
-	sta A+1
-
-; optimize OK (examples\butterfly.pas), line = 60
-
 	lda X
 	add A
 	sta X
 	lda X+1
 	adc A+1
 	sta X+1
-l_0188
+l_0184
 
-; optimize OK (examples\butterfly.pas), line = 62
+; optimize OK (examples\butterfly.pas), line = 61
 
 	lda J+1
 	cmp #$00
@@ -1176,9 +1171,9 @@ l_0188
 	lda J
 	cmp #$4F
 @
-	jcc l_01A6
+	jcc l_01A2
 
-; optimize OK (examples\butterfly.pas), line = 63
+; optimize OK (examples\butterfly.pas), line = 62
 
 	lda #$00
 	sub C
@@ -1187,7 +1182,7 @@ l_0188
 	sbc C+1
 	sta C+1
 
-; optimize OK (examples\butterfly.pas), line = 64
+; optimize OK (examples\butterfly.pas), line = 63
 
 	lda J
 	add C
@@ -1195,9 +1190,9 @@ l_0188
 	lda J+1
 	adc C+1
 	sta J+1
-l_01A6
+l_01A2
 
-; optimize OK (examples\butterfly.pas), line = 66
+; optimize OK (examples\butterfly.pas), line = 65
 
 	lda J+1
 	cmp #$00
@@ -1206,10 +1201,10 @@ l_01A6
 	cmp #$00
 @
 	bcc @+
-	jne l_01C4
+	jne l_01C0
 @
 
-; optimize OK (examples\butterfly.pas), line = 67
+; optimize OK (examples\butterfly.pas), line = 66
 
 	lda #$00
 	sub C
@@ -1218,7 +1213,7 @@ l_01A6
 	sbc C+1
 	sta C+1
 
-; optimize OK (examples\butterfly.pas), line = 68
+; optimize OK (examples\butterfly.pas), line = 67
 
 	lda J
 	add C
@@ -1226,9 +1221,9 @@ l_01A6
 	lda J+1
 	adc C+1
 	sta J+1
-l_01C4
+l_01C0
 
-; optimize OK (examples\butterfly.pas), line = 70
+; optimize OK (examples\butterfly.pas), line = 69
 
 	lda X+1
 	cmp #$00
@@ -1237,10 +1232,10 @@ l_01C4
 	cmp #$00
 @
 	bcc @+
-	jne l_01E2
+	jne l_01DE
 @
 
-; optimize OK (examples\butterfly.pas), line = 71
+; optimize OK (examples\butterfly.pas), line = 70
 
 	lda #$00
 	sub A
@@ -1249,7 +1244,7 @@ l_01C4
 	sbc A+1
 	sta A+1
 
-; optimize OK (examples\butterfly.pas), line = 72
+; optimize OK (examples\butterfly.pas), line = 71
 
 	lda X
 	add A
@@ -1257,38 +1252,38 @@ l_01C4
 	lda X+1
 	adc A+1
 	sta X+1
-l_01E2
+l_01DE
+
+; optimize OK (examples\butterfly.pas), line = 73
+
+	lda Y+1
+	cmp #$00
+	bne @+
+	lda Y
+	cmp #$BF
+@
+	jcc l_01FC
 
 ; optimize OK (examples\butterfly.pas), line = 74
 
-	lda Y+1
-	cmp #$00
-	bne @+
-	lda Y
-	cmp #$BF
-@
-	jcc l_0200
+	lda #$00
+	sub B
+	sta B
+	lda #$00
+	sbc B+1
+	sta B+1
 
 ; optimize OK (examples\butterfly.pas), line = 75
 
-	lda #$00
-	sub B
-	sta B
-	lda #$00
-	sbc B+1
-	sta B+1
-
-; optimize OK (examples\butterfly.pas), line = 76
-
 	lda Y
 	add B
 	sta Y
 	lda Y+1
 	adc B+1
 	sta Y+1
-l_0200
+l_01FC
 
-; optimize OK (examples\butterfly.pas), line = 78
+; optimize OK (examples\butterfly.pas), line = 77
 
 	lda K+1
 	cmp #$00
@@ -1296,9 +1291,9 @@ l_0200
 	lda K
 	cmp #$BF
 @
-	jcc l_021E
+	jcc l_021A
 
-; optimize OK (examples\butterfly.pas), line = 79
+; optimize OK (examples\butterfly.pas), line = 78
 
 	lda #$00
 	sub D
@@ -1307,7 +1302,7 @@ l_0200
 	sbc D+1
 	sta D+1
 
-; optimize OK (examples\butterfly.pas), line = 80
+; optimize OK (examples\butterfly.pas), line = 79
 
 	lda K
 	add D
@@ -1315,9 +1310,9 @@ l_0200
 	lda K+1
 	adc D+1
 	sta K+1
-l_021E
+l_021A
 
-; optimize OK (examples\butterfly.pas), line = 82
+; optimize OK (examples\butterfly.pas), line = 81
 
 	lda K+1
 	cmp #$00
@@ -1326,10 +1321,10 @@ l_021E
 	cmp #$00
 @
 	bcc @+
-	jne l_023C
+	jne l_0238
 @
 
-; optimize OK (examples\butterfly.pas), line = 83
+; optimize OK (examples\butterfly.pas), line = 82
 
 	lda #$00
 	sub D
@@ -1338,7 +1333,7 @@ l_021E
 	sbc D+1
 	sta D+1
 
-; optimize OK (examples\butterfly.pas), line = 84
+; optimize OK (examples\butterfly.pas), line = 83
 
 	lda K
 	add D
@@ -1346,9 +1341,9 @@ l_021E
 	lda K+1
 	adc D+1
 	sta K+1
-l_023C
+l_0238
 
-; optimize OK (examples\butterfly.pas), line = 86
+; optimize OK (examples\butterfly.pas), line = 85
 
 	lda Y+1
 	cmp #$00
@@ -1357,10 +1352,10 @@ l_023C
 	cmp #$00
 @
 	bcc @+
-	jne l_025A
+	jne l_0256
 @
 
-; optimize OK (examples\butterfly.pas), line = 87
+; optimize OK (examples\butterfly.pas), line = 86
 
 	lda #$00
 	sub B
@@ -1369,7 +1364,7 @@ l_023C
 	sbc B+1
 	sta B+1
 
-; optimize OK (examples\butterfly.pas), line = 88
+; optimize OK (examples\butterfly.pas), line = 87
 
 	lda Y
 	add B
@@ -1377,14 +1372,14 @@ l_023C
 	lda Y+1
 	adc B+1
 	sta Y+1
-l_025A
+l_0256
 
 ; --- ForToDoEpilog
 	inw I						; inc ptr word [CounterAddress]
 
-	jne l_010D
+	jne l_0109
 
-l_0119
+l_0115
 
 ; ------------------------------------------------------------
 
@@ -1399,7 +1394,7 @@ K	= DATAORIGIN+$0047
 COL	= DATAORIGIN+$0049
 I	= DATAORIGIN+$004B
 Q	= DATAORIGIN+$004D
-@FORTMP_010A	= $24B8
+@FORTMP_0106	= $24B8
 
 @VarData	= A
 @VarDataSize	= 22
@@ -1412,7 +1407,7 @@ Q	= DATAORIGIN+$004D
 .endl
 l_0014
 
-; optimize FAIL ('DEMO2PROC', examples\butterfly.pas), line = 94
+; optimize FAIL ('DEMO2PROC', examples\butterfly.pas), line = 93
 	jsr DEMO2PROC
 
 ; ------------------------------------------------------------

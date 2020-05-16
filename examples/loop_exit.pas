@@ -12,21 +12,20 @@ procedure MAINProc;
 var
   key : char;
   n : byte;
-begin
+begin  // 2
   Write(Chr(125));
   Writeln('Effectus example:');
   Writeln('Using EXIT command in loop statements FOR,WHILE and UNTIL');
   Writeln('');
   Writeln('Counting from 1 to 10...');
   Writeln('');
-  n := 1;
   for  n:=1 to 10 do begin
   Write(n);
   Write(Chr(44));
   if n=7 then begin
   break;
-  end;
-  end;
+  end;  // if
+  end;  // for
   Writeln('');
   Writeln('Escaped from FOR loop!');
   Writeln('');
@@ -39,9 +38,9 @@ begin
   Write(Chr(44));
   if n=14 then begin
   break;
-  end;
+  end;  // if
   n := n+1;
-  end;
+  end;  // while
   Writeln('');
   Writeln('Escaped from WHILE loop!');
   Writeln('');
@@ -58,7 +57,7 @@ begin
   Writeln('');
   Writeln('Escaped from UNTIL loop!');
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

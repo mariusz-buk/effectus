@@ -1,48 +1,48 @@
-mads 2.1.0 build 4 (27 Oct 19)
+mads 2.1.0
   3726 					opt l+
     95
     96 				.print 'RUNLIB: ',RUNLIB,'..',*
-    96 				RUNLIB: $20C1..$21A8
+    96 				RUNLIB: $20C0..$21A7
     97
     98 				; ------------------------------------------------------------
     99
-   100 21A8			START
-   101 21A8 BA				tsx
-   102 21A9 8E 1A 23			stx MAIN.@halt+1
+   100 21A7			START
+   101 21A7 BA				tsx
+   102 21A8 8E 19 23			stx MAIN.@halt+1
    103
    104 					.ifdef fmulinit
    105 					fmulinit
    106 					eif
    107
    108 = 0014			VLEN	= VARDATASIZE-VARINITSIZE
-   109 = 2333			VADR	= DATAORIGIN+VARINITSIZE
+   109 = 2332			VADR	= DATAORIGIN+VARINITSIZE
    110
    111 					ift VADR > $BFFF
    112 					ert 'Invalid memory address range ',VADR
    113 					eli (VLEN>0) && (VLEN<=256)
-   114 21AC A2 EC			ldx #256-VLEN
-   115 21AE A9 00			lda #0
-   116 21B0 9D 47 22 E8 D0 FA		sta:rne VADR+VLEN-256,x+
+   114 21AB A2 EC			ldx #256-VLEN
+   115 21AD A9 00			lda #0
+   116 21AF 9D 46 22 E8 D0 FA		sta:rne VADR+VLEN-256,x+
    117 					eli VLEN>0
    118 					@fill #VADR #VLEN #0
    119 					eif
    120
-   121 21B6 A2 0F			ldx #$0f
-   122 21B8 BD 40 03 9D 1D 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   121 21B5 A2 0F			ldx #$0f
+   122 21B7 BD 40 03 9D 1C 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
    123
-   124 21C1 E8				inx		; X = 0 !!!
-   125 21C2 86 8E			stx bp		; lo BP = 0
+   124 21C0 E8				inx		; X = 0 !!!
+   125 21C1 86 8E			stx bp		; lo BP = 0
    126
-   127 21C4				UNITINITIALIZATION
+   127 21C3				UNITINITIALIZATION
 Macro: UNITINITIALIZATION [Source: func.a65]
    128
-   129 21C4			.local	MAIN						; PROCEDURE
+   129 21C3			.local	MAIN						; PROCEDURE
    130
-   131 21C4 4C 16 23			jmp l_00C8
+   131 21C3 4C 15 23			jmp l_00C7
    132
    133 				; ------------------------------------------------------------
    134
-   135 21C7			.local	SYSTEM						; UNIT
+   135 21C6			.local	SYSTEM						; UNIT
    136
    137 				; ------------------------------------------------------------
    138
@@ -92,27 +92,27 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    182 = 0008			FMOPENWRITE	= $0008
    183 = 0009			FMOPENAPPEND	= $0009
    184 = 000C			FMOPENREADWRITE	= $000C
-   185 = 232D			SCREENWIDTH	= DATAORIGIN+$0000
-   186 = 232F			SCREENHEIGHT	= DATAORIGIN+$0002
-   187 = 2331			DATESEPARATOR	= DATAORIGIN+$0004
+   185 = 232C			SCREENWIDTH	= DATAORIGIN+$0000
+   186 = 232E			SCREENHEIGHT	= DATAORIGIN+$0002
+   187 = 2330			DATESEPARATOR	= DATAORIGIN+$0004
    188 = D014			TVSYSTEM	= $D014
    189 = 02C0			adr.PALETTE	= $02C0
-   190 21C7			.var PALETTE	= adr.PALETTE .word
+   190 21C6			.var PALETTE	= adr.PALETTE .word
    191 = D012			adr.HPALETTE	= $D012
-   192 21C7			.var HPALETTE	= adr.HPALETTE .word
-   193 = 2332			FILEMODE	= DATAORIGIN+$0005
-   194 = 2333			SCREENMODE	= DATAORIGIN+$0006
-   195 = 2334			IORESULT	= DATAORIGIN+$0007
-   196 = 2335			EOLN	= DATAORIGIN+$0008
-   197 = 2336			RNDSEED	= DATAORIGIN+$0009
+   192 21C6			.var HPALETTE	= adr.HPALETTE .word
+   193 = 2331			FILEMODE	= DATAORIGIN+$0005
+   194 = 2332			SCREENMODE	= DATAORIGIN+$0006
+   195 = 2333			IORESULT	= DATAORIGIN+$0007
+   196 = 2334			EOLN	= DATAORIGIN+$0008
+   197 = 2335			RNDSEED	= DATAORIGIN+$0009
    198
-   199 = 21C7 C0 02		PALETTE
-   199 = 21C9 12 D0		HPALETTE
+   199 = 21C6 C0 02		PALETTE
+   199 = 21C8 12 D0		HPALETTE
    199 				.endl							; UNIT SYSTEM
    200
    201 				; ------------------------------------------------------------
    202
-   203 21CB			.local	DOS						; UNIT
+   203 21CA			.local	DOS						; UNIT
    204
    205 				; ------------------------------------------------------------
    206
@@ -122,7 +122,7 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    210
    211 				; ------------------------------------------------------------
    212
-   213 21CB			.local	STRUTILS					; UNIT
+   213 21CA			.local	STRUTILS					; UNIT
    214
    215 				; ------------------------------------------------------------
    216
@@ -130,7 +130,7 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    218
    219 				; ------------------------------------------------------------
    220
-   221 21CB			.local	SYSUTILS					; UNIT
+   221 21CA			.local	SYSUTILS					; UNIT
    222
    223 				; ------------------------------------------------------------
    224
@@ -146,7 +146,7 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    234
    235 				; ------------------------------------------------------------
    236
-   237 21CB			.local	ATARI						; UNIT
+   237 21CA			.local	ATARI						; UNIT
    238
    239 				; ------------------------------------------------------------
    240
@@ -241,11 +241,11 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    329
    330 				; ------------------------------------------------------------
    331
-   332 21CB			.local	CRT						; UNIT
+   332 21CA			.local	CRT						; UNIT
    333
    334 				; ------------------------------------------------------------
    335
-   336 = 2338			TEXTATTR	= DATAORIGIN+$000B
+   336 = 2337			TEXTATTR	= DATAORIGIN+$000B
    337 = D01F			CONSOL	= $D01F
    338 = 0000			CN_START_SELECT_OPTION	= $0000
    339 = 0001			CN_SELECT_OPTION	= $0001
@@ -284,7 +284,7 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    372
    373 				; ------------------------------------------------------------
    374
-   375 21CB			.local	JOYSTICK					; UNIT
+   375 21CA			.local	JOYSTICK					; UNIT
    376
    377 				; ------------------------------------------------------------
    378
@@ -300,15 +300,15 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    388 = 0278			JOY_1	= $0278
    389 = 0279			JOY_2	= $0279
    390 = 0278			adr.STICK	= $0278
-   391 21CB			.var STICK	= adr.STICK .word
+   391 21CA			.var STICK	= adr.STICK .word
    392 = 0278			STICK0	= $0278
    393 = 0279			STICK1	= $0279
    394 = 0284			adr.STRIG	= $0284
-   395 21CB			.var STRIG	= adr.STRIG .word
+   395 21CA			.var STRIG	= adr.STRIG .word
    396 = 0284			STRIG0	= $0284
    397 = 0285			STRIG1	= $0285
    398 = 0270			adr.PADDL	= $0270
-   399 21CB			.var PADDL	= adr.PADDL .word
+   399 21CA			.var PADDL	= adr.PADDL .word
    400 = 0270			PADDL0	= $0270
    401 = 0271			PADDL1	= $0271
    402 = 0272			PADDL2	= $0272
@@ -318,7 +318,7 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    406 = 0276			PADDL6	= $0276
    407 = 0277			PADDL7	= $0277
    408 = 027C			adr.PTRIG	= $027C
-   409 21CB			.var PTRIG	= adr.PTRIG .word
+   409 21CA			.var PTRIG	= adr.PTRIG .word
    410 = 027C			PTRIG0	= $027C
    411 = 027D			PTRIG1	= $027D
    412 = 027E			PTRIG2	= $027E
@@ -328,53 +328,53 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    416 = 0282			PTRIG6	= $0282
    417 = 0283			PTRIG7	= $0283
    418
-   419 = 21CB 78 02		STICK
-   419 = 21CD 84 02		STRIG
-   419 = 21CF 70 02		PADDL
-   419 = 21D1 7C 02		PTRIG
+   419 = 21CA 78 02		STICK
+   419 = 21CC 84 02		STRIG
+   419 = 21CE 70 02		PADDL
+   419 = 21D0 7C 02		PTRIG
    419 				.endl							; UNIT JOYSTICK
    420
-   421 21D3			.local	SUMFUNC						; FUNCTION
+   421 21D2			.local	SUMFUNC						; FUNCTION
    422
    423 				; ------------------------------------------------------------
    424
    425 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
    426 				; as Pointer
-   427 21D3 B5 98 8D 3B 23		mva :STACKORIGIN,x NN2
-   428 21D8 B5 A8 8D 3C 23		mva :STACKORIGIN+STACKWIDTH,x NN2+1
-   429 21DD CA				dex						; sub bx, 1
+   427 21D2 B5 98 8D 3A 23		mva :STACKORIGIN,x NN2
+   428 21D7 B5 A8 8D 3B 23		mva :STACKORIGIN+STACKWIDTH,x NN2+1
+   429 21DC CA				dex						; sub bx, 1
    430
    431 				; ------------------------------------------------------------
    432
    433 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
    434 				; as Pointer
-   435 21DE B5 98 8D 39 23		mva :STACKORIGIN,x NN1
-   436 21E3 B5 A8 8D 3A 23		mva :STACKORIGIN+STACKWIDTH,x NN1+1
-   437 21E8 CA				dex						; sub bx, 1
+   435 21DD B5 98 8D 38 23		mva :STACKORIGIN,x NN1
+   436 21E2 B5 A8 8D 39 23		mva :STACKORIGIN+STACKWIDTH,x NN1+1
+   437 21E7 CA				dex						; sub bx, 1
    438
    439 				; optimize OK (examples\func.pas), line = 15
    440
-   441 21E9 AD 39 23			lda NN1
-   442 21EC 18 6D 3B 23			add NN2
-   443 21F0 8D 3F 23			sta RES
-   444 21F3 AD 3A 23			lda NN1+1
-   445 21F6 6D 3C 23			adc NN2+1
-   446 21F9 8D 40 23			sta RES+1
+   441 21E8 AD 38 23			lda NN1
+   442 21EB 18 6D 3A 23			add NN2
+   443 21EF 8D 3E 23			sta RES
+   444 21F2 AD 39 23			lda NN1+1
+   445 21F5 6D 3B 23			adc NN2+1
+   446 21F8 8D 3F 23			sta RES+1
    447
    448 				; optimize OK (examples\func.pas), line = 16
    449
-   450 21FC AD 3F 23 8D 3D 23		mva RES RESULT
-   451 2202 AD 40 23 8D 3E 23		mva RES+1 RESULT+1
-   452 2208			@exit
+   450 21FB AD 3E 23 8D 3C 23		mva RES RESULT
+   451 2201 AD 3F 23 8D 3D 23		mva RES+1 RESULT+1
+   452 2207			@exit
    453
    454 				; ------------------------------------------------------------
    455
    456 				; Push WORD / SMALLINT / SHORTREAL / POINTER
    457 				; as Pointer
    458
-   459 2208 E8				inx						; add bx, 1
-   460 2209 AD 3D 23 95 98		mva RESULT :STACKORIGIN,x
-   461 220E AD 3E 23 95 A8		mva RESULT+1 :STACKORIGIN+STACKWIDTH,x
+   459 2207 E8				inx						; add bx, 1
+   460 2208 AD 3C 23 95 98		mva RESULT :STACKORIGIN,x
+   461 220D AD 3D 23 95 A8		mva RESULT+1 :STACKORIGIN+STACKWIDTH,x
    462
    463 					.ifdef @new
    464 					@FreeMem #@VarData #@VarDataSize
@@ -382,215 +382,215 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    466
    467 				; ------------------------------------------------------------
    468
-   469 = 2339			NN1	= DATAORIGIN+$000C
-   470 = 233B			NN2	= DATAORIGIN+$000E
-   471 = 233D			RESULT	= DATAORIGIN+$0010
-   472 = 233F			RES	= DATAORIGIN+$0012
+   469 = 2338			NN1	= DATAORIGIN+$000C
+   470 = 233A			NN2	= DATAORIGIN+$000E
+   471 = 233C			RESULT	= DATAORIGIN+$0010
+   472 = 233E			RES	= DATAORIGIN+$0012
    473
-   474 = 2339			@VarData	= NN1
+   474 = 2338			@VarData	= NN1
    475 = 0008			@VarDataSize	= 8
    476
-   477 2213 60				rts						; ret
+   477 2212 60				rts						; ret
    478 				.endl
    479
-   480 2214			.local	MAINPROC					; PROCEDURE
+   480 2213			.local	MAINPROC					; PROCEDURE
    481
    482 				; optimize FAIL (100, examples\func.pas), line = 24
    483 					@print #$7D
    483 				 LDY# $7D\ JSR @PRINT
-   483 2214 A0 7D		 LDY# $7D
-   483 2216 20 C6 20		 JSR @PRINT
+   483 2213 A0 7D		 LDY# $7D
+   483 2215 20 C5 20		 JSR @PRINT
    484
    485 				; optimize FAIL (100, examples\func.pas), line = 25
    486 					@printSTRING #CODEORIGIN+$000D
    486 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
-   486 2219 A0 20		 LDY> CODEORIGIN+$000D
-   486 221B A9 0D		 LDA< CODEORIGIN+$000D
-   486 221D 20 CF 20		 JSR @PRINTSTRING
-   487 2220 20 C1 20			@printEOL
+   486 2218 A0 20		 LDY> CODEORIGIN+$000D
+   486 221A A9 0D		 LDA< CODEORIGIN+$000D
+   486 221C 20 CE 20		 JSR @PRINTSTRING
+   487 221F 20 C0 20			@printEOL
    488
    489 				; optimize FAIL (100, examples\func.pas), line = 26
    490 					@printSTRING #CODEORIGIN+$0020
    490 				 LDY> CODEORIGIN+$0020\ LDA< CODEORIGIN+$0020\ JSR @PRINTSTRING
-   490 2223 A0 20		 LDY> CODEORIGIN+$0020
-   490 2225 A9 20		 LDA< CODEORIGIN+$0020
-   490 2227 20 CF 20		 JSR @PRINTSTRING
-   491 222A 20 C1 20			@printEOL
+   490 2222 A0 20		 LDY> CODEORIGIN+$0020
+   490 2224 A9 20		 LDA< CODEORIGIN+$0020
+   490 2226 20 CE 20		 JSR @PRINTSTRING
+   491 2229 20 C0 20			@printEOL
    492
    493 				; optimize FAIL (100, examples\func.pas), line = 27
-   494 					@printSTRING #CODEORIGIN+$003E
-   494 				 LDY> CODEORIGIN+$003E\ LDA< CODEORIGIN+$003E\ JSR @PRINTSTRING
-   494 222D A0 20		 LDY> CODEORIGIN+$003E
-   494 222F A9 3E		 LDA< CODEORIGIN+$003E
-   494 2231 20 CF 20		 JSR @PRINTSTRING
-   495 2234 20 C1 20			@printEOL
+   494 					@printSTRING #CODEORIGIN+$003D
+   494 				 LDY> CODEORIGIN+$003D\ LDA< CODEORIGIN+$003D\ JSR @PRINTSTRING
+   494 222C A0 20		 LDY> CODEORIGIN+$003D
+   494 222E A9 3D		 LDA< CODEORIGIN+$003D
+   494 2230 20 CE 20		 JSR @PRINTSTRING
+   495 2233 20 C0 20			@printEOL
    496
    497 				; optimize OK (examples\func.pas), line = 28
    498
-   499 2237 A9 1E 8D 41 23		mva #$1E N1
-   500 223C A9 00 8D 42 23		mva #$00 N1+1
+   499 2236 A9 1E 8D 40 23		mva #$1E N1
+   500 223B A9 00 8D 41 23		mva #$00 N1+1
    501
    502 				; optimize OK (examples\func.pas), line = 29
    503
-   504 2241 A9 78 8D 43 23		mva #$78 N2
-   505 2246 A9 00 8D 44 23		mva #$00 N2+1
+   504 2240 A9 78 8D 42 23		mva #$78 N2
+   505 2245 A9 00 8D 43 23		mva #$00 N2+1
    506
    507 				; optimize FAIL (100, examples\func.pas), line = 30
-   508 					@printSTRING #CODEORIGIN+$0040
-   508 				 LDY> CODEORIGIN+$0040\ LDA< CODEORIGIN+$0040\ JSR @PRINTSTRING
-   508 224B A0 20		 LDY> CODEORIGIN+$0040
-   508 224D A9 40		 LDA< CODEORIGIN+$0040
-   508 224F 20 CF 20		 JSR @PRINTSTRING
-   509 2252 20 C1 20			@printEOL
+   508 					@printSTRING #CODEORIGIN+$003F
+   508 				 LDY> CODEORIGIN+$003F\ LDA< CODEORIGIN+$003F\ JSR @PRINTSTRING
+   508 224A A0 20		 LDY> CODEORIGIN+$003F
+   508 224C A9 3F		 LDA< CODEORIGIN+$003F
+   508 224E 20 CE 20		 JSR @PRINTSTRING
+   509 2251 20 C0 20			@printEOL
    510
    511 				; optimize FAIL (100, examples\func.pas), line = 31
-   512 					@printSTRING #CODEORIGIN+$003D
-   512 				 LDY> CODEORIGIN+$003D\ LDA< CODEORIGIN+$003D\ JSR @PRINTSTRING
-   512 2255 A0 20		 LDY> CODEORIGIN+$003D
-   512 2257 A9 3D		 LDA< CODEORIGIN+$003D
-   512 2259 20 CF 20		 JSR @PRINTSTRING
-   513 225C 20 C1 20			@printEOL
+   512 					@printSTRING #CODEORIGIN+$003C
+   512 				 LDY> CODEORIGIN+$003C\ LDA< CODEORIGIN+$003C\ JSR @PRINTSTRING
+   512 2254 A0 20		 LDY> CODEORIGIN+$003C
+   512 2256 A9 3C		 LDA< CODEORIGIN+$003C
+   512 2258 20 CE 20		 JSR @PRINTSTRING
+   513 225B 20 C0 20			@printEOL
    514
    515 				; optimize FAIL (100, examples\func.pas), line = 32
-   516 					@printSTRING #CODEORIGIN+$0055
-   516 				 LDY> CODEORIGIN+$0055\ LDA< CODEORIGIN+$0055\ JSR @PRINTSTRING
-   516 225F A0 20		 LDY> CODEORIGIN+$0055
-   516 2261 A9 55		 LDA< CODEORIGIN+$0055
-   516 2263 20 CF 20		 JSR @PRINTSTRING
+   516 					@printSTRING #CODEORIGIN+$0054
+   516 				 LDY> CODEORIGIN+$0054\ LDA< CODEORIGIN+$0054\ JSR @PRINTSTRING
+   516 225E A0 20		 LDY> CODEORIGIN+$0054
+   516 2260 A9 54		 LDA< CODEORIGIN+$0054
+   516 2262 20 CE 20		 JSR @PRINTSTRING
    517
    518 				; optimize FAIL ('SUMFUNC', examples\func.pas), line = 33
-   519 2266 E8				inx
-   520 2267 AD 41 23 95 98		mva N1 :STACKORIGIN,x
-   521 226C AD 42 23 95 A8		mva N1+1 :STACKORIGIN+STACKWIDTH,x
-   522 2271 E8				inx
-   523 2272 AD 43 23 95 98		mva N2 :STACKORIGIN,x
-   524 2277 AD 44 23 95 A8		mva N2+1 :STACKORIGIN+STACKWIDTH,x
-   525 227C 20 D3 21			jsr SUMFUNC
-   526 227F B5 98 8D 45 23		mva :STACKORIGIN,x N3
-   527 2284 B5 A8 8D 46 23		mva :STACKORIGIN+STACKWIDTH,x N3+1
-   528 2289 CA				dex
+   519 2265 E8				inx
+   520 2266 AD 40 23 95 98		mva N1 :STACKORIGIN,x
+   521 226B AD 41 23 95 A8		mva N1+1 :STACKORIGIN+STACKWIDTH,x
+   522 2270 E8				inx
+   523 2271 AD 42 23 95 98		mva N2 :STACKORIGIN,x
+   524 2276 AD 43 23 95 A8		mva N2+1 :STACKORIGIN+STACKWIDTH,x
+   525 227B 20 D2 21			jsr SUMFUNC
+   526 227E B5 98 8D 44 23		mva :STACKORIGIN,x N3
+   527 2283 B5 A8 8D 45 23		mva :STACKORIGIN+STACKWIDTH,x N3+1
+   528 2288 CA				dex
    529
    530 				; optimize FAIL (100, examples\func.pas), line = 34
-   531 228A E8				inx
-   532 228B AD 45 23 95 98		mva N3 :STACKORIGIN,x
-   533 2290 AD 46 23 95 A8		mva N3+1 :STACKORIGIN+STACKWIDTH,x
-   534 2295 20 11 21			jsr @printWORD
-   535 2298 CA				dex
-   536 2299 20 C1 20			@printEOL
+   531 2289 E8				inx
+   532 228A AD 44 23 95 98		mva N3 :STACKORIGIN,x
+   533 228F AD 45 23 95 A8		mva N3+1 :STACKORIGIN+STACKWIDTH,x
+   534 2294 20 10 21			jsr @printWORD
+   535 2297 CA				dex
+   536 2298 20 C0 20			@printEOL
    537
    538 				; optimize OK (examples\func.pas), line = 35
    539
-   540 229C A9 FF 8D 41 23		mva #$FF N1
-   541 22A1 A9 00 8D 42 23		mva #$00 N1+1
+   540 229B A9 FF 8D 40 23		mva #$FF N1
+   541 22A0 A9 00 8D 41 23		mva #$00 N1+1
    542
    543 				; optimize FAIL ('SUMFUNC', examples\func.pas), line = 36
-   544 22A6 E8				inx
-   545 22A7 AD 41 23 95 98		mva N1 :STACKORIGIN,x
-   546 22AC AD 42 23 95 A8		mva N1+1 :STACKORIGIN+STACKWIDTH,x
-   547 22B1 E8				inx
-   548 22B2 A9 FF 95 98			mva #$FF :STACKORIGIN,x
-   549 22B6 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-   550 22BA 20 D3 21			jsr SUMFUNC
-   551 22BD B5 98 8D 45 23		mva :STACKORIGIN,x N3
-   552 22C2 B5 A8 8D 46 23		mva :STACKORIGIN+STACKWIDTH,x N3+1
-   553 22C7 CA				dex
+   544 22A5 E8				inx
+   545 22A6 AD 40 23 95 98		mva N1 :STACKORIGIN,x
+   546 22AB AD 41 23 95 A8		mva N1+1 :STACKORIGIN+STACKWIDTH,x
+   547 22B0 E8				inx
+   548 22B1 A9 FF 95 98			mva #$FF :STACKORIGIN,x
+   549 22B5 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+   550 22B9 20 D2 21			jsr SUMFUNC
+   551 22BC B5 98 8D 44 23		mva :STACKORIGIN,x N3
+   552 22C1 B5 A8 8D 45 23		mva :STACKORIGIN+STACKWIDTH,x N3+1
+   553 22C6 CA				dex
    554
    555 				; optimize FAIL (100, examples\func.pas), line = 37
-   556 					@printSTRING #CODEORIGIN+$0073
-   556 				 LDY> CODEORIGIN+$0073\ LDA< CODEORIGIN+$0073\ JSR @PRINTSTRING
-   556 22C8 A0 20		 LDY> CODEORIGIN+$0073
-   556 22CA A9 73		 LDA< CODEORIGIN+$0073
-   556 22CC 20 CF 20		 JSR @PRINTSTRING
+   556 					@printSTRING #CODEORIGIN+$0072
+   556 				 LDY> CODEORIGIN+$0072\ LDA< CODEORIGIN+$0072\ JSR @PRINTSTRING
+   556 22C7 A0 20		 LDY> CODEORIGIN+$0072
+   556 22C9 A9 72		 LDA< CODEORIGIN+$0072
+   556 22CB 20 CE 20		 JSR @PRINTSTRING
    557
    558 				; optimize FAIL (100, examples\func.pas), line = 38
-   559 22CF E8				inx
-   560 22D0 AD 45 23 95 98		mva N3 :STACKORIGIN,x
-   561 22D5 AD 46 23 95 A8		mva N3+1 :STACKORIGIN+STACKWIDTH,x
-   562 22DA 20 11 21			jsr @printWORD
-   563 22DD CA				dex
-   564 22DE 20 C1 20			@printEOL
+   559 22CE E8				inx
+   560 22CF AD 44 23 95 98		mva N3 :STACKORIGIN,x
+   561 22D4 AD 45 23 95 A8		mva N3+1 :STACKORIGIN+STACKWIDTH,x
+   562 22D9 20 10 21			jsr @printWORD
+   563 22DC CA				dex
+   564 22DD 20 C0 20			@printEOL
    565
    566 				; optimize FAIL (100, examples\func.pas), line = 39
-   567 					@printSTRING #CODEORIGIN+$003D
-   567 				 LDY> CODEORIGIN+$003D\ LDA< CODEORIGIN+$003D\ JSR @PRINTSTRING
-   567 22E1 A0 20		 LDY> CODEORIGIN+$003D
-   567 22E3 A9 3D		 LDA< CODEORIGIN+$003D
-   567 22E5 20 CF 20		 JSR @PRINTSTRING
-   568 22E8 20 C1 20			@printEOL
+   567 					@printSTRING #CODEORIGIN+$003C
+   567 				 LDY> CODEORIGIN+$003C\ LDA< CODEORIGIN+$003C\ JSR @PRINTSTRING
+   567 22E0 A0 20		 LDY> CODEORIGIN+$003C
+   567 22E2 A9 3C		 LDA< CODEORIGIN+$003C
+   567 22E4 20 CE 20		 JSR @PRINTSTRING
+   568 22E7 20 C0 20			@printEOL
    569
    570 				; optimize FAIL (100, examples\func.pas), line = 40
-   571 					@printSTRING #CODEORIGIN+$008E
-   571 				 LDY> CODEORIGIN+$008E\ LDA< CODEORIGIN+$008E\ JSR @PRINTSTRING
-   571 22EB A0 20		 LDY> CODEORIGIN+$008E
-   571 22ED A9 8E		 LDA< CODEORIGIN+$008E
-   571 22EF 20 CF 20		 JSR @PRINTSTRING
-   572 22F2 20 C1 20			@printEOL
+   571 					@printSTRING #CODEORIGIN+$008D
+   571 				 LDY> CODEORIGIN+$008D\ LDA< CODEORIGIN+$008D\ JSR @PRINTSTRING
+   571 22EA A0 20		 LDY> CODEORIGIN+$008D
+   571 22EC A9 8D		 LDA< CODEORIGIN+$008D
+   571 22EE 20 CE 20		 JSR @PRINTSTRING
+   572 22F1 20 C0 20			@printEOL
    573
    574 				; --- WhileProlog
-   575 22F5			l_016F
+   575 22F4			l_016E
    576
    577 				; optimize OK (examples\func.pas), line = 41
    578
-   579 22F5 A0 00			ldy #$00
-   580 22F7 B9 84 02			lda JOYSTICK.adr.STRIG,y
-   581 22FA C9 01			cmp #$01
-   582 22FC D0 03			jne l_017F
-   583 22FE 4C F5 22			jmp l_016F
-   584 2301			l_017F
+   579 22F4 A0 00			ldy #$00
+   580 22F6 B9 84 02			lda JOYSTICK.adr.STRIG,y
+   581 22F9 C9 01			cmp #$01
+   582 22FB D0 03			jne l_017E
+   583 22FD 4C F4 22			jmp l_016E
+   584 2300			l_017E
    585
    586 				; optimize FAIL (100, examples\func.pas), line = 43
-   587 					@printSTRING #CODEORIGIN+$009D
-   587 				 LDY> CODEORIGIN+$009D\ LDA< CODEORIGIN+$009D\ JSR @PRINTSTRING
-   587 2301 A0 20		 LDY> CODEORIGIN+$009D
-   587 2303 A9 9D		 LDA< CODEORIGIN+$009D
-   587 2305 20 CF 20		 JSR @PRINTSTRING
-   588 2308 20 C1 20			@printEOL
+   587 					@printSTRING #CODEORIGIN+$009C
+   587 				 LDY> CODEORIGIN+$009C\ LDA< CODEORIGIN+$009C\ JSR @PRINTSTRING
+   587 2300 A0 20		 LDY> CODEORIGIN+$009C
+   587 2302 A9 9C		 LDA< CODEORIGIN+$009C
+   587 2304 20 CE 20		 JSR @PRINTSTRING
+   588 2307 20 C0 20			@printEOL
    589
    590 				; optimize FAIL (100, examples\func.pas), line = 44
-   591 					@printSTRING #CODEORIGIN+$00AE
-   591 				 LDY> CODEORIGIN+$00AE\ LDA< CODEORIGIN+$00AE\ JSR @PRINTSTRING
-   591 230B A0 20		 LDY> CODEORIGIN+$00AE
-   591 230D A9 AE		 LDA< CODEORIGIN+$00AE
-   591 230F 20 CF 20		 JSR @PRINTSTRING
-   592 2312 20 C1 20			@printEOL
+   591 					@printSTRING #CODEORIGIN+$00AD
+   591 				 LDY> CODEORIGIN+$00AD\ LDA< CODEORIGIN+$00AD\ JSR @PRINTSTRING
+   591 230A A0 20		 LDY> CODEORIGIN+$00AD
+   591 230C A9 AD		 LDA< CODEORIGIN+$00AD
+   591 230E 20 CE 20		 JSR @PRINTSTRING
+   592 2311 20 C0 20			@printEOL
    593
    594 				; ------------------------------------------------------------
    595
-   596 = 2341			N1	= DATAORIGIN+$0014
-   597 = 2343			N2	= DATAORIGIN+$0016
-   598 = 2345			N3	= DATAORIGIN+$0018
+   596 = 2340			N1	= DATAORIGIN+$0014
+   597 = 2342			N2	= DATAORIGIN+$0016
+   598 = 2344			N3	= DATAORIGIN+$0018
    599
-   600 = 2341			@VarData	= N1
+   600 = 2340			@VarData	= N1
    601 = 0006			@VarDataSize	= 6
    602
-   603 2315			@exit
+   603 2314			@exit
    604 					.ifdef @new
    605 					@FreeMem #@VarData #@VarDataSize
    606 					eif
-   607 2315 60				rts						; ret
+   607 2314 60				rts						; ret
    608 				.endl
-   609 2316			l_00C8
+   609 2315			l_00C7
    610
    611 				; optimize FAIL ('MAINPROC', examples\func.pas), line = 48
-   612 2316 20 14 22			jsr MAINPROC
+   612 2315 20 13 22			jsr MAINPROC
    613
    614 				; ------------------------------------------------------------
    615
-   616 2319			@exit
+   616 2318			@exit
    617
-   618 2319 A2 00		@halt	ldx #0
-   619 231B 9A				txs
+   618 2318 A2 00		@halt	ldx #0
+   619 231A 9A				txs
    620
-   621 231C 60				rts
+   621 231B 60				rts
    622
    623 				; ------------------------------------------------------------
    624
-   625 231D 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+   625 231C 00 00 00 00 00 00 + IOCB@COPY	:16 brk
    626
    627 				; ------------------------------------------------------------
    628
-   629 232D			.local	@DEFINES
-   630 232D			ATARI
+   629 232C			.local	@DEFINES
+   630 232C			ATARI
    631 				.endl
    632
    633 				.endl							; MAIN
@@ -633,7 +633,7 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    670
    671 					ift .SIZEOF(MAIN.SYSTEM) > 0
    672 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-   672 				SYSTEM: $21C7..$21CA
+   672 				SYSTEM: $21C6..$21C9
    673 					eif
    674
    675 					ift .SIZEOF(MAIN.DOS) > 0
@@ -658,39 +658,38 @@ Macro: UNITINITIALIZATION [Source: func.a65]
    694
    695 					ift .SIZEOF(MAIN.JOYSTICK) > 0
    696 					.print 'JOYSTICK: ',MAIN.JOYSTICK,'..',MAIN.JOYSTICK+.SIZEOF(MAIN.JOYSTICK)-1
-   696 				JOYSTICK: $21CB..$21D2
+   696 				JOYSTICK: $21CA..$21D1
    697 					eif
    698
    699 					.print 'CODE: ',CODEORIGIN,'..',*-1
-   699 				CODE: $2000..$232C
+   699 				CODE: $2000..$232B
    700
    701 				; ------------------------------------------------------------
    702
-   703 232D			DATAORIGIN
-   704 232D 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
+   703 232C			DATAORIGIN
+   704 232C 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
    705
    706 = 0006			VARINITSIZE	= *-DATAORIGIN
    707 = 001A			VARDATASIZE	= 26
    708
-   709 = 2347			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+   709 = 2346			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
    710
    711 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-   711 				DATA: $232D..$2347
+   711 				DATA: $232C..$2346
    712
-   713 02E0-02E1> A8 21			run START
+   713 02E0-02E1> A7 21			run START
    714
    715 				; ------------------------------------------------------------
    716
    717 				.macro	STATICDATA
    718 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
-   719 				.by  $78 $61 $6D $70 $6C $65 $3A $00  $1C $55 $73 $69 $6E $67 $20 $6C  $6F $63 $61 $6C $20 $66 $75 $6E
-   720 				.by  $63 $74 $69 $6F $6E $73 $20 $28  $46 $55 $4E $43 $29 $00 $00 $00  $13 $43 $75 $73 $74 $6F $6D $20
-   721 				.by  $66 $75 $6E $63 $74 $69 $6F $6E  $20 $53 $75 $6D $00 $1C $6E $31  $3D $33 $30 $2C $6E $32 $3D $31
-   722 				.by  $32 $30 $2C $77 $69 $74 $68 $20  $73 $75 $6D $20 $6F $66 $20 $6E  $33 $3D $00 $19 $6E $31 $3D $32
-   723 				.by  $35 $35 $20 $77 $69 $74 $68 $20  $32 $35 $35 $20 $61 $64 $64 $65  $64 $20 $69 $73 $20 $00 $0D $50
-   724 				.by  $72 $65 $73 $73 $20 $74 $72 $69  $67 $67 $65 $72 $00 $0F $54 $72  $69 $67 $67 $65 $72 $20 $70 $72
-   725 				.by  $65 $73 $73 $65 $64 $00 $11 $50  $72 $6F $67 $72 $61 $6D $20 $66  $69 $6E $69 $73 $68 $65 $64 $21
-   726 				.by  $00
-   727 				.endm
-   728
-   729 					end
+   719 				.by  $78 $61 $6D $70 $6C $65 $3A $00  $1B $55 $73 $69 $6E $67 $20 $6C  $6F $63 $61 $6C $20 $66 $75 $6E
+   720 				.by  $63 $74 $69 $6F $6E $73 $28 $46  $55 $4E $43 $29 $00 $00 $00 $13  $43 $75 $73 $74 $6F $6D $20 $66
+   721 				.by  $75 $6E $63 $74 $69 $6F $6E $20  $53 $75 $6D $00 $1C $6E $31 $3D  $33 $30 $2C $6E $32 $3D $31 $32
+   722 				.by  $30 $2C $77 $69 $74 $68 $20 $73  $75 $6D $20 $6F $66 $20 $6E $33  $3D $00 $19 $6E $31 $3D $32 $35
+   723 				.by  $35 $20 $77 $69 $74 $68 $20 $32  $35 $35 $20 $61 $64 $64 $65 $64  $20 $69 $73 $20 $00 $0D $50 $72
+   724 				.by  $65 $73 $73 $20 $74 $72 $69 $67  $67 $65 $72 $00 $0F $54 $72 $69  $67 $67 $65 $72 $20 $70 $72 $65
+   725 				.by  $73 $73 $65 $64 $00 $11 $50 $72  $6F $67 $72 $61 $6D $20 $66 $69  $6E $69 $73 $68 $65 $64 $21 $00
+   726 				.endm
+   727
+   728 					end

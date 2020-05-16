@@ -8,15 +8,15 @@ uses
 // -------------------------------------
 // Using BYTE ARRAY as direct memory
 // assignment
-
-procedure MAINProc;
 var
   key : char;
   mem : byte;
   arrD : array[0..255] of byte absolute 28000;
   arrH : array[0..255] of byte absolute $0600;
   COL : array[0..255] of byte absolute 708;
-begin
+
+procedure MAINProc;
+begin  // 1
   Write(Chr(125));
   COL[0] := 154;
   COL[1] := 40;
@@ -51,7 +51,7 @@ begin
   mem := Peek($0601);
   Writeln(mem);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

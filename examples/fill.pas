@@ -10,7 +10,7 @@ uses
 // (using Fill procedure)
 
 procedure MAINProc;
-begin
+begin  // 6
   InitGraph(7);
   Writeln('FILL TEST');
   Poke(708 + 4,  0*16 +  15);
@@ -36,7 +36,7 @@ begin
   Writeln('FILL TEST');
   repeat
   until 0 = 1;
-end;
+end;  // 4
 
 begin
   MAINProc;

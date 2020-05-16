@@ -15,14 +15,14 @@ var
   a : byte;
   b : byte;
   arr : array[0..5] of byte;
-begin
+begin  // 2
   Write(Chr(125));
   Writeln('ASCII manipulation demonstration');
   Writeln('');
   Writeln('Character Put test');
-  Write('A');  // test put
-  Write('T');  // test put
-  Write('a');  // test put
+  Write(Chr(65));
+  Write(Chr(84));
+  Write(Chr(97));
   Write(Chr(82));
   Write(Chr($49));
   Writeln('');
@@ -39,13 +39,12 @@ begin
   arr[2] := 50;
   arr[3] := 67;
   arr[4] := 52;
-  n := 2;
   for  n:=2 TO 4 do begin
   Write(Chr(44));
   Write(ARR[N]);
-  end;
+  end;  // for
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

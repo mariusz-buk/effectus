@@ -13,16 +13,16 @@ procedure MAINProc;
 var
   b : byte;
   fire : byte;
-begin
+begin  // 2
   Write(Chr(125));
   fire := 1;
  WHILE fire>0 do begin
   B := stick[0];
   Writeln(B);
   fire := strig[0];
-  end;
+  end;  // while
   Writeln('TRIGGER WAS PRESSED!');
-end;
+end;  // 4
 
 begin
   MAINProc;

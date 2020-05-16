@@ -3,13 +3,13 @@
 ; Using BYTE ARRAY as direct memory
 ; assignment
 
-PROC Main()
-
 CHAR key
 BYTE mem
 BYTE ARRAY arrD=28000
 BYTE ARRAY arrH=$0600
 BYTE ARRAY COL=708
+
+PROC Main()
 
 Put(125)
 

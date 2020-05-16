@@ -37,6 +37,8 @@ interface
 Uses
   SySUtils, Classes, StrUtils, decl;
 
+function VarValue(valuePos, index : byte; compareValue : string) : boolean;
+function GetVarValue(valuePos, index : byte) : string;
 function Extract(offset : byte; str : string; delim : char) : string;
 function ExtractText(Str : String; Ch1, Ch2 : Char) : String;
 function Strip(Str : String; Ch : Char) : String;
@@ -47,6 +49,19 @@ function IsNumber(src : Char) : Boolean;
 procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringList);
 
 implementation
+
+function VarValue(valuePos, index : byte; compareValue : string) : boolean;
+begin
+  if ExtractDelimited(valuePos, vars.ValueFromIndex[index], [';']) = compareValue then
+    result := true
+  else
+    result := false;
+end;
+
+function GetVarValue(valuePos, index : byte) : string;
+begin
+  result := ExtractDelimited(valuePos, vars.ValueFromIndex[index], [';']); 
+end;
 
 {------------------------------------------------------------------------------
  Description: Extracts string between characters Ch1 and Ch2
@@ -78,7 +93,8 @@ begin
   //if sNoTrim in Flags then
   //  Result := res
   //else
-    Result := Trim(res);
+
+  Result := Trim(res);
 end;
 
 function Replace(Str : String; Ch1, Ch2 : Char) : String;

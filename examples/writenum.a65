@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -128,7 +128,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_008A
+	jmp l_0089
 
 ; ------------------------------------------------------------
 
@@ -502,31 +502,27 @@ BLINK	= $0080
 ; optimize FAIL (100, examples\writenum.pas), line = 26
 	@printSTRING #CODEORIGIN+$0030
 	@printEOL
+; --- For
 
 ; optimize OK (examples\writenum.pas), line = 27
 
 	mva #$01 I
-; --- For
 
-; optimize OK (examples\writenum.pas), line = 28
-
-	sta I
-
-; optimize OK (examples\writenum.pas), line = 28
+; optimize OK (examples\writenum.pas), line = 27
 
 ; --- To
-l_010C
+l_0107
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\writenum.pas), line = 28
+; optimize OK (examples\writenum.pas), line = 27
 
 	lda I
 	cmp #$0C
 	scc
-	jne l_011A
+	jne l_0115
 
-; optimize FAIL ('SYSUTILS.INTTOSTR', examples\writenum.pas), line = 29
+; optimize FAIL ('SYSUTILS.INTTOSTR', examples\writenum.pas), line = 28
 	inx
 	mva I :STACKORIGIN,x
 	jsr @expandToCARD.BYTE
@@ -535,7 +531,7 @@ l_010C
 	dex						; sub bx, 1
 ; BlockWrite
 
-; optimize OK (examples\writenum.pas), line = 30
+; optimize OK (examples\writenum.pas), line = 29
 
 	mwa F :bp2
 	ldy #s@file.buffer
@@ -547,7 +543,7 @@ l_010C
 	adc #$00
 	sta (:bp2),y
 
-; optimize OK (examples\writenum.pas), line = 30
+; optimize OK (examples\writenum.pas), line = 29
 
 	mwa STRBUFFER :bp2
 	ldy #0
@@ -567,9 +563,9 @@ l_010C
 ; --- ForToDoEpilog
 	inc I						; inc ptr byte [CounterAddress]
 
-	jne l_010C
+	jne l_0107
 
-l_011A
+l_0115
 ; CloseFile
 
 	txa:pha
@@ -577,18 +573,18 @@ l_011A
 	@closefile F
 	pla:tax
 
-; optimize FAIL (100, examples\writenum.pas), line = 33
+; optimize FAIL (100, examples\writenum.pas), line = 32
 	@printSTRING #CODEORIGIN+$004A
 	@printEOL
 
-; optimize FAIL (100, examples\writenum.pas), line = 34
+; optimize FAIL (100, examples\writenum.pas), line = 33
 	@printSTRING #CODEORIGIN+$001D
 	@print #$9B
 	@printSTRING #CODEORIGIN+$001D
 	@print #$9B
-	@printSTRING #CODEORIGIN+$0067
+	@printSTRING #CODEORIGIN+$0066
 
-; optimize FAIL ('CRT.READKEY', examples\writenum.pas), line = 35
+; optimize FAIL ('CRT.READKEY', examples\writenum.pas), line = 34
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -597,7 +593,7 @@ l_011A
 
 I	= DATAORIGIN+$0123
 KEY	= DATAORIGIN+$0124
-@FORTMP_0109	= $000C
+@FORTMP_0104	= $000C
 
 @VarData	= I
 @VarDataSize	= 2
@@ -608,9 +604,9 @@ KEY	= DATAORIGIN+$0124
 	eif
 	rts						; ret
 .endl
-l_008A
+l_0089
 
-; optimize FAIL ('MAINPROC', examples\writenum.pas), line = 39
+; optimize FAIL ('MAINPROC', examples\writenum.pas), line = 38
 	jsr MAINPROC
 ; CloseFile
 
@@ -722,9 +718,9 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 .by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $0F $50 $72  $69 $6E $74 $42 $44 $20 $65 $78
 .by  $61 $6D $70 $6C $65 $00 $00 $00  $0E $48 $31 $3A $54 $45 $53 $54  $4E $55 $4D $2E $54 $58 $54 $00
 .by  $18 $57 $72 $69 $74 $65 $20 $6E  $75 $6D $62 $65 $72 $73 $20 $74  $6F $20 $64 $69 $73 $6B $2E $2E
-.by  $2E $00 $1B $44 $6F $6E $65 $21  $20 $28 $66 $69 $6C $65 $20 $48  $31 $3A $54 $45 $53 $54 $4E $55
-.by  $4D $2E $54 $58 $54 $29 $00 $1A  $50 $72 $65 $73 $73 $20 $61 $6E  $79 $20 $6B $65 $79 $20 $74 $6F
-.by  $20 $63 $6F $6E $74 $69 $6E $75  $65 $21 $00
+.by  $2E $00 $1A $44 $6F $6E $65 $21  $28 $66 $69 $6C $65 $20 $48 $31  $3A $54 $45 $53 $54 $4E $55 $4D
+.by  $2E $54 $58 $54 $29 $00 $1A $50  $72 $65 $73 $73 $20 $61 $6E $79  $20 $6B $65 $79 $20 $74 $6F $20
+.by  $63 $6F $6E $74 $69 $6E $75 $65  $21 $00
 .endm
 
 	end

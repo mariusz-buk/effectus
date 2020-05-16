@@ -1,9 +1,19 @@
 # Lazarus project
 **/*.lps
 **/*.lpi
-**/*.o
-**/*.ppu
 src/backup
 .DS_Store
 geany
+/src/lib/
+/src/effectus
+**/*.ppu
+**/*.o
+/src/lib
+**/efflog.txt
+**/effectus.txt
+/lib/.a65
+/examples/lib/
 /.idea/
+/examples/mads
+/examples/mariusz_buk_acx_com_pl@kapkap.eu
+/examples/mp

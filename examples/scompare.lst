@@ -1,4 +1,4 @@
-mads 2.1.0 build 4 (27 Oct 19)
+mads 2.1.0
   3726 					opt l+
     95
     96 				.print 'RUNLIB: ',RUNLIB,'..',*

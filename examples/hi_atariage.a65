@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -791,29 +791,23 @@ SCANLINE_WIDTH	= DATAORIGIN+$022C
 	@readfile F, #11
 	pla:tax
 
+; --- For
+
 ; optimize OK (examples\hi_atariage.pas), line = 33
 
 	mva #$00 I
 	sta I+1
 	sta I+2
 	sta I+3
-; --- For
 
-; optimize OK (examples\hi_atariage.pas), line = 34
-
-	mva #$00 I
-	sta I+1
-	sta I+2
-	sta I+3
-
-; optimize OK (examples\hi_atariage.pas), line = 34
+; optimize OK (examples\hi_atariage.pas), line = 33
 
 ; --- To
-l_0110
+l_010C
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\hi_atariage.pas), line = 34
+; optimize OK (examples\hi_atariage.pas), line = 33
 
 	.LOCAL
 	lda I+3
@@ -840,18 +834,18 @@ L4	bvc L5
 L5
 	.ENDL
 	smi
-	jne l_011A
+	jne l_0116
 
-; optimize FAIL (100, examples\hi_atariage.pas), line = 35
+; optimize FAIL (100, examples\hi_atariage.pas), line = 34
 	@printSTRING #CODEORIGIN+$001E
 	@printEOL
 
 ; --- ForToDoEpilog
 	ind I						; inc ptr dword [CounterAddress]
-	jmp l_0110
-l_011A
+	jmp l_010C
+l_0116
 
-; optimize FAIL ('CRT.READKEY', examples\hi_atariage.pas), line = 37
+; optimize FAIL ('CRT.READKEY', examples\hi_atariage.pas), line = 36
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -859,7 +853,7 @@ l_011A
 ; ------------------------------------------------------------
 
 I	= DATAORIGIN+$033F
-@FORTMP_010D	= $0002
+@FORTMP_0109	= $0002
 
 @VarData	= I
 @VarDataSize	= 4
@@ -872,7 +866,7 @@ I	= DATAORIGIN+$033F
 .endl
 l_003A
 
-; optimize FAIL ('MAINPROC', examples\hi_atariage.pas), line = 41
+; optimize FAIL ('MAINPROC', examples\hi_atariage.pas), line = 40
 	jsr MAINPROC
 ; CloseFile
 

@@ -15,17 +15,16 @@ var
   i : byte;
   mem : word;
   arr : array[0..255] of word absolute $8000;
-begin
+begin  // 2
   Write(Chr(125));
   arr[0] := 14;
   arr[1] := 230;
   arr[2] := 5100;
   arr[3] := 63000;
   Write('', eol, 'Array values:', eol, '');
-  i := 0;
   for  i:=0 to 3 do begin
   Writeln(arr[i]);
-  end;
+  end;  // for
   Write('', eol, 'Array values in descending order:', eol, '');
   mem := DPeek($8006);
   Writeln(mem);
@@ -36,7 +35,7 @@ begin
   mem := DPeek($8000);
   Writeln(mem);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

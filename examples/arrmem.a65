@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -625,21 +625,6 @@ BLINK	= $0080
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
-
-; ------------------------------------------------------------
-
-KEY	= DATAORIGIN+$000E
-MEM	= DATAORIGIN+$000F
-adr.ARRD	= $6D60
-.var ARRD	= adr.ARRD .word
-adr.ARRH	= $0600
-.var ARRH	= adr.ARRH .word
-adr.COL	= $02C4
-.var COL	= adr.COL .word
-
-@VarData	= KEY
-@VarDataSize	= 770
-
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
@@ -653,6 +638,14 @@ l_0052
 
 ; ------------------------------------------------------------
 
+KEY	= DATAORIGIN+$000E
+MEM	= DATAORIGIN+$000F
+adr.ARRD	= $6D60
+.var ARRD	= adr.ARRD .word
+adr.ARRH	= $0600
+.var ARRH	= adr.ARRH .word
+adr.COL	= $02C4
+.var COL	= adr.COL .word
 @exit
 
 @halt	ldx #0

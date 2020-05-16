@@ -84,9 +84,6 @@ begin
     TextColor(White);
     WriteLn('Program options:');
 
-    //TextColor(LightCyan); Write('-d:path');
-    //TextColor(LightGray); Writeln('Output directory');
-
     TextColor(LightCyan); Write('-o:extension  ');
     TextColor(LightGray); Writeln('Binary file extension');
 
@@ -97,7 +94,7 @@ begin
     TextColor(LightGray); Writeln('Effectus variable usage list');
     
     TextColor(LightCyan); Write('-nc           ');
-    TextColor(LightGray); Writeln('Effectus only translate source to Mad Pascal');    
+    TextColor(LightGray); Writeln('Effectus only translate source to Mad Pascal');
 
     DestroyLists;
     Halt(0);
@@ -115,24 +112,14 @@ begin
       end;
       prgName := ExtractFilenameWithoutExt(actionFilename);
     end
-    //else if LeftStr(ParamStr(i), 3) = '-d:' then
-    //  optOutput := RightStr(ParamStr(i), Length(ParamStr(i)) - 3)
     else if LeftStr(ParamStr(i), 3) = '-o:' then begin
       optBinExt := RightStr(ParamStr(i), Length(ParamStr(i)) - 3);
     end
-//     else if LeftStr(ParamStr(i), 3) = '-l:' then
-//       meditMADS_log_dir := RightStr(ParamStr(i), Length(ParamStr(i)) - 3)
-//     else if LeftStr(ParamStr(i), 3) = '-a:' then begin
-//       if TryStrToInt(RightStr(ParamStr(i), Length(ParamStr(i)) - 3), num) then
-//         meditAddr := num
-//       else
-//         Writeln('-a option could not be processed!');
-//     end
     else if LeftStr(ParamStr(i), 2) = '-i' then
       isInfo := true
     else if LeftStr(ParamStr(i), 2) = '-c' then
        isClearLog := true
-    else if LeftStr(ParamStr(i), 3) = '-nc' then      
+    else if LeftStr(ParamStr(i), 3) = '-nc' then
     else
       Writeln(ParamStr(i) + ': Unknown parameter!')
   end;
@@ -164,20 +151,10 @@ begin
     AStringList.SaveToFile(logFileTotal);
   end;
 
-  //if isMadPascalUserLocation then
-  //  AProcess.Executable := strMadPascalUserLocation + DirectorySeparator + 'mp'
-  //else begin
-    //AProcess.Executable := getDir + 'bin' + DirectorySeparator + 'mp' + DirectorySeparator + 'mp';
-  //end;
-  //writeln('1.) ', GetCurrentDir + PathDelim + 'mp ', 'mp filename = ', filename);
   AProcess.Executable := GetCurrentDir + PathDelim + 'mp';
 
   //  AProcess.Parameters.Add(AnsiQuotedStr(GetCurrentDir + '\bin\roto.pas', '"'));
   AProcess.Parameters.Add(AnsiQuotedStr(filename, '"'));
-
-  //  if isMadPascal_o then AProcess.Parameters.Add('-o');
-  //  if isMadPascal_d then AProcess.Parameters.Add('-d');
-  //SetParams(AProcess, propMadPascal, propFlagMadPascal);
 
   AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes, poStdErrToOutPut];
   AProcess.Execute;
@@ -194,12 +171,12 @@ begin
       isPasError := true;
       break;
     end;
-  end;  
+  end;
 
   AStringList.Insert(0, 'Filename: ' + filename);
   AStringList.Insert(1, FormatDateTime('c', Now));
   AStringList.Add('--------------------------------------------------------------------------------');
-  
+
   // Save the output to a file
   AStringList.SaveToFile(logFile);
 
@@ -223,40 +200,15 @@ begin
   AProcess.Options := [poWaitOnExit, poUsePipes];
   AProcess.Execute();
 
-//      if isMadPascalUserLocation then
-//        AProcess.Executable := strMadsUserLocation + DirectorySeparator + 'mads'
-//      else begin
-//        AProcess.Executable := getDir + 'bin' + DirectorySeparator + 'mp' + DirectorySeparator + 'mads';
-//      end;
-     //writeln('2.) ', GetCurrentDir + PathDelim + 'mads ', ExtractFilenameWithoutExt(filename));
-
   AProcess.Executable := GetCurrentDir + PathDelim + 'mads';
 
   AProcess.Parameters.Clear;
 
-//   fileTemp := filename;
-//   filePath := ExtractFilePath(filename);
-//   filenamePart := ExtractFilenameWithoutExt(filename);
-    
-  //FilenameSrc := ExtractFilePath(actionFilename);
-  //pasFile := ExtractFilenameWithoutExt(actionFilename) + '.pas';
-  //FilenameSrc += pasFile;
-  
   filePath := ExtractFilePath(filename);
   filenamePart := ExtractFilenameWithoutExt(filename) + '.a65';
-  
-  //writeln('filePath + filenamePart = ', filePath + filenamePart);
-
-  //AProcess.Parameters.Add(AnsiQuotedStr(ExtractFileNameWithoutExt(filename) + '.a65', '"'));
   AProcess.Parameters.Add(AnsiQuotedStr(filePath + filenamePart, '"'));
-  //SetParams(AProcess, propMadsMP, propFlagMadsMP);
-  
-  //writeln(AnsiQuotedStr(ExtractFilenameWithoutExt(filename), '"'));
 
   filenamePart := ExtractFilenameWithoutExt(filename) + '.' + optBinExt;
-
-//  AProcess.Parameters.Add('-o:' + AnsiQuotedStr(ExtractFilenameWithoutExt(filename) +
-//                           '.' + optBinExt, '"'));
   AProcess.Parameters.Add('-o:' + AnsiQuotedStr(filePath + filenamePart, '"'));
   AProcess.Parameters.Add('-x');
   AProcess.Parameters.Add('-i:base');
@@ -267,7 +219,7 @@ begin
   AStringList.Free;
   AProcess.Free;
   
-  result := isPasError;  
+  result := isPasError;
 end;
 
 {------------------------------------------------------------------------------
@@ -283,19 +235,19 @@ begin
   if vars.Count > 0 then begin
     WriteLn(LineEnding + 'Variables' + LineEnding);
     WriteLn('Variable name        | Data type      | Description     | Owner (PROC/FUNC)');
-    WriteLn('----------------------------------------------------------------------------' + LineEnding);
+    WriteLn('------------------------------------------------------------------------------');
     for i := 0 to vars.Count - 1 do begin
       if ExtractDelimited(2, vars.ValueFromIndex[i], [';']) = '2' then begin
         continue;
       end;
-      
+
       dataType := UpperCase(ExtractDelimited(1, vars.ValueFromIndex[i], [';']));
       dataTypeExt := ExtractDelimited(2, vars.ValueFromIndex[i], [';']);
       varItem := vars.Names[i];
-      
+
       // TYPE variable
       temp := ExtractDelimited(6, vars.ValueFromIndex[i], [';']);
-      if temp <> '' then begin
+      if temp <> '0' then begin
         varItem += ' (TYPE ' + temp + ')';
       end
       // Variable with default value
@@ -353,7 +305,7 @@ begin
   if myProcs.Count > 0 then begin
     WriteLn(LineEnding + 'PROCedures');
     //WriteLn('Name           | Parameters');
-    WriteLn('-----------------' + LineEnding);
+    WriteLn('-----------------');
     for i := 0 to myProcs.Count - 1 do begin
       Writeln(PadRight(myProcs.Names[i], 14));
     end;
@@ -368,6 +320,126 @@ begin
       Writeln(PadRight(myFuncs.Names[i], 14));
     end;
   end;
+
+  // DEFINE constants
+  if defineList.Count > 0 then begin
+    WriteLn(LineEnding + 'DEFINE constants' + LineEnding);
+    WriteLn('Constant         | Value');
+    WriteLn('------------------------------------------------------------------------------');
+    for i := 0 to defineList.Count - 1 do begin
+      temp := ExtractDelimited(1, defineList.ValueFromIndex[i], [';']);
+      temp := StringReplace(temp, '{', '=', [rfReplaceAll]);
+      Writeln(PadRight(defineList.Names[i], 16), ' | ', temp);
+    end;
+  end;
+end;
+
+{------------------------------------------------------------------------------
+ Description: DEFINE declaration block
+ -----------------------------------------------------------------------------}
+procedure CheckDefine;
+var
+  defineName : string;
+  defineValue : string;
+  i, j : word;
+  temp : string;
+  A: TStringArray;
+begin
+  if not varPtr.isDefine then Exit;
+  varPtr.isDefine := false;
+
+  Write('2. pass...');
+  for i := 0 to effCode.Count - 1 do begin
+    temp := Trim(effCode[i]);
+    temp := StringReplace(temp, ' = ', '=', [rfReplaceAll]);
+    if temp = '' then continue;
+
+    // Check comments
+    if temp[1] = ';' then begin
+      continue;
+    end;
+
+    // Parse each command or statement delimited by space
+    A := temp.Split(' ', '"', '"');
+    if High(a) >= 0 then begin
+      for j := 0 to High(a) do begin
+        //writeln('a[j] = ', a[j]);
+        if UpperCase(a[j]) = 'DEFINE' then begin
+          varPtr.isDefine := true;
+        end
+        else if varPtr.isDefine then begin
+          a[j] := StringReplace(a[j], '=', '{', []);
+          defineName := Extract(1, a[j], '{');
+          defineValue := Extract(2, a[j], '{');
+          defineValue := ExtractText(defineValue, '"', '"');
+          defineValue := StringReplace(defineValue, '=', '{', [rfReplaceAll]);
+          defineList.Add(defineName + '=' + defineValue);
+          //writeln('DEFINE ', defineName, ' = ', defineValue);
+          if a[j][Length(a[j])] = ',' then begin
+            varPtr.isDefine := true;
+            //writeln('a[j] , ', a[j]);
+          end else begin
+            varPtr.isDefine := false;
+          end;
+        end;
+      end;
+    end;
+  end;
+
+  for i := 0 to effCode.Count - 1 do begin
+    if (System.Pos('DEFINE ', UpperCase(effCode[i])) > 0)
+       or (UpperCase(effCode[i]) = 'DEFINE') then
+    begin
+      if (System.Pos('"', UpperCase(effCode[i])) > 0)
+         and (System.Pos('"', UpperCase(effCode[i])) < System.Pos('DEFINE ', UpperCase(effCode[i]))) then
+      begin
+      end
+      else begin 
+        effCode[i] := '';
+        continue;
+      end;
+    end;
+
+    // Convert possible DEFINE constants to real data
+    for j := 0 to defineList.Count - 1 do begin
+      //writeln('defineList.Names[j] = ', defineList.Names[j]);
+      temp := effCode[i];
+      if System.Pos(UpperCase(defineList.Names[j]), UpperCase(temp)) > 0 then begin
+        if (System.Pos('"', UpperCase(temp)) > 0) and (System.Pos('"', UpperCase(temp))
+             < System.Pos(UpperCase(defineList.Names[j]), UpperCase(temp))) then
+        begin
+        end
+        else begin
+          //if defineList.IndexOfName(j) >= 0 then begin
+          temp:= ExtractDelimited(1, defineList.ValueFromIndex[j], [';']);
+          temp := StringReplace(temp, '{', '=', [rfReplaceAll]);
+          effCode[i] := StringReplace(effCode[i], defineList.Names[j], temp, [rfReplaceAll]);
+        end;
+      end;
+    end;
+  end;
+
+  for i := 0 to effCode.Count - 1 do begin
+    // Convert possible DEFINE constants to real data
+    for j := 0 to defineList.Count - 1 do begin
+      temp := effCode[i];
+      if System.Pos(UpperCase(defineList.Names[j]), UpperCase(temp)) > 0 then begin
+        if (System.Pos('"', UpperCase(temp)) > 0) and (System.Pos('"', UpperCase(temp))
+             < System.Pos(UpperCase(defineList.Names[j]), UpperCase(temp))) then
+        begin
+        end
+        else begin
+          //if defineList.IndexOfName(j) >= 0 then begin
+          temp:= ExtractDelimited(1, defineList.ValueFromIndex[j], [';']);
+          //writeln('before replace { ', defineList.Names[j], ' = ', temp);
+          temp := StringReplace(temp, '{', '=', [rfReplaceAll]);
+          //writeln('replace { ', defineList.Names[j], ' = ', temp);
+          effCode[i] := StringReplace(effCode[i], defineList.Names[j], temp, [rfReplaceAll]);
+        end;
+      end;
+    end;
+  end;
+  Writeln(' Done!');
 end;
 
 {------------------------------------------------------------------------------
@@ -378,14 +450,12 @@ var
   i : LongInt;
   tempxy : TStringList;
 begin
-  //writeln('ReadSource filename = ', filename);
-
   tempxy := TStringlist.create;
   try
     try
       // Check if source file exists
       if not FileExists(filename) then begin
-      //GetCurrentDir + PathDelim + 
+      //GetCurrentDir + PathDelim +
         WriteLn('The source listing doesn''t exist!');
         DestroyLists;
         Halt(0);
@@ -398,9 +468,21 @@ begin
       devicePtr.isGraphics := false;
       devicePtr.isStick := false;
       prgPtr.isByteBuffer := false;
+      varPtr.isDefine := false;
+      Write('1. pass... ');
       for i := 0 to tempxy.Count - 1 do begin
+        tempxy.strings[i] := ReplaceStr(tempxy.strings[i], 'MODULE', '');
+
+        // Remove character with Ascii code 9 from Action! listing lines 
         tempxy.strings[i] := StringReplace(tempxy.strings[i], Chr(9), '', [rfReplaceAll]);
+
+        // Add Action! listing line
         effCode.add(tempxy.strings[i]);
+
+        // Check DEFINE statement
+        if System.Pos('DEFINE ', UpperCase(tempxy.strings[i])) > 0 then begin
+          varPtr.isDefine := true;
+        end;
 
         if (System.Pos('GETD(7)', UpperCase(tempxy.strings[i])) > 0)
            and not devicePtr.isDevice then
@@ -439,6 +521,9 @@ begin
           devicePtr.isGraphics := true;
         end;
       end;
+      WriteLn(' Done!');
+      CheckDefine;
+
       except
         on E : Exception do writeln(E.Message);
         else begin

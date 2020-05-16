@@ -17,7 +17,7 @@ var
 procedure MAINProc;
 var
   i : byte;
-begin
+begin  // 2
   assign(f, 'S:'); rewrite(f, 1);
   InitGraph(2);
   repeat
@@ -27,7 +27,7 @@ begin
   Blockwrite(f, strBuffer[1], Length(strBuffer));
   Poke(710, i);
   until 0 = 1;
-end;
+end;  // 4
 
 begin
   MAINProc;

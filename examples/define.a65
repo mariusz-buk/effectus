@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -442,29 +442,33 @@ BLINK	= $0080
 
 .local	DEFINE_TESTPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\define.pas), line = 17
+; optimize FAIL (100, examples\define.pas), line = 16
 	@print #$7D
 
-; optimize OK (examples\define.pas), line = 18
+; optimize OK (examples\define.pas), line = 17
 
 	lda #$00
 	sta $02C6
 
-; optimize OK (examples\define.pas), line = 19
+; optimize OK (examples\define.pas), line = 18
 
 	lda #$3C
 	sta $02C8
 
-; optimize FAIL (100, examples\define.pas), line = 20
+; optimize FAIL (100, examples\define.pas), line = 19
 	@printSTRING #CODEORIGIN+$000D
 	@printEOL
 
-; optimize FAIL (100, examples\define.pas), line = 21
+; optimize FAIL (100, examples\define.pas), line = 20
 	@printSTRING #CODEORIGIN+$000C
 	@printEOL
 
-; optimize FAIL (100, examples\define.pas), line = 22
+; optimize FAIL (100, examples\define.pas), line = 21
 	@printSTRING #CODEORIGIN+$000F
+	@printEOL
+
+; optimize FAIL (100, examples\define.pas), line = 22
+	@printSTRING #CODEORIGIN+$000C
 	@printEOL
 
 ; optimize FAIL (100, examples\define.pas), line = 23
@@ -472,45 +476,37 @@ BLINK	= $0080
 	@printEOL
 
 ; optimize FAIL (100, examples\define.pas), line = 24
-	@printSTRING #CODEORIGIN+$000C
-	@printEOL
-
-; optimize FAIL (100, examples\define.pas), line = 25
 	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize FAIL (100, examples\define.pas), line = 26
+; optimize FAIL (100, examples\define.pas), line = 25
 	@printSTRING #CODEORIGIN+$000C
 	@printEOL
 
-; optimize FAIL (100, examples\define.pas), line = 27
+; optimize FAIL (100, examples\define.pas), line = 26
 	@printSTRING #CODEORIGIN+$0033
 	@printEOL
-
-; optimize OK (examples\define.pas), line = 28
-
-	mva #$01 N
 ; --- For
 
-; optimize OK (examples\define.pas), line = 29
+; optimize OK (examples\define.pas), line = 27
 
-	sta N
+	mva #$01 N
 
-; optimize OK (examples\define.pas), line = 29
+; optimize OK (examples\define.pas), line = 27
 
 ; --- To
-l_00CC
+l_00C8
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\define.pas), line = 29
+; optimize OK (examples\define.pas), line = 27
 
 	lda N
 	cmp #$03
 	scc
-	jne l_00DA
+	jne l_00D6
 
-; optimize FAIL (100, examples\define.pas), line = 30
+; optimize FAIL (100, examples\define.pas), line = 28
 	inx
 	mva N :STACKORIGIN,x
 	jsr @printBYTE
@@ -520,11 +516,11 @@ l_00CC
 ; --- ForToDoEpilog
 	inc N						; inc ptr byte [CounterAddress]
 
-	jne l_00CC
+	jne l_00C8
 
-l_00DA
+l_00D6
 
-; optimize FAIL ('CRT.READKEY', examples\define.pas), line = 32
+; optimize FAIL ('CRT.READKEY', examples\define.pas), line = 30
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -532,7 +528,7 @@ l_00DA
 ; ------------------------------------------------------------
 
 N	= DATAORIGIN+$000E
-@FORTMP_00C9	= $0003
+@FORTMP_00C5	= $0003
 
 @VarData	= N
 @VarDataSize	= 1
@@ -545,7 +541,7 @@ N	= DATAORIGIN+$000E
 .endl
 l_004F
 
-; optimize FAIL ('DEFINE_TESTPROC', examples\define.pas), line = 36
+; optimize FAIL ('DEFINE_TESTPROC', examples\define.pas), line = 34
 	jsr DEFINE_TESTPROC
 
 ; ------------------------------------------------------------

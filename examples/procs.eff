@@ -13,7 +13,11 @@ RETURN
 
 PROC ShowNum(BYTE n)
 
+Print("Entered number is ")
 PrintBE(n)
+IF n#20 THEN
+  PrintE("It is not 20!")
+FI
 
 RETURN
 

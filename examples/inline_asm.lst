@@ -1,48 +1,48 @@
-mads 2.1.0 build 4 (27 Oct 19)
+mads 2.1.0
   3726 					opt l+
     95
     96 				.print 'RUNLIB: ',RUNLIB,'..',*
-    96 				RUNLIB: $20D1..$2135
+    96 				RUNLIB: $20CD..$2131
     97
     98 				; ------------------------------------------------------------
     99
-   100 2135			START
-   101 2135 BA				tsx
-   102 2136 8E 0B 22			stx MAIN.@halt+1
+   100 2131			START
+   101 2131 BA				tsx
+   102 2132 8E 07 22			stx MAIN.@halt+1
    103
    104 					.ifdef fmulinit
    105 					fmulinit
    106 					eif
    107
    108 = 0017			VLEN	= VARDATASIZE-VARINITSIZE
-   109 = 2232			VADR	= DATAORIGIN+VARINITSIZE
+   109 = 222E			VADR	= DATAORIGIN+VARINITSIZE
    110
    111 					ift VADR > $BFFF
    112 					ert 'Invalid memory address range ',VADR
    113 					eli (VLEN>0) && (VLEN<=256)
-   114 2139 A2 E9			ldx #256-VLEN
-   115 213B A9 00			lda #0
-   116 213D 9D 49 21 E8 D0 FA		sta:rne VADR+VLEN-256,x+
+   114 2135 A2 E9			ldx #256-VLEN
+   115 2137 A9 00			lda #0
+   116 2139 9D 45 21 E8 D0 FA		sta:rne VADR+VLEN-256,x+
    117 					eli VLEN>0
    118 					@fill #VADR #VLEN #0
    119 					eif
    120
-   121 2143 A2 0F			ldx #$0f
-   122 2145 BD 40 03 9D 0E 22 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   121 213F A2 0F			ldx #$0f
+   122 2141 BD 40 03 9D 0A 22 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
    123
-   124 214E E8				inx		; X = 0 !!!
-   125 214F 86 8E			stx bp		; lo BP = 0
+   124 214A E8				inx		; X = 0 !!!
+   125 214B 86 8E			stx bp		; lo BP = 0
    126
-   127 2151				UNITINITIALIZATION
+   127 214D				UNITINITIALIZATION
 Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    128
-   129 2151			.local	MAIN						; PROCEDURE
+   129 214D			.local	MAIN						; PROCEDURE
    130
-   131 2151 4C 07 22			jmp l_00D8
+   131 214D 4C 03 22			jmp l_00D4
    132
    133 				; ------------------------------------------------------------
    134
-   135 2154			.local	SYSTEM						; UNIT
+   135 2150			.local	SYSTEM						; UNIT
    136
    137 				; ------------------------------------------------------------
    138
@@ -92,27 +92,27 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    182 = 0008			FMOPENWRITE	= $0008
    183 = 0009			FMOPENAPPEND	= $0009
    184 = 000C			FMOPENREADWRITE	= $000C
-   185 = 221E			SCREENWIDTH	= DATAORIGIN+$0000
-   186 = 2220			SCREENHEIGHT	= DATAORIGIN+$0002
-   187 = 2222			DATESEPARATOR	= DATAORIGIN+$0004
+   185 = 221A			SCREENWIDTH	= DATAORIGIN+$0000
+   186 = 221C			SCREENHEIGHT	= DATAORIGIN+$0002
+   187 = 221E			DATESEPARATOR	= DATAORIGIN+$0004
    188 = D014			TVSYSTEM	= $D014
    189 = 02C0			adr.PALETTE	= $02C0
-   190 2154			.var PALETTE	= adr.PALETTE .word
+   190 2150			.var PALETTE	= adr.PALETTE .word
    191 = D012			adr.HPALETTE	= $D012
-   192 2154			.var HPALETTE	= adr.HPALETTE .word
-   193 = 2223			FILEMODE	= DATAORIGIN+$0005
-   194 = 2224			SCREENMODE	= DATAORIGIN+$0006
-   195 = 2225			IORESULT	= DATAORIGIN+$0007
-   196 = 2226			EOLN	= DATAORIGIN+$0008
-   197 = 2227			RNDSEED	= DATAORIGIN+$0009
+   192 2150			.var HPALETTE	= adr.HPALETTE .word
+   193 = 221F			FILEMODE	= DATAORIGIN+$0005
+   194 = 2220			SCREENMODE	= DATAORIGIN+$0006
+   195 = 2221			IORESULT	= DATAORIGIN+$0007
+   196 = 2222			EOLN	= DATAORIGIN+$0008
+   197 = 2223			RNDSEED	= DATAORIGIN+$0009
    198
-   199 = 2154 C0 02		PALETTE
-   199 = 2156 12 D0		HPALETTE
+   199 = 2150 C0 02		PALETTE
+   199 = 2152 12 D0		HPALETTE
    199 				.endl							; UNIT SYSTEM
    200
    201 				; ------------------------------------------------------------
    202
-   203 2158			.local	DOS						; UNIT
+   203 2154			.local	DOS						; UNIT
    204
    205 				; ------------------------------------------------------------
    206
@@ -122,7 +122,7 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    210
    211 				; ------------------------------------------------------------
    212
-   213 2158			.local	STRUTILS					; UNIT
+   213 2154			.local	STRUTILS					; UNIT
    214
    215 				; ------------------------------------------------------------
    216
@@ -130,7 +130,7 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    218
    219 				; ------------------------------------------------------------
    220
-   221 2158			.local	SYSUTILS					; UNIT
+   221 2154			.local	SYSUTILS					; UNIT
    222
    223 				; ------------------------------------------------------------
    224
@@ -146,7 +146,7 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    234
    235 				; ------------------------------------------------------------
    236
-   237 2158			.local	ATARI						; UNIT
+   237 2154			.local	ATARI						; UNIT
    238
    239 				; ------------------------------------------------------------
    240
@@ -241,29 +241,29 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    329
    330 				; ------------------------------------------------------------
    331
-   332 2158			.local	CRT						; UNIT
+   332 2154			.local	CRT						; UNIT
    333
-   334 2158			.local	READKEY						; FUNCTION | ASSEMBLER
+   334 2154			.local	READKEY						; FUNCTION | ASSEMBLER
    335
    336 				; ---------------------  ASM Block 063  ---------------------
    337
-   338 2158 8A 48			txa:pha
+   338 2154 8A 48			txa:pha
    339
-   340 215A 20 25 21			@GetKey
+   340 2156 20 21 21			@GetKey
    341
-   342 215D 8D 2A 22			sta Result
+   342 2159 8D 26 22			sta Result
    343
-   344 2160 68 AA			pla:tax
+   344 215C 68 AA			pla:tax
    345
-   346 2162			@exit
+   346 215E			@exit
    347
    348 				; ------------------------------------------------------------
    349
    350 				; Push BYTE / CHAR / SHORTINT / BOOLEAN
    351 				; as Pointer
    352
-   353 2162 E8				inx						; add bx, 1
-   354 2163 AD 2A 22 95 98		mva RESULT :STACKORIGIN,x
+   353 215E E8				inx						; add bx, 1
+   354 215F AD 26 22 95 98		mva RESULT :STACKORIGIN,x
    355
    356 					.ifdef @new
    357 					@FreeMem #@VarData #@VarDataSize
@@ -271,17 +271,17 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    359
    360 				; ------------------------------------------------------------
    361
-   362 = 222A			RESULT	= DATAORIGIN+$000C
+   362 = 2226			RESULT	= DATAORIGIN+$000C
    363
-   364 = 222A			@VarData	= RESULT
+   364 = 2226			@VarData	= RESULT
    365 = 0001			@VarDataSize	= 1
    366
-   367 2168 60				rts						; ret
+   367 2164 60				rts						; ret
    368 				.endl
    369
    370 				; ------------------------------------------------------------
    371
-   372 = 2229			TEXTATTR	= DATAORIGIN+$000B
+   372 = 2225			TEXTATTR	= DATAORIGIN+$000B
    373 = D01F			CONSOL	= $D01F
    374 = 0000			CN_START_SELECT_OPTION	= $0000
    375 = 0001			CN_SELECT_OPTION	= $0001
@@ -320,7 +320,7 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    408
    409 				; ------------------------------------------------------------
    410
-   411 2169			.local	TYPES						; UNIT
+   411 2165			.local	TYPES						; UNIT
    412
    413 				; ------------------------------------------------------------
    414
@@ -328,7 +328,7 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    416
    417 				; ------------------------------------------------------------
    418
-   419 2169			.local	GRAPH						; UNIT
+   419 2165			.local	GRAPH						; UNIT
    420
    421 				; ------------------------------------------------------------
    422
@@ -386,182 +386,182 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    474 = 000A			VGALO	= $000A
    475 = 001F			VGAMED	= $001F
    476 = 0018			VGAHI	= $0018
-   477 = 222B			WIN_LEFT	= DATAORIGIN+$000D
-   478 = 222D			WIN_RIGHT	= DATAORIGIN+$000F
-   479 = 222F			WIN_TOP	= DATAORIGIN+$0011
-   480 = 2231			WIN_BOTTOM	= DATAORIGIN+$0013
-   481 = 2233			GRAPHRESULT	= DATAORIGIN+$0015
-   482 = 2234			GETCOLOR	= DATAORIGIN+$0016
-   483 = 2235			adr.LASTARCCOORDS	= DATAORIGIN+$0017
-   484 2169			.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-   485 = 2235			LASTARCCOORDS.X	= DATAORIGIN+$0017
-   486 = 2237			LASTARCCOORDS.Y	= DATAORIGIN+$0019
-   487 = 2239			LASTARCCOORDS.XSTART	= DATAORIGIN+$001B
-   488 = 223B			LASTARCCOORDS.YSTART	= DATAORIGIN+$001D
-   489 = 223D			LASTARCCOORDS.XEND	= DATAORIGIN+$001F
-   490 = 223F			LASTARCCOORDS.YEND	= DATAORIGIN+$0021
-   491 = 2241			CURRENTX	= DATAORIGIN+$0023
-   492 = 2243			CURRENTY	= DATAORIGIN+$0025
-   493 = 2245			VIDEORAM	= DATAORIGIN+$0027
-   494 = 2247			SCANLINE_WIDTH	= DATAORIGIN+$0029
+   477 = 2227			WIN_LEFT	= DATAORIGIN+$000D
+   478 = 2229			WIN_RIGHT	= DATAORIGIN+$000F
+   479 = 222B			WIN_TOP	= DATAORIGIN+$0011
+   480 = 222D			WIN_BOTTOM	= DATAORIGIN+$0013
+   481 = 222F			GRAPHRESULT	= DATAORIGIN+$0015
+   482 = 2230			GETCOLOR	= DATAORIGIN+$0016
+   483 = 2231			adr.LASTARCCOORDS	= DATAORIGIN+$0017
+   484 2165			.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
+   485 = 2231			LASTARCCOORDS.X	= DATAORIGIN+$0017
+   486 = 2233			LASTARCCOORDS.Y	= DATAORIGIN+$0019
+   487 = 2235			LASTARCCOORDS.XSTART	= DATAORIGIN+$001B
+   488 = 2237			LASTARCCOORDS.YSTART	= DATAORIGIN+$001D
+   489 = 2239			LASTARCCOORDS.XEND	= DATAORIGIN+$001F
+   490 = 223B			LASTARCCOORDS.YEND	= DATAORIGIN+$0021
+   491 = 223D			CURRENTX	= DATAORIGIN+$0023
+   492 = 223F			CURRENTY	= DATAORIGIN+$0025
+   493 = 2241			VIDEORAM	= DATAORIGIN+$0027
+   494 = 2243			SCANLINE_WIDTH	= DATAORIGIN+$0029
    495
-   496 = 2169 35 22		LASTARCCOORDS
+   496 = 2165 31 22		LASTARCCOORDS
    496 				.endl							; UNIT GRAPH
    497
-   498 216B			.local	MAINPROC					; PROCEDURE
+   498 2167			.local	MAINPROC					; PROCEDURE
    499
    500 				; optimize FAIL (100, examples\inline_asm.pas), line = 15
    501 					@print #$7D
    501 				 LDY# $7D\ JSR @PRINT
-   501 216B A0 7D		 LDY# $7D
-   501 216D 20 D6 20		 JSR @PRINT
+   501 2167 A0 7D		 LDY# $7D
+   501 2169 20 D2 20		 JSR @PRINT
    502
    503 				; optimize FAIL (100, examples\inline_asm.pas), line = 16
    504 					@printSTRING #CODEORIGIN+$000D
    504 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
-   504 2170 A0 20		 LDY> CODEORIGIN+$000D
-   504 2172 A9 0D		 LDA< CODEORIGIN+$000D
-   504 2174 20 DF 20		 JSR @PRINTSTRING
-   505 2177 20 D1 20			@printEOL
+   504 216C A0 20		 LDY> CODEORIGIN+$000D
+   504 216E A9 0D		 LDA< CODEORIGIN+$000D
+   504 2170 20 DB 20		 JSR @PRINTSTRING
+   505 2173 20 CD 20			@printEOL
    506
    507 				; optimize FAIL (100, examples\inline_asm.pas), line = 17
    508 					@printSTRING #CODEORIGIN+$0020
    508 				 LDY> CODEORIGIN+$0020\ LDA< CODEORIGIN+$0020\ JSR @PRINTSTRING
-   508 217A A0 20		 LDY> CODEORIGIN+$0020
-   508 217C A9 20		 LDA< CODEORIGIN+$0020
-   508 217E 20 DF 20		 JSR @PRINTSTRING
-   509 2181 20 D1 20			@printEOL
+   508 2176 A0 20		 LDY> CODEORIGIN+$0020
+   508 2178 A9 20		 LDA< CODEORIGIN+$0020
+   508 217A 20 DB 20		 JSR @PRINTSTRING
+   509 217D 20 CD 20			@printEOL
    510
    511 				; optimize FAIL (100, examples\inline_asm.pas), line = 18
    512 					@printSTRING #CODEORIGIN+$003F
    512 				 LDY> CODEORIGIN+$003F\ LDA< CODEORIGIN+$003F\ JSR @PRINTSTRING
-   512 2184 A0 20		 LDY> CODEORIGIN+$003F
-   512 2186 A9 3F		 LDA< CODEORIGIN+$003F
-   512 2188 20 DF 20		 JSR @PRINTSTRING
-   513 218B 20 D1 20			@printEOL
+   512 2180 A0 20		 LDY> CODEORIGIN+$003F
+   512 2182 A9 3F		 LDA< CODEORIGIN+$003F
+   512 2184 20 DB 20		 JSR @PRINTSTRING
+   513 2187 20 CD 20			@printEOL
    514
    515 				; ---------------------  ASM Block 089  ---------------------
    516
    517
-   518 218E A9 21 8D C6 02 00 +     .by $A9 $21 $8D $C6 $02 $00 $60 
+   518 218A A9 21 8D C6 02 00 +     .by $A9 $21 $8D $C6 $02 $00 $60 
    519 				  
    520
    521 				; optimize FAIL (100, examples\inline_asm.pas), line = 23
    522 					@printSTRING #CODEORIGIN+$0041
    522 				 LDY> CODEORIGIN+$0041\ LDA< CODEORIGIN+$0041\ JSR @PRINTSTRING
-   522 2195 A0 20		 LDY> CODEORIGIN+$0041
-   522 2197 A9 41		 LDA< CODEORIGIN+$0041
-   522 2199 20 DF 20		 JSR @PRINTSTRING
-   523 219C 20 D1 20			@printEOL
+   522 2191 A0 20		 LDY> CODEORIGIN+$0041
+   522 2193 A9 41		 LDA< CODEORIGIN+$0041
+   522 2195 20 DB 20		 JSR @PRINTSTRING
+   523 2198 20 CD 20			@printEOL
    524
    525 				; optimize FAIL ('CRT.READKEY', examples\inline_asm.pas), line = 24
-   526 219F 20 58 21			jsr CRT.READKEY
-   527 21A2 B5 98 8D 48 22		mva :STACKORIGIN,x KEY
-   528 21A7 CA				dex
+   526 219B 20 54 21			jsr CRT.READKEY
+   527 219E B5 98 8D 44 22		mva :STACKORIGIN,x KEY
+   528 21A3 CA				dex
    529
    530 				; ---------------------  ASM Block 090  ---------------------
    531
    532
-   533 21A8 A9 90 3E C6 02 00 +     .by $A9 $90 $3E $C6 $02 $0 $60 
+   533 21A4 A9 90 3E C6 02 00 +     .by $A9 $90 $3E $C6 $02 $0 $60 
    534 				  
    535
    536 				; optimize FAIL (100, examples\inline_asm.pas), line = 29
-   537 					@printSTRING #CODEORIGIN+$0065
-   537 				 LDY> CODEORIGIN+$0065\ LDA< CODEORIGIN+$0065\ JSR @PRINTSTRING
-   537 21AF A0 20		 LDY> CODEORIGIN+$0065
-   537 21B1 A9 65		 LDA< CODEORIGIN+$0065
-   537 21B3 20 DF 20		 JSR @PRINTSTRING
-   538 21B6 20 D1 20			@printEOL
+   537 					@printSTRING #CODEORIGIN+$0064
+   537 				 LDY> CODEORIGIN+$0064\ LDA< CODEORIGIN+$0064\ JSR @PRINTSTRING
+   537 21AB A0 20		 LDY> CODEORIGIN+$0064
+   537 21AD A9 64		 LDA< CODEORIGIN+$0064
+   537 21AF 20 DB 20		 JSR @PRINTSTRING
+   538 21B2 20 CD 20			@printEOL
    539
    540 				; optimize FAIL ('CRT.READKEY', examples\inline_asm.pas), line = 30
-   541 21B9 20 58 21			jsr CRT.READKEY
-   542 21BC B5 98 8D 48 22		mva :STACKORIGIN,x KEY
-   543 21C1 CA				dex
+   541 21B5 20 54 21			jsr CRT.READKEY
+   542 21B8 B5 98 8D 44 22		mva :STACKORIGIN,x KEY
+   543 21BD CA				dex
    544
    545 				; ---------------------  ASM Block 091  ---------------------
    546
    547
-   548 21C2 A9 60 8D C6 02 00 +     .by $A9 $60 $8D $C6 $02 $0 $60 
+   548 21BE A9 60 8D C6 02 00 +     .by $A9 $60 $8D $C6 $02 $0 $60 
    549 				  
    550
    551 				; optimize FAIL (100, examples\inline_asm.pas), line = 35
-   552 					@printSTRING #CODEORIGIN+$0089
-   552 				 LDY> CODEORIGIN+$0089\ LDA< CODEORIGIN+$0089\ JSR @PRINTSTRING
-   552 21C9 A0 20		 LDY> CODEORIGIN+$0089
-   552 21CB A9 89		 LDA< CODEORIGIN+$0089
-   552 21CD 20 DF 20		 JSR @PRINTSTRING
-   553 21D0 20 D1 20			@printEOL
+   552 					@printSTRING #CODEORIGIN+$0087
+   552 				 LDY> CODEORIGIN+$0087\ LDA< CODEORIGIN+$0087\ JSR @PRINTSTRING
+   552 21C5 A0 20		 LDY> CODEORIGIN+$0087
+   552 21C7 A9 87		 LDA< CODEORIGIN+$0087
+   552 21C9 20 DB 20		 JSR @PRINTSTRING
+   553 21CC 20 CD 20			@printEOL
    554
    555 				; optimize FAIL ('CRT.READKEY', examples\inline_asm.pas), line = 36
-   556 21D3 20 58 21			jsr CRT.READKEY
-   557 21D6 B5 98 8D 48 22		mva :STACKORIGIN,x KEY
-   558 21DB CA				dex
+   556 21CF 20 54 21			jsr CRT.READKEY
+   557 21D2 B5 98 8D 44 22		mva :STACKORIGIN,x KEY
+   558 21D7 CA				dex
    559
    560 				; ---------------------  ASM Block 092  ---------------------
    561
    562
-   563 21DC A9 76 8D C6 02 00 +     .by $A9 $76 $8D $C6 $02 $0 $60 
+   563 21D8 A9 76 8D C6 02 00 +     .by $A9 $76 $8D $C6 $02 $0 $60 
    564 				  
    565
    566 				; optimize FAIL (100, examples\inline_asm.pas), line = 41
-   567 					@printSTRING #CODEORIGIN+$00AD
-   567 				 LDY> CODEORIGIN+$00AD\ LDA< CODEORIGIN+$00AD\ JSR @PRINTSTRING
-   567 21E3 A0 20		 LDY> CODEORIGIN+$00AD
-   567 21E5 A9 AD		 LDA< CODEORIGIN+$00AD
-   567 21E7 20 DF 20		 JSR @PRINTSTRING
-   568 21EA 20 D1 20			@printEOL
+   567 					@printSTRING #CODEORIGIN+$00AA
+   567 				 LDY> CODEORIGIN+$00AA\ LDA< CODEORIGIN+$00AA\ JSR @PRINTSTRING
+   567 21DF A0 20		 LDY> CODEORIGIN+$00AA
+   567 21E1 A9 AA		 LDA< CODEORIGIN+$00AA
+   567 21E3 20 DB 20		 JSR @PRINTSTRING
+   568 21E6 20 CD 20			@printEOL
    569
    570 				; optimize FAIL ('CRT.READKEY', examples\inline_asm.pas), line = 42
-   571 21ED 20 58 21			jsr CRT.READKEY
-   572 21F0 B5 98 8D 48 22		mva :STACKORIGIN,x KEY
-   573 21F5 CA				dex
+   571 21E9 20 54 21			jsr CRT.READKEY
+   572 21EC B5 98 8D 44 22		mva :STACKORIGIN,x KEY
+   573 21F1 CA				dex
    574
    575 				; ---------------------  ASM Block 093  ---------------------
    576
    577
-   578 21F6 A9 13 8D C6 02 00 +     .by $A9 $13 $8D $C6 $02 $0 $60 
+   578 21F2 A9 13 8D C6 02 00 +     .by $A9 $13 $8D $C6 $02 $0 $60 
    579 				  
    580
    581 				; optimize FAIL ('CRT.READKEY', examples\inline_asm.pas), line = 47
-   582 21FD 20 58 21			jsr CRT.READKEY
-   583 2200 B5 98 8D 48 22		mva :STACKORIGIN,x KEY
-   584 2205 CA				dex
+   582 21F9 20 54 21			jsr CRT.READKEY
+   583 21FC B5 98 8D 44 22		mva :STACKORIGIN,x KEY
+   584 2201 CA				dex
    585
    586 				; ------------------------------------------------------------
    587
-   588 = 2248			KEY	= DATAORIGIN+$002A
+   588 = 2244			KEY	= DATAORIGIN+$002A
    589
-   590 = 2248			@VarData	= KEY
+   590 = 2244			@VarData	= KEY
    591 = 0001			@VarDataSize	= 1
    592
-   593 2206			@exit
+   593 2202			@exit
    594 					.ifdef @new
    595 					@FreeMem #@VarData #@VarDataSize
    596 					eif
-   597 2206 60				rts						; ret
+   597 2202 60				rts						; ret
    598 				.endl
-   599 2207			l_00D8
+   599 2203			l_00D4
    600
    601 				; optimize FAIL ('MAINPROC', examples\inline_asm.pas), line = 51
-   602 2207 20 6B 21			jsr MAINPROC
+   602 2203 20 67 21			jsr MAINPROC
    603
    604 				; ------------------------------------------------------------
    605
-   606 220A			@exit
+   606 2206			@exit
    607
-   608 220A A2 00		@halt	ldx #0
-   609 220C 9A				txs
+   608 2206 A2 00		@halt	ldx #0
+   609 2208 9A				txs
    610
-   611 220D 60				rts
+   611 2209 60				rts
    612
    613 				; ------------------------------------------------------------
    614
-   615 220E 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+   615 220A 00 00 00 00 00 00 + IOCB@COPY	:16 brk
    616
    617 				; ------------------------------------------------------------
    618
-   619 221E			.local	@DEFINES
-   620 221E			ATARI
+   619 221A			.local	@DEFINES
+   620 221A			ATARI
    621 				.endl
    622
    623 				.endl							; MAIN
@@ -608,7 +608,7 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    664
    665 					ift .SIZEOF(MAIN.SYSTEM) > 0
    666 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-   666 				SYSTEM: $2154..$2157
+   666 				SYSTEM: $2150..$2153
    667 					eif
    668
    669 					ift .SIZEOF(MAIN.DOS) > 0
@@ -629,7 +629,7 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    684
    685 					ift .SIZEOF(MAIN.CRT) > 0
    686 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-   686 				CRT: $2158..$2168
+   686 				CRT: $2154..$2164
    687 					eif
    688
    689 					ift .SIZEOF(MAIN.TYPES) > 0
@@ -638,39 +638,39 @@ Macro: UNITINITIALIZATION [Source: inline_asm.a65]
    692
    693 					ift .SIZEOF(MAIN.GRAPH) > 0
    694 					.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
-   694 				GRAPH: $2169..$216A
+   694 				GRAPH: $2165..$2166
    695 					eif
    696
    697 					.print 'CODE: ',CODEORIGIN,'..',*-1
-   697 				CODE: $2000..$221D
+   697 				CODE: $2000..$2219
    698
    699 				; ------------------------------------------------------------
    700
-   701 221E			DATAORIGIN
-   702 221E 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $27  $00 $00 $00 $17
+   701 221A			DATAORIGIN
+   702 221A 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $27  $00 $00 $00 $17
    703
    704 = 0014			VARINITSIZE	= *-DATAORIGIN
    705 = 002B			VARDATASIZE	= 43
    706
-   707 = 2249			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+   707 = 2245			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
    708
    709 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-   709 				DATA: $221E..$2249
+   709 				DATA: $221A..$2245
    710
-   711 02E0-02E1> 35 21			run START
+   711 02E0-02E1> 31 21			run START
    712
    713 				; ------------------------------------------------------------
    714
    715 				.macro	STATICDATA
    716 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
    717 				.by  $78 $61 $6D $70 $6C $65 $3A $00  $1D $55 $73 $69 $6E $67 $20 $69  $6E $6C $69 $6E $65 $20 $6D $61
-   718 				.by  $63 $68 $69 $6E $65 $20 $6C $61  $6E $67 $75 $61 $67 $65 $00 $00  $00 $22 $50 $72 $65 $73 $73 $20
+   718 				.by  $63 $68 $69 $6E $65 $20 $6C $61  $6E $67 $75 $61 $67 $65 $00 $00  $00 $21 $50 $72 $65 $73 $73 $20
    719 				.by  $61 $6E $79 $20 $6B $65 $79 $20  $74 $6F $20 $63 $68 $61 $6E $67  $65 $20 $63 $6F $6C $6F $72 $21
-   720 				.by  $20 $28 $31 $29 $00 $22 $50 $72  $65 $73 $73 $20 $61 $6E $79 $20  $6B $65 $79 $20 $74 $6F $20 $63
-   721 				.by  $68 $61 $6E $67 $65 $20 $63 $6F  $6C $6F $72 $21 $20 $28 $32 $29  $00 $22 $50 $72 $65 $73 $73 $20
-   722 				.by  $61 $6E $79 $20 $6B $65 $79 $20  $74 $6F $20 $63 $68 $61 $6E $67  $65 $20 $63 $6F $6C $6F $72 $21
-   723 				.by  $20 $28 $33 $29 $00 $22 $50 $72  $65 $73 $73 $20 $61 $6E $79 $20  $6B $65 $79 $20 $74 $6F $20 $63
-   724 				.by  $68 $61 $6E $67 $65 $20 $63 $6F  $6C $6F $72 $21 $20 $28 $34 $29  $00
+   720 				.by  $28 $31 $29 $00 $21 $50 $72 $65  $73 $73 $20 $61 $6E $79 $20 $6B  $65 $79 $20 $74 $6F $20 $63 $68
+   721 				.by  $61 $6E $67 $65 $20 $63 $6F $6C  $6F $72 $21 $28 $32 $29 $00 $21  $50 $72 $65 $73 $73 $20 $61 $6E
+   722 				.by  $79 $20 $6B $65 $79 $20 $74 $6F  $20 $63 $68 $61 $6E $67 $65 $20  $63 $6F $6C $6F $72 $21 $28 $33
+   723 				.by  $29 $00 $21 $50 $72 $65 $73 $73  $20 $61 $6E $79 $20 $6B $65 $79  $20 $74 $6F $20 $63 $68 $61 $6E
+   724 				.by  $67 $65 $20 $63 $6F $6C $6F $72  $21 $28 $34 $29 $00
    725 				.endm
    726
    727 					end

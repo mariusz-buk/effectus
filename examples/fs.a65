@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -601,28 +601,28 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
 
 .local	CHNDLPROC					; PROCEDURE
 
-; optimize OK (examples\fs.pas), line = 23
+; optimize OK (examples\fs.pas), line = 24
 
 	lda adr.NDL+$1C
 	sta TMP
 
-; optimize OK (examples\fs.pas), line = 24
+; optimize OK (examples\fs.pas), line = 25
 
 	lda TMP
 	cmp #$02
 	jcs l_00DD
 
-; optimize OK (examples\fs.pas), line = 25
+; optimize OK (examples\fs.pas), line = 26
 
 	mva #$FF adr.NDL+$1C
 
-; optimize OK (examples\fs.pas), line = 26
+; optimize OK (examples\fs.pas), line = 27
 
 	ldy adr.NDL+$1D
 	dey
 	sty TMP
 
-; optimize OK (examples\fs.pas), line = 27
+; optimize OK (examples\fs.pas), line = 28
 
 	ldy #$1D
 	mva TMP adr.NDL,y
@@ -630,13 +630,13 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
 	jmp l_00FE
 l_00DD
 
-; optimize OK (examples\fs.pas), line = 30
+; optimize OK (examples\fs.pas), line = 31
 
 	lda adr.NDL+$1C
 	sub #$02
 	sta TMP
 
-; optimize OK (examples\fs.pas), line = 31
+; optimize OK (examples\fs.pas), line = 32
 
 	ldy #$1C
 	mva TMP adr.NDL,y
@@ -650,15 +650,15 @@ l_00FE
 
 .local	SCROLPROC					; PROCEDURE
 
-; optimize OK (examples\fs.pas), line = 37
+; optimize OK (examples\fs.pas), line = 38
 
 	mva J HSC
 
-; optimize OK (examples\fs.pas), line = 38
+; optimize OK (examples\fs.pas), line = 39
 
 	ind J
 
-; optimize OK (examples\fs.pas), line = 39
+; optimize OK (examples\fs.pas), line = 40
 
 	.LOCAL
 	lda J+3
@@ -683,22 +683,22 @@ L5
 	.ENDL
 	jne l_0130
 
-; optimize FAIL ('CHNDLPROC', examples\fs.pas), line = 40
+; optimize FAIL ('CHNDLPROC', examples\fs.pas), line = 41
 	jsr CHNDLPROC
 
-; optimize OK (examples\fs.pas), line = 41
+; optimize OK (examples\fs.pas), line = 42
 
 	mva #$00 J
 	sta J+1
 	sta J+2
 	sta J+3
 
-; optimize OK (examples\fs.pas), line = 42
+; optimize OK (examples\fs.pas), line = 43
 
 	ind K
 l_0130
 
-; optimize OK (examples\fs.pas), line = 44
+; optimize OK (examples\fs.pas), line = 45
 
 	.LOCAL
 	lda K+3
@@ -723,17 +723,17 @@ L5
 	.ENDL
 	jne l_0150
 
-; optimize OK (examples\fs.pas), line = 45
+; optimize OK (examples\fs.pas), line = 46
 
 	ldy #$1C
 	mva TMPL adr.NDL,y
 
-; optimize OK (examples\fs.pas), line = 46
+; optimize OK (examples\fs.pas), line = 47
 
 	ldy #$1D
 	mva TMPH adr.NDL,y
 
-; optimize OK (examples\fs.pas), line = 47
+; optimize OK (examples\fs.pas), line = 48
 
 	mva #$00 K
 	sta K+1
@@ -755,35 +755,28 @@ l_0150
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL ('GRAPH.INITGRAPH_007A', examples\fs.pas), line = 66
+; optimize FAIL ('GRAPH.INITGRAPH_007A', examples\fs.pas), line = 67
 	inx
 	mva #$00 :STACKORIGIN,x
 	jsr GRAPH.INITGRAPH_007A
 
-; optimize OK (examples\fs.pas), line = 67
+; optimize OK (examples\fs.pas), line = 68
 
 	mva NDL DLIST
 	mva NDL+1 DLIST+1
 
-; optimize OK (examples\fs.pas), line = 68
+; optimize OK (examples\fs.pas), line = 69
 
 	mva #$40 SAV
 	mva #$9C SAV+1
 
-; optimize OK (examples\fs.pas), line = 69
+; optimize OK (examples\fs.pas), line = 70
 
 	mva #$0E COL0
 
-; optimize OK (examples\fs.pas), line = 70
-
-	sta COL1
-
 ; optimize OK (examples\fs.pas), line = 71
 
-	mva #$01 I
-	mva #$00 I+1
-	sta I+2
-	sta I+3
+	sta COL1
 ; --- For
 
 ; optimize OK (examples\fs.pas), line = 72
@@ -796,7 +789,7 @@ l_0150
 ; optimize OK (examples\fs.pas), line = 72
 
 ; --- To
-l_0189
+l_0185
 
 ; --- ForToDoCondition
 
@@ -827,7 +820,7 @@ L4	bvc L5
 L5
 	.ENDL
 	smi
-	jne l_0193
+	jne l_018F
 
 ; optimize FAIL (100, examples\fs.pas), line = 73
 	@printSTRING #CODEORIGIN+$000D
@@ -844,8 +837,8 @@ L5
 
 ; --- ForToDoEpilog
 	ind I						; inc ptr dword [CounterAddress]
-	jmp l_0189
-l_0193
+	jmp l_0185
+l_018F
 
 ; optimize FAIL (100, examples\fs.pas), line = 75
 	@printSTRING #CODEORIGIN+$0016
@@ -872,7 +865,7 @@ l_0193
 	mva I CLOCK
 
 ; --- WhileProlog
-l_01CA
+l_01C6
 
 ; optimize OK (examples\fs.pas), line = 80
 
@@ -899,9 +892,9 @@ L4	bvc L5
 	ora #$01
 L5
 	.ENDL
-	jne l_01D9
-	jmp l_01CA
-l_01D9
+	jne l_01D5
+	jmp l_01C6
+l_01D5
 
 ; optimize OK (examples\fs.pas), line = 82
 
@@ -931,7 +924,7 @@ DLIST	= $0230
 VVBLKD	= $0224
 COL0	= $02C4
 COL1	= $02C5
-@FORTMP_0186	= $0017
+@FORTMP_0182	= $0017
 
 @VarData	= I
 @VarDataSize	= 4

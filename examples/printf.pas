@@ -14,7 +14,7 @@ var
   key : char;
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Effectus example');
   Writeln('PrintF demo');
@@ -28,13 +28,13 @@ begin
   Write('', eol, '', '%after');
   Write('', eol, 'before', '%');
   Write('', eol, 'Procent sign ''', '%'' in one line format!');
-  Write('', eol, '', eol, 'HEX x (BYTE) ', X, '=', '$', HexStr(X, 4), '');
-  Write('', eol, 'HEX y (INT) ', Y, '=', '$', HexStr(Y, 4), '');
-  Write('', eol, 'HEX z (CARD) ', Z, '=', '$', HexStr(Z, 4), '');
+  Write('', eol, '', eol, 'HEX x(BYTE) ', X, '=', '$', HexStr(X, 4), '');
+  Write('', eol, 'HEX y(INT) ', Y, '=', '$', HexStr(Y, 4), '');
+  Write('', eol, 'HEX z(CARD) ', Z, '=', '$', HexStr(Z, 4), '');
   Write('', eol, '', eol, 'First character: ', Chr(65), '');
   Write('', eol, 'Number one: ', Chr(49), '');
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

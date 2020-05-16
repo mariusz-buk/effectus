@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -128,7 +128,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_00D8
+	jmp l_00D4
 
 ; ------------------------------------------------------------
 
@@ -534,7 +534,7 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
   
 
 ; optimize FAIL (100, examples\inline_asm.pas), line = 29
-	@printSTRING #CODEORIGIN+$0065
+	@printSTRING #CODEORIGIN+$0064
 	@printEOL
 
 ; optimize FAIL ('CRT.READKEY', examples\inline_asm.pas), line = 30
@@ -549,7 +549,7 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
   
 
 ; optimize FAIL (100, examples\inline_asm.pas), line = 35
-	@printSTRING #CODEORIGIN+$0089
+	@printSTRING #CODEORIGIN+$0087
 	@printEOL
 
 ; optimize FAIL ('CRT.READKEY', examples\inline_asm.pas), line = 36
@@ -564,7 +564,7 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
   
 
 ; optimize FAIL (100, examples\inline_asm.pas), line = 41
-	@printSTRING #CODEORIGIN+$00AD
+	@printSTRING #CODEORIGIN+$00AA
 	@printEOL
 
 ; optimize FAIL ('CRT.READKEY', examples\inline_asm.pas), line = 42
@@ -596,7 +596,7 @@ KEY	= DATAORIGIN+$002A
 	eif
 	rts						; ret
 .endl
-l_00D8
+l_00D4
 
 ; optimize FAIL ('MAINPROC', examples\inline_asm.pas), line = 51
 	jsr MAINPROC
@@ -715,13 +715,13 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 .macro	STATICDATA
 .by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
 .by  $78 $61 $6D $70 $6C $65 $3A $00  $1D $55 $73 $69 $6E $67 $20 $69  $6E $6C $69 $6E $65 $20 $6D $61
-.by  $63 $68 $69 $6E $65 $20 $6C $61  $6E $67 $75 $61 $67 $65 $00 $00  $00 $22 $50 $72 $65 $73 $73 $20
+.by  $63 $68 $69 $6E $65 $20 $6C $61  $6E $67 $75 $61 $67 $65 $00 $00  $00 $21 $50 $72 $65 $73 $73 $20
 .by  $61 $6E $79 $20 $6B $65 $79 $20  $74 $6F $20 $63 $68 $61 $6E $67  $65 $20 $63 $6F $6C $6F $72 $21
-.by  $20 $28 $31 $29 $00 $22 $50 $72  $65 $73 $73 $20 $61 $6E $79 $20  $6B $65 $79 $20 $74 $6F $20 $63
-.by  $68 $61 $6E $67 $65 $20 $63 $6F  $6C $6F $72 $21 $20 $28 $32 $29  $00 $22 $50 $72 $65 $73 $73 $20
-.by  $61 $6E $79 $20 $6B $65 $79 $20  $74 $6F $20 $63 $68 $61 $6E $67  $65 $20 $63 $6F $6C $6F $72 $21
-.by  $20 $28 $33 $29 $00 $22 $50 $72  $65 $73 $73 $20 $61 $6E $79 $20  $6B $65 $79 $20 $74 $6F $20 $63
-.by  $68 $61 $6E $67 $65 $20 $63 $6F  $6C $6F $72 $21 $20 $28 $34 $29  $00
+.by  $28 $31 $29 $00 $21 $50 $72 $65  $73 $73 $20 $61 $6E $79 $20 $6B  $65 $79 $20 $74 $6F $20 $63 $68
+.by  $61 $6E $67 $65 $20 $63 $6F $6C  $6F $72 $21 $28 $32 $29 $00 $21  $50 $72 $65 $73 $73 $20 $61 $6E
+.by  $79 $20 $6B $65 $79 $20 $74 $6F  $20 $63 $68 $61 $6E $67 $65 $20  $63 $6F $6C $6F $72 $21 $28 $33
+.by  $29 $00 $21 $50 $72 $65 $73 $73  $20 $61 $6E $79 $20 $6B $65 $79  $20 $74 $6F $20 $63 $68 $61 $6E
+.by  $67 $65 $20 $63 $6F $6C $6F $72  $21 $28 $34 $29 $00
 .endm
 
 	end

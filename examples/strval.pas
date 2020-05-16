@@ -21,7 +21,7 @@ var
   strnum3 : string[6];
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Effectus example:');
   Writeln('');
@@ -51,7 +51,7 @@ begin
   Write('num3=');
   Writeln(num3);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

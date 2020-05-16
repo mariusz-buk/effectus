@@ -15,7 +15,7 @@ var
   n1 : byte;
   n2 : integer;
   n3 : word;
-begin
+begin  // 2
   Write(Chr(125));
   Writeln('');
   Writeln('Enter BYTE value: ');
@@ -29,7 +29,7 @@ begin
   Writeln(n2);
   Writeln(n3);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

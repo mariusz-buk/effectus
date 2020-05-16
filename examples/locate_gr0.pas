@@ -12,7 +12,7 @@ procedure MAINProc;
 var
   key : char;
   loc : byte;
-begin
+begin  // 2
   InitGraph(0);
   GotoXY(3 + 1,  3 + 1);
   Write('HELLO,ATARIAN');
@@ -25,7 +25,7 @@ begin
   GotoXY(5 + 1,  5 + 1);
   Write(Chr(LOC));
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

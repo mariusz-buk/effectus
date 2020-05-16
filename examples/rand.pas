@@ -13,7 +13,7 @@ var
   key : char;
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Effectus example:');
   Writeln('Random number generator demonstration');
@@ -34,7 +34,7 @@ begin
   i := Random(3);
   Writeln(i);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

@@ -13,7 +13,7 @@ var
   num : array[0..4] of byte;
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
   Writeln('Effectus example:');
   Writeln('ARRAYs demonstration');
@@ -23,15 +23,14 @@ begin
   num[2] := 155;
   num[3] := 246;
   num[4] := 170;
-  i := 0;
   for  i:=0 TO 4 do begin
   Write('Element ');
   Write(i);
   Write('=');
   Writeln(num[i]);
-  end;
+  end;  // for
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

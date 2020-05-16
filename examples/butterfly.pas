@@ -23,7 +23,7 @@ var
   COL : word;
   I : word;
   Q : word;
-begin
+begin  // 2
   InitGraph(11);
   Poke(710, 0);
   SetColor(0);
@@ -35,7 +35,6 @@ begin
   Y := Random(190);
   J := Random(50);
   K := Random(190);
-  I := 1;
   for  I:=1 TO 9400 do begin
   PutPixel(X, Y);
   MoveTo(X, Y);
@@ -50,45 +49,45 @@ begin
   Q := Random(50);
   if Q>40 then begin
   Inc(COL);
-  end;
+  end;  // if
   if COL>14 then begin
   COL := 1;
-  end;
+  end;  // if
   SetColor(COL);
   if X>=79 then begin
   A := -A;
   Inc(X, A);
-  end;
+  end;  // if
   if J>=79 then begin
   C := -C;
   Inc(J, C);
-  end;
+  end;  // if
   if J<=0 then begin
   C := -C;
   Inc(J, C);
-  end;
+  end;  // if
   if X<=0 then begin
   A := -A;
   Inc(X, A);
-  end;
+  end;  // if
   if Y>=191 then begin
   B := -B;
   Inc(Y, B);
-  end;
+  end;  // if
   if K>=191 then begin
   D := -D;
   Inc(K, D);
-  end;
+  end;  // if
   if K<=0 then begin
   D := -D;
   Inc(K, D);
-  end;
+  end;  // if
   if Y<=0 then begin
   B := -B;
   Inc(Y, B);
-  end;
-  end;
-end;
+  end;  // if
+  end;  // for
+end;  // 4
 
 begin
   DEMO2Proc;

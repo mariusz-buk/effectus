@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -128,7 +128,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_00E6
+	jmp l_0109
 
 ; ------------------------------------------------------------
 
@@ -433,11 +433,25 @@ BLINK	= $0080
 	dex						; sub bx, 1
 
 ; optimize FAIL (100, examples\procs.pas), line = 22
+	@printSTRING #CODEORIGIN+$0020
+
+; optimize FAIL (100, examples\procs.pas), line = 23
 	inx
 	mva N :STACKORIGIN,x
 	jsr @printBYTE
 	dex
 	@printEOL
+
+; optimize OK (examples\procs.pas), line = 24
+
+	lda N
+	cmp #$14
+	jeq l_0190
+
+; optimize FAIL (100, examples\procs.pas), line = 25
+	@printSTRING #CODEORIGIN+$0034
+	@printEOL
+l_0190
 
 ; ------------------------------------------------------------
 
@@ -469,16 +483,16 @@ N	= DATAORIGIN+$0012
 	mva :STACKORIGIN,x N1
 	dex						; sub bx, 1
 
-; optimize OK (examples\procs.pas), line = 32
+; optimize OK (examples\procs.pas), line = 36
 
 	lda N1
 	add N2
 	sta TOTAL1
 
-; optimize FAIL (100, examples\procs.pas), line = 33
-	@printSTRING #CODEORIGIN+$0020
+; optimize FAIL (100, examples\procs.pas), line = 37
+	@printSTRING #CODEORIGIN+$0043
 
-; optimize FAIL (100, examples\procs.pas), line = 34
+; optimize FAIL (100, examples\procs.pas), line = 38
 	inx
 	mva TOTAL1 :STACKORIGIN,x
 	jsr @printBYTE
@@ -519,7 +533,7 @@ TOTAL1	= DATAORIGIN+$0015
 	mva :STACKORIGIN+STACKWIDTH,x C1+1
 	dex						; sub bx, 1
 
-; optimize OK (examples\procs.pas), line = 44
+; optimize OK (examples\procs.pas), line = 48
 
 	lda C1
 	add C2
@@ -528,10 +542,10 @@ TOTAL1	= DATAORIGIN+$0015
 	adc C2+1
 	sta TOTAL2+1
 
-; optimize FAIL (100, examples\procs.pas), line = 45
-	@printSTRING #CODEORIGIN+$0020
+; optimize FAIL (100, examples\procs.pas), line = 49
+	@printSTRING #CODEORIGIN+$0043
 
-; optimize FAIL (100, examples\procs.pas), line = 46
+; optimize FAIL (100, examples\procs.pas), line = 50
 	inx
 	mva TOTAL2 :STACKORIGIN,x
 	mva TOTAL2+1 :STACKORIGIN+STACKWIDTH,x
@@ -600,16 +614,16 @@ TOTAL2	= DATAORIGIN+$001A
 	mva :STACKORIGIN+STACKWIDTH,x E1+1
 	dex						; sub bx, 1
 
-; optimize FAIL (100, examples\procs.pas), line = 52
+; optimize FAIL (100, examples\procs.pas), line = 56
 	@printSTRING #CODEORIGIN+$000C
 	@print #$9B
-	@printSTRING #CODEORIGIN+$002A
+	@printSTRING #CODEORIGIN+$004D
 	inx
 	mva E1 :STACKORIGIN,x
 	mva E1+1 :STACKORIGIN+STACKWIDTH,x
 	jsr @printWORD
 	dex
-	@printSTRING #CODEORIGIN+$002F
+	@printSTRING #CODEORIGIN+$0052
 	inx
 	mva E2 :STACKORIGIN,x
 	mva E2+1 :STACKORIGIN+STACKWIDTH,x
@@ -617,20 +631,20 @@ TOTAL2	= DATAORIGIN+$001A
 	dex
 	@printSTRING #CODEORIGIN+$000C
 
-; optimize FAIL (100, examples\procs.pas), line = 53
+; optimize FAIL (100, examples\procs.pas), line = 57
 	@printSTRING #CODEORIGIN+$000C
 	@print #$9B
-	@printSTRING #CODEORIGIN+$0035
+	@printSTRING #CODEORIGIN+$0058
 	inx
 	mva E3 :STACKORIGIN,x
 	jsr @printBYTE
 	dex
 	@printSTRING #CODEORIGIN+$000C
 
-; optimize FAIL (100, examples\procs.pas), line = 54
+; optimize FAIL (100, examples\procs.pas), line = 58
 	@printSTRING #CODEORIGIN+$000C
 	@print #$9B
-	@printSTRING #CODEORIGIN+$003A
+	@printSTRING #CODEORIGIN+$005D
 	inx
 	mva E4 :STACKORIGIN,x
 	mva E4+1 :STACKORIGIN+STACKWIDTH,x
@@ -638,7 +652,7 @@ TOTAL2	= DATAORIGIN+$001A
 	mva E4+3 :STACKORIGIN+STACKWIDTH*3,x
 	jsr @printINT
 	dex
-	@printSTRING #CODEORIGIN+$003F
+	@printSTRING #CODEORIGIN+$0062
 	inx
 	mva E5 :STACKORIGIN,x
 	mva E5+1 :STACKORIGIN+STACKWIDTH,x
@@ -670,71 +684,71 @@ E5	= DATAORIGIN+$0025
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\procs.pas), line = 59
+; optimize FAIL (100, examples\procs.pas), line = 63
 	@print #$7D
 
-; optimize FAIL (100, examples\procs.pas), line = 60
-	@printSTRING #CODEORIGIN+$0045
+; optimize FAIL (100, examples\procs.pas), line = 64
+	@printSTRING #CODEORIGIN+$0068
 	@printEOL
 
-; optimize FAIL (100, examples\procs.pas), line = 61
-	@printSTRING #CODEORIGIN+$0058
+; optimize FAIL (100, examples\procs.pas), line = 65
+	@printSTRING #CODEORIGIN+$007B
 	@printEOL
 
-; optimize FAIL ('PRINTTEXTPROC', examples\procs.pas), line = 62
+; optimize FAIL ('PRINTTEXTPROC', examples\procs.pas), line = 66
 	jsr PRINTTEXTPROC
 
-; optimize FAIL (100, examples\procs.pas), line = 63
-	@printSTRING #CODEORIGIN+$0070
+; optimize FAIL (100, examples\procs.pas), line = 67
+	@printSTRING #CODEORIGIN+$0093
 
-; optimize FAIL ('SHOWNUMPROC', examples\procs.pas), line = 64
+; optimize FAIL ('SHOWNUMPROC', examples\procs.pas), line = 68
 	inx
 	mva #$15 :STACKORIGIN,x
 	jsr SHOWNUMPROC
 
-; optimize FAIL (100, examples\procs.pas), line = 65
+; optimize FAIL (100, examples\procs.pas), line = 69
 	@printSTRING #CODEORIGIN+$000C
 	@printEOL
 
-; optimize FAIL (100, examples\procs.pas), line = 66
-	@printSTRING #CODEORIGIN+$0089
+; optimize FAIL (100, examples\procs.pas), line = 70
+	@printSTRING #CODEORIGIN+$00AC
 	@printEOL
 
-; optimize FAIL ('SUMBYTESPROC', examples\procs.pas), line = 67
+; optimize FAIL ('SUMBYTESPROC', examples\procs.pas), line = 71
 	inx
 	mva #$0A :STACKORIGIN,x
 	inx
 	mva #$F0 :STACKORIGIN,x
 	jsr SUMBYTESPROC
 
-; optimize FAIL (100, examples\procs.pas), line = 68
+; optimize FAIL (100, examples\procs.pas), line = 72
 	@printSTRING #CODEORIGIN+$000C
 	@printEOL
 
-; optimize OK (examples\procs.pas), line = 69
+; optimize OK (examples\procs.pas), line = 73
 
 	mva #$34 M1
 	mva #$08 M1+1
 
-; optimize OK (examples\procs.pas), line = 70
+; optimize OK (examples\procs.pas), line = 74
 
 	mva #$30 M2
 	mva #$F2 M2+1
 
-; optimize FAIL (100, examples\procs.pas), line = 71
-	@printSTRING #CODEORIGIN+$00A7
+; optimize FAIL (100, examples\procs.pas), line = 75
+	@printSTRING #CODEORIGIN+$00CA
 
-; optimize FAIL (100, examples\procs.pas), line = 72
+; optimize FAIL (100, examples\procs.pas), line = 76
 	inx
 	mva M1 :STACKORIGIN,x
 	mva M1+1 :STACKORIGIN+STACKWIDTH,x
 	jsr @printWORD
 	dex
 
-; optimize FAIL (100, examples\procs.pas), line = 73
-	@printSTRING #CODEORIGIN+$00BB
+; optimize FAIL (100, examples\procs.pas), line = 77
+	@printSTRING #CODEORIGIN+$00DE
 
-; optimize FAIL (100, examples\procs.pas), line = 74
+; optimize FAIL (100, examples\procs.pas), line = 78
 	inx
 	mva M2 :STACKORIGIN,x
 	mva M2+1 :STACKORIGIN+STACKWIDTH,x
@@ -742,11 +756,11 @@ E5	= DATAORIGIN+$0025
 	dex
 	@printEOL
 
-; optimize FAIL (100, examples\procs.pas), line = 75
-	@printSTRING #CODEORIGIN+$00C2
+; optimize FAIL (100, examples\procs.pas), line = 79
+	@printSTRING #CODEORIGIN+$00E5
 	@printEOL
 
-; optimize FAIL ('SUMCARDSPROC', examples\procs.pas), line = 76
+; optimize FAIL ('SUMCARDSPROC', examples\procs.pas), line = 80
 	inx
 	mva M1 :STACKORIGIN,x
 	mva M1+1 :STACKORIGIN+STACKWIDTH,x
@@ -755,7 +769,7 @@ E5	= DATAORIGIN+$0025
 	mva M2+1 :STACKORIGIN+STACKWIDTH,x
 	jsr SUMCARDSPROC
 
-; optimize FAIL ('NUMBERSPROC', examples\procs.pas), line = 77
+; optimize FAIL ('NUMBERSPROC', examples\procs.pas), line = 81
 	inx
 	mva #$10 :STACKORIGIN,x
 	mva #$27 :STACKORIGIN+STACKWIDTH,x
@@ -774,7 +788,7 @@ E5	= DATAORIGIN+$0025
 	jsr @expandToCARD.WORD
 	jsr NUMBERSPROC
 
-; optimize FAIL ('CRT.READKEY', examples\procs.pas), line = 78
+; optimize FAIL ('CRT.READKEY', examples\procs.pas), line = 82
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -784,9 +798,9 @@ E5	= DATAORIGIN+$0025
 	eif
 	rts						; ret
 .endl
-l_00E6
+l_0109
 
-; optimize FAIL ('MAINPROC', examples\procs.pas), line = 82
+; optimize FAIL ('MAINPROC', examples\procs.pas), line = 86
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
@@ -889,15 +903,16 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
 .macro	STATICDATA
 .by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $00 $00 $0F  $48 $65 $6C $6C $6F $20 $66 $72
-.by  $6F $6D $20 $50 $52 $4F $43 $00  $08 $52 $65 $73 $75 $6C $74 $3A  $20 $00 $03 $65 $31 $3D $00 $04
-.by  $2C $65 $32 $3D $00 $03 $65 $33  $3D $00 $03 $65 $34 $3D $00 $04  $2C $65 $35 $3D $00 $11 $45 $66
-.by  $66 $65 $63 $74 $75 $73 $20 $65  $78 $61 $6D $70 $6C $65 $3A $00  $16 $55 $73 $69 $6E $67 $20 $6C
-.by  $6F $63 $61 $6C $20 $50 $52 $4F  $43 $65 $64 $75 $72 $65 $73 $00  $17 $56 $61 $72 $69 $61 $62 $6C
-.by  $65 $20 $6E $20 $68 $6F $6C $64  $73 $20 $76 $61 $6C $75 $65 $20  $00 $1C $49 $6E $70 $75 $74 $20
-.by  $70 $61 $72 $61 $6D $65 $74 $65  $72 $73 $3A $20 $31 $30 $20 $61  $6E $64 $20 $32 $34 $30 $00 $12
-.by  $49 $6E $70 $75 $74 $20 $70 $61  $72 $61 $6D $65 $74 $65 $72 $73  $3A $20 $00 $05 $20 $61 $6E $64
-.by  $20 $00 $1B $68 $65 $6C $64 $20  $69 $6E $20 $76 $61 $72 $69 $61  $62 $6C $65 $73 $20 $6D $31 $20
-.by  $61 $6E $64 $20 $6D $32 $00
+.by  $6F $6D $20 $50 $52 $4F $43 $00  $12 $45 $6E $74 $65 $72 $65 $64  $20 $6E $75 $6D $62 $65 $72 $20
+.by  $69 $73 $20 $00 $0D $49 $74 $20  $69 $73 $20 $6E $6F $74 $20 $32  $30 $21 $00 $08 $52 $65 $73 $75
+.by  $6C $74 $3A $20 $00 $03 $65 $31  $3D $00 $04 $2C $65 $32 $3D $00  $03 $65 $33 $3D $00 $03 $65 $34
+.by  $3D $00 $04 $2C $65 $35 $3D $00  $11 $45 $66 $66 $65 $63 $74 $75  $73 $20 $65 $78 $61 $6D $70 $6C
+.by  $65 $3A $00 $16 $55 $73 $69 $6E  $67 $20 $6C $6F $63 $61 $6C $20  $50 $52 $4F $43 $65 $64 $75 $72
+.by  $65 $73 $00 $17 $56 $61 $72 $69  $61 $62 $6C $65 $20 $6E $20 $68  $6F $6C $64 $73 $20 $76 $61 $6C
+.by  $75 $65 $20 $00 $1C $49 $6E $70  $75 $74 $20 $70 $61 $72 $61 $6D  $65 $74 $65 $72 $73 $3A $20 $31
+.by  $30 $20 $61 $6E $64 $20 $32 $34  $30 $00 $12 $49 $6E $70 $75 $74  $20 $70 $61 $72 $61 $6D $65 $74
+.by  $65 $72 $73 $3A $20 $00 $05 $20  $61 $6E $64 $20 $00 $1B $68 $65  $6C $64 $20 $69 $6E $20 $76 $61
+.by  $72 $69 $61 $62 $6C $65 $73 $20  $6D $31 $20 $61 $6E $64 $20 $6D  $32 $00
 .endm
 
 	end

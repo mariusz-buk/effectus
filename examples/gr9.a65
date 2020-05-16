@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -888,36 +888,32 @@ SCANLINE_WIDTH	= DATAORIGIN+$0029
 
 	lda #$80
 	sta $02C8
+; --- For
 
 ; optimize OK (examples\gr9.pas), line = 18
 
 	mva #$00 I
-; --- For
 
-; optimize OK (examples\gr9.pas), line = 19
-
-	sta I
-
-; optimize OK (examples\gr9.pas), line = 19
+; optimize OK (examples\gr9.pas), line = 18
 
 ; --- To
-l_00E4
+l_00E0
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\gr9.pas), line = 19
+; optimize OK (examples\gr9.pas), line = 18
 
 	lda I
 	cmp #$4F
 	scc
-	jne l_00F2
+	jne l_00EE
 
-; optimize FAIL ('GRAPH.SETCOLOR', examples\gr9.pas), line = 20
+; optimize FAIL ('GRAPH.SETCOLOR', examples\gr9.pas), line = 19
 	inx
 	mva I :STACKORIGIN,x
 	jsr GRAPH.SETCOLOR
 
-; optimize FAIL ('GRAPH.PUTPIXEL_0084', examples\gr9.pas), line = 21
+; optimize FAIL ('GRAPH.PUTPIXEL_0084', examples\gr9.pas), line = 20
 	inx
 	mva I :STACKORIGIN,x
 	mva #$00 :STACKORIGIN+STACKWIDTH,x
@@ -926,7 +922,7 @@ l_00E4
 	mva #$00 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.PUTPIXEL_0084
 
-; optimize FAIL ('GRAPH.MOVETO', examples\gr9.pas), line = 22
+; optimize FAIL ('GRAPH.MOVETO', examples\gr9.pas), line = 21
 	inx
 	mva I :STACKORIGIN,x
 	mva #$00 :STACKORIGIN+STACKWIDTH,x
@@ -935,7 +931,7 @@ l_00E4
 	mva #$00 :STACKORIGIN+STACKWIDTH,x
 	jsr GRAPH.MOVETO
 
-; optimize FAIL ('GRAPH.LINETO', examples\gr9.pas), line = 23
+; optimize FAIL ('GRAPH.LINETO', examples\gr9.pas), line = 22
 	inx
 	mva I :STACKORIGIN,x
 	mva #$00 :STACKORIGIN+STACKWIDTH,x
@@ -947,18 +943,18 @@ l_00E4
 ; --- ForToDoEpilog
 	inc I						; inc ptr byte [CounterAddress]
 
-	jne l_00E4
+	jne l_00E0
 
-l_00F2
+l_00EE
 
-; optimize FAIL ('CRT.READKEY', examples\gr9.pas), line = 25
+; optimize FAIL ('CRT.READKEY', examples\gr9.pas), line = 24
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
 
 ; ------------------------------------------------------------
 
-@FORTMP_00E1	= $004F
+@FORTMP_00DD	= $004F
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
@@ -967,7 +963,7 @@ l_00F2
 .endl
 l_0014
 
-; optimize FAIL ('MAINPROC', examples\gr9.pas), line = 29
+; optimize FAIL ('MAINPROC', examples\gr9.pas), line = 28
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

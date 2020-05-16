@@ -6,14 +6,13 @@ uses
 
 // Effectus example
 // -------------------------------------
-// DEFINE declaration demo
 var
   key : char;
 
 procedure DEFINE_TESTProc;
 var
   n : byte;
-begin
+begin  // 1
   Write(Chr(125));
   Poke(710, 0);
   Poke(712, 60);
@@ -25,12 +24,11 @@ begin
   Writeln('Cls,Newline');
   Writeln('');
   Writeln('Count from 1 to max');
-  n := 1;
   for  n:=1 to 3 do begin
   Writeln(n);
-  end;
+  end;  // for
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   DEFINE_TESTProc;

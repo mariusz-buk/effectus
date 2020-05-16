@@ -14,9 +14,9 @@ var
   b : byte;
 
 procedure MAINProc;
-begin
+begin  // 1
   Write(Chr(125));
-  Writeln('Logical (bitwise) operators demo');
+  Writeln('Logical(bitwise) operators demo');
   Writeln('');
   Write('n=');
   n := 2;
@@ -57,7 +57,7 @@ begin
   b := a SHR 1;
   Writeln(b);
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

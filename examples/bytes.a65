@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -442,43 +442,39 @@ BLINK	= $0080
 ; optimize OK (examples\bytes.pas), line = 25
 
 	mva #$AA adr.NUM+$04
+; --- For
 
 ; optimize OK (examples\bytes.pas), line = 26
 
 	mva #$00 I
-; --- For
 
-; optimize OK (examples\bytes.pas), line = 27
-
-	sta I
-
-; optimize OK (examples\bytes.pas), line = 27
+; optimize OK (examples\bytes.pas), line = 26
 
 ; --- To
-l_00C3
+l_00BF
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\bytes.pas), line = 27
+; optimize OK (examples\bytes.pas), line = 26
 
 	lda I
 	cmp #$04
 	scc
-	jne l_00D1
+	jne l_00CD
 
-; optimize FAIL (100, examples\bytes.pas), line = 28
+; optimize FAIL (100, examples\bytes.pas), line = 27
 	@printSTRING #CODEORIGIN+$0038
 
-; optimize FAIL (100, examples\bytes.pas), line = 29
+; optimize FAIL (100, examples\bytes.pas), line = 28
 	inx
 	mva I :STACKORIGIN,x
 	jsr @printBYTE
 	dex
 
-; optimize FAIL (100, examples\bytes.pas), line = 30
+; optimize FAIL (100, examples\bytes.pas), line = 29
 	@print #$3D
 
-; optimize FAIL (100, examples\bytes.pas), line = 31
+; optimize FAIL (100, examples\bytes.pas), line = 30
 	inx
 	ldy I
 	mva adr.NUM,y :STACKORIGIN,x
@@ -489,18 +485,18 @@ l_00C3
 ; --- ForToDoEpilog
 	inc I						; inc ptr byte [CounterAddress]
 
-	jne l_00C3
+	jne l_00BF
 
-l_00D1
+l_00CD
 
-; optimize FAIL ('CRT.READKEY', examples\bytes.pas), line = 33
+; optimize FAIL ('CRT.READKEY', examples\bytes.pas), line = 32
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
 
 ; ------------------------------------------------------------
 
-@FORTMP_00C0	= $0004
+@FORTMP_00BC	= $0004
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
@@ -509,7 +505,7 @@ l_00D1
 .endl
 l_0049
 
-; optimize FAIL ('MAINPROC', examples\bytes.pas), line = 37
+; optimize FAIL ('MAINPROC', examples\bytes.pas), line = 36
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

@@ -1,5 +1,5 @@
 ; ------------------------------------------------------------
-; Mad Pascal Compiler version 1.6.3 [2020/01/04] for 6502
+; Mad Pascal Compiler version 1.6.3 [2020/05/10] for 6502
 ; ------------------------------------------------------------
 
 STACKWIDTH	= 16
@@ -919,30 +919,27 @@ Y1	= DATAORIGIN+$003D
 
 .local	DEMOPROC					; PROCEDURE
 
+; --- For
+
 ; optimize OK (examples\gr_w1k.pas), line = 26
 
 	mva #$00 I
-; --- For
 
-; optimize OK (examples\gr_w1k.pas), line = 27
-
-	sta I
-
-; optimize OK (examples\gr_w1k.pas), line = 27
+; optimize OK (examples\gr_w1k.pas), line = 26
 
 ; --- To
-l_0104
+l_0100
 
 ; --- ForToDoCondition
 
-; optimize OK (examples\gr_w1k.pas), line = 27
+; optimize OK (examples\gr_w1k.pas), line = 26
 
 	lda I
 	cmp #$4F
 	scc
-	jne l_0112
+	jne l_010E
 
-; optimize FAIL ('LINKAPROC', examples\gr_w1k.pas), line = 28
+; optimize FAIL ('LINKAPROC', examples\gr_w1k.pas), line = 27
 	inx
 	mva #$00 :STACKORIGIN,x
 	inx
@@ -956,13 +953,13 @@ l_0104
 ; --- ForToDoEpilog
 	inc I						; inc ptr byte [CounterAddress]
 
-	jne l_0104
+	jne l_0100
 
-l_0112
+l_010E
 
 ; ------------------------------------------------------------
 
-@FORTMP_0101	= $004F
+@FORTMP_00FD	= $004F
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
@@ -972,24 +969,24 @@ l_0112
 
 .local	HLPROGRAMPROC					; PROCEDURE
 
-; optimize FAIL ('GRAPH.INITGRAPH_006F', examples\gr_w1k.pas), line = 34
+; optimize FAIL ('GRAPH.INITGRAPH_006F', examples\gr_w1k.pas), line = 33
 	inx
 	mva #$07 :STACKORIGIN,x
 	jsr GRAPH.INITGRAPH_006F
 
-; optimize FAIL ('GRAPH.SETCOLOR', examples\gr_w1k.pas), line = 35
+; optimize FAIL ('GRAPH.SETCOLOR', examples\gr_w1k.pas), line = 34
 	inx
 	mva #$01 :STACKORIGIN,x
 	jsr GRAPH.SETCOLOR
 
-; optimize FAIL ('DEMOPROC', examples\gr_w1k.pas), line = 36
+; optimize FAIL ('DEMOPROC', examples\gr_w1k.pas), line = 35
 	jsr DEMOPROC
 
-; optimize FAIL (100, examples\gr_w1k.pas), line = 37
+; optimize FAIL (100, examples\gr_w1k.pas), line = 36
 	@printSTRING #CODEORIGIN+$000D
 	@printEOL
 
-; optimize FAIL ('CRT.READKEY', examples\gr_w1k.pas), line = 38
+; optimize FAIL ('CRT.READKEY', examples\gr_w1k.pas), line = 37
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KLAVESA
 	dex
@@ -1001,7 +998,7 @@ l_0112
 .endl
 l_001B
 
-; optimize FAIL ('HLPROGRAMPROC', examples\gr_w1k.pas), line = 42
+; optimize FAIL ('HLPROGRAMPROC', examples\gr_w1k.pas), line = 41
 	jsr HLPROGRAMPROC
 
 ; ------------------------------------------------------------

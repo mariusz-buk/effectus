@@ -348,10 +348,7 @@
        else if procName = 'PRINTBD' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
            temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -359,11 +356,7 @@
        else if procName = 'PRINTBDE' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
            temp := '  strBuffer := Concat(IntToStr(' + params[1] + '), #$9b);' + LineEnding;
-           //temp := '  strBuffer := Concat(' + params[1] + ', #$9b);' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
            temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -371,10 +364,7 @@
        else if procName = 'PRINTCD' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
            temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -382,10 +372,7 @@
        else if procName = 'PRINTCDE' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
            temp := '  strBuffer := Concat(IntToStr(' + params[1] + '), #$9b);' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
            temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -393,10 +380,7 @@
        else if procName = 'PRINTID' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
            temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -404,10 +388,7 @@
        else if procName = 'PRINTIDE' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
            temp := '  strBuffer := Concat(IntToStr(' + params[1] + '), #$9b);' + LineEnding;
-           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
            temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;

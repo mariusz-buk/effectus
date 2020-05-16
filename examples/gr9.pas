@@ -12,18 +12,17 @@ var
   i : byte;
 
 procedure MAINProc;
-begin
+begin  // 1
   InitGraph(9);
   Poke(708 + 4,  8*16 +  0);
-  i := 0;
   for  i:=0 TO 79 do begin
   SetColor(i);
   PutPixel(i, i);
   MoveTo(i, i);
   LineTo(i, 191);
-  end;
+  end;  // for
   key := ReadKey;
-end;
+end;  // 4
 
 begin
   MAINProc;

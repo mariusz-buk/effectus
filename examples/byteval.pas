@@ -13,7 +13,7 @@ var
   N1 : byte absolute 764;
   N2 : byte;
   N3 : byte = 12;
-begin
+begin  // 2
   Write(Chr(125));
   N2 := 14;
   Write('Value of 764 is ');
@@ -25,9 +25,9 @@ begin
   N1 := 255;
   N1 := 255;
  WHILE N1=255 do begin
-  end;
+  end;  // while
   N1 := 255;
-end;
+end;  // 4
 
 begin
   MAINProc;
