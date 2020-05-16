@@ -4,3 +4,15 @@
 src/backup
 .DS_Store
 geany
+/src/lib/
+**/*.ppu
+**/*.o
+/src/effectus
+**/efflog.txt
+**/effectus.txt
+/lib/.a65
+/examples/lib/
+/.idea/
+/examples/mads
+/examples/mariusz_buk_acx_com_pl@kapkap.eu
+/examples/mp
