@@ -331,42 +331,6 @@ NMIEN	= $D40E
 
 .local	CRT						; UNIT
 
-.local	READKEY						; FUNCTION | ASSEMBLER
-
-; ---------------------  ASM Block 063  ---------------------
-
-	txa:pha
-
-	@GetKey
-
-	sta Result
-
-	pla:tax
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx						; add bx, 1
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	@FreeMem #@VarData #@VarDataSize
-	eif
-
-; ------------------------------------------------------------
-
-RESULT	= DATAORIGIN+$000C
-
-@VarData	= RESULT
-@VarDataSize	= 1
-
-	rts						; ret
-.endl
-
 ; ------------------------------------------------------------
 
 TEXTATTR	= DATAORIGIN+$000B
@@ -406,41 +370,128 @@ BLINK	= $0080
 
 .endl							; UNIT CRT
 
-.local	CHANGEPROC					; PROCEDURE
+; ------------------------------------------------------------
 
-; optimize OK (examples\scope01.pas), line = 16
+.local	TYPES						; UNIT
 
-	mva #$0A N1
+; ------------------------------------------------------------
 
-; optimize FAIL (100, examples\scope01.pas), line = 17
-	inx
-	mva N1 :STACKORIGIN,x
-	jsr @printBYTE
-	dex
-	@printEOL
-@exit
-	.ifdef @new
-	@FreeMem #@VarData #@VarDataSize
-	eif
-	rts						; ret
-.endl
+.endl							; UNIT TYPES
 
-.local	MAINPROC					; PROCEDURE
+; ------------------------------------------------------------
 
-; optimize FAIL (100, examples\scope01.pas), line = 22
-	inx
-	mva N1 :STACKORIGIN,x
-	jsr @printBYTE
-	dex
-	@printEOL
+.local	GRAPH						; UNIT
 
-; optimize FAIL ('CHANGEPROC', examples\scope01.pas), line = 23
-	jsr CHANGEPROC
+; ------------------------------------------------------------
 
-; optimize FAIL ('CRT.READKEY', examples\scope01.pas), line = 24
-	jsr CRT.READKEY
-	mva :STACKORIGIN,x KEY
-	dex
+CURRENTDRIVER	= $FFFFFF80
+DETECT	= $0000
+CGA	= $0001
+MCGA	= $0002
+EGA	= $0003
+EGA64	= $0004
+EGAMONO	= $0005
+LOWRES	= $0006
+HERCMONO	= $0007
+VGA	= $0009
+VESA	= $000A
+D1BIT	= $000B
+D2BIT	= $000C
+D4BIT	= $000D
+D6BIT	= $000E
+D8BIT	= $000F
+D12BIT	= $0010
+M640X400	= $0018
+M640X480	= $0018
+GROK	= $0000
+GRNOINITGRAPH	= $FFFFFFFF
+GRNOTDETECTED	= $FFFFFFFE
+GRFILENOTFOUND	= $FFFFFFFD
+GRINVALIDDRIVER	= $FFFFFFFC
+GRNOLOADMEM	= $FFFFFFFB
+GRNOSCANMEM	= $FFFFFFFA
+GRNOFLOODMEM	= $FFFFFFF9
+GRFONTNOTFOUND	= $FFFFFFF8
+GRNOFONTMEM	= $FFFFFFF7
+GRINVALIDMODE	= $FFFFFFF6
+GRERROR	= $FFFFFFF5
+GRIOERROR	= $FFFFFFF4
+GRINVALIDFONT	= $FFFFFFF3
+GRINVALIDFONTNUM	= $FFFFFFF2
+GRINVALIDVERSION	= $FFFFFFEE
+CGAC0	= $0000
+CGAC1	= $0001
+CGAC2	= $0002
+CGAC3	= $0003
+CGAHI	= $0004
+MCGAC0	= $0000
+MCGAC1	= $0001
+MCGAC2	= $0002
+MCGAC3	= $0003
+MCGAMED	= $0004
+MCGAHI	= $0005
+EGALO	= $0000
+EGAHI	= $0001
+EGA64LO	= $0000
+EGA64HI	= $0001
+EGAMONOHI	= $0003
+VGALO	= $000A
+VGAMED	= $001F
+VGAHI	= $0018
+WIN_LEFT	= DATAORIGIN+$000C
+WIN_RIGHT	= DATAORIGIN+$000E
+WIN_TOP	= DATAORIGIN+$0010
+WIN_BOTTOM	= DATAORIGIN+$0012
+GRAPHRESULT	= DATAORIGIN+$0014
+GETCOLOR	= DATAORIGIN+$0015
+adr.LASTARCCOORDS	= DATAORIGIN+$0016
+.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
+LASTARCCOORDS.X	= DATAORIGIN+$0016
+LASTARCCOORDS.Y	= DATAORIGIN+$0018
+LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
+LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
+LASTARCCOORDS.XEND	= DATAORIGIN+$001E
+LASTARCCOORDS.YEND	= DATAORIGIN+$0020
+CURRENTX	= DATAORIGIN+$0022
+CURRENTY	= DATAORIGIN+$0024
+VIDEORAM	= DATAORIGIN+$0026
+SCANLINE_WIDTH	= DATAORIGIN+$0028
+
+.endl							; UNIT GRAPH
+
+.local	RAINBOWPROC					; PROCEDURE
+
+; optimize OK (examples\rainbow.pas), line = 29
+
+	mva #$FF CH
+
+; --- RepeatUntilProlog
+l_00A2
+
+; optimize OK (examples\rainbow.pas), line = 31
+
+	mva U WSYNC
+
+; optimize OK (examples\rainbow.pas), line = 32
+
+	lda VCOUNT
+	add RTCLOK
+	sta GETCOLOR
+
+; optimize OK (examples\rainbow.pas), line = 33
+
+	lda CH
+	cmp #$FF
+	jeq l_00A2
+
+; ------------------------------------------------------------
+
+VCOUNT	= $D40B
+WSYNC	= $D40A
+RTCLOK	= $0014
+GETCOLOR	= $D018
+U	= $0007
+CH	= $02FC
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
@@ -449,13 +500,11 @@ BLINK	= $0080
 .endl
 l_0014
 
-; optimize FAIL ('MAINPROC', examples\scope01.pas), line = 28
-	jsr MAINPROC
+; optimize FAIL ('RAINBOWPROC', examples\rainbow.pas), line = 37
+	jsr RAINBOWPROC
 
 ; ------------------------------------------------------------
 
-KEY	= DATAORIGIN+$000D
-N1	= DATAORIGIN+$000E
 @exit
 
 @halt	ldx #0
@@ -503,6 +552,14 @@ ATARI
 	.ifdef MAIN.CRT.@UnitInit
 	jsr MAIN.CRT.@UnitInit
 	eif
+
+	.ifdef MAIN.TYPES.@UnitInit
+	jsr MAIN.TYPES.@UnitInit
+	eif
+
+	.ifdef MAIN.GRAPH.@UnitInit
+	jsr MAIN.GRAPH.@UnitInit
+	eif
 .endm
 
 ; ------------------------------------------------------------
@@ -531,15 +588,23 @@ ATARI
 	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
 	eif
 
+	ift .SIZEOF(MAIN.TYPES) > 0
+	.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
+	eif
+
+	ift .SIZEOF(MAIN.GRAPH) > 0
+	.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
+	eif
+
 	.print 'CODE: ',CODEORIGIN,'..',*-1
 
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $0E
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 15
+VARDATASIZE	= 41
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
