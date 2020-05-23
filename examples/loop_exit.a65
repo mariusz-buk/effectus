@@ -581,24 +581,20 @@ l_0205
 
 ; optimize OK (examples\loop_exit.pas), line = 55
 
-	mva #$06 N
-
-; optimize OK (examples\loop_exit.pas), line = 56
-
 	lda N
 	cmp #$06
 	jne l_0205
 b_0205
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 57
+; optimize FAIL (100, examples\loop_exit.pas), line = 56
 	@printSTRING #CODEORIGIN+$005A
 	@printEOL
 
-; optimize FAIL (100, examples\loop_exit.pas), line = 58
+; optimize FAIL (100, examples\loop_exit.pas), line = 57
 	@printSTRING #CODEORIGIN+$00DC
 	@printEOL
 
-; optimize FAIL ('CRT.READKEY', examples\loop_exit.pas), line = 59
+; optimize FAIL ('CRT.READKEY', examples\loop_exit.pas), line = 58
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
@@ -620,7 +616,7 @@ N	= DATAORIGIN+$000E
 .endl
 l_00FD
 
-; optimize FAIL ('MAINPROC', examples\loop_exit.pas), line = 63
+; optimize FAIL ('MAINPROC', examples\loop_exit.pas), line = 62
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
