@@ -1,0 +1,21 @@
+; Effectus example
+; - - - - - - - - - - - - - - - - - -
+; PutD and PutDE demo
+; Print character codes to the screen
+
+PROC PUTD_TEST()
+
+BYTE CH=764
+
+GRAPHICS(1+16)
+
+PUTD(6,65) PUTD(6,66) PUTD(6,67)
+PUTDE(6)
+PUTD(6,68) PUTD(6,69) PUTD(6,70)
+
+; PRESS ANY KEY TO EXIT
+CH=255
+DO UNTIL CH#255 OD
+CH=255
+
+RETURN

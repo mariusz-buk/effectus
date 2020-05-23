@@ -128,7 +128,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_00AC
+	jmp l_003F
 
 ; ------------------------------------------------------------
 
@@ -408,116 +408,51 @@ BLINK	= $0080
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\pointer.pas), line = 17
-	@print #$7D
-
-; optimize FAIL (100, examples\pointer.pas), line = 18
+; optimize FAIL (100, examples\printe.pas), line = 15
 	@printSTRING #CODEORIGIN+$000D
 	@printEOL
 
-; optimize FAIL (100, examples\pointer.pas), line = 19
-	@printSTRING #CODEORIGIN+$0020
+; optimize FAIL (100, examples\printe.pas), line = 16
+	@printSTRING #CODEORIGIN+$001A
 	@printEOL
 
-; optimize FAIL (100, examples\pointer.pas), line = 20
-	@printSTRING #CODEORIGIN+$0041
+; optimize FAIL (100, examples\printe.pas), line = 17
+	@printSTRING #CODEORIGIN+$001C
 	@printEOL
 
-; optimize OK (examples\pointer.pas), line = 21
-
-	mva #$46 I
-	mva #$00 I+1
-	sta I+2
-	sta I+3
-
-; optimize FAIL (100, examples\pointer.pas), line = 22
-	@printSTRING #CODEORIGIN+$0043
+; optimize FAIL (100, examples\printe.pas), line = 18
+	@printSTRING #CODEORIGIN+$0019
 	@printEOL
 
-; optimize FAIL (100, examples\pointer.pas), line = 23
-	inx
-	mva I :STACKORIGIN,x
-	mva I+1 :STACKORIGIN+STACKWIDTH,x
-	mva I+2 :STACKORIGIN+STACKWIDTH*2,x
-	mva I+3 :STACKORIGIN+STACKWIDTH*3,x
-	jsr @printINT
-	dex
+; optimize FAIL (100, examples\printe.pas), line = 19
+	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize OK (examples\pointer.pas), line = 24
-
-	mva <I PTR
-	mva >I PTR+1
-
-; optimize FAIL (100, examples\pointer.pas), line = 25
-	@printSTRING #CODEORIGIN+$0062
-	@printEOL
-
-; optimize FAIL (100, examples\pointer.pas), line = 26
-	inx
-	mva PTR :STACKORIGIN,x
-	mva PTR+1 :STACKORIGIN+STACKWIDTH,x
-	jsr @printWORD
-	dex
-	@printEOL
-
-; optimize FAIL (100, examples\pointer.pas), line = 27
-	@printSTRING #CODEORIGIN+$0082
-	@printEOL
-
-; optimize OK (examples\pointer.pas), line = 28
-
-	mwa PTR :bp2
-	ldy #$00
-	lda #$FB
-	sta (:bp2),y
-	iny
-	lda #$00
-	sta (:bp2),y
-
-; optimize FAIL (100, examples\pointer.pas), line = 29
-	inx
-	mwa PTR :bp2
-	ldy #$00
-	mva (:bp2),y :STACKORIGIN,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH,x
-	jsr @printWORD
-	dex
-
-; optimize FAIL (100, examples\pointer.pas), line = 30
-	@print #$3D
-
-; optimize FAIL (100, examples\pointer.pas), line = 31
-	inx
-	mva I :STACKORIGIN,x
-	mva I+1 :STACKORIGIN+STACKWIDTH,x
-	mva I+2 :STACKORIGIN+STACKWIDTH*2,x
-	mva I+3 :STACKORIGIN+STACKWIDTH*3,x
-	jsr @printINT
-	dex
-	@printEOL
-
-; optimize FAIL ('CRT.READKEY', examples\pointer.pas), line = 32
+; optimize FAIL ('CRT.READKEY', examples\printe.pas), line = 20
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
+
+; ------------------------------------------------------------
+
+KEY	= DATAORIGIN+$000D
+
+@VarData	= KEY
+@VarDataSize	= 1
+
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
 	eif
 	rts						; ret
 .endl
-l_00AC
+l_003F
 
-; optimize FAIL ('MAINPROC', examples\pointer.pas), line = 36
+; optimize FAIL ('MAINPROC', examples\printe.pas), line = 24
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-KEY	= DATAORIGIN+$000D
-PTR	= DATAORIGIN+$000E
-I	= DATAORIGIN+$0010
 @exit
 
 @halt	ldx #0
@@ -601,7 +536,7 @@ DATAORIGIN
 .by  $28 $00 $18 $00 $2D $0C
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 20
+VARDATASIZE	= 14
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -612,13 +547,9 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
-.by  $78 $61 $6D $70 $6C $65 $3A $00  $1F $50 $4F $49 $4E $54 $3D $45  $52 $20 $76 $61 $72 $69 $61 $62
-.by  $6C $65 $20 $64 $65 $6D $6F $6E  $73 $74 $72 $61 $74 $69 $6F $6E  $00 $00 $00 $1D $43 $75 $72 $72
-.by  $65 $6E $74 $20 $76 $61 $6C $75  $65 $20 $6F $66 $20 $76 $61 $72  $69 $61 $62 $6C $65 $20 $69 $3A
-.by  $20 $00 $1E $4D $65 $6D $6F $72  $79 $20 $61 $64 $64 $72 $65 $73  $73 $20 $6F $66 $20 $76 $61 $72
-.by  $69 $61 $62 $6C $65 $20 $69 $3A  $20 $00 $21 $4E $65 $77 $20 $76  $61 $6C $75 $65 $20 $6F $66 $20
-.by  $76 $61 $72 $69 $61 $62 $6C $65  $20 $70 $74 $72 $20 $61 $6E $64  $20 $69 $3A $20 $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $0B $48 $45  $4C $4C $4F $20 $57 $4F $52 $4C
+.by  $44 $00 $00 $00 $08 $4E $45 $57  $20 $4C $49 $4E $45 $00 $10 $41  $4E $4F $54 $48 $45 $52 $20 $4E
+.by  $45 $57 $20 $4C $49 $4E $45 $00
 .endm
 
 	end
