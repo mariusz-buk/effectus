@@ -128,13 +128,56 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_003A
+	jmp l_0043
 
 ; ------------------------------------------------------------
 
 .local	SYSTEM						; UNIT
 
-.local	CONCAT_0060					; FUNCTION | ASSEMBLER | OVERLOAD
+.local	MOVE_005D					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x COUNT
+	mva :STACKORIGIN+STACKWIDTH,x COUNT+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x DEST
+	mva :STACKORIGIN+STACKWIDTH,x DEST+1
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x SOURCE
+	mva :STACKORIGIN+STACKWIDTH,x SOURCE+1
+	dex						; sub bx, 1
+
+; ---------------------  ASM Block 031  ---------------------
+
+	jsr @move
+
+
+; ------------------------------------------------------------
+
+SOURCE	= edx
+DEST	= ecx
+COUNT	= eax
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+
+.local	CONCAT_0073					; FUNCTION | ASSEMBLER | OVERLOAD
 
 ; ------------------------------------------------------------
 
@@ -190,6 +233,63 @@ adr.RESULT	= DATAORIGIN+$010C
 
 @VarData	= A
 @VarDataSize	= 513
+
+	rts						; ret
+.endl
+
+.local	CONCAT_007C					; FUNCTION | OVERLOAD
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x B
+	dex						; sub bx, 1
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x A
+	dex						; sub bx, 1
+
+; optimize OK (SYSTEM), line = 2055
+
+	mva #$02 adr.RESULT+$00
+
+; optimize OK (SYSTEM), line = 2056
+
+	ldy #$01
+	mva A adr.RESULT,y
+
+; optimize OK (SYSTEM), line = 2057
+
+	ldy #$02
+	mva B adr.RESULT,y
+@exit
+
+; ------------------------------------------------------------
+
+; Push WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+
+	inx						; add bx, 1
+	mva RESULT :STACKORIGIN,x
+	mva RESULT+1 :STACKORIGIN+STACKWIDTH,x
+
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+
+; ------------------------------------------------------------
+
+A	= DATAORIGIN+$020C
+B	= DATAORIGIN+$020D
+adr.RESULT	= DATAORIGIN+$020E
+.var RESULT	= adr.RESULT .word
+
+@VarData	= A
+@VarDataSize	= 258
 
 	rts						; ret
 .endl
@@ -419,7 +519,7 @@ NMIEN	= $D40E
 
 ; ------------------------------------------------------------
 
-RESULT	= DATAORIGIN+$020D
+RESULT	= DATAORIGIN+$030F
 
 @VarData	= RESULT
 @VarDataSize	= 1
@@ -459,8 +559,8 @@ RESULT	= DATAORIGIN+$020D
 
 ; ------------------------------------------------------------
 
-X	= DATAORIGIN+$020E
-Y	= DATAORIGIN+$020F
+X	= DATAORIGIN+$0310
+Y	= DATAORIGIN+$0311
 
 @VarData	= X
 @VarDataSize	= 2
@@ -474,7 +574,7 @@ Y	= DATAORIGIN+$020F
 
 ; ------------------------------------------------------------
 
-TEXTATTR	= DATAORIGIN+$020C
+TEXTATTR	= DATAORIGIN+$030E
 CONSOL	= $D01F
 CN_START_SELECT_OPTION	= $0000
 CN_SELECT_OPTION	= $0001
@@ -523,7 +623,7 @@ BLINK	= $0080
 
 .local	GRAPH						; UNIT
 
-.local	INITGRAPH_009E					; PROCEDURE | OVERLOAD
+.local	INITGRAPH_00D0					; PROCEDURE | OVERLOAD
 
 ; ------------------------------------------------------------
 
@@ -615,7 +715,7 @@ tmrcn	equ $ee8d
 
 ; ------------------------------------------------------------
 
-MODE	= DATAORIGIN+$022D
+MODE	= DATAORIGIN+$032F
 
 @VarData	= MODE
 @VarDataSize	= 1
@@ -683,24 +783,24 @@ EGAMONOHI	= $0003
 VGALO	= $000A
 VGAMED	= $001F
 VGAHI	= $0018
-WIN_LEFT	= DATAORIGIN+$0210
-WIN_RIGHT	= DATAORIGIN+$0212
-WIN_TOP	= DATAORIGIN+$0214
-WIN_BOTTOM	= DATAORIGIN+$0216
-GRAPHRESULT	= DATAORIGIN+$0218
-GETCOLOR	= DATAORIGIN+$0219
-adr.LASTARCCOORDS	= DATAORIGIN+$021A
+WIN_LEFT	= DATAORIGIN+$0312
+WIN_RIGHT	= DATAORIGIN+$0314
+WIN_TOP	= DATAORIGIN+$0316
+WIN_BOTTOM	= DATAORIGIN+$0318
+GRAPHRESULT	= DATAORIGIN+$031A
+GETCOLOR	= DATAORIGIN+$031B
+adr.LASTARCCOORDS	= DATAORIGIN+$031C
 .var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-LASTARCCOORDS.X	= DATAORIGIN+$021A
-LASTARCCOORDS.Y	= DATAORIGIN+$021C
-LASTARCCOORDS.XSTART	= DATAORIGIN+$021E
-LASTARCCOORDS.YSTART	= DATAORIGIN+$0220
-LASTARCCOORDS.XEND	= DATAORIGIN+$0222
-LASTARCCOORDS.YEND	= DATAORIGIN+$0224
-CURRENTX	= DATAORIGIN+$0226
-CURRENTY	= DATAORIGIN+$0228
-VIDEORAM	= DATAORIGIN+$022A
-SCANLINE_WIDTH	= DATAORIGIN+$022C
+LASTARCCOORDS.X	= DATAORIGIN+$031C
+LASTARCCOORDS.Y	= DATAORIGIN+$031E
+LASTARCCOORDS.XSTART	= DATAORIGIN+$0320
+LASTARCCOORDS.YSTART	= DATAORIGIN+$0322
+LASTARCCOORDS.XEND	= DATAORIGIN+$0324
+LASTARCCOORDS.YEND	= DATAORIGIN+$0326
+CURRENTX	= DATAORIGIN+$0328
+CURRENTY	= DATAORIGIN+$032A
+VIDEORAM	= DATAORIGIN+$032C
+SCANLINE_WIDTH	= DATAORIGIN+$032E
 
 .endl							; UNIT GRAPH
 
@@ -708,7 +808,7 @@ SCANLINE_WIDTH	= DATAORIGIN+$022C
 
 ; AssignFile
 
-; optimize OK (examples\hi_atariage.pas), line = 28
+; optimize OK (examples\chrdef.pas), line = 29
 
 	mwa F :bp2
 	ldy #s@file.pfname
@@ -718,14 +818,14 @@ SCANLINE_WIDTH	= DATAORIGIN+$022C
 	lda #$20
 	sta (:bp2),y
 
-; optimize OK (examples\hi_atariage.pas), line = 28
+; optimize OK (examples\chrdef.pas), line = 29
 
 	ldy #s@file.status
 	lda #$00
 	sta (:bp2),y
 ; Rewrite
 
-; optimize OK (examples\hi_atariage.pas), line = 28
+; optimize OK (examples\chrdef.pas), line = 29
 
 	ldy #s@file.record
 	lda #$01
@@ -739,30 +839,135 @@ SCANLINE_WIDTH	= DATAORIGIN+$022C
 	@openfile F, #8
 	pla:tax
 
-; optimize FAIL ('GRAPH.INITGRAPH_009E', examples\hi_atariage.pas), line = 29
+; optimize FAIL ('GRAPH.INITGRAPH_00D0', examples\chrdef.pas), line = 30
 	inx
 	mva #$02 :STACKORIGIN,x
-	jsr GRAPH.INITGRAPH_009E
+	jsr GRAPH.INITGRAPH_00D0
 
-; optimize FAIL ('CRT.GOTOXY', examples\hi_atariage.pas), line = 30
+; optimize OK (examples\chrdef.pas), line = 32
+
+	lda RAMTOP
+	sub #$08
+	sta TOPMEM
+	lda #$00
+	sbc #$00
+	sta TOPMEM+1
+
+; optimize OK (examples\chrdef.pas), line = 33
+
+	mva TOPMEM CHBAS
+
+; optimize OK (examples\chrdef.pas), line = 34
+
+	lda #$00
+	sta :eax
+	lda TOPMEM
+	sta :eax+1
+	lda :eax
+	sta TOPMEM
+	lda :eax+1
+	sta TOPMEM+1
+
+; optimize OK (examples\chrdef.pas), line = 38
+
+	lda TOPMEM
+	sta ax
+	lda TOPMEM+1
+	sta ax+1
+	lda #$00
+	sta cx
+	lda #$01
+	sta cx+1
+	jsr idivAX_CX
+	lda :eax
+	sta CHBAS
+
+; optimize OK (examples\chrdef.pas), line = 40
+
+	lda #$00
+	sta :edx
+	lda #$E0
+	sta :edx+1
+	lda TOPMEM
+	sta :ecx
+	lda TOPMEM+1
+	sta :ecx+1
+	lda #$FF
+	sta :eax
+	lda #$03
+	sta :eax+1
+	jsr @move
+
+; optimize OK (examples\chrdef.pas), line = 42
+
+	lda #$00
+	sta :eax+1
+	lda #$1C
+	asl @
+	rol :eax+1
+	asl @
+	rol :eax+1
+	asl @
+	rol :eax+1
+	add TOPMEM
+	sta :ecx
+	lda TOPMEM+1
+	adc :eax+1
+	sta :ecx+1
+	lda CHECK
+	sta :edx
+	lda CHECK+1
+	sta :edx+1
+	lda #$08
+	sta :eax
+	lda #$00
+	sta :eax+1
+	jsr @move
+
+; optimize OK (examples\chrdef.pas), line = 43
+
+	lda #$00
+	sta :eax+1
+	lda #$1E
+	asl @
+	rol :eax+1
+	asl @
+	rol :eax+1
+	asl @
+	rol :eax+1
+	add TOPMEM
+	sta :ecx
+	lda TOPMEM+1
+	adc :eax+1
+	sta :ecx+1
+	lda SMILEY
+	sta :edx
+	lda SMILEY+1
+	sta :edx+1
+	lda #$08
+	sta :eax
+	lda #$00
+	sta :eax+1
+	jsr @move
+
+; optimize FAIL ('CRT.GOTOXY', examples\chrdef.pas), line = 45
 	inx
-	mva #$06 :STACKORIGIN,x
+	mva #$03 :STACKORIGIN,x
 	inx
 	sta :STACKORIGIN,x
 	jsr CRT.GOTOXY
 
-; optimize FAIL ('SYSTEM.CONCAT_0060', examples\hi_atariage.pas), line = 31
+; optimize FAIL ('SYSTEM.CONCAT_007C', examples\chrdef.pas), line = 46
 	inx
-	mva #$11 :STACKORIGIN,x
-	mva #$20 :STACKORIGIN+STACKWIDTH,x
+	mva #$3E :STACKORIGIN,x
 	inx
 	mva #$9B :STACKORIGIN,x
-	jsr SYSTEM.CONCAT_0060
+	jsr SYSTEM.CONCAT_007C
 	@moveSTRING STRBUFFER
 	dex						; sub bx, 1
 ; BlockWrite
 
-; optimize OK (examples\hi_atariage.pas), line = 32
+; optimize OK (examples\chrdef.pas), line = 47
 
 	mwa F :bp2
 	ldy #s@file.buffer
@@ -774,7 +979,7 @@ SCANLINE_WIDTH	= DATAORIGIN+$022C
 	adc #$00
 	sta (:bp2),y
 
-; optimize OK (examples\hi_atariage.pas), line = 32
+; optimize OK (examples\chrdef.pas), line = 47
 
 	mwa STRBUFFER :bp2
 	ldy #0
@@ -791,82 +996,109 @@ SCANLINE_WIDTH	= DATAORIGIN+$022C
 	@readfile F, #11
 	pla:tax
 
-; --- For
+; optimize FAIL ('SYSTEM.CONCAT_0073', examples\chrdef.pas), line = 48
+	inx
+	mva #$11 :STACKORIGIN,x
+	mva #$20 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$9B :STACKORIGIN,x
+	jsr SYSTEM.CONCAT_0073
+	@moveSTRING STRBUFFER
+	dex						; sub bx, 1
+; BlockWrite
 
-; optimize OK (examples\hi_atariage.pas), line = 33
+; optimize OK (examples\chrdef.pas), line = 49
 
-	mva #$00 I
-	sta I+1
-	sta I+2
-	sta I+3
+	mwa F :bp2
+	ldy #s@file.buffer
+	lda STRBUFFER
+	add #$01
+	sta (:bp2),y
+	iny
+	lda STRBUFFER+1
+	adc #$00
+	sta (:bp2),y
 
-; optimize OK (examples\hi_atariage.pas), line = 33
+; optimize OK (examples\chrdef.pas), line = 49
 
-; --- To
-l_010C
+	mwa STRBUFFER :bp2
+	ldy #0
+	lda (:bp2),y
+	mwy F :bp2
+	ldy #s@file.nrecord
+	sta (:bp2),y
+	iny
+	lda #$00
+	sta (:bp2),y
 
-; --- ForToDoCondition
+	txa:pha
+	sec
+	@readfile F, #11
+	pla:tax
 
-; optimize OK (examples\hi_atariage.pas), line = 33
+	ldy #256-10
+	mva:rne CODEORIGIN+$0015+10-256,y adr.STRBUFFER+10-256,y+
+; BlockWrite
 
-	.LOCAL
-	lda I+3
-	clv:sec
-	sbc #$00
-	bne L4
-	lda I+2
-	cmp #$00
-	bne L1
-	lda I+1
-	cmp #$00
-	bne L1
-	lda I
-	cmp #$02
-L1	beq L5
-	bcs L3
-	lda #$FF
-	jmp L5
-L3	lda #$01
-	jmp L5
-L4	bvc L5
-	eor #$FF
-	ora #$01
-L5
-	.ENDL
-	smi
-	jne l_0116
+; optimize OK (examples\chrdef.pas), line = 51
 
-; optimize FAIL (100, examples\hi_atariage.pas), line = 34
-	@printSTRING #CODEORIGIN+$001E
+	mwa F :bp2
+	ldy #s@file.buffer
+	lda STRBUFFER
+	add #$01
+	sta (:bp2),y
+	iny
+	lda STRBUFFER+1
+	adc #$00
+	sta (:bp2),y
+
+; optimize OK (examples\chrdef.pas), line = 51
+
+	mwa STRBUFFER :bp2
+	ldy #0
+	lda (:bp2),y
+	mwy F :bp2
+	ldy #s@file.nrecord
+	sta (:bp2),y
+	iny
+	lda #$00
+	sta (:bp2),y
+
+	txa:pha
+	sec
+	@readfile F, #11
+	pla:tax
+
+; optimize FAIL (100, examples\chrdef.pas), line = 52
+	@printSTRING #CODEORIGIN+$0020
 	@printEOL
 
-; --- ForToDoEpilog
-	ind I						; inc ptr dword [CounterAddress]
-	jmp l_010C
-l_0116
+; optimize OK (examples\chrdef.pas), line = 54
 
-; optimize FAIL ('CRT.READKEY', examples\hi_atariage.pas), line = 36
+	mva #$FF CH
+
+; --- RepeatUntilProlog
+l_0192
+
+; optimize OK (examples\chrdef.pas), line = 56
+
+	lda CH
+	cmp #$21
+	jne l_0192
+
+; optimize FAIL ('CRT.READKEY', examples\chrdef.pas), line = 57
 	jsr CRT.READKEY
 	mva :STACKORIGIN,x KEY
 	dex
-
-; ------------------------------------------------------------
-
-I	= DATAORIGIN+$033F
-@FORTMP_0109	= $0002
-
-@VarData	= I
-@VarDataSize	= 4
-
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
 	eif
 	rts						; ret
 .endl
-l_003A
+l_0043
 
-; optimize FAIL ('MAINPROC', examples\hi_atariage.pas), line = 40
+; optimize FAIL ('MAINPROC', examples\chrdef.pas), line = 61
 	jsr MAINPROC
 ; CloseFile
 
@@ -877,11 +1109,19 @@ l_003A
 
 ; ------------------------------------------------------------
 
-INTVALUE	= DATAORIGIN+$022E
-.var F	= DATAORIGIN+$0232 .word
-adr.STRBUFFER	= DATAORIGIN+$023E
+INTVALUE	= DATAORIGIN+$0330
+.var F	= DATAORIGIN+$0334 .word
+adr.STRBUFFER	= DATAORIGIN+$0340
 .var STRBUFFER	= adr.STRBUFFER .word
-KEY	= DATAORIGIN+$033E
+CH	= $02FC
+RAMTOP	= $006A
+CHBAS	= $02F4
+TOPMEM	= DATAORIGIN+$0440
+KEY	= DATAORIGIN+$0442
+adr.CHECK	= DATAORIGIN+$0443
+.var CHECK	= adr.CHECK .word
+adr.SMILEY	= DATAORIGIN+$044B
+.var SMILEY	= adr.SMILEY .word
 @exit
 
 @halt	ldx #0
@@ -1000,10 +1240,34 @@ DATAORIGIN
 .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
 .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
 .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-.by  $00 $00 $27 $00 $00 $00 $17
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $27 $00 $00 $00
+.by  $17 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $01 $03 $06 $8C  $D8 $70 $20 $3C $42 $A5 $81 $A5
+.by  $99 $42 $3C
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 835
+VARDATASIZE	= 1107
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -1014,9 +1278,9 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $02 $53 $3A  $00 $0B $68 $69 $20 $61 $74 $61
-.by  $72 $69 $61 $67 $65 $00 $13 $68  $69 $2C $41 $74 $61 $72 $69 $41  $67 $65 $2E $2E $2E $2E $2E $2E
-.by  $2E $2E $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $02 $53 $3A  $00 $02 $22 $22 $00 $09 $43 $48
+.by  $45 $43 $4B $45 $44 $20 $3C $00  $1A $50 $52 $45 $53 $53 $20 $3C  $53 $50 $41 $43 $45 $3E $20 $4B
+.by  $45 $59 $20 $54 $4F $20 $45 $58  $49 $54 $21 $00
 .endm
 
 	end

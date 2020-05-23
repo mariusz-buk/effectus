@@ -128,7 +128,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_0067
+	jmp l_0014
 
 ; ------------------------------------------------------------
 
@@ -331,42 +331,6 @@ NMIEN	= $D40E
 
 .local	CRT						; UNIT
 
-.local	READKEY						; FUNCTION | ASSEMBLER
-
-; ---------------------  ASM Block 063  ---------------------
-
-	txa:pha
-
-	@GetKey
-
-	sta Result
-
-	pla:tax
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx						; add bx, 1
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	@FreeMem #@VarData #@VarDataSize
-	eif
-
-; ------------------------------------------------------------
-
-RESULT	= DATAORIGIN+$000C
-
-@VarData	= RESULT
-@VarDataSize	= 1
-
-	rts						; ret
-.endl
-
 ; ------------------------------------------------------------
 
 TEXTATTR	= DATAORIGIN+$000B
@@ -406,156 +370,255 @@ BLINK	= $0080
 
 .endl							; UNIT CRT
 
-.local	MAINPROC					; PROCEDURE
+; ------------------------------------------------------------
 
-; optimize FAIL (100, examples\arrayset.pas), line = 21
-	@print #$7D
-
-; optimize FAIL (100, examples\arrayset.pas), line = 22
-	@printSTRING #CODEORIGIN+$000D
-	@printEOL
-
-; optimize FAIL (100, examples\arrayset.pas), line = 23
-	@printSTRING #CODEORIGIN+$0020
-	@printEOL
-
-; optimize FAIL (100, examples\arrayset.pas), line = 24
-	@printSTRING #CODEORIGIN+$0036
-	@printEOL
-
-; optimize FAIL (100, examples\arrayset.pas), line = 25
-	@printSTRING #CODEORIGIN+$0038
-	@printEOL
-; --- For
-
-; optimize OK (examples\arrayset.pas), line = 26
-
-	mva #$00 I
-
-; optimize OK (examples\arrayset.pas), line = 26
-
-; --- To
-l_00C7
-
-; --- ForToDoCondition
-
-; optimize OK (examples\arrayset.pas), line = 26
-
-	lda I
-	cmp #$03
-	scc
-	jne l_00D5
-
-; optimize FAIL (100, examples\arrayset.pas), line = 27
-	inx
-	ldy I
-	mva adr.BYTES,y :STACKORIGIN,x
-	jsr @printBYTE
-	dex
-
-; optimize OK (examples\arrayset.pas), line = 28
-
-	lda I
-	cmp #$03
-	jcs l_00F2
-
-; optimize FAIL (100, examples\arrayset.pas), line = 29
-	@print #$2C
-l_00F2
-
-; --- ForToDoEpilog
-	inc I						; inc ptr byte [CounterAddress]
-
-	jne l_00C7
-
-l_00D5
-
-; optimize FAIL (100, examples\arrayset.pas), line = 32
-	@printSTRING #CODEORIGIN+$0035
-	@printEOL
-
-; optimize FAIL (100, examples\arrayset.pas), line = 33
-	@printSTRING #CODEORIGIN+$0035
-	@printEOL
-
-; optimize FAIL (100, examples\arrayset.pas), line = 34
-	@printSTRING #CODEORIGIN+$004C
-	@printEOL
-; --- For
-
-; optimize OK (examples\arrayset.pas), line = 35
-
-	mva #$00 I
-
-; optimize OK (examples\arrayset.pas), line = 35
-
-; --- To
-l_010C
-
-; --- ForToDoCondition
-
-; optimize OK (examples\arrayset.pas), line = 35
-
-	lda I
-	cmp #$03
-	scc
-	jne l_011A
-
-; optimize FAIL (100, examples\arrayset.pas), line = 36
-	inx
-	lda I
-	asl @
-	tay
-	mva adr.CARDS,y :STACKORIGIN,x
-	mva adr.CARDS+1,y :STACKORIGIN+STACKWIDTH,x
-	jsr @printWORD
-	dex
-
-; optimize OK (examples\arrayset.pas), line = 37
-
-	lda I
-	cmp #$03
-	jcs l_0136
-
-; optimize FAIL (100, examples\arrayset.pas), line = 38
-	@print #$2C
-l_0136
-
-; --- ForToDoEpilog
-	inc I						; inc ptr byte [CounterAddress]
-
-	jne l_010C
-
-l_011A
-
-; optimize FAIL ('CRT.READKEY', examples\arrayset.pas), line = 41
-	jsr CRT.READKEY
-	mva :STACKORIGIN,x KEY
-	dex
+.local	TYPES						; UNIT
 
 ; ------------------------------------------------------------
 
-@FORTMP_00C4	= $0003
-@FORTMP_0109	= $0003
+.endl							; UNIT TYPES
+
+; ------------------------------------------------------------
+
+.local	GRAPH						; UNIT
+
+.local	INITGRAPH_0064					; PROCEDURE | OVERLOAD
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x MODE
+	dex						; sub bx, 1
+
+; optimize OK (GRAPH), line = 73
+
+	mva #$00 GRAPHRESULT
+
+; optimize OK (GRAPH), line = 75
+
+	mva MODE SYSTEM.SCREENMODE
+
+; ---------------------  ASM Block 074  ---------------------
+
+
+	txa:pha
+
+	mva #$2c @putchar.vbxe
+
+	lda mode
+	and #$0f
+	tay
+
+	ldx #$60	; 6*16
+	lda mode	; %00010000 with text window
+	and #$10
+	eor #$10
+	ora #2		; read
+
+	.nowarn @graphics
+	
+	
+tlshc	equ $ee6d
+
+	ldx dindex
+	ldy tlshc,x
+	lda #5
+shift	asl @
+	dey
+	bne shift
+
+	sta SCANLINE_WIDTH
+	
+
+; Fox/TQA
+
+dindex	equ $57
+tmccn	equ $ee7d
+tmrcn	equ $ee8d
+
+	ldx dindex
+	lda tmccn,x
+	ldy tmrcn,x
+	ldx #0
+	cmp #<320
+	sne:inx
+    
+; X:A = horizontal resolution
+; Y = vertical resolution
+
+	sta MAIN.SYSTEM.ScreenWidth
+	stx MAIN.SYSTEM.ScreenWidth+1
+	
+	sub #1
+	sta WIN_RIGHT
+	txa
+	sbc #0
+	sta WIN_RIGHT+1
+	
+	sty MAIN.SYSTEM.ScreenHeight
+	lda #0
+	sta MAIN.SYSTEM.ScreenHeight+1
+	
+	sta WIN_LEFT
+	sta WIN_LEFT+1
+	sta WIN_TOP
+	sta WIN_TOP+1
+
+	sta WIN_BOTTOM+1	
+	dey
+	sty WIN_BOTTOM
+
+	pla:tax
+
+
+; ------------------------------------------------------------
+
+MODE	= DATAORIGIN+$0029
+
+@VarData	= MODE
+@VarDataSize	= 1
+
 @exit
 	.ifdef @new
 	@FreeMem #@VarData #@VarDataSize
 	eif
 	rts						; ret
 .endl
-l_0067
 
-; optimize FAIL ('MAINPROC', examples\arrayset.pas), line = 45
+; ------------------------------------------------------------
+
+CURRENTDRIVER	= $FFFFFF80
+DETECT	= $0000
+CGA	= $0001
+MCGA	= $0002
+EGA	= $0003
+EGA64	= $0004
+EGAMONO	= $0005
+LOWRES	= $0006
+HERCMONO	= $0007
+VGA	= $0009
+VESA	= $000A
+D1BIT	= $000B
+D2BIT	= $000C
+D4BIT	= $000D
+D6BIT	= $000E
+D8BIT	= $000F
+D12BIT	= $0010
+M640X400	= $0018
+M640X480	= $0018
+GROK	= $0000
+GRNOINITGRAPH	= $FFFFFFFF
+GRNOTDETECTED	= $FFFFFFFE
+GRFILENOTFOUND	= $FFFFFFFD
+GRINVALIDDRIVER	= $FFFFFFFC
+GRNOLOADMEM	= $FFFFFFFB
+GRNOSCANMEM	= $FFFFFFFA
+GRNOFLOODMEM	= $FFFFFFF9
+GRFONTNOTFOUND	= $FFFFFFF8
+GRNOFONTMEM	= $FFFFFFF7
+GRINVALIDMODE	= $FFFFFFF6
+GRERROR	= $FFFFFFF5
+GRIOERROR	= $FFFFFFF4
+GRINVALIDFONT	= $FFFFFFF3
+GRINVALIDFONTNUM	= $FFFFFFF2
+GRINVALIDVERSION	= $FFFFFFEE
+CGAC0	= $0000
+CGAC1	= $0001
+CGAC2	= $0002
+CGAC3	= $0003
+CGAHI	= $0004
+MCGAC0	= $0000
+MCGAC1	= $0001
+MCGAC2	= $0002
+MCGAC3	= $0003
+MCGAMED	= $0004
+MCGAHI	= $0005
+EGALO	= $0000
+EGAHI	= $0001
+EGA64LO	= $0000
+EGA64HI	= $0001
+EGAMONOHI	= $0003
+VGALO	= $000A
+VGAMED	= $001F
+VGAHI	= $0018
+WIN_LEFT	= DATAORIGIN+$000C
+WIN_RIGHT	= DATAORIGIN+$000E
+WIN_TOP	= DATAORIGIN+$0010
+WIN_BOTTOM	= DATAORIGIN+$0012
+GRAPHRESULT	= DATAORIGIN+$0014
+GETCOLOR	= DATAORIGIN+$0015
+adr.LASTARCCOORDS	= DATAORIGIN+$0016
+.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
+LASTARCCOORDS.X	= DATAORIGIN+$0016
+LASTARCCOORDS.Y	= DATAORIGIN+$0018
+LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
+LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
+LASTARCCOORDS.XEND	= DATAORIGIN+$001E
+LASTARCCOORDS.YEND	= DATAORIGIN+$0020
+CURRENTX	= DATAORIGIN+$0022
+CURRENTY	= DATAORIGIN+$0024
+VIDEORAM	= DATAORIGIN+$0026
+SCANLINE_WIDTH	= DATAORIGIN+$0028
+
+.endl							; UNIT GRAPH
+
+.local	MAINPROC					; PROCEDURE
+
+; optimize OK (examples\dlidemo.pas), line = 27
+
+	mva DL SDLSTL
+	mva DL+1 SDLSTL+1
+
+; optimize OK (examples\dlidemo.pas), line = 28
+
+	mva DLI VDSLST
+	mva DLI+1 VDSLST+1
+
+; optimize OK (examples\dlidemo.pas), line = 29
+
+	mva #$C0 NMIEN
+
+; optimize OK (examples\dlidemo.pas), line = 30
+
+	mva #$FF CH
+
+; --- WhileProlog
+l_00C1
+
+; optimize OK (examples\dlidemo.pas), line = 31
+
+	lda CH
+	cmp #$FF
+	jne l_00D0
+	jmp l_00C1
+l_00D0
+
+; optimize FAIL ('GRAPH.INITGRAPH_0064', examples\dlidemo.pas), line = 33
+	inx
+	mva #$00 :STACKORIGIN,x
+	jsr GRAPH.INITGRAPH_0064
+@exit
+	.ifdef @new
+	@FreeMem #@VarData #@VarDataSize
+	eif
+	rts						; ret
+.endl
+l_0014
+
+; optimize FAIL ('MAINPROC', examples\dlidemo.pas), line = 37
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-KEY	= DATAORIGIN+$000D
-I	= DATAORIGIN+$000E
-adr.BYTES	= DATAORIGIN+$000F
-.var BYTES	= adr.BYTES .word
-adr.CARDS	= DATAORIGIN+$0013
-.var CARDS	= adr.CARDS .word
+adr.DL	= DATAORIGIN+$002A
+.var DL	= adr.DL .word
+adr.DLI	= DATAORIGIN+$0040
+.var DLI	= adr.DLI .word
+CH	= $02FC
+NMIEN	= $D40E
+VDSLST	= $0200
+SDLSTL	= $0230
 @exit
 
 @halt	ldx #0
@@ -603,6 +666,14 @@ ATARI
 	.ifdef MAIN.CRT.@UnitInit
 	jsr MAIN.CRT.@UnitInit
 	eif
+
+	.ifdef MAIN.TYPES.@UnitInit
+	jsr MAIN.TYPES.@UnitInit
+	eif
+
+	.ifdef MAIN.GRAPH.@UnitInit
+	jsr MAIN.GRAPH.@UnitInit
+	eif
 .endm
 
 ; ------------------------------------------------------------
@@ -631,16 +702,26 @@ ATARI
 	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
 	eif
 
+	ift .SIZEOF(MAIN.TYPES) > 0
+	.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
+	eif
+
+	ift .SIZEOF(MAIN.GRAPH) > 0
+	.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
+	eif
+
 	.print 'CODE: ',CODEORIGIN,'..',*-1
 
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $0A  $14 $1E $28 $1C $02 $14 $05 $B0
-.by  $68 $14 $FF
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $70 $70 $70 $42 $00 $40
+.by  $02 $02 $02 $02 $F0 $02 $02 $02  $02 $02 $70 $70 $70 $41 $00 $20  $48 $A9 $DE $8D $0A $D4 $8D $18
+.by  $D0 $68 $40
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 27
+VARDATASIZE	= 75
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -651,10 +732,7 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $46  $46 $45 $43 $54 $55 $53 $20 $45
-.by  $58 $41 $4D $50 $4C $45 $3A $00  $14 $41 $52 $52 $41 $59 $53 $20  $44 $45 $4D $4F $4E $53 $54 $52
-.by  $41 $54 $49 $4F $4E $00 $00 $00  $12 $42 $59 $54 $45 $20 $41 $52  $52 $41 $59 $20 $56 $41 $4C $55
-.by  $45 $53 $3A $00 $12 $43 $41 $52  $44 $20 $41 $52 $52 $41 $59 $20  $56 $41 $4C $55 $45 $53 $3A $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00
 .endm
 
 	end
