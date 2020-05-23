@@ -1,0 +1,104 @@
+==========================================
+Effectus - Missing features and bug issues
+==========================================
+
+Not yet supported
+-----------------
+
+- INCLUDE files
+- SET directive addressing
+- XIO PROCedure for handling I/O operations
+- Note and Point PROCedures for working with disk drives
+- No proper error handling is done yet, so it happens that no errors show on the screen
+  even when something goes wrong
+
+Bug issues
+----------
+
+- Declared strings have to be of non-standard type temporarily called SBYTE ARRAY because of
+  the way Action! handles bytes. Effectus will have to immitate it like Action! does,
+  byte by byte, which are concatenated together to form a string.
+- FUNCtion conducted as inline machine language block does not return a value
+- PROC/FUNC parameter types missing: BYTE ARRAY, CARD ARRAY, POINTER
+- Pointers are not yet fully supported
+- BYTE/CARD ARRAY declaration structure has to follow some rules to be compiled correctly
+  
+  Proper syntax (characters "=" and "[" must be on the same line):
+    BYTE ARRAY ndl=[112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
+    
+    BYTE ARRAY CLRS=[64 66 68 70 72 74
+      72 70 68 66  64  66  68  70  72
+      74  72  70  68  66  64  66  68
+      70 72 74 76 ]    
+
+  Wrong syntax:
+    BYTE ARRAY ndl=
+      [112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
+
+- TYPE declaration structure has to follow some rules to be compiled correctly
+
+  Proper syntax (ending "]" character must be separated from other values:
+    TYPE REC = [
+      BYTE day, month CARD year
+      BYTE height
+    ]
+  or
+    TYPE REC =
+    [
+      BYTE day, month CARD year
+      BYTE height
+    ]
+
+  Wrong syntax:
+    TYPE REC = [BYTE day, month CARD year
+                BYTE height]
+
+- DEFINE issues:
+  - You are free to name DEFINE constants as you like, but it is adviceable to name them
+    prefixed with "_" character in case same names appear anywhere else in the program
+    inside other strings. Currently, parser does not differentiate between constants for whole
+    words or substrings inside strings.
+  - DEFINE constants must be named with length of at least 3 characters:
+    
+    Proper syntax:
+      DEFINE Cls="PUT(125)"
+      DEFINE Black="Poke(710,0)"
+      DEFINE max="3"
+      DEFINE Pre="PUTD(6,"
+      
+    Wrong syntax:
+      DEFINE P="PUTD(6,"
+      DEFINE Pr="PUTD(6,"
+      
+  - DEFINE constant value definition must start and end with '"' character on the same line
+
+    Proper syntax:
+      DEFINE GETTEMPS="[$68 $85 $D3 $A2 $00 $68 $95 $80 $68 $95 $A0 $68 $95 $A8 $68 $95 $C0 $E8 $E0 $08 $D0 $EF]"
+
+    Wrong syntax:
+      DEFINE GETTEMPS="[$68 $85 $D3 $A2 $00 $68
+        $95 $80 $68 $95 $A0 $68 $95 $A8
+        $68 $95 $C0 $E8 $E0 $08 $D0 $EF]"
+      
+- Variable declared as BYTE ARRAY or CARD ARRAY with predeclared values MUST NOT be
+  the last variable declaration in PROCedures or FUNCtions. This would lead to
+  missing declaration of such variable in created Mad Pascal listing code.
+ 
+  Proper syntax:
+    PROC Main()
+
+    BYTE ARRAY new_dir=[$D7 $D8 $D9 $FF 1 39 40 41]
+    BYTE ch, dir
+
+    dir = 1
+    ...
+
+  Wrong syntax:
+    PROC Main()
+  
+    BYTE ch, dir
+    BYTE ARRAY new_dir=[$D7 $D8 $D9 $FF 1 39 40 41]
+  
+    dir = 1
+    ...
+

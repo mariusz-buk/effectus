@@ -1,5 +1,5 @@
 ==================
-  Effectus 0.4.2
+  Effectus 0.4.3
 ==================
 
 This is new version of Effectus, done from scratch. This is new branch version, currently only
@@ -105,7 +105,8 @@ Device I/O support
 ------------------
 
 PROCedures:
-  OPEN, CLOSE, PRINTD, PRINTDE, PRINTBD, PRINTBDE, PRINTCD, PRINTCDE, PRINTID, PRINTIDE
+  OPEN, CLOSE, PUTD, PUTDE, PRINTD, PRINTDE,
+  PRINTBD, PRINTBDE, PRINTCD, PRINTCDE, PRINTID, PRINTIDE,
   INPUTSD, INPUTMD
 
 FUNCtions:  
@@ -189,58 +190,12 @@ Available options:
 
 - Log files are created on compile time
 
-What is missing?
-----------------
+Missing features and bug issues
+-------------------------------
 
-Many things! But new features will eventually pop in.
+You can read about missing features and bug issues in additional file dev_log.txt!
 
-Not yet supported:
-  - INCLUDE files
-  - No proper error handling is done yet, so it happens that no errors show on the screen even if
-    something went wrong
-
-Bugs
-----
-
-- Variables are now allowed in inline machine language block
-- Declared strings have to be of non-standard type temporarily called SBYTE ARRAY because of
-  the way Action! handles bytes. Effectus will have to immitate it like Action! does,
-  byte by byte, which are concatenated together to form a string.
-- FUNCtion does not return a value after executing machine language code
-- PROC/FUNC parameter types missing: BYTE ARRAY, CARD ARRAY, POINTER
-- Pointers are not yet fully supported
-- TYPE and BYTE/CARD ARRAY structure has some rules to follow to be compiled correctly.
-  For example, the proper syntax is:
-
-  byte array ndl=[112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
-
-  and NOT like this:
-
-  byte array ndl=
-    [112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
-
-- TYPE declaration can be achieved in this manner:
-
-  TYPE REC = [
-    BYTE day, month CARD year
-    BYTE height
-  ]
-  
-  or
-  
-  TYPE REC =
-  [
-    BYTE day, month CARD year
-    BYTE height
-  ]
-
-  but NOT like this:
-
-  TYPE REC = [BYTE day, month CARD year
-              BYTE height]
-
-All this will be fixed at some point!
-
+-------------------------------------------------------------------------------
 
 Written by Bostjan Gorisek from Slovenia
 Page URL: http://gury.atari8.info/effectus/
