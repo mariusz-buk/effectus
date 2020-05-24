@@ -52,7 +52,6 @@ begin  // 2
   Write(n);
   Write(Chr(44));
   break;
-  n := 6;
   until  n=6;
   Writeln('');
   Writeln('Escaped from UNTIL loop!');

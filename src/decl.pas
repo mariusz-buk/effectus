@@ -37,7 +37,7 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.4.2';  // Effectus version
+  VERSION = '0.4.3';  // Effectus version
 
 type
   // Program support variables
@@ -350,6 +350,8 @@ begin
   
   procParams.Add('Open=4;2;1;2;2');
   procParams.Add('Close=1;2');
+  procParams.Add('PutD=2;2;2');
+  procParams.Add('PutDE=1;2');
   procParams.Add('PrintD=2;2;1');
   procParams.Add('PrintDE=2;2;1');
   procParams.Add('PrintBD=2;2;2');

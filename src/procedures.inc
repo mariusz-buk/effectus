@@ -30,11 +30,18 @@
   If not, see <http://www.gnu.org/licenses/>.
 }
 
+       //writeln('procName = ', procName); 
+
        if procName = 'PRINT' then begin
          temp := '  Write(' + params2 + ');';
          code.Add(temp);
        end
        else if procName = 'PRINTE' then begin
+         //writeln('params[0] = ', Trim(params[0]), '*');
+         if (params[0] = '""') or (UpperCase(params[0]) = 'PRINTE()') then begin
+           //writeln('2.) params[0] = ', params[0], '**');
+           params2 := QuotedStr('');
+         end;
          temp := '  Writeln(' + params2 + ');';
          code.Add(temp);
        end
@@ -91,15 +98,12 @@
          code.Add(temp);
        end
        else if procName = 'FILL' then begin
-         //temp := '  FloodFillH(' + params2 + ', ' + prgPtr.colorValue + ');';
          temp := '  FloodFill(' + params2 + ', ' + prgPtr.colorValue + ');';
          code.Add(temp);
        end
        else if procName = 'POSITION' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           //prgPtr.posX := params[0];
-           //prgPtr.posY := params[1];
            temp := '  GotoXY(' + params[0] + ' + 1, ' + params[1] + ' + 1);';
          end;
          code.Add(temp);
@@ -118,6 +122,13 @@
            params2 := '';
            for j := 0 to High(params) do begin
              if j = 0 then begin
+               if vars.IndexOfName(params[j]) >= 0 then begin
+                 if VarValue(2, vars.IndexOfName(params[j]), _VAR_BYTE_ARRAY)
+                    or VarValue(2, vars.IndexOfName(params[j]), _VAR_CARD_ARRAY) then
+                 begin
+                   params[j] := '@' + params[j];
+                 end;
+               end;             
                params2 += 'pointer(' + params[j] + '),';
              end
              else begin
@@ -133,7 +144,13 @@
          code.Add(temp);
        end
        else if procName = 'MOVEBLOCK' then begin
-         params := params2.Split(',');
+         params := params2.Split(',');         
+         params[0] := Trim(params[0]);
+         params[1] := Trim(params[1]);
+         
+         if IsNumber(params[1][1]) then begin
+           params[1] := 'pointer(' + Trim(params[1]) + ')';
+         end;                 
          params2 := Trim(params[1]) + ', pointer(' + Trim(params[0]) + '), ' + params[2];
          temp := '  Move(' + params2 + ');';
          code.Add(temp);
@@ -226,7 +243,6 @@
          // Format string definition
          params := params2.Split(',', '"', '"');
          temp := params[0];
-         //writeln('params2 = ', params2);
          
          // Process
          if System.Pos('%%', temp) > 0 then begin
@@ -251,7 +267,6 @@
            end
            else if UpperCase(paramsEx[i][1]) = 'U' then begin
              Inc(cnt);
-             //writeln('params[cnt] = ', cnt, ' ', params[cnt]);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
              params[cnt] := ReplaceStr(params[cnt], ')', ']');
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
@@ -291,7 +306,6 @@
 //                temp02 += ', eol'
 //              else begin
              temp02 += ', eol, ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
-             //end;
            end;
          end;
          code.Add('  Write(' + temp02 + ');');
@@ -303,7 +317,6 @@
            //assign(f, s);
            //reset(f, sizeof(cardinal));
            temp := '  Assign(f, ' + params[1] + ');' + LineEnding;
-
            if Trim(params[2]) = '4' then
              //temp += '  Reset(f, sizeOf(byteBuffer));'
              temp += '  Reset(f, 1);'
@@ -321,6 +334,27 @@
            code.Add(temp);
          end;
        end
+       else if procName = 'PUTD' then begin
+         params := params2.Split(',');
+         if High(params) > 0 then begin
+           if params[1][1] = '''' then begin
+             temp := Extract(2, params[1], '''');
+             temp := QuotedStr(temp);
+           end
+           else begin
+             temp := 'Concat(Chr(' + params[1] + '), ' + QuotedStr('') + ')';
+             temp := 'Concat(' + temp + ', ' + QuotedStr('') + ');';
+           end;         
+           temp := '  strBuffer := ' + temp + ';' + LineEnding;
+           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           code.Add(temp);
+         end;
+       end
+       else if procName = 'PUTDE' then begin
+         temp := '  strBuffer := Concat(#$9b, ' + QuotedStr('') + ');' + LineEnding;
+         temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+         code.Add(temp);
+       end
        else if procName = 'PRINTD' then begin
          //params := params2.Split(',');
          //if High(params) > 0 then begin
@@ -332,7 +366,6 @@
          //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
          temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
          code.Add(temp);
-         //end;
        end
        else if procName = 'PRINTDE' then begin
          //params := params2.Split(',');  //, '"', '"', 1);
@@ -343,7 +376,6 @@
          temp := '  strBuffer := Concat(' + temp03 + ', #$9b);' + LineEnding;
          temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
          code.Add(temp);
-         //end;
        end
        else if procName = 'PRINTBD' then begin
          params := params2.Split(',');

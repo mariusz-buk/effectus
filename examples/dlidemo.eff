@@ -1,0 +1,32 @@
+; Effectus example
+; - - - - - - - - - - - - - - - - - -
+; Display list interrupt (DLI) demo
+
+SET $E=$2000
+SET $491=$2000
+
+BYTE ARRAY DL=[$70$70$70$42$00$40$2$2$2$2$F0$2$2$2$2$2$70$70$70$41$00$20]
+BYTE ARRAY DLI=[$48$A9$DE$8D$0A$D4$8D$18$D0$68$40]
+; 48        PHA
+; A9 DE     LDA #$DE
+; 8D 0A D4  STA $D40A   ;WSYNC
+; 8D 18 D0  STA $D018   ;COLPF2
+; 68        PLA
+; 40        RTI
+
+BYTE
+  CH=$2FC,
+  NMIEN=$D40E
+
+CARD
+  VDSLST=$200,
+  SDLSTL=$230
+
+PROC MAIN()
+  SDLSTL=DL
+  VDSLST=DLI
+  NMIEN=$C0
+
+  WHILE CH=$FF DO OD
+  GRAPHICS(0)
+RETURN

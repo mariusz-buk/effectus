@@ -134,7 +134,7 @@ var
   AStringList : TStringList;
   isPasError : boolean = false;
   logFile : String; 
-  logFileTotal : String; 
+  logFileTotal : String;
   filenamePart : string;
   filePath : string;
   i : word;
@@ -142,7 +142,7 @@ begin
   logFile := GetCurrentDir + PathDelim + 'efflog.txt';
   logFileTotal := GetCurrentDir + PathDelim + 'effectus.txt';
 
-  AProcess := TProcess.Create(nil);  
+  AProcess := TProcess.Create(nil);
   AProcess.Parameters.Clear;  
   AStringList := TStringList.Create;
 
@@ -162,11 +162,11 @@ begin
   //AStringList.LoadFromStream(AProcess.Stderr);
   // Save log output to file.
   //AStringList.SaveToFile('d:\atari\temp\test_err.log');
-  AStringList.LoadFromStream(AProcess.Output);  
+  AStringList.LoadFromStream(AProcess.Output);
   
   // Check for errors created by Mad Pascal caused by Effectus source code listing  
   for i := 0 to AStringList.Count - 1 do begin
-    //isPasError := AStringList.IndexOf('Error:') >= 0; 
+    //isPasError := AStringList.IndexOf('Error:') >= 0;
     if System.Pos('Error:', AStringList[i]) > 0 then begin
       isPasError := true;
       break;
@@ -358,8 +358,8 @@ begin
     if temp[1] = ';' then begin
       continue;
     end;
-
-    // Parse each command or statement delimited by space
+    // Find DEFINE constants as substitutes for real statement values
+    // Parse each command or statement delimited by space ignoring words in "" pairs
     A := temp.Split(' ', '"', '"');
     if High(a) >= 0 then begin
       for j := 0 to High(a) do begin
@@ -386,6 +386,7 @@ begin
     end;
   end;
 
+  // Convert DEFINE constants to real statement values
   for i := 0 to effCode.Count - 1 do begin
     if (System.Pos('DEFINE ', UpperCase(effCode[i])) > 0)
        or (UpperCase(effCode[i]) = 'DEFINE') then
@@ -413,7 +414,8 @@ begin
           //if defineList.IndexOfName(j) >= 0 then begin
           temp:= ExtractDelimited(1, defineList.ValueFromIndex[j], [';']);
           temp := StringReplace(temp, '{', '=', [rfReplaceAll]);
-          effCode[i] := StringReplace(effCode[i], defineList.Names[j], temp, [rfReplaceAll]);
+          effCode[i] := StringReplace(
+            effCode[i], defineList.Names[j], temp, [rfReplaceAll, rfIgnoreCase]);
         end;
       end;
     end;
@@ -431,10 +433,9 @@ begin
         else begin
           //if defineList.IndexOfName(j) >= 0 then begin
           temp:= ExtractDelimited(1, defineList.ValueFromIndex[j], [';']);
-          //writeln('before replace { ', defineList.Names[j], ' = ', temp);
           temp := StringReplace(temp, '{', '=', [rfReplaceAll]);
-          //writeln('replace { ', defineList.Names[j], ' = ', temp);
-          effCode[i] := StringReplace(effCode[i], defineList.Names[j], temp, [rfReplaceAll]);
+          effCode[i] := StringReplace(
+            effCode[i], defineList.Names[j], temp, [rfReplaceAll, rfIgnoreCase]);
         end;
       end;
     end;
@@ -471,16 +472,18 @@ begin
       varPtr.isDefine := false;
       Write('1. pass... ');
       for i := 0 to tempxy.Count - 1 do begin
+        tempxy.strings[i] := Trim(tempxy.strings[i]);
         tempxy.strings[i] := ReplaceStr(tempxy.strings[i], 'MODULE', '');
 
-        // Remove character with Ascii code 9 from Action! listing lines 
+        // Remove character with Ascii code 9 from Action! listing lines
         tempxy.strings[i] := StringReplace(tempxy.strings[i], Chr(9), '', [rfReplaceAll]);
 
         // Add Action! listing line
         effCode.add(tempxy.strings[i]);
 
         // Check DEFINE statement
-        if System.Pos('DEFINE ', UpperCase(tempxy.strings[i])) > 0 then begin
+        if System.Pos('DEFINE ', UpperCase(tempxy.strings[i])) = 1 then begin
+        //if tempxy.strings[i] = 'DEFINE' then begin
           varPtr.isDefine := true;
         end;
 
