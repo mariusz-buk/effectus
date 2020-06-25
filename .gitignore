@@ -5,7 +5,6 @@ src/backup
 .DS_Store
 geany
 /src/lib/
-/bin/macos/effectus
 **/*.ppu
 **/*.o
 /src/lib
