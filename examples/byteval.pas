@@ -2,7 +2,7 @@
 program bytevalPrg;
 
 uses
-  SySutils, Crt;
+  Crt;
 
 // Effectus example
 // -------------------------------------
@@ -22,7 +22,6 @@ begin  // 2
   Writeln(N2);
   Write('Predeclared value of N3 is ');
   Writeln(N3);
-  N1 := 255;
   N1 := 255;
  WHILE N1=255 do begin
   end;  // while

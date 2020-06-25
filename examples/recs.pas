@@ -2,8 +2,11 @@
 program recsPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example:
 // Record ARRAY demonstration
 type
@@ -15,7 +18,7 @@ type
 var
   DATA : array[0..15] of byte;
   ENTRY : ^rec;
-  KEY : char;
+  KEY : byte;
 
 procedure MAINProc;
 begin  // 1
@@ -54,7 +57,8 @@ begin  // 1
   Write('entry.num3=');
   Writeln(ENTRY.NUM3);
   Write('', eol, '---------------------');
-  KEY := ReadKey;
+  KEY := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

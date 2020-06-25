@@ -2,7 +2,7 @@
 program dlidemoPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, Graph;
 
 // Effectus example
 // - - - - - - - - - - - - - - - - - -
@@ -27,7 +27,6 @@ begin  // 1
   SDLSTL := word(@DL);
   VDSLST := word(@DLI);
   NMIEN := $C0;
-  CH := $FF;
  WHILE CH=$FF do begin
   end;  // while
   InitGraph(0);

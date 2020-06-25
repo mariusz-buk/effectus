@@ -2,8 +2,11 @@
 program valbciPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // String to number conversion demo
@@ -11,7 +14,7 @@ uses
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
   B : byte;
   C : word;
   I : integer;
@@ -22,7 +25,8 @@ begin  // 2
   Writeln(B);
   Writeln(C);
   Writeln(I);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

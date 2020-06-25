@@ -2,12 +2,10 @@
 program chrdefPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
 
 var
-  intValue : integer;
-  f : file;
   strBuffer : string;
 // Effectus example
 // - - - - - - - - - - - - - - - - - -
@@ -18,7 +16,7 @@ var
   RAMTOP : byte absolute $6A;
   CHBAS : byte absolute $2F4;
   TOPMEM : word;
-  key : char;
+  key : byte;
 var
   CHECK : array[0..7] of byte = (0, 1, 3, 6, 140, 216, 112, 32);
   SMILEY : array[0..7] of byte = (60, 66, 165, 129, 165, 153, 66, 60);
@@ -26,7 +24,6 @@ var
 procedure MAINProc;
 // TEXT MODE 2
 begin  // 6
-  assign(f, 'S:'); rewrite(f, 1);
   InitGraph(2);
 // RESERVE MEMORY FOR NEW CHARACTER SET
   TOPMEM := RAMTOP-8;
@@ -44,20 +41,20 @@ begin  // 6
 // DEMO
   GotoXY(2 + 1,  2 + 1);
   strBuffer := Concat('>', #$9b);
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
+  BPut(6, @strBuffer[1], Length(strBuffer));
   strBuffer := Concat('""', #$9b);
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
-  strBuffer := 'CHECKED <';
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
+  BPut(6, @strBuffer[1], Length(strBuffer));
+  strBuffer :=  'CHECKED <';
+  BPut(6, @strBuffer[1], Length(strBuffer));
   Writeln('PRESS <SPACE> KEY TO EXIT!');
 // CHECK FOR SPACE KEY PRESSED
   CH := 255;
   repeat
   until  CH=33;
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin
   MAINProc;
-  Close(f);
 end.

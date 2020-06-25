@@ -2,8 +2,11 @@
 program pmgdemoPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Player/Missile graphics demo
@@ -12,7 +15,7 @@ procedure MAINProc;
 // REGISTER VARIABLES
 // PLAYER 0 BITMAP
 var
-  key : char;
+  key : byte;
   PMBASE : byte absolute $D407;
   SDMCTL : byte absolute $22F;
   GRACTL : byte absolute $D01D;
@@ -47,7 +50,8 @@ begin  // 1
   GRACTL := 3;
   PCOLR0 := 50;
   HPOSP0 := 120;
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 // TURN OFF P/M GRAPHICS
   GRACTL := 0;
 end;  // 4

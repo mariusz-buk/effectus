@@ -2,14 +2,17 @@
 program proc_asmPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using local PROCedures using machine
 // language
 var
-  KEY : char;
+  KEY : byte;
 
 procedure PokeTestProc(d : byte); assembler;
   asm
@@ -38,13 +41,16 @@ var
 begin  // 1
   Write(Chr(125));
   Write('', eol, 'Press any key to see some effect!', eol, '');
-  KEY := ReadKey;
+  KEY := Get(7);
+  ReadKey;
   TESTProc(1, 20, 30, 8, 8, 4);
   Write('LOOK,I AM UPSIDE DOWN!', eol, '');
   Writeln('Press any key again!');
-  KEY := ReadKey;
+  KEY := Get(7);
+  ReadKey;
   POKETESTProc(144);
-  KEY := ReadKey;
+  KEY := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

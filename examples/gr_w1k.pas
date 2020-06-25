@@ -2,8 +2,11 @@
 program gr_w1kPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Graphics demonstration
@@ -12,7 +15,7 @@ uses
 // http://atarionline.pl/forum/comments.php?DiscussionID=207&page=1#Item_0
 var
   I : byte;
-  KLAVESA : char;
+  KLAVESA : byte;
 
 procedure LINKAProc(X0 : byte; Y0 : byte; X1 : byte; Y1 : byte);
 begin  // 1
@@ -34,7 +37,8 @@ begin  // 6
   SetColor(1);
   DEMOProc;
   Writeln('STLAC');
-  KLAVESA := ReadKey;
+  KLAVESA := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

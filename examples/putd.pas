@@ -2,11 +2,10 @@
 program putdPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
 
 var
-  f : file;
   strBuffer : string;
 // Effectus example
 // - - - - - - - - - - - - - - - - - -
@@ -17,22 +16,14 @@ procedure PUTD_TESTProc;
 var
   CH : byte absolute 764;
 begin  // 2
-  assign(f, 'S:'); rewrite(f, 1);
   InitGraph(1+16);
-  strBuffer := Concat(Concat(Chr( 65), ''), '');;
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
-  strBuffer := Concat(Concat(Chr( 66), ''), '');;
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
-  strBuffer := Concat(Concat(Chr( 67), ''), '');;
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
-  strBuffer := Concat(#$9b, '');
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
-  strBuffer := Concat(Concat(Chr( 68), ''), '');;
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
-  strBuffer := Concat(Concat(Chr( 69), ''), '');;
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
-  strBuffer := Concat(Concat(Chr( 70), ''), '');;
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
+  Put(6,  65);
+  Put(6,  66);
+  Put(6,  67);
+  Put(6, $9b);
+  Put(6,  68);
+  Put(6,  69);
+  Put(6,  70);
 // PRESS ANY KEY TO EXIT
   CH := 255;
   repeat
@@ -41,5 +32,4 @@ end;  // 4
 
 begin
   PUTD_TESTProc;
-  Close(f);
 end.

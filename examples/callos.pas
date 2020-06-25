@@ -2,8 +2,11 @@
 program callosPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Calling OS routines by using PROC
@@ -49,7 +52,7 @@ end;  // 6
 procedure MAINProc;
 var
   N : byte;
-  key : char;
+  key : byte;
 begin  // 2
   Write(Chr(125));
   GotoXY(2 + 1,  18 + 1);
@@ -60,7 +63,8 @@ begin  // 2
   CLICKProc;
   SCROLLProc;
   end;  // for
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

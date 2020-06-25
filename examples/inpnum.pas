@@ -2,8 +2,11 @@
 program inpnumPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Input numeric values
@@ -11,7 +14,7 @@ uses
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
   n1 : byte;
   n2 : integer;
   n3 : word;
@@ -28,7 +31,8 @@ begin  // 2
   Writeln(n1);
   Writeln(n2);
   Writeln(n3);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

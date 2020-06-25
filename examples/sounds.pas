@@ -2,7 +2,7 @@
 program soundsPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, Graph;
 
 // Effectus example
 // -------------------------------------
@@ -14,7 +14,6 @@ var
 
 procedure WAITFORKEYProc;
 begin  // 1
-  CH := 255;
  WHILE CH=255 do begin
   end;  // while
   CH := 255;

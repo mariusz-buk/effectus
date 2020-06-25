@@ -2,19 +2,19 @@
 program peekpokePrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, Graph;
 
 // Effectus example
 // -------------------------------------
 // PEEK and POKE demo
 var
   n : byte;
+  mem : word;
   CH : byte absolute 764;
   COL : byte absolute 710;
 
 procedure WAITFORKEYProc;
 begin  // 1
-  CH := 255;
  WHILE CH=255 do begin
   end;  // while
   CH := 255;
@@ -26,12 +26,12 @@ begin  // 6
   Writeln('Effectus example:');
   Writeln('PEEK demonstration');
   Writeln('');
-  n := CH;
+  n := Peek(CH);
   Writeln('Shadow register 764 currently holds:');
   Writeln('');
   Writeln(n);
   Writeln('');
-  n := COL;
+  n := Peek(710);
   Writeln('Shadow register 710 currently holds:');
   Writeln('');
   Writeln(n);
@@ -40,6 +40,10 @@ begin  // 6
   Writeln('Shadow register 559 currently holds:');
   Writeln('');
   Writeln(n);
+  mem := DPeek($0230);
+  Writeln('DLISTL:');
+  Writeln('');
+  Writeln(mem);
   Writeln('');
   Writeln('');
   Writeln('POKE demonstration');

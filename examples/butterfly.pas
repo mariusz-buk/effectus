@@ -2,7 +2,7 @@
 program butterflyPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, Graph;
 
 // Effectus example
 // -------------------------------------

@@ -2,13 +2,16 @@
 program bytesPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // BYTE ARRAY demo
 var
-  key : char;
+  key : byte;
   i : byte;
   num : array[0..4] of byte;
 
@@ -29,7 +32,8 @@ begin  // 1
   Write('=');
   Writeln(num[i]);
   end;  // for
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

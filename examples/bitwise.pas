@@ -2,13 +2,16 @@
 program bitwisePrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Logical (bitwise) manipulation demo
 var
-  key : char;
+  key : byte;
   n : byte;
   a : byte;
   b : byte;
@@ -56,7 +59,8 @@ begin  // 1
   Write('b=a RSH 1 Result: ');
   b := a SHR 1;
   Writeln(b);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

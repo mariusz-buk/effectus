@@ -2,8 +2,11 @@
 program strconstPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // String manipulation demo
@@ -14,14 +17,15 @@ uses
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
   A : string = 'THIS IS A STRING CONSTANT';
   B : string = 'N1';
 begin  // 2
   Writeln(A);
   B := A;
   Writeln(B);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

@@ -2,11 +2,12 @@
 program man_animPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, Graph;
 
+// --------------------------------------
 // Effectus example
-// - - - - - - - - - - - - - - - - - -
 // Player animation demo
+// --------------------------------------
 // Colors for players
 // Player 0 data
 var
@@ -116,7 +117,6 @@ begin  // 6
   Write('Man running on the street');
   HPOSP[0] := px0;
   HPOSP[1] := px1;
-  CH := 255;
   CH := 255;
  WHILE CH=255 do begin
   NEXTFRAMEProc;

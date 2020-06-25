@@ -2,15 +2,18 @@
 program atasciiPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Printing ATASCII characters
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
   n : byte;
   a : byte;
   b : byte;
@@ -43,7 +46,8 @@ begin  // 2
   Write(Chr(44));
   Write(ARR[N]);
   end;  // for
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

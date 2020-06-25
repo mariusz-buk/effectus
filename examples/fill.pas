@@ -2,7 +2,7 @@
 program fillPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, Graph;
 
 // Effectus example
 // -------------------------------------

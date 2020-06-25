@@ -2,14 +2,17 @@
 program arrmemPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using BYTE ARRAY as direct memory
 // assignment
 var
-  key : char;
+  key : byte;
   mem : byte;
   arrD : array[0..255] of byte absolute 28000;
   arrH : array[0..255] of byte absolute $0600;
@@ -21,13 +24,14 @@ begin  // 1
   COL[0] := 154;
   COL[1] := 40;
   COL[2] := 78;
+  COL[3] := 132;
   COL[4] := 228;
   arrD[0] := 10;
-  arrD[1] := 30+arrD[0]-12*3*3;
+  arrD[1] := 20+arrD[0];
   arrD[2] := 60;
   arrH[0] := 20;
   arrH[1] := 40;
-  arrH[2] := 150;
+  arrH[2] := 80;
 // PrintF("%EarrD array elements:%E")
 // PrintB(arrD(0))
 // Print(",")
@@ -50,7 +54,8 @@ begin  // 1
   Writeln(mem);
   mem := Peek($0601);
   Writeln(mem);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

@@ -2,14 +2,17 @@
 program fsPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Finescroll by greblus
 // Modification by Gury (keypress check)
 var
-  key : char;
+  key : byte;
   j : integer = 0;
   k : integer = 0;
   hsc : byte absolute 54276;
@@ -76,13 +79,13 @@ begin  // 1
   tmpl := ndl[28];
   tmph := ndl[29];
   i := clock;
-  clock := i;
  while clock=i do begin
   end;  // while
   nmi := 0;
   vvblkd := word(@SCROLProc);
   nmi := $40;
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

@@ -2,12 +2,10 @@
 program writenumPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
 
 var
-  intValue : integer;
-  f : file;
   strBuffer : string;
 // Effectus example
 // --------------------------------------
@@ -17,24 +15,24 @@ var
 procedure MAINProc;
 var
   I : byte;
-  key : char;
+  key : byte;
 begin  // 2
   Write(Chr(125));
   Write('PrintBD example', eol, '', eol, '');
-  Assign(f,  'H1:TESTNUM.TXT');
-  Rewrite(f, 1);
+  Cls(1);
+  Opn(1, 8, 0, 'H1:TESTNUM.TXT');
   Writeln('Write numbers to disk...');
   for  I:=1 TO 12 do begin
   strBuffer := IntToStr( I);
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
+  BPut(1, @strBuffer[1], Length(strBuffer));
   end;  // for
-  Close(f);
+  Cls(1);
   Writeln('Done!(file H1:TESTNUM.TXT)');
   Write('', eol, '', eol, 'Press any key to continue!');
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin
   MAINProc;
-  Close(f);
 end.

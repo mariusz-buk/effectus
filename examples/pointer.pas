@@ -2,13 +2,16 @@
 program pointerPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using pointer
 var
-  key : char;
+  key : byte;
   ptr : ^word;
   i : integer;
 
@@ -29,7 +32,8 @@ begin  // 1
   Write(ptr^);
   Write('=');
   Writeln(i);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

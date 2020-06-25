@@ -2,12 +2,10 @@
 program inputsdPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
 
 var
-  intValue : integer;
-  f : file;
   strBuffer : string;
 // Effectus example
 // -------------------------------------
@@ -16,7 +14,7 @@ var
 // 
 // Sample file on H1: device: TEST.TXT
 var
-  key : char;
+  key : byte;
   str_buffer1 : string[255];
 
 procedure MAINProc;
@@ -27,22 +25,21 @@ begin  // 1
   Writeln('to read text file');
   Writeln('');
   Writeln('Sample file: TEST.TXT');
-  Assign(f,  'H1:TEST.TXT');
-  Reset(f, 1);
+  Cls(1);
+  Opn(1, 4, 0, 'H1:TEST.TXT');
   Write('', eol, 'InputSD example:', eol, '');
-  BlockRead(f,  str_buffer1, 255);
+  BGet(1,  str_buffer1, SizeOf( str_buffer1));
   Writeln(str_buffer1);
-  Close(f);
-  Assign(f,  'H1:TEST.TXT');
-  Reset(f, 1);
+  Cls(1);
+  Opn(1, 4, 0, 'H1:TEST.TXT');
   Write('', eol, 'InputMD example:', eol, '');
-  BlockRead(f,  str_buffer1,  255);
+  BGet(1,  str_buffer1,  255);
   Writeln(str_buffer1);
-  Close(f);
-  key := ReadKey;
+  Cls(1);
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin
   MAINProc;
-  Close(f);
 end.

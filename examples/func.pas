@@ -2,7 +2,7 @@
 program funcPrg;
 
 uses
-  SySutils, Crt, Joystick;
+  Crt, Joystick;
 
 // Effectus example
 // -------------------------------------

@@ -2,8 +2,11 @@
 program strvalPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Number to string conversion using
@@ -12,7 +15,7 @@ uses
 // String to number conversion by using
 // ValB, ValI and ValC functions
 var
-  key : char;
+  key : byte;
   num1 : byte;
   num2 : integer;
   num3 : word;
@@ -50,7 +53,8 @@ begin  // 1
   num3 := StrToInt('44611');
   Write('num3=');
   Writeln(num3);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

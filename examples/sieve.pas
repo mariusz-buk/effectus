@@ -2,8 +2,11 @@
 program sievePrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // SIEVE benchmark test
@@ -16,7 +19,7 @@ var
   K : word;
   PRIME : word;
   TIME : word;
-  key : char;
+  key : byte;
 
 procedure SIEVEProc;
 begin  // 1
@@ -41,7 +44,8 @@ begin  // 1
   SDMCTL := 34;
   Write('', eol, ' ', COUNT, ' PRIMES IN');
   Write('', eol, ' ', TIME, ' JIFFIES');
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

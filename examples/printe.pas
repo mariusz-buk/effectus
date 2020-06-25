@@ -2,22 +2,26 @@
 program printePrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // - - - - - - - - - - - - - - - - - -
 // PrintE demo
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
 begin  // 2
   Writeln('HELLO WORLD');
   Writeln('');
   Writeln('NEW LINE');
   Writeln('');
   Writeln('ANOTHER NEW LINE');
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

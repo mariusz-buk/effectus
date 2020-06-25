@@ -2,11 +2,15 @@
 program typePrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
+// --------------------------------------
 // Effectus example
-// -------------------------------------
 // TYPE declaration demo
+// --------------------------------------
 type
   REC = record
   day : byte;
@@ -17,7 +21,7 @@ type
 var
   data : REC;
   weightData : byte;
-  key : char;
+  key : byte;
 
 procedure MAINProc;
 begin  // 1
@@ -35,7 +39,8 @@ begin  // 1
   Write('', eol, 'Birthday: ', data.day, '.', data.month, '.', data.year, '', eol, '');
   Write('Height: ');
   Writeln(weightData);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

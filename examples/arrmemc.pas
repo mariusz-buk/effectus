@@ -2,8 +2,11 @@
 program arrmemcPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using CARD ARRAY as direct memory
@@ -11,7 +14,7 @@ uses
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
   i : byte;
   mem : word;
   arr : array[0..255] of word absolute $8000;
@@ -34,7 +37,8 @@ begin  // 2
   Writeln(mem);
   mem := DPeek($8000);
   Writeln(mem);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

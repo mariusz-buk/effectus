@@ -2,8 +2,11 @@
 program fillscrPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+
+var
+  strBuffer : string;
 var
   RTCLOCK : byte absolute 20;
   SAVMSCL : byte absolute 88;
@@ -11,7 +14,7 @@ var
   I : byte;
   J : byte;
   TIME : byte;
-  KEY : char;
+  KEY : byte;
   SCREEN : word;
 
 procedure BENCHProc;
@@ -28,7 +31,8 @@ begin  // 1
   TIME := RTCLOCK;
   InitGraph(0);
   Write('', eol, ' ', TIME, ' JIFFIES');
-  KEY := ReadKey;
+  KEY := Get(7);
+  ReadKey;
 end;  // 4
 
 begin
