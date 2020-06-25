@@ -5,7 +5,7 @@
   Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
 
   Unit file  : lib.pas
-  Description: String supporting routines
+  Description: Supporting routines
 
   Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
   for 8-bit Atari home computers from Action! language source code listings.
@@ -39,12 +39,16 @@ Uses
 
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 function GetVarValue(valuePos, index : byte) : string;
+function ReplaceToken(code, operand, newOperand01, newOperand02 : string) : string;
+procedure CheckOper(op, expr : string);
+function ActionSCompare(params : string) : string;
+procedure FuncInIfCond(procName, temp, params2 : string);
 function Extract(offset : byte; str : string; delim : char) : string;
 function ExtractText(Str : String; Ch1, Ch2 : Char) : String;
 function Strip(Str : String; Ch : Char) : String;
 function ExtractFilenameWithoutExt(AFileName: String) : String;
-function Split(const str: string; const separator: string): TStringArray;
-procedure SplitText(const aDelimiter, s: String; aList: TStringList);
+//function Split(const str: string; const separator: string): TStringArray;
+//procedure SplitText(const aDelimiter, s: String; aList: TStringList);
 function IsNumber(src : Char) : Boolean;
 procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringList);
 
@@ -64,18 +68,132 @@ begin
 end;
 
 {------------------------------------------------------------------------------
- Description: Extracts string between characters Ch1 and Ch2
- Parameters : Str - Input string
-              Ch1 - Starting character of examined string
-              Ch2 - Last character of examined string
- Returns    : Returns string between characters Ch1 and Ch2
- Examples:
-   Str := Between('ProcX(int a, byte b);', '(', ')');
-   Str := Between('PrintE("test")', '"', '"');
+ Description: Replace/substitute program defined tokens with true operators
+ -----------------------------------------------------------------------------}
+function ReplaceToken(code, operand, newOperand01, newOperand02 : string) : string;
+begin
+  if (System.Pos(operand, code) > 1) and (System.Pos('"', code) > 0)
+     and (System.Pos(operand, code) > System.Pos('"', code)) then
+  begin
+  end
+  else if System.Pos(operand, code) > 0 then begin
+    if operand = newOperand01 then begin
+      code := StringReplace(code, ' ' + operand, operand, [rfReplaceAll]);
+      code := StringReplace(code, operand + ' ', newOperand01, [rfReplaceAll]);
+      code := StringReplace(code, operand, newOperand02, [rfReplaceAll]);
+    end
+    else begin
+      code := StringReplace(code, ' ' + operand + ' ', newOperand01, [rfReplaceAll]);
+      code := StringReplace(code, operand + ' ', newOperand01, [rfReplaceAll]);
+      code := StringReplace(code, ' ' + operand, newOperand02, [rfReplaceAll]);
+    end;
+  end;
+  result := code;
+end;
+
+{------------------------------------------------------------------------------
+ Description: Count operator occurrences in an expression
+ -----------------------------------------------------------------------------}
+procedure CheckOper(op, expr : string);
+var
+  x, y : integer;
+begin
+  y := 1;
+  repeat
+    x := nPos(op, expr, y);
+    if x > 0 then begin
+      if Length(op) = 1 then
+        oper.Add(op + '=' + IntToStr(x) + ';0')
+      else begin
+        oper.Add('{' + op + '}=' + IntToStr(x) + ';0')
+      end;
+    end;
+    inc(y);
+  until x = 0;
+end;
+
+function ActionSCompare(params : string) : string;
+var
+  paramsEx : TStringArray;
+begin
+  result := '-2';
+  paramsEx := params.Split(',');
+  //writeln('(2) scompare params2 = ', params2);
+  
+  if High(paramsEx) = 1 then begin
+    paramsEx[0] := Trim(paramsEx[0]);
+    paramsEx[1] := Trim(paramsEx[1]);
+    if paramsEx[0] < paramsEx[1] then
+      result := '-1'
+    else if paramsEx[0] = paramsEx[1] then
+      result := '0'
+    else begin
+      result := '1'
+    end;
+  end;
+end;
+
+procedure FuncInIfCond(procName, temp, params2 : string);  //; compare : string);
+var
+  //params : TStringArray;
+  temp02 : string;
+  list : TStringList;
+  i : byte;
+begin
+  list := TStringlist.create;
+  //writeln(procname, ' ', temp, ' ', params2, ' ', compare);
+  for i := 0 to 4 do begin
+    list.Clear;
+    SplitStr(temp, _CMP_OPER[i], list);
+    //params := temp.Split(compare);
+    // High(params) = 1
+    if list.Count = 2 then begin
+      list[0] := Trim(list[0]);
+      list[1] := Trim(list[1]);
+      temp02 := Extract(1, list[0], '(');
+      //writeln('temp02 = ', temp02, ' procname = ', procname);
+      if funcs.IndexOfName(temp02) >= 0 then begin
+        if procName = 'RAND' then
+          temp02 := 'Random'
+        else if procName = 'PEEK' then
+          temp02 := 'Peek'
+        else if procName = 'PEEKC' then
+          temp02 := 'DPeek'
+        else if procName = 'SCOMPARE' then begin
+          temp02 := 'SCOMPARE';
+          branchPtr.isFuncInIf := true;
+          branchPtr.ifThenCode += ActionSCompare(params2) + ' ' + _CMP_OPER[i] + ' ' + list[1];
+        end
+        else begin
+          temp02 := ''
+        end;
+        
+        if (temp02 <> '') and (temp02 <> 'SCOMPARE') then begin
+          branchPtr.isFuncInIf := true;
+          branchPtr.ifThenCode += ' ' + temp02 + '(' + params2 + ') ' +
+                                  _CMP_OPER[i] + ' ' + list[1] + ' ';
+        end;
+      end;
+    end;
+  end;
+  list.Free;
+end;
+
+{------------------------------------------------------------------------------
+Description: Extracts string between characters Ch1 and Ch2
+Parameters
+  Str - Input string
+  Ch1 - First character as a wrapper of input string
+  Ch2 - Last character as a wrapper of input string
+Examples:
+  Str := Between('ProcX(int a, byte b);', '(', ')');
+  Str := Between('PrintE("test")', '"', '"');
  -----------------------------------------------------------------------------}
 function ExtractText(Str : String; Ch1, Ch2 : Char) : String;
 begin
-  result := Copy(Str, System.Pos(Ch1, Str) + 1, RPos(Ch2, Str)-System.Pos(Ch1, Str) - 1);
+  result := Copy(Str,
+                 System.Pos(Ch1, Str) + 1,
+                 RPos(Ch2, Str) - System.Pos(Ch1, Str) - 1);
   if Trim(result) = '' then begin
     result := str;
   end;
@@ -112,7 +230,6 @@ end;
  Description: Deletes all occurences of a character in a string
  Parameters : Str - String value to be processed
               Ch - Character to be deleted from the string
- Returns    : New string value
  -----------------------------------------------------------------------------}
 function Strip(Str : String; Ch : Char) : String;
 begin
@@ -135,47 +252,45 @@ begin
   Result:= nSep;
 end;
 
-function Split(const str: string; const separator: string): TStringArray;
-var
-  i, n: integer;
-  strline, strfield: string;
-begin
-  n:= Occurs(str, separator);
-  SetLength(Result, n + 1);
-  i := 0;
-  strline:= str;
-  repeat
-    if Pos(separator, strline) > 0 then begin
-      strfield:= Copy(strline, 1, Pos(separator, strline) - 1);
-      strline:= Copy(strline, Pos(separator, strline) + 1,
-                     Length(strline) - pos(separator,strline));
-    end
-    else begin
-      strfield:= strline;
-      strline:= '';
-    end;
-    Result[i]:= strfield;
-    Inc(i);
-  until strline= '';
-  if Result[High(Result)] = '' then SetLength(Result, Length(Result) -1);
-end;
+// function Split(const str : string; const separator : string): TStringArray;
+// var
+//   i, n: integer;
+//   strline, strfield: string;
+// begin
+//   n:= Occurs(str, separator);
+//   SetLength(Result, n + 1);
+//   i := 0;
+//   strline:= str;
+//   repeat
+//     if Pos(separator, strline) > 0 then begin
+//       strfield:= Copy(strline, 1, Pos(separator, strline) - 1);
+//       strline:= Copy(strline, Pos(separator, strline) + 1,
+//                      Length(strline) - pos(separator,strline));
+//     end
+//     else begin
+//       strfield:= strline;
+//       strline:= '';
+//     end;
+//     Result[i]:= strfield;
+//     Inc(i);
+//   until strline= '';
+//   if Result[High(Result)] = '' then SetLength(Result, Length(Result) -1);
+// end;
 
-procedure SplitText(const aDelimiter,s: String; aList: TStringList);
-begin
-  aList.LineBreak := aDelimiter;
-  aList.Text := s;
-end;
+// procedure SplitText(const aDelimiter,s: String; aList: TStringList);
+// begin
+//   aList.LineBreak := aDelimiter;
+//   aList.Text := s;
+// end;
 
 procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringList);
 var
   s: PChar;
-
   DelimiterIndex: Integer;
   Item: String;
 begin
   s:=PChar(Source);
   DelimitedList.Clear;
-
   repeat
     DelimiterIndex:=Pos(Delimiter, s);
     if DelimiterIndex=0 then Break;
