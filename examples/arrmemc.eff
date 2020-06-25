@@ -8,7 +8,7 @@ PROC Main()
 CHAR key
 BYTE i
 CARD mem
-CARD ARRAY arr=$8000
+CARD ARRAY arr = $8000
 
 Put(125)
 

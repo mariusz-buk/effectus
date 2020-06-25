@@ -1,6 +1,7 @@
+;--------------------------------------
 ; Effectus example
-;-------------------------------------
 ; DEFINE declaration demo
+;--------------------------------------
 
 DEFINE Cls="PUT(125)"
 DEFINE WriteLn="PrintBE"

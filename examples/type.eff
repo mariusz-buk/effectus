@@ -1,6 +1,7 @@
+;--------------------------------------
 ; Effectus example
-;-------------------------------------
 ; TYPE declaration demo
+;--------------------------------------
 
 TYPE REC = [
   BYTE day, month CARD year
