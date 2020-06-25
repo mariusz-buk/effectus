@@ -27,6 +27,8 @@ FilePos
 FileSize
 FillByte	; optimization build in compiler
 FillChar	; optimization build in compiler
+IsLetter
+IsDigit
 iSqrt		; fast inverse square root
 HexStr
 Ln
@@ -94,6 +96,12 @@ type	TLastArcCoords = record x,y,xstart,ystart,xend,yend: smallint end;
 
 	*)
 
+type	PBoolean = ^Boolean;
+	(*
+	@description:
+
+	*)
+
 type	PByte = ^byte;
 	(*
 	@description:
@@ -101,6 +109,24 @@ type	PByte = ^byte;
 	*)
 
 type	PWord = ^word;
+	(*
+	@description:
+
+	*)
+
+type	PCardinal = ^cardinal;
+	(*
+	@description:
+
+	*)
+
+type	PInteger = ^integer;
+	(*
+	@description:
+
+	*)
+
+type	PString = ^string;
 	(*
 	@description:
 
@@ -119,6 +145,8 @@ type	PWordArray = ^word;
 	*)
 
 const
+	__PORTB_BANKS = $0101;		// memory banks array
+
 	M_PI_2	= pi*2;
 	D_PI_2	= pi/2;
 	D_PI_180= pi/180;
@@ -194,7 +222,7 @@ var	ScreenWidth: smallint = 40;	(* @var current screen width *)
 
 	FileMode: byte = fmOpenReadWrite;
 
-	ScreenMode: byte;		(* @var current screen mode *)
+	GraphMode: byte;		(* @var current screen mode *)
 
 	IOResult: byte;			(* @var result of last file IO operation *)
 
@@ -203,12 +231,15 @@ var	ScreenWidth: smallint = 40;	(* @var current screen width *)
 
 	function Abs(x: Real): Real; register; assembler; overload;
 	function Abs(x: Single): Single; register; assembler; overload;
+	function Abs(x: shortint): shortint; register; assembler; overload;
+	function Abs(x: smallint): smallint; register; assembler; overload;
 	function Abs(x: Integer): Integer; register; assembler; overload;
-	function ArcTan(value: real): real;
+	function ArcTan(value: real): real; overload;
+	function ArcTan(value: single): single; overload;
 	function BinStr(Value: cardinal; Digits: byte): TString; assembler;
-	function Concat(a,b: string): string; assembler; overload;
-	function Concat(a: string; b: char): string; assembler; overload;
-	function Concat(a: char; b: string): string; assembler; overload;
+	function Concat(a,b: String): string; assembler; overload;
+	function Concat(a: PString; b: char): string; assembler; overload;
+	function Concat(a: char; b: PString): string; assembler; overload;
 	function Concat(a,b: char): string; overload;
 	function Copy(var S: String; Index: Byte; Count: Byte): string; assembler;
 	function Cos(x: Real): Real; overload;
@@ -228,8 +259,12 @@ var	ScreenWidth: smallint = 40;	(* @var current screen width *)
 	procedure FillChar(var x; count: word; value: char); assembler; register; overload;
 	procedure FillChar(var x; count: word; value: byte); assembler; register; overload;
 	procedure FillChar(var x; count: word; value: Boolean); assembler; register; overload;
-	function FloatToStr(a: real): ^string; assembler;
+	function FloatToStr(a: real): TString; assembler;
+	procedure FreeMem(var p; size: word); assembler; register;
+	procedure GetMem(var p; size: word); assembler; register;
 	function HexStr(Value: cardinal; Digits: byte): TString; register; assembler;
+	function IsLetter(A: char): Boolean;
+	function IsDigit(A: char): Boolean;
 	function iSqrt(number: Single): Single;
 	function Ln(x: Real): Real; overload;
 	function Ln(x: Float): Float; overload;
@@ -249,15 +284,14 @@ var	ScreenWidth: smallint = 40;	(* @var current screen width *)
 	function Random(range: smallint): smallint; overload;
 	function RandomF: Float;
 	procedure Randomize; assembler;
-	function ReadConfig (devnum: byte): cardinal; assembler;
-	procedure ReadSector (devnum: byte; sector: word; var buf); assembler;
 	procedure RunError(a: byte);
 	procedure Seek(var f: file; a: cardinal); assembler;
 	procedure SetLength(var S: string; Len: byte); register; assembler;
 	function Sin(x: Real): Real; overload;
 	function Sin(x: Single): Single; overload;
 	function Space(b: Byte): ^string; assembler;
-	procedure Str(a: integer; var s: TString); assembler;
+	procedure Str(a: integer; var s: TString); overload; assembler;
+	procedure Str(a: cardinal; var s: TString); overload; assembler;
 	function StringOfChar(c: Char; l: byte): ^string; assembler;
 	function Sqr(x: Real): Real; overload;
 	function Sqr(x: Single): Single; overload;
@@ -266,9 +300,9 @@ var	ScreenWidth: smallint = 40;	(* @var current screen width *)
 	function Sqrt(x: Single): Single; overload;
 	function Sqrt(x: Integer): Single; overload;
 	function UpCase(a: char): char;
-	procedure Val(const s: TString; var v: integer; var code: byte); assembler; overload;
-	procedure Val(const s: TString; var v: single; var code: byte); overload;
-	procedure WriteSector(devnum: byte; sector: word; var buf); assembler;
+	procedure Val(s: PString; var v: integer; var code: byte); assembler; overload;
+	procedure Val(s: PString; var v: real; var code: byte); overload; //register;
+	procedure Val(s: PString; var v: single; var code: byte); overload; //register;
 	function Swap(a: word): word; overload;
 	function Swap(a: cardinal): cardinal; overload;
 
@@ -277,149 +311,6 @@ implementation
 
 var
 	RndSeed: smallint;
-
-
-function ReadConfig(devnum: byte): cardinal; assembler;
-(*
-@description:
-Read disk drive configuration
-
-@param: devnum - device number
-*)
-
-{
-DVSTAT
-Byte 0 ($02ea):
-Bit 0:Indicates the last command frame had an error.
-Bit 1:Checksum, indicates that there was a checksum error in the last command or data frame
-Bit 2:Indicates that the last operation by the drive was in error.
-Bit 3:Indicates a write protected diskette. 1=Write protect
-Bit 4:Indicates the drive motor is on. 1=motor on
-Bit 5:A one indicates MFM format (double density)
-Bit 6:Not used
-Bit 7:Indicates Density and a Half if 1
-
-Byte 1 ($02eb):
-Bit 0:FDC Busy should always be a 1
-Bit 1:FDC Data Request should always be 1
-Bit 2:FDC Lost data should always be 1
-Bit 3:FDC CRC error, a 0 indicates the last sector read had a CRC error
-Bit 4:FDC Record not found, a 0 indicates last sector not found
-Bit 5:FDC record type, a 0 indicates deleted data mark
-Bit 6:FDC write protect, indicates write protected disk
-Bit 7:FDC door is open, 0 indicates door is open
-
-Byte 2 ($2ec):
-Timeout value for doing a format.
-
-Byte 3 ($2ed):
-not used, should be zero
-}
-asm
-{	txa:pha
-
-	lda devnum
-	jsr @sio.devnrm
-	bmi _err
-
-	lda #'S'	; odczyt statusu stacji
-	sta dcmnd
-
-	jsr jdskint	; $e453
-	bmi _err
-
-	ldx <256	; 256 bajtow
-	ldy >256	; w sektorze
-
-	lda dvstat
-	and #%00100000
-	bne _skp
-
-	ldx <128	;128 bajtow
-	ldy >128	;w sektorze
-
-_skp	jsr @sio.devsec
-
-	mva dvstat result
-	mva dvstat+1 result+1
-	mva dvstat+2 result+2
-	mva dvstat+3 result+3
-
-	ldy #0
-
-_err	sty MAIN.SYSTEM.IOResult
-
-	pla:tax
-};
-end;
-
-
-procedure ReadSector(devnum: byte; sector: word; var buf); assembler;
-(*
-@description:
-Read disk sector to buffer
-
-@param: devnum - device number
-@param: sector - sector number
-@param: buf - pointer to buffer
-*)
-asm
-{	txa:pha
-
-	lda devnum
-	jsr @sio.devnrm
-	bmi _err
-
-	lda sector
-	sta daux1
-	lda sector+1
-	sta daux2
-
-	ldx buf
-	ldy buf+1
-	lda #'R'
-
-	jsr @sio
-
-_err	sty MAIN.SYSTEM.IOResult
-
-	pla:tax
-};
-end;
-
-
-procedure WriteSector(devnum: byte; sector: word; var buf); assembler;
-(*
-@description:
-Write disk sector from buffer
-
-@param: devnum - device number
-@param: sector - sector number
-@param: buf - pointer to buffer
-*)
-asm
-{	txa:pha
-
-	lda devnum
-	jsr @sio.devnrm
-	bmi _err
-
-	lda sector
-	sta daux1
-	lda sector+1
-	sta daux2
-
-	ldx buf
-	ldy buf+1
-	lda #'P'
-
-	jsr @sio
-
-_err	sty MAIN.SYSTEM.IOResult
-
-	pla:tax
-};
-end;
 
 
 procedure RunError(a: byte);
@@ -769,6 +660,58 @@ asm
 end;
 
 
+function Abs(x: shortint): shortint; register; assembler; overload;
+(*
+@description:
+Abs returns the absolute value of a variable.
+
+The result of the function has the same type as its argument, which can be any numerical type.
+
+@param: x - shortint
+
+@returns: shortint
+*)
+asm
+{	lda edx
+	bpl @+
+
+	eor #$ff
+	add #1
+@
+	sta Result
+};
+end;
+
+
+function Abs(x: smallint): smallint; register; assembler; overload;
+(*
+@description:
+Abs returns the absolute value of a variable.
+
+The result of the function has the same type as its argument, which can be any numerical type.
+
+@param: x - smallint
+
+@returns: smallint
+*)
+asm
+{	lda edx+1
+	bpl @+
+
+	lda #$00
+	sub edx
+	sta edx
+	lda #$00
+	sbc edx+1
+	sta edx+1
+@
+	sta Result+1
+
+	mva edx Result
+};
+end;
+
+
 function Abs(x: Integer): Integer; register; assembler; overload;
 (*
 @description:
@@ -785,10 +728,11 @@ asm
 	spl
 	jsr negEDX
 
+	sta Result+3
+
 	mva edx Result
 	mva edx+1 Result+1
 	mva edx+2 Result+2
-	mva edx+3 Result+3
 };
 end;
 
@@ -961,7 +905,7 @@ begin
 end;
 
 
-function ArcTan(value: real): real;
+function ArcTan(value: real): real; overload;
 (*
 @description:
 Arctan returns the Arctangent of Value, which can be any Real type.
@@ -989,6 +933,48 @@ begin
    end;
 
   x:=(x-1.0)/(x+1.0);
+  y:=x*x;
+  x := ((((((((.0028662257*y - .0161657367)*y + .0429096138)*y -
+             .0752896400)*y + .1065626393)*y - .1420889944)*y +
+             .1999355085)*y - .3333314528)*y + 1.0)*x;
+  x:= .785398163397 + x;
+
+  if sign then
+   Result := -x
+  else
+   Result := x;
+
+end;
+
+
+function ArcTan(value: single): single; overload;
+(*
+@description:
+Arctan returns the Arctangent of Value, which can be any Real type.
+
+The resulting angle is in radial units.
+
+@param: value - Real (Q24.8)
+
+@returns: Real (Q24.8)
+*)
+var x, y: single;
+    sign: Boolean;
+begin
+  sign:=false;
+  x:=value;
+  y:=0;
+
+  if (value=0) then begin
+    Result:=0;
+    exit;
+  end else
+   if (x < 0) then begin
+    sign:=true;
+    x:=-x;
+   end;
+
+  x:=(x-1)/(x+1);
   y:=x*x;
   x := ((((((((.0028662257*y - .0161657367)*y + .0429096138)*y -
              .0752896400)*y + .1065626393)*y - .1420889944)*y +
@@ -1166,7 +1152,8 @@ asm
 	tax
 	lda #39
 	sta iccmd,x
-	jsr ciov
+
+	m@call	ciov
 
 	sty IOResult
 
@@ -1199,7 +1186,8 @@ asm
 	tax
 	lda #38
 	sta iccmd,x
-	jsr ciov
+
+	m@call	ciov
 
 	sty IOResult
 
@@ -1270,7 +1258,7 @@ asm
 	mva eax+1 icax4,x
 	mva eax+2 icax5,x
 
-	jsr ciov
+	m@call	ciov
 
 	sty IOResult
 
@@ -1306,6 +1294,38 @@ asm
 	and #e@file.eof
 	sta Result
 };
+end;
+
+
+function IsLetter(A: char): Boolean;
+(*
+@description:
+Check if A is a letter.
+
+@param: A - char
+
+@returns: Boolean
+*)
+begin
+
+ Result := (a>='A') and (a<='Z');
+
+end;
+
+
+function IsDigit(A: char): Boolean;
+(*
+@description:
+Check if A is a digit.
+
+@param: A - char
+
+@returns: Boolean
+*)
+begin
+
+ Result := (a>='0') and (a<='9');
+
 end;
 
 
@@ -1349,17 +1369,17 @@ begin
 end;
 
 
-procedure Val(const s: TString; var v: integer; var code: byte); assembler; overload;
+procedure Val(s: PString; var v: integer; var code: byte); assembler; overload;
 (*
 @description:
 Calculate numerical value of a string
 
-@param: s - string[32]
+@param: s - string
 @param: v - pointer to integer - result
 @param: code - pointer to integer - error code
 *)
 asm
-{	@StrToInt #adr.s
+{	@StrToInt s
 
 	tya
 	pha
@@ -1380,12 +1400,76 @@ asm
 end;
 
 
-procedure Val(const s: TString; var v: single; var code: byte); overload;
+procedure Val(s: PString; var v: real; var code: byte); overload; //register;
 (*
 @description:
 Calculate numerical value of a string
 
-@param: s - string[32]
+@param: s - string
+@param: v - pointer to real - result
+@param: code - pointer to integer - error code
+*)
+var n, dotpos, len: byte;
+    r: real;
+begin
+
+ r:=0.0;
+ 
+ code:=1;
+
+ len:=1 + byte(s[0]);
+
+ if len > 1 then begin
+
+	dotpos:=0;
+
+	if (s[1] = '-') or (s[1] = '+') then	//Added line to check sign.If the number is signed,
+		n:=2				//set n to position 2.
+	else					//(number is not signed)
+		n:=1;				//set n to position 1.
+
+// If the number was signed,then we set n to 2,
+// so that we start with s[2],and at the end
+// if the number was negative we will multiply by -1.
+
+	while n<len do begin			//n is already set to the position of the fisrt number.
+
+	if (s[n] = '.') then
+		dotpos := len - n - 1
+        else
+		if isDigit(s[n]) then
+			r := r * 10.0 +  real(ord(s[n])-ord('0'))
+		else begin
+			v := 0.0;
+			code := n;
+			exit;
+		end;
+
+	inc(n);
+	end;
+
+	while dotpos <> 0 do begin
+		r := r / 10;
+		dec(dotpos);
+	end;
+
+	if (s[1]='-') then			//If s[] is "negative"
+		r :=  -r;
+
+	code := 0;
+ end;
+ 
+ v := r;
+
+end;
+
+
+procedure Val(s: PString; var v: single; var code: byte); overload; //register;
+(*
+@description:
+Calculate numerical value of a string
+
+@param: s - string
 @param: v - pointer to integer - result
 @param: code - pointer to integer - error code
 *)
@@ -1394,6 +1478,8 @@ var n, dotpos, len: byte;
 begin
 
  f:=0;
+ 
+ code:=1;
 
  len:=length(s) + 1;
 
@@ -1415,7 +1501,13 @@ begin
 	if (s[n] = '.') then
 		dotpos := len - n - 1
         else
-		f := f * 10 +  single(ord(s[n])-ord('0'));
+		if isDigit(s[n]) then
+			f := f * 10 +  single(ord(s[n])-ord('0'))		
+		else begin
+			v := 0;
+			code := n;
+			exit;
+		end;
 
 	inc(n);
 	end;
@@ -1428,6 +1520,7 @@ begin
 	if (s[1]='-') then			// If s[] is "negative"
 		f :=  -f;
 
+	code := 0;
  end;
 
  v := f;
@@ -1435,7 +1528,7 @@ begin
 end;
 
 
-function FloatToStr(a: real): ^string; assembler;
+function FloatToStr(a: real): TString; assembler;
 (*
 @description:
 Convert a float value to a string
@@ -1451,14 +1544,15 @@ asm
 
 	@ValueToStr #@printREAL
 
-	mwa #@buf Result
+	ldx #$20
+	mva:rpl @buf,x adr.Result,x-
 
 	pla:tax
 };
 end;
 
 
-procedure Str(a: integer; var s: TString); assembler;
+procedure Str(a: integer; var s: TString); overload; assembler;
 (*
 @description:
 Convert a numerical value to a string
@@ -1472,6 +1566,28 @@ asm
 	inx
 
 	@ValueToStr #@printINT
+
+	@move #@buf s #16	; !!! koniecznie przez wskaznik
+
+	pla:tax
+};
+end;
+
+
+procedure Str(a: cardinal; var s: TString); overload; assembler;
+(*
+@description:
+Convert a numerical value to a string
+
+@param: a - integer
+@param: s - string[32] - result
+*)
+asm
+{	txa:pha
+
+	inx
+
+	@ValueToStr #@printCARD
 
 	@move #@buf s #16	; !!! koniecznie przez wskaznik
 
@@ -1714,7 +1830,7 @@ end;
 
 function fsincos(x: single; sc: boolean): single;
 //----------------------------------------------------------------------------------------------
-// http://atariage.com/forums/topic/240919-mad-pascal/page-10#entry3818764
+// https://atariage.com/forums/topic/240919-mad-pascal/?do=findComment&comment=3818764
 //----------------------------------------------------------------------------------------------
 var i: byte;
 begin
@@ -1729,8 +1845,7 @@ begin
     i := trunc(x);
 
     { Fixes negative part, needed to calculate "fractional" part }
-    if cardinal(x) >= $80000000 then { this is shorter than "x < 0" }
-        dec(i);
+    if integer(x) < 0 then dec(i); { this is shorter than "x < 0" }
 
     { And finally get's fractional part }
     x := x - shortint(i);
@@ -1989,7 +2104,7 @@ asm
 end;
 
 
-function Concat(a,b: string): string; assembler; overload;
+function Concat(a,b: PString): string; assembler; overload;
 (*
 @description:
 Append one string to another.
@@ -2000,36 +2115,44 @@ Append one string to another.
 @returns: string (a+b)
 *)
 asm
-{	mva #0 @buf
-	@addString #adr.a
-	@addString #adr.b
-;	@move #@buf #adr.Result #256
+{	cpw a #@buf
+	beq skp
+
+	mva #0 @buf
+	@addString a
+skp
+	@addString b
+
 	ldy #0
 	mva:rne @buf,y adr.Result,y+
 };
 end;
 
 
-function Concat(a: string; b: char): string; assembler; overload;
+function Concat(a: PString; b: char): string; assembler; overload;
 (*
 @description:
 
 *)
 asm
-{	mva #0 @buf
-	@addString #adr.a
+{	cpw a #@buf
+	beq skp
+
+	mva #0 @buf
+	@addString a
+skp
 	inc @buf
 	ldy @buf
 	lda b
 	sta @buf,y
-;	@move #@buf #adr.Result #256
+
 	ldy #0
 	mva:rne @buf,y adr.Result,y+
 };
 end;
 
 
-function Concat(a: char; b: string): string; assembler; overload;
+function Concat(a: char; b: PString): string; assembler; overload;
 (*
 @description:
 
@@ -2038,8 +2161,8 @@ asm
 {	mva #1 @buf
 	lda a
 	sta @buf+1
-	@addString #adr.b
-;	@move #@buf #adr.Result #256
+	@addString b
+
 	ldy #0
 	mva:rne @buf,y adr.Result,y+
 };
@@ -2143,5 +2266,55 @@ begin
  Result := a shr 16 + a shl 16;
 
 end;
+
+
+procedure GetMem(var p; size: word); assembler; register;
+(*
+@description:
+Getmem reserves Size bytes memory, and returns a pointer to this memory in p.
+
+@param: p - pointer
+@param: size
+*)
+asm
+{
+	ldy #$00
+	lda :psptr
+	sta (P),y
+	iny
+	lda :psptr+1
+	sta (P),y
+
+	adw :psptr size
+};
+end;
+
+
+procedure FreeMem(var p; size: word); assembler; register;
+(*
+@description:
+Freemem releases the memory occupied by the pointer P
+
+@param: p - pointer
+@param: size
+*)
+asm
+{
+	cpw psptr #:PROGRAMSTACK
+	beq skp
+	bcc skp
+	
+	ldy #$00
+	tya
+	sta (P),y
+	iny
+	sta (P),y
+
+	sbw :psptr size	
+skp
+};
+end;
+
+
 
 end.

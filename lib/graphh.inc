@@ -1,6 +1,6 @@
 
 type
-	TFrameBuffer = record 
+	TDisplayBuffer = record
 			dl: word;
 			bp: word;
 		       end;
@@ -32,7 +32,7 @@ const
 	m640x480 = 8 + 16;
 
 	{ error codes }
-	grOK		= 0;
+	grOK		= 1;
 	grNoInitGraph	= -1;
 	grNotDetected	= -2;
 	grFileNotFound	= -3;
@@ -103,7 +103,7 @@ var	WIN_LEFT: smallint = 0;
 	WIN_BOTTOM: smallint = 23;
 
 	GraphResult: byte;
-	
+
 	GetColor: byte;
 
 	LastArcCoords: TLastArcCoords;
@@ -113,7 +113,8 @@ var	WIN_LEFT: smallint = 0;
 	procedure Bar3D(x1, y1, x2, y2 : smallint;depth : word;top : boolean);
 	procedure Circle(x0,y0,radius: word);
 	procedure ClipLine(x1, y1, x2, y2: smallint);
-	procedure Ellipse(x0, y0, a, b: word);
+	procedure Ellipse(x0, y0, a, b: word); overload;
+	procedure Ellipse(X, Y, StAngle, EndAngle, xRadius,yRadius: Word); overload;
 	procedure FillEllipse(x0, y0, a, b: word);
 	procedure FillRect(Rect: TRect);
 	procedure FloodFill(a,b: smallint; newcolor: byte);
@@ -125,7 +126,7 @@ var	WIN_LEFT: smallint = 0;
 	function GetPixel(x,y: smallint): byte; assembler;
 	function GetMaxColor: word;
 	procedure InitGraph(mode: byte); overload;
-	procedure InitGraph(driver, mode: byte; pth: TString); overload;
+	procedure InitGraph(driver, mode: byte; dev: PByte); overload;
 	procedure Line(x1,y1,x2,y2: smallint);
 	procedure MoveRel(Dx, Dy: smallint);
 	procedure MoveTo(x, y: smallint); assembler;
