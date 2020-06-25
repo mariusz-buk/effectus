@@ -1,6 +1,6 @@
-==================
-  Effectus 0.4.3
-==================
+================
+  Effectus 0.5
+================
 
 This is new version of Effectus, done from scratch. This is new branch version, currently only
 for Windows platform. Other platforms will be supported when vital parts of the program will be
@@ -105,14 +105,13 @@ Device I/O support
 ------------------
 
 PROCedures:
-  OPEN, CLOSE, PUTD, PUTDE, PRINTD, PRINTDE,
+  OPEN, CLOSE, PUTD, PUTDE, PRINTD, PRINTDE, XIO,
   PRINTBD, PRINTBDE, PRINTCD, PRINTCDE, PRINTID, PRINTIDE,
   INPUTSD, INPUTMD
 
 FUNCtions:  
   INPUTBD, INPUTCD, INPUTID
 
-- EOF (end of line) variable supported in IF, WHILE and UNTIL branch conditions
 - Printing to text modes by using PrintD and PrintDE is allowed
 
 Inline machine language
@@ -169,7 +168,7 @@ Misc
 Effectus directory structure
 ----------------------------
 
-- root directory: effectus.exe, mads.exe, mp.exe, LICENSE-mads-mp, readme.txt, test.bat, del.bat
+- root directory: program executables, license documents and other supporting files
 - examples: Action!/Effectus examples
 - base: Mad Assembler library directory
 - lib: Mad Pascal library directory
@@ -180,10 +179,14 @@ Command prompt execution
 effectus <filename> <parameters>
 
 Available options:
-  -i  information about declared variables, PROCedures, FUNCtions and DEFINE constants
-  -o: binary file extension
-  -c  clear summarized log file
-  -nc Effectus only translate source to Mad Pascal
+  -i   Information about declared variables, PROCedures, FUNCtions and DEFINE constants
+  -o:  Binary file extension
+  -c   Clear summarized log file
+  -nc  Effectus only translate source to Mad Pascal
+  -z   Variable zero page address
+  -zb  BYTE variable zero page address
+  -zw  CARD (word) variable zero page address
+  -zp  Pointer (PByte) zero page address
 
 - Effectus/Action! source code listing can reside on any path and resulting code
   is also generated there
@@ -198,9 +201,13 @@ You can read about missing features and bug issues in additional file dev_log.tx
 -------------------------------------------------------------------------------
 
 Written by Bostjan Gorisek from Slovenia
-Page URL: http://gury.atari8.info/effectus/
-          http://freeweb.siol.net/diomedes/effectus/
-          https://github.com/mariusz-buk/effectus
+References:
+  http://gury.atari8.info/effectus/
+  http://freeweb.siol.net/diomedes/effectus/
+  https://github.com/mariusz-buk/effectus
 
 Mad Pascal and MAD Assembler (MADS) are products written by Tomasz Biela (Tebe) from Poland
-Page URL: http://mads.atari8.info/
+References:
+  http://mads.atari8.info/
+  https://github.com/tebe6502/Mad-Pascal
+  https://github.com/tebe6502/Mad-Assembler
