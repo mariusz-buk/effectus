@@ -2,8 +2,11 @@
 program strmanPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using string manipulation PROCedures
@@ -15,7 +18,7 @@ uses
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
   STR01 : string[21];
   STR02 : string[15];
   STR03 : string[15];
@@ -34,7 +37,8 @@ begin  // 2
   STR01 := Concat(Concat(Copy(STR01, 1,  7 - 1),  'ATARI'), Copy(STR01,  11 + 1, Length(STR01)));
   Write('STR01=');
   Writeln(STR01);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

@@ -1,0 +1,54 @@
+BYTE ch=764     ; ESC = 28
+
+BYTE RTCLOCK=20 ; sys timer
+CARD SAVMSC=88  ; screen addr
+
+BYTE col1=709
+BYTE col2=710
+BYTE colB=712
+
+BYTE stop
+
+PROC drawBoard()
+ BYTE i1b, i2b, i3b
+ BYTE ARRAY SCREEN
+
+ SCREEN=SAVMSC
+
+ FOR i3b=1 TO 8
+  DO
+   FOR i2b=1 TO 24
+    DO
+     FOR i1b=1 TO 4
+       DO
+         SCREEN(0)=255
+         SCREEN(1)=255
+         SCREEN(2)=255
+         SCREEN==+6
+       OD
+     SCREEN==+16
+    OD
+    IF (i3b & 1) = 0 THEN SCREEN==-3 ELSE SCREEN==+3 FI
+  OD
+RETURN
+
+PROC main()
+ BYTE I=[0]
+
+ GRAPHICS(8+16)
+ col1=1
+ col2=11
+ colB=12
+
+ RTCLOCK=0
+ WHILE RTCLOCK<150
+  DO
+   drawBoard()
+   I==+1
+  OD
+ stop=RTCLOCK
+
+ GRAPHICS(0)
+ PRINTF("%E %U iterations",I)
+ WHILE ch=255 DO OD
+RETURN

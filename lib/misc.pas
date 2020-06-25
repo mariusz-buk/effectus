@@ -1,7 +1,7 @@
 unit misc;
 (*
  @type: unit
- @author: Tomasz Biela (Tebe)
+ @author: Konrad Kokoszkiewicz, Tomasz Biela
  @name: Miscellaneous procedures for detect additional hardware
  @version: 1.0
 
@@ -26,7 +26,7 @@ DetectVBXE
 
 interface
 
-var	banks: array [0..63] of byte absolute $0101;	// array with code of banks PORTB
+var	banks: array [0..63] of byte absolute __PORTB_BANKS;	// array with code of banks PORTB
 	
 var	DetectOS: byte absolute $fff7;
 (* 
@@ -44,6 +44,7 @@ Detect OS
 253 'QMEG+OS RC01'
 *)	
 
+	function DetectANTIC: Boolean; assembler;
 	function DetectBASIC: byte; assembler;
 	function DetectCPU: byte; assembler;
 	function DetectCPUSpeed: real;
@@ -58,10 +59,49 @@ Detect OS
 implementation
 
 
+function DetectANTIC: Boolean; assembler;
+asm
+{
+// ANTIC PAL Test for Atari 8-bits
+// (C) 2019 Guillermo Fuenzalida
+
+antic_loop1
+	lda vcount
+	cmp #100
+	bcc antic_loop1		// wait till scanline 200
+	sta scanline
+antic_loop2
+	lda vcount
+	cmp #10
+	bmi antic_loop2_fin
+	cmp scanline
+	bmi antic_loop2
+	sta scanline
+	bpl antic_loop2
+antic_loop2_fin	
+	ldx #$00
+	lda #0
+scanline equ *-1
+	cmp #135
+	bmi ntsc
+	inx
+ntsc
+	stx palnts	
+detect
+	ldy #1
+	lda palnts
+	seq
+	dey
+
+	sty Result
+};
+end;
+
+
 function DetectHighMem: word;
 (*
 @description:
-Detect 65816 linear memmory
+Detect 65816 linear memory
 
 <http://atariki.krap.pl/index.php/Obliczenie_rozmiaru_pami%C4%99ci_liniowej>
 
@@ -265,7 +305,7 @@ function DetectCPU: byte; assembler;
 @description:
  How to detect on which CPU the assembler code is running
 
- (This information is from Draco, the author of SYSINFO 2.0)
+ (This information is from Konrad Kokoszkiewicz (drac030), the author of SYSINFO 2.0)
 
  You can test on plain 6502-Code if there is a 65c816 CPU, the 16-Bit processor avaible
 
@@ -322,7 +362,7 @@ function DetectCPUSpeed: real;
 @description:
 Detect CPU speed in megahertz
 
-author: Draco
+author: Konrad Kokoszkiewicz
 
 @returns: speed (REAL Q24.8)
 *)
@@ -334,12 +374,18 @@ asm
 
 	tsx
 	stx	stk
-
+	
 	lda	vvblki
 	sta	lvbl
 
 	lda	vvblki+1
 	sta	hvbl
+
+	lda	portb
+	sta	oldp
+
+	lda	#$ff
+	sta	portb
 
 	sei
 
@@ -389,7 +435,12 @@ lvbl	equ *-1
 hvbl	equ *-1
 	sta vvblki+1
 
+	lda	#0
+oldp	equ *-1
+	sta	portb
+
 	cli
+
 	ldx #0
 @sp	equ *-1
 };
@@ -400,7 +451,7 @@ end;
 function DetectMem: byte; assembler;
 (*
 @description:
-Detect amount additional memmory PORTB
+Detect amount additional memory PORTB
 
 @returns: amount of banks (0..255)
 @returns: banks code PORTB = BANKS[0..63] at address $0101
@@ -629,12 +680,15 @@ BASROM	= $a8e2
 
 	lda PORTB
 	sta old
+	
+	and #1
+	beq stop
 
 	lda #$fd
 	sta PORTB
 
 	lda BASROM
-	sta Result
+stop	sta Result
 	
 	lda #$ff
 old	equ *-1

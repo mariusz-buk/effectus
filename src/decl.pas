@@ -37,10 +37,10 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.4.3';  // Effectus version
+  VERSION = '0.5';  // Effectus version
 
 type
-  // Program support variables
+  // Program flag variables
   TPrgPtr = record
     isProcBegin : boolean;
     isProcFirstBegin : boolean;
@@ -59,7 +59,6 @@ type
     isCheckVar : boolean;
     strCheckProcName : string;
     isStartBegin : boolean;
-
     colorValue : string;  // color variable current value
     isByteBuffer : boolean;
   end;
@@ -67,9 +66,7 @@ type
   { Machine language holder }
   TProcML = record
     Name : String;
-    //ProcType : Byte;
     Code : String;
-    //Address : String[5];
     isAsm : boolean;
     strAsm : string
   end;
@@ -121,6 +118,7 @@ type
     isIfThenInProgress : boolean;
     ifThenCode : string;
     ifTempCode : string;
+    isFuncInIf : boolean;
 
     isFor : boolean;
     isForDoNext : boolean;
@@ -142,11 +140,11 @@ type
 
   // Device support variables
   TDevicePtr = record
-    isOpen : boolean;
     isDevice : boolean;
     isStick : boolean;
     isGraphics : boolean;
     isGr0 : boolean;
+    isSySutils : boolean;
   end;
 
 var
@@ -157,9 +155,14 @@ var
   dataTypes : TStringList;
   code : TStringList;
   effCode : TStringList;
-  isClearLog : Boolean = False;
-  //ProcCount : LongInt;  // PROC statement count
-  //FuncCount : LongInt;  // FUNC statement count
+  isClearLog : boolean = false;
+  
+  isVarFastMode : boolean = false;
+  isByteFastMode : boolean = false;
+  isPointerFastMode : boolean = false;
+  isWordFastMode : boolean = false;
+  cntByteFastMode : byte = 0;
+  
   FuncList : TStringList;
   defineList : TStringList;
   filenameSrc : string;
@@ -197,6 +200,8 @@ const
   _VAR_CARD_ARRAY = '5';
   _VAR_SCALAR_DEFAULT = '6';
   _VAR_TYPE_REC   = '7';
+
+  _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
 procedure Init;
 procedure CreateLists;
@@ -362,8 +367,14 @@ begin
   procParams.Add('PrintIDE=2;2;3');
   procParams.Add('InputSD=2;2;1');
   procParams.Add('InputMD=3;2;1;2');
+  
+  //PROC XIO(BYTE chan,0,cmd,auxl,aux2,<filestring))
+  procParams.Add('XIO=6;2;2;2;2;2;1');
 
+  // Action! variables
   funcs.Add('Color=0');
+  
+  // Action! FUNCtions
   //funcs.Add('EOF=0');
   funcs.Add('Rand=1');
   funcs.Add('Peek=1');

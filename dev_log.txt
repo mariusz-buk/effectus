@@ -7,7 +7,6 @@ Not yet supported
 
 - INCLUDE files
 - SET directive addressing
-- XIO PROCedure for handling I/O operations
 - Note and Point PROCedures for working with disk drives
 - No proper error handling is done yet, so it happens that no errors show on the screen
   even when something goes wrong
@@ -101,4 +100,3 @@ Bug issues
   
     dir = 1
     ...
-

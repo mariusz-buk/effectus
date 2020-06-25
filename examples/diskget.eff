@@ -23,17 +23,17 @@ OD
 
 Close(1)
 PRINTF("%EAll numbers read!%E%E")
-PRINTE("Read numbers again:")
+;PRINTE("Read numbers again:")
 
-OPEN(1,"H1:TESTNUM.TXT",4,0)
+;OPEN(1,"H1:TESTNUM.TXT",4,0)
 
-DO
-  n=GetD(1) Put(n)
-UNTIL EOF(1)
-OD
+;DO
+;  n=GetD(1) Put(n)
+;UNTIL EOF(1)
+;OD
 
-CLOSE(1)
-PRINTF("%E%EAll numbers are read again!%E")
+;CLOSE(1)
+;PRINTF("%E%EAll numbers are read again!%E")
 
 KEY=GETD(7)
 

@@ -2,13 +2,16 @@
 program scope02Prg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // PROCedure and variable scope
 var
-  key : char;
+  key : byte;
   cvar : word;
 
 procedure TEST01Proc;
@@ -54,7 +57,8 @@ begin  // 1
   TEST01Proc;
   TEST02Proc(72);
   TEST03Proc(7, 2355);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

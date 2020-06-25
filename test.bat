@@ -8,6 +8,7 @@ effectus examples\butterfly.eff
 effectus examples\bytes.eff
 effectus examples\byteval.eff
 effectus examples\callos.eff
+effectus examples\chessboard.eff
 effectus examples\chrdef.eff
 effectus examples\define.eff
 effectus examples\diskget.eff
@@ -41,6 +42,7 @@ effectus examples\rainbow.eff
 effectus examples\rand.eff
 effectus examples\recs.eff
 effectus examples\resieve.eff
+effectus examples\rscroll.eff
 effectus examples\scompare.eff
 effectus examples\scope01.eff
 effectus examples\scope02.eff

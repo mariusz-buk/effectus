@@ -2,15 +2,18 @@
 program loop_exitPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using EXIT command in loop statements
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
   n : byte;
 begin  // 2
   Write(Chr(125));
@@ -55,7 +58,8 @@ begin  // 2
   until  n=6;
   Writeln('');
   Writeln('Escaped from UNTIL loop!');
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

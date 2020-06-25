@@ -2,7 +2,7 @@
 program rainbowPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, Graph;
 
 // Effectus example
 // - - - - - - - - - - - - - - - - - -

@@ -2,7 +2,7 @@
 program shipPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, Graph;
 
 // Effectus example
 // -------------------------------------

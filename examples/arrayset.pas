@@ -2,14 +2,17 @@
 program arraysetPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using ARRAY predeclared values with
 // BYTE ARRAY and CARD ARRAY
 var
-  key : char;
+  key : byte;
   I : byte;
 var
   BYTES : array[0..3] of byte = (10, 20, 30, 40);
@@ -38,7 +41,8 @@ begin  // 6
   Write(',');
   end;  // if
   end;  // for
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

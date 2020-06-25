@@ -2,15 +2,18 @@
 program procsPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using local PROCedures
 var
   m1 : word;
   m2 : word;
-  key : char;
+  key : byte;
 
 procedure PRINTTEXTProc;
 begin  // 1
@@ -79,7 +82,8 @@ begin  // 6
   Writeln('held in variables m1 and m2');
   SUMCARDSProc(m1, m2);
   NUMBERSProc(10000, 65200, 201, 32000, 4651);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

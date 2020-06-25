@@ -2,12 +2,16 @@
 program definePrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
-// Effectus example
-// -------------------------------------
+
 var
-  key : char;
+  strBuffer : string;
+// --------------------------------------
+// Effectus example
+// --------------------------------------
+var
+  key : byte;
 
 procedure DEFINE_TESTProc;
 var
@@ -27,7 +31,8 @@ begin  // 1
   for  n:=1 to 3 do begin
   Writeln(n);
   end;  // for
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

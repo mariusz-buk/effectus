@@ -2,8 +2,11 @@
 program printfPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // PrintF demo
@@ -11,7 +14,7 @@ var
   x : byte;
   y : integer;
   z : word;
-  key : char;
+  key : byte;
 
 procedure MAINProc;
 begin  // 1
@@ -33,7 +36,8 @@ begin  // 1
   Write('', eol, 'HEX z(CARD) ', Z, '=', '$', HexStr(Z, 4), '');
   Write('', eol, '', eol, 'First character: ', Chr(65), '');
   Write('', eol, 'Number one: ', Chr(49), '');
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

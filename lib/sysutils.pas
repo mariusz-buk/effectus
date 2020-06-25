@@ -11,8 +11,10 @@ unit sysutils;
 {
 
 AnsiUpperCase
+AnsiLowerCase
 Beep
 BoolToStr
+ByteToStr
 Click
 Date
 DateToStr
@@ -50,6 +52,7 @@ type	TSearchRec = record
 
 *)
 		Attr: Byte;
+		ExcludeAttr: Byte;
 		Name: TString;
 		FindHandle: Pointer;
 	     end;
@@ -64,9 +67,11 @@ const
 	faAnyFile	= $3f;
 
 
-	function AnsiUpperCase(const a: string): string;
+	function AnsiUpperCase(a: PString): string; register;
+	function AnsiLowerCase(a: PString): string; register;
 	procedure Beep;
 	function BoolToStr(B: Boolean; UseBoolStrs: Boolean): TString;
+	function ByteToStr(a: byte): TString; assembler;
 	procedure Click; assembler;
 	function Date: TDateTime;
 	function DateToStr(d: TDateTime): TString;
@@ -77,22 +82,23 @@ const
 	function EncodeDate(Year, Month, Day: Byte): TDateTime;
 	function EncodeDateTime(Year, Month, Day, Hour, Minute, Second: Byte): TDateTime;
 	function EncodeTime(Hour, Minute, Second: Byte): TDateTime;
-	function ExtractFileExt(const a: string): TString;
-	function ExtractFilePath(const a: string): string;
-	function FileExists(name: TString): Boolean;
+	function ExtractFileExt(a: PString): TString;
+	function ExtractFilePath(a: PString): string;
+	function FileExists(name: PString): Boolean;
 	procedure FindClose(var f: TSearchRec); assembler;
 	function FindFirst (const FileMask: TString; Attributes: Byte; var SearchResult: TSearchRec): byte;
 	function FindNext(var f: TSearchRec): byte; assembler;
 	function GetTickCount: cardinal; assembler;
 	function IntToHex(Value: cardinal; Digits: byte): TString; register; assembler;
-	function IntToStr(a: integer): ^string; assembler;
+	function IntToStr(a: integer): TString; assembler; overload;
+	function IntToStr(a: cardinal): TString; assembler; overload;
 	function IsLeapYear(Year: Word): boolean;
 	function Now: TDateTime;
 	function RenameFile(var OldName,NewName: TString): Boolean; assembler;
-	function StrToBool(const S: TString): Boolean;
-	function StrToFloat(var s: TString): real;
+	function StrToBool(S: PString): Boolean;
+	function StrToFloat(var s: string): real; 
 	function StrToInt(const s: char): byte; assembler; overload;
-	function StrToInt(const s: TString): integer; assembler; overload;
+	function StrToInt(s: PString): integer; assembler; overload;
 	function TimeToStr(d: TDateTime): TString;
 	function Trim(var S: string): string;
 
@@ -139,7 +145,7 @@ asm
 end;
 
 
-function FindFirst (const FileMask: TString; Attributes: Byte; var SearchResult: TSearchRec): byte;
+function FindFirst(const FileMask: TString; Attributes: Byte; var SearchResult: TSearchRec): byte;
 (*
 @description: Start a file search and return a findhandle
 
@@ -155,12 +161,12 @@ begin
 asm
 {	txa:pha
 
-loop	clc			; iocheck off
+	clc			; iocheck off
 	@openfile f #6
-
+loop
 	mwa SearchResult :bp2
 
-	ldy #SearchResult.Attr-DATAORIGIN
+	ldy #SearchResult.ExcludeAttr-DATAORIGIN
 	lda Attributes
 	sta (:bp2),y
 
@@ -196,7 +202,12 @@ loop	clc			; iocheck off
 
 	jsr @DirFileName
 
+	mwa SearchResult :bp2
+
+	ldy #SearchResult.Attr-DATAORIGIN
 	txa
+	sta (:bp2),y
+	
 	and Attributes
 	ora Result
 	beq loop
@@ -231,8 +242,12 @@ loop	mwa f :bp2
 	jsr @DirFileName
 
 	mwa f :bp2
+	
 	ldy #f.Attr-DATAORIGIN
 	txa
+	sta (:bp2),y
+	
+	ldy #f.ExcludeAttr-DATAORIGIN
 	and (:bp2),y
 	ora Result
 	beq loop
@@ -300,7 +315,8 @@ asm
 	lda #$00
 	sta icax1,x
 	sta icax2,x
-	jsr ciov
+
+	m@call	ciov
 
 stop	sty MAIN.SYSTEM.IOResult
 
@@ -344,7 +360,8 @@ asm
 	lda #$00
 	sta icax1,x
 	sta icax2,x
-	jsr ciov
+	
+	m@call	ciov
 
 stop	sty MAIN.SYSTEM.IOResult
 
@@ -361,7 +378,7 @@ ok	lda #true
 end;
 
 
-function FileExists(name: TString): Boolean;
+function FileExists(name: PString): Boolean;
 (*
 @description: Check whether a particular file exists in the filesystem
 
@@ -409,9 +426,46 @@ begin
 end;
 
 
-function IntToStr(a: integer): ^string; assembler;
+function ByteToStr(a: byte): TString; assembler;
 (*
-@description: Convert an integer value to a decimal string
+@description: Converts input byte to a string
+
+@param: a: byte
+
+@returns: pointer to string
+.Y = hundreds, .X = tens, .A = ones
+*)
+
+asm
+{	txa:pha
+
+	lda a
+	ldy #$2f
+	ldx #$3a
+	sec
+@	iny
+	sbc #100
+	bcs @-
+@	dex
+	adc #10
+	bmi @-
+	adc #$2f
+	
+	sta adr.Result+3
+	stx adr.Result+2
+	sty adr.Result+1
+	
+	lda #3
+	sta adr.Result
+
+	pla:tax
+};
+end;
+
+
+function IntToStr(a: integer): TString; assembler; overload;
+(*
+@description: Convert an INTEGER value to a decimal string
 
 @param: a: integer
 
@@ -424,7 +478,31 @@ asm
 
 	@ValueToStr #@printINT
 
-	mwa #@buf Result
+	ldx #$20
+	mva:rpl @buf,x adr.Result,x-
+
+	pla:tax
+};
+end;
+
+
+function IntToStr(a: cardinal): TString; assembler; overload;
+(*
+@description: Convert an CARDINAL value to a decimal string
+
+@param: a: cardinal
+
+@returns: pointer to string
+*)
+asm
+{	txa:pha
+
+	inx
+
+	@ValueToStr #@printCARD
+
+	ldx #$20
+	mva:rpl @buf,x adr.Result,x-
 
 	pla:tax
 };
@@ -450,7 +528,7 @@ asm
 end;
 
 
-function StrToInt(const s: TString): integer; assembler; overload;
+function StrToInt(s: PString): integer; assembler; overload;
 (*
 @description: Convert a string to an integer value
 
@@ -459,7 +537,7 @@ function StrToInt(const s: TString): integer; assembler; overload;
 @returns: integer (32bit)
 *)
 asm
-{	@StrToInt #adr.s
+{	@StrToInt s
 
 	mva edx Result
 	mva edx+1 Result+1
@@ -492,7 +570,7 @@ asm
 end;
 
 
-function StrToFloat(var s: TString): real;
+function StrToFloat(var s: string): real; 
 (*
 @description: Convert a string to a floating-point value
 
@@ -525,7 +603,12 @@ begin
 	if (s[n] = '.') then
 		dotpos := len - n - 1
         else
-		result := result * 10.0 +  real(ord(s[n])-ord('0'));
+		if isDigit(s[n]) then
+			Result := Result * 10.0 +  real(ord(s[n])-ord('0'))
+		else begin
+			Result := 0.0;
+			exit;
+		end;
 
 	inc(n);
 	end;
@@ -543,7 +626,7 @@ begin
 end;
 
 
-function ExtractFileExt(const a: string): TString;
+function ExtractFileExt(a: PString): TString;
 (*
 @description: Return the extension from a filename
 
@@ -573,7 +656,7 @@ begin
 end;
 
 
-function ExtractFilePath(const a: string): string;
+function ExtractFilePath(a: PString): string;
 (*
 @description: Extract the path from a filename
 
@@ -601,23 +684,38 @@ begin
 end;
 
 
-function AnsiUpperCase(const a: string): string;
+function AnsiUpperCase(a: PString): string; register;
 (*
 @description: Return an uppercase version of a string
 
-@param: const a: string[255]
+@param: a: PString
 
 @returns: string[255]
 *)
-var i, j: byte;
+var j: byte;
 begin
 
  Result:=a;
 
- i:=byte(a[0]);
+ for j:=1 to length(a) do Result[j] := UpCase(Result[j]);
 
- if i<>0 then
-  for j:=1 to i do Result[j]:=UpCase(Result[j]);
+end;
+
+
+function AnsiLowerCase(a: PString): string; register;
+(*
+@description: AnsiLowerCase converts the string S to lowercase characters and returns the resulting string.
+
+@param: a: PString
+
+@returns: string[255]
+*)
+var j: byte;
+begin
+
+ Result:=a;
+
+ for j:=1 to length(a) do Result[j] := LowerCase(Result[j]);
 
 end;
 
@@ -642,7 +740,7 @@ asm
 	ldx #11
 	mva:rpl readrtc,x ddevic,x-
 
-	jsr jsioint
+	m@call	jsioint
 
 	sty MAIN.SYSTEM.IOResult
 
@@ -845,7 +943,7 @@ begin
 end;
 
 
-function StrToBool(const S: TString): Boolean;
+function StrToBool(S: PString): Boolean;
 (*
 @description:
 StrToBool will convert the string S to a boolean value.
@@ -856,9 +954,22 @@ If it contains a numerical value, 0 is converted to False, all other values resu
 
 @returns: Boolean
 *)
+var i: integer;
+    e: byte;
 begin
 
- if (AnsiUpperCase(S) = 'TRUE') or (S = '1') then
+ val(S, i, e);
+
+ if e = 0 then begin
+ 
+  if i = 0 then
+   Result := false
+  else 
+   Result := true; 
+ 
+ end else
+ 
+ if (AnsiUpperCase(S) = 'TRUE') then
   Result := true
  else
   Result := false;

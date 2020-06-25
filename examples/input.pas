@@ -2,14 +2,17 @@
 program inputPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // String input demo
 // (using InputS procedure)
 var
-  key : char;
+  key : byte;
   name : string[13];
   surname : string[21];
 
@@ -31,7 +34,8 @@ begin  // 1
   Write(Chr(32));
   Writeln(surname);
   Writeln('');
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

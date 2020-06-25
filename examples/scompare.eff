@@ -35,9 +35,9 @@ FI
 
 PrintF("%EAgain...%E%E")
 
-IF SCOMPARE(STR1,STR2)<0 THEN
+IF SCOMPARE(STR1,STR2)<1 THEN
   PRINTE("str2 is greater than str1")
-ELSEIF SCOMPARE(STR1,STR2)=0 THEN
+ELSEIF SCOMPARE(STR1,STR2)=2 THEN
   PRINTE("str1 and str2 are equal")
 ELSE
   PRINTE("str1 is greater than str2")

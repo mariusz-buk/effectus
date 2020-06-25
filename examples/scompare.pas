@@ -2,11 +2,11 @@
 program scomparePrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
 
 var
-  intValue : integer;
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using SCompare function
@@ -18,7 +18,7 @@ var
 procedure MAINProc;
 var
   value : integer;
-  key : char;
+  key : byte;
   str1 : string = 'ATARI';
   str2 : string = 'HELLO';
   str3 : string = 'ATARI';
@@ -44,18 +44,17 @@ begin  // 2
   Writeln('str1 is greater than str2');
   end;  // if
   Write('', eol, 'Again...', eol, '', eol, '');
-    intValue  := -1;
-  if    intValue =-1  then begin
+  if -1 < 1 then begin
   Writeln('str2 is greater than str1');
-    intValue  := -1;
   end
-  else if    intValue =-1  then begin
+  else if -1 = 2 then begin
   Writeln('str1 and str2 are equal');
   end
   else begin
   Writeln('str1 is greater than str2');
   end;  // if
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

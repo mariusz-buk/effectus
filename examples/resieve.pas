@@ -2,7 +2,7 @@
 program resievePrg;
 
 uses
-  SySutils, Crt;
+  Crt;
 
 var
   ch : byte absolute 764;
@@ -16,7 +16,6 @@ var
   N : word;
   K : word;
 begin  // 1
-  FRAME := RTCLOCK;
  WHILE FRAME=RTCLOCK do begin
   end;  // while
   FillChar(FLAGS, 8190, 1);
@@ -46,7 +45,6 @@ begin  // 1
   end;  // if
   end;  // for
   Write('', eol, ' ', COUNT, ' PRIMES');
-  ch := 255;
  WHILE ch=255 do begin
   end;  // while
 end;  // 4

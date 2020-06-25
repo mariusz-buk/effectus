@@ -2,8 +2,11 @@
 program trianglePrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Graphics triangle demo
@@ -11,7 +14,7 @@ var
   x : byte;
   y : byte;
   r : byte;
-  key : char;
+  key : byte;
 
 procedure MAINProc;
 begin  // 1
@@ -38,7 +41,8 @@ begin  // 1
   SetColor(3);
   LineTo(x, y);
   Writeln('Triangle');
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

@@ -1,0 +1,9 @@
+Filename: examples\chessboard.pas
+25. 06. 2020 14:57:53
+Mad Pascal Compiler version 1.6.4 [2020/06/20] for 6502
+Compiling examples\chessboard.pas
+d:\Atari\Projects\publish\effectus\lib\graph.inc (788) Warning: lo/hi(dword/qword) returns the upper/lower word/dword
+d:\Atari\Projects\publish\effectus\lib\graph.inc (789) Warning: lo/hi(dword/qword) returns the upper/lower word/dword
+66 lines compiled, 1.06 sec, 12098 tokens, 1132 idents, 332 blocks, 7 types
+2 warning(s) issued
+--------------------------------------------------------------------------------

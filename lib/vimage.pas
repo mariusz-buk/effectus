@@ -32,14 +32,14 @@ unit vimage;
 @author: Steven Don, Tomasz Biela (Tebe)
 
 @description:
-VBXE
+VBXE Image
 *)
 
 {
 
-LoadBMP
-LoadGIF
-LoadPCX
+LoadVBMP
+LoadVGIF
+LoadVPCX
 
 }
 
@@ -60,9 +60,9 @@ const
   TooLarge          = $03;
 
 
-	function LoadVBMP(Filename: TString; Location: cardinal): Boolean;
-	function LoadVPCX(Filename: TString; Location: cardinal): Boolean;
-	function LoadVGIF(FileName: TString; Location: cardinal): Boolean;
+	function LoadVBMP(Filename: PString; Location: cardinal): Boolean;
+	function LoadVPCX(Filename: PString; Location: cardinal): Boolean;
+	function LoadVGIF(FileName: PString; Location: cardinal): Boolean;
 
 
 implementation
@@ -109,7 +109,7 @@ procedure LoadPalette(cnt: byte; x, ln, a,b,c: byte);
 @description:
 
 *)
-var i: byte;
+var i: word;
 begin
 
  SetRGBPalette(x);
@@ -122,7 +122,7 @@ begin
 end;
 
 
-function LoadVPCX(Filename: TString; Location: cardinal): Boolean;
+function LoadVPCX(Filename: PString; Location: cardinal): Boolean;
 (*
 @description:
 This loads a PCX File (8bit)
@@ -181,8 +181,8 @@ begin
     Exit;
   end;
 
-  if (Header.xMax > 336-1) or (Header.xMin < 0)
-  or (Header.yMax > 256-1) or (Header.yMin < 0) then begin
+  if (word(Header.xMax) > 336-1) or (Header.xMin < 0)
+  or (word(Header.yMax) > 256-1) or (Header.yMin < 0) then begin
     Close (f);
     IMGError := TooLarge;
     Result := false;
@@ -225,7 +225,7 @@ begin
   nY:=0;
 
   {Decode and display graphics}
-  While (Y < Header.yMax) do begin
+  While (Y < word(Header.yMax)) do begin
     {Read next byte}
     DataByte := NextByte;
 
@@ -247,7 +247,7 @@ begin
       inc (X);
 
       {If End of Line reached, next line}
-      if X = Header.xMax then begin
+      if X = word(Header.xMax) then begin
         X := Header.xMin;
 	inc(Y);
 	inc(nY);
@@ -268,7 +268,7 @@ begin
 end;
 
 
-function LoadVBMP(Filename: TString; Location: cardinal): Boolean;
+function LoadVBMP(Filename: PString; Location: cardinal): Boolean;
 (*
 @description:
 This loads a BMP File (4bit, 8bit)
@@ -384,7 +384,7 @@ begin
 end;
 
 
-function LoadVGIF(FileName: TString; Location: cardinal): Boolean;
+function LoadVGIF(FileName: PString; Location: cardinal): Boolean;
 (*
 @description:
 This loads a GIF File (GIF87a)

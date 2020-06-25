@@ -30,7 +30,7 @@
   If not, see <http://www.gnu.org/licenses/>.
 }
 
-       //writeln('procName = ', procName); 
+       //writeln('procName = ', procName);
 
        if procName = 'PRINT' then begin
          temp := '  Write(' + params2 + ');';
@@ -76,9 +76,9 @@
        else if procName = 'GRAPHICS' then begin
          temp := '';
 
-         if devicePtr.isDevice then begin  
-           temp := '  assign(f, ''S:''); rewrite(f, 1);' + LineEnding;
-         end;
+         //if devicePtr.isDevice then begin  
+         //  temp := '  assign(f, ''S:''); rewrite(f, 1);' + LineEnding;
+         //end;
 
          devicePtr.isGr0 := params2 = '0';
 //          if params2 = '0' then begin
@@ -128,7 +128,7 @@
                  begin
                    params[j] := '@' + params[j];
                  end;
-               end;             
+               end;
                params2 += 'pointer(' + params[j] + '),';
              end
              else begin
@@ -144,13 +144,13 @@
          code.Add(temp);
        end
        else if procName = 'MOVEBLOCK' then begin
-         params := params2.Split(',');         
+         params := params2.Split(',');
          params[0] := Trim(params[0]);
          params[1] := Trim(params[1]);
-         
+
          if IsNumber(params[1][1]) then begin
            params[1] := 'pointer(' + Trim(params[1]) + ')';
-         end;                 
+         end;
          params2 := Trim(params[1]) + ', pointer(' + Trim(params[0]) + '), ' + params[2];
          temp := '  Move(' + params2 + ');';
          code.Add(temp);
@@ -167,13 +167,13 @@
          code.Add(temp);
        end
        else if procName = 'PUT' then begin
-         if params2[1] = '''' then begin
-           temp := Extract(2, params2, '''');
-           temp := '  Write(' + QuotedStr(temp) + ');  // test put';
-         end
-         else begin
+//          if params2[1] = '''' then begin
+//            temp := Extract(2, params2, '''');
+//            temp := '  Write(' + QuotedStr(temp) + ');  // test put';
+//          end
+//          else begin
            temp := '  Write(Chr(' + params2 + '));';
-         end;
+         //end;
          code.Add(temp);
        end
        else if procName = 'STRB' then begin
@@ -243,7 +243,7 @@
          // Format string definition
          params := params2.Split(',', '"', '"');
          temp := params[0];
-         
+
          // Process
          if System.Pos('%%', temp) > 0 then begin
            //SplitStr(temp, '%%', aList);
@@ -311,77 +311,95 @@
          code.Add('  Write(' + temp02 + ');');
        end
        else if procName = 'OPEN' then begin
-         devicePtr.isOpen := true;
-         params := params2.Split(',');
-         if High(params) > 0 then begin
-           //assign(f, s);
-           //reset(f, sizeof(cardinal));
-           temp := '  Assign(f, ' + params[1] + ');' + LineEnding;
-           if Trim(params[2]) = '4' then
-             //temp += '  Reset(f, sizeOf(byteBuffer));'
-             temp += '  Reset(f, 1);'
-           else begin
-             //temp += '  Rewrite(f, sizeOf(byteBuffer));';
-             temp += '  Rewrite(f, 1);';
-           end;
-           code.Add(temp);
-         end;
+//          //devicePtr.isOpen := true;
+//          params := params2.Split(',');
+//          if High(params) > 0 then begin
+//            temp := '  Assign(f, ' + params[1] + ');' + LineEnding;
+//            if Trim(params[2]) = '4' then
+//              //temp += '  Reset(f, sizeOf(byteBuffer));'
+//              temp += '  Reset(f, 1);'
+//            else begin
+//              //temp += '  Rewrite(f, sizeOf(byteBuffer));';
+//              temp += '  Rewrite(f, 1);';
+//            end;
+//            code.Add(temp);
+//          end;
+          params := params2.Split(',');
+          if High(params) > 0 then begin
+            // procedure Opn(chn, ax1, ax2: byte; device: PByte); assembler;
+            temp := '  Opn(' + params[0] + ', ' + Trim(params[2]) + ', 0, ' + Trim(params[1]) + ');';
+            code.Add(temp);
+          end;
        end
        else if (procName = 'CLOSE') then begin
-         if devicePtr.isOpen then begin
-           devicePtr.isOpen := false;
-           temp := '  Close(f);';
+         //if devicePtr.isOpen then begin
+         //  devicePtr.isOpen := false;
+           //procedure Cls(chn: byte); assembler;
+           //temp := '  Close(f);';
+           temp := '  Cls(' + params2 + ');';
            code.Add(temp);
-         end;
+         //end;
        end
        else if procName = 'PUTD' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           if params[1][1] = '''' then begin
-             temp := Extract(2, params[1], '''');
-             temp := QuotedStr(temp);
-           end
-           else begin
-             temp := 'Concat(Chr(' + params[1] + '), ' + QuotedStr('') + ')';
-             temp := 'Concat(' + temp + ', ' + QuotedStr('') + ');';
-           end;         
-           temp := '  strBuffer := ' + temp + ';' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+//            // F.e. 'A
+//            if params[1][1] = '''' then begin
+//              temp := Extract(2, params[1], '''');
+//              //temp := QuotedStr(IntToStr(ord(temp)));
+//            end
+//            else begin
+           //  temp := 'Concat(Chr(' + params[1] + '), ' + QuotedStr('') + ')';
+           //  temp := 'Concat(' + temp + ', ' + QuotedStr('') + ');';
+             //temp := params[1];
+//           end;
+           //temp := '  strBuffer := ' + temp + ';' + LineEnding;
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           // Put(6, ord('A'*));
+           temp := '  Put(' + params[0] + ', ' + params[1] + ');';
            code.Add(temp);
          end;
        end
        else if procName = 'PUTDE' then begin
-         temp := '  strBuffer := Concat(#$9b, ' + QuotedStr('') + ');' + LineEnding;
-         temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+         //temp := '  strBuffer := Concat(#$9b, ' + QuotedStr('') + ');' + LineEnding;
+         //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+         temp := '  Put(' + params2 + ', $9b);';
          code.Add(temp);
        end
        else if procName = 'PRINTD' then begin
-         //params := params2.Split(',');
-         //if High(params) > 0 then begin
+         temp03 := StringReplace(params2, ',', '{', []);
+         params := temp03.Split('{');
+         if High(params) > 0 then begin
            //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
            //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
-         temp03 := StringReplace(params2, ',', '{', []);
-         temp03 := Extract(2, temp03, '{');
-         temp := '  strBuffer := ' + temp03 + ';' + LineEnding;
-         //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
-         temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
-         code.Add(temp);
+           //temp03 := StringReplace(params2, ',', '{', []);
+           //temp03 := Extract(2, temp03, '{');
+           temp := '  strBuffer := ' + params[1] + ';' + LineEnding;
+           //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
+           code.Add(temp);
+         end;
        end
        else if procName = 'PRINTDE' then begin
-         //params := params2.Split(',');  //, '"', '"', 1);
-         //if High(params) > 0 then begin
-           //temp := '  strBuffer := Concat(' + params[1] + ', ' + QuotedStr('$9b') + ');' + LineEnding;
          temp03 := StringReplace(params2, ',', '{', []);
-         temp03 := Extract(2, temp03, '{');
-         temp := '  strBuffer := Concat(' + temp03 + ', #$9b);' + LineEnding;
-         temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
-         code.Add(temp);
+         params := temp03.Split('{');
+         if High(params) > 0 then begin
+           //temp03 := StringReplace(params2, ',', '{', []);
+           //temp03 := Extract(2, temp03, '{');
+           //temp := '  strBuffer := Concat(' + temp03 + ', #$9b);' + LineEnding;
+           temp := '  strBuffer := Concat(' + Trim(params[1]) + ', #$9b);' + LineEnding;
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
+           code.Add(temp);
+         end;
        end
        else if procName = 'PRINTBD' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
        end
@@ -389,7 +407,8 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := Concat(IntToStr(' + params[1] + '), #$9b);' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
        end
@@ -397,7 +416,8 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
        end
@@ -405,7 +425,8 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := Concat(IntToStr(' + params[1] + '), #$9b);' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
        end
@@ -413,7 +434,8 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
        end
@@ -421,21 +443,45 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := Concat(IntToStr(' + params[1] + '), #$9b);' + LineEnding;
-           temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
+           temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
        end
        else if procName = 'INPUTSD' then begin
+         //procedure BGet(chn: byte; buf: PByte; cnt: word); assembler; register;
          params := params2.Split(',');
          if High(params) > 0 then begin
-           temp := '  BlockRead(f, ' + params[1] + ', 255);';
+           //temp := '  BlockRead(f, ' + params[1] + ', 255);';
+           //temp := '  strBuffer := ' + params[1] + ';' + LineEnding;
+           //temp := '  BGet(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
+           temp := '  BGet(' + params[0] + ', ' + params[1] + ', SizeOf(' + params[1] + '));';
            code.Add(temp);
          end;
        end
        else if procName = 'INPUTMD' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-           temp := '  BlockRead(f, ' + params[1] + ', ' + params[2] + ');';
+           //temp := '  BlockRead(f, ' + params[1] + ', ' + params[2] + ');';
+           //temp := '  strBuffer := ' + params[1] + ';' + LineEnding;
+           temp := '  BGet(' + params[0] + ', ' + params[1] + ', ' + params[2] + ');';
+           code.Add(temp);
+         end;
+       end
+       else if procName = 'XIO' then begin
+         //procedure XIO(cmd, chn, ax1, ax2: byte; device: PByte); assembler;
+         (*
+         @param: cmd - command
+         @param: chn - channel 0..7
+         @param: ax1 - parameter
+         @param: ax2 - parameter
+         @param: device - name of device, example "S2:"
+         PROC XIO(BYTE chan,0,cmd,auxl,aux2,<filestring))
+         *)
+         params := params2.Split(',');
+         if High(params) > 0 then begin
+           temp := '  XIO(' + params[2] + ', ' + params[0] + ', ' + params[3] + ', ' +
+                              params[4] + ', ' + params[5] + ');' + LineEnding;
            code.Add(temp);
          end;
        end

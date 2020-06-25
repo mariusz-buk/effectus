@@ -1,6 +1,7 @@
+;--------------------------------------
 ; Effectus example
-; - - - - - - - - - - - - - - - - - -
 ; Player animation demo
+;--------------------------------------
 
 ; Colors for players
 BYTE ARRAY

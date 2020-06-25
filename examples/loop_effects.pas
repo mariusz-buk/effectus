@@ -2,11 +2,10 @@
 program loop_effectsPrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
 
 var
-  f : file;
   strBuffer : string;
 // Effectus example
 // -------------------------------------
@@ -18,18 +17,16 @@ procedure MAINProc;
 var
   i : byte;
 begin  // 2
-  assign(f, 'S:'); rewrite(f, 1);
   InitGraph(2);
   repeat
   GotoXY(7 + 1,  5 + 1);
   i := Random(255);
   strBuffer := IntToStr( i);
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
+  BPut(6, @strBuffer[1], Length(strBuffer));
   Poke(710, i);
   until 0 = 1;
 end;  // 4
 
 begin
   MAINProc;
-  Close(f);
 end.

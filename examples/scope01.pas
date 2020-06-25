@@ -2,13 +2,16 @@
 program scope01Prg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Variable assignment and its scope
 var
-  key : char;
+  key : byte;
   n1 : byte = 14;
 
 procedure CHANGEProc;
@@ -21,7 +24,8 @@ procedure MAINProc;
 begin  // 6
   Writeln(n1);
   CHANGEProc;
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

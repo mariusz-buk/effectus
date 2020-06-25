@@ -2,15 +2,18 @@
 program randPrg;
 
 uses
-  SySutils, Crt;
+  Crt, SySutils, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Random number generator demo
 // (Rand function)
 var
   i : byte;
-  key : char;
+  key : byte;
 
 procedure MAINProc;
 begin  // 1
@@ -20,7 +23,8 @@ begin  // 1
   Writeln('(function Rand)');
   Writeln('');
   Writeln('Press any key to see random numbers!');
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
   Writeln('');
   Writeln('Selected number between 0 and 100');
   i := Random(100);
@@ -33,7 +37,8 @@ begin  // 1
   Writeln('Selected number between 0 and 3');
   i := Random(3);
   Writeln(i);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

@@ -2,13 +2,16 @@
 program gr9Prg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Graphics mode 9 demo
 var
-  key : char;
+  key : byte;
   i : byte;
 
 procedure MAINProc;
@@ -21,7 +24,8 @@ begin  // 1
   MoveTo(i, i);
   LineTo(i, 191);
   end;  // for
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

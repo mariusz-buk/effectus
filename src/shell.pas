@@ -63,18 +63,21 @@ begin
     //WriteLn('Effectus ' + VERSION + ' (i386-win32 32-bit Windows platform console version)');
 {$endif}
 {$endif}
-    WriteLn('Action! language parser and cross-assembler to native code for Atari 8-bit home computers');
+    Write('Action! language parser and cross-assembler to native code for Atari 8-bit home computers');
     TextColor(White);
-    WriteLn('Written by Bostjan Gorisek from Slovenia');
-    WriteLn('Page URL: http://gury.atari8.info/effectus/');
+    WriteLn(' written by Bostjan Gorisek from Slovenia');
+    WriteLn('References:');
+    WriteLn('http://freeweb.siol.net/diomedes/effectus/');
+    WriteLn('https://github.com/mariusz-buk/effectus');
+    WriteLn('http://gury.atari8.info/effectus/');
     WriteLn('');
     TextColor(LightCyan);
     WriteLn('Mad Pascal and MAD Assembler (MADS) are products written by Tomasz Biela (Tebe) from Poland');
     TextColor(White);
     WriteLn('References:');
     WriteLn('http://mads.atari8.info/');
-    WriteLn('http://freeweb.siol.net/diomedes/effectus/');
-    WriteLn('https://github.com/mariusz-buk/effectus');
+    WriteLn('https://github.com/tebe6502/Mad-Assembler');
+    WriteLn('https://github.com/tebe6502/Mad-Pascal');
     //WriteLn('https://atariage.com/forums/topic/291426-effectus-action-cross-compiler-using-mad-assembler-mads/');
     WriteLn('');
     TextColor(LightGreen);
@@ -95,6 +98,18 @@ begin
     
     TextColor(LightCyan); Write('-nc           ');
     TextColor(LightGray); Writeln('Effectus only translate source to Mad Pascal');
+
+    TextColor(LightCyan); Write('-z            ');
+    TextColor(LightGray); Writeln('Variable zero page address');
+
+    TextColor(LightCyan); Write('-zb           ');
+    TextColor(LightGray); Writeln('BYTE variable zero page address');
+
+    TextColor(LightCyan); Write('-zw           ');
+    TextColor(LightGray); Writeln('CARD (word) variable zero page address');
+
+    TextColor(LightCyan); Write('-zp           ');
+    TextColor(LightGray); Writeln('Pointer (PByte) zero page address');
 
     DestroyLists;
     Halt(0);
@@ -120,8 +135,17 @@ begin
     else if LeftStr(ParamStr(i), 2) = '-c' then
        isClearLog := true
     else if LeftStr(ParamStr(i), 3) = '-nc' then
-    else
-      Writeln(ParamStr(i) + ': Unknown parameter!')
+    else if LeftStr(ParamStr(i), 3) = '-z' then
+       isVarFastMode := true
+    else if LeftStr(ParamStr(i), 3) = '-zb' then
+       isByteFastMode := true
+    else if LeftStr(ParamStr(i), 3) = '-zw' then
+       isWordFastMode := true
+    else if LeftStr(ParamStr(i), 3) = '-zp' then
+       isPointerFastMode := true
+    else begin
+      Writeln(ParamStr(i) + ': Unknown parameter!');
+    end;
   end;
 end;
 
@@ -466,8 +490,10 @@ begin
       tempxy.loadfromfile(filename);
       //GetCurrentDir + PathDelim
       devicePtr.isDevice := false;
+      //devicePtr.isDeviceOpen := false;
       devicePtr.isGraphics := false;
       devicePtr.isStick := false;
+      devicePtr.isSySutils := false;
       prgPtr.isByteBuffer := false;
       varPtr.isDefine := false;
       Write('1. pass... ');
@@ -487,31 +513,23 @@ begin
           varPtr.isDefine := true;
         end;
 
-        if (System.Pos('GETD(7)', UpperCase(tempxy.strings[i])) > 0)
-           and not devicePtr.isDevice then
-        begin
-        end
-        else if (System.Pos('GETD', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('SCOMPARE', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          prgPtr.isByteBuffer := true;
-        end
-        else if (System.Pos('OPEN', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('CLOSE', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PUTD', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PRINTD', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PRINTBD', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PRINTCD', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PRINTID', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('GETD', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('INPUTSD', UpperCase(tempxy.strings[i])) > 0) then
+        if (System.Pos('OPEN', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('CLOSE', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('PUTD', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('PRINTD', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('PRINTBD', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('PRINTCD', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('PRINTID', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('GETD', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('INPUTSD', UpperCase(tempxy.strings[i])) > 0) then
         begin
           devicePtr.isDevice := true;
+          devicePtr.isSySutils := true;
         end
-        else if (System.Pos('STICK', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('STRIG', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PADDLE', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PTRIG', UpperCase(tempxy.strings[i])) > 0) then
+        else if (System.Pos('STICK', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('STRIG', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('PADDLE', UpperCase(tempxy.strings[i])) > 0) or
+          (System.Pos('PTRIG', UpperCase(tempxy.strings[i])) > 0) then
         begin
           devicePtr.isStick := true;
         end
@@ -522,6 +540,15 @@ begin
              or (System.Pos('FILL', UpperCase(tempxy.strings[i])) > 0) then
         begin
           devicePtr.isGraphics := true;
+        end
+        else if (System.Pos('STRB', UpperCase(tempxy.strings[i])) > 0)
+             or (System.Pos('STRC', UpperCase(tempxy.strings[i])) > 0)
+             or (System.Pos('STRI', UpperCase(tempxy.strings[i])) > 0)
+             or (System.Pos('VALB', UpperCase(tempxy.strings[i])) > 0)
+             or (System.Pos('VALC', UpperCase(tempxy.strings[i])) > 0)
+             or (System.Pos('VALI', UpperCase(tempxy.strings[i])) > 0) then
+        begin
+          devicePtr.isSySutils := true;
         end;
       end;
       WriteLn(' Done!');

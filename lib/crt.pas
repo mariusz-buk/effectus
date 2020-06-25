@@ -89,7 +89,7 @@ const
 	procedure CursorOn;
 	procedure Delay(count: word); assembler;
 	procedure DelLine;
-	procedure GotoXY(x,y: byte); assembler;
+	procedure GotoXY(x: byte; y: byte); assembler;
 	procedure InsLine;
 	function Keypressed: Boolean; assembler;
 	procedure NoSound; assembler;
@@ -253,7 +253,7 @@ skp	sty Result
 end;
 
 
-procedure GotoXY(x,y: byte); assembler;
+procedure GotoXY(x: byte; y: byte); assembler;
 (*
 @description:
 Set cursor position on screen.
@@ -269,14 +269,18 @@ the origin of the current window. The origin is located at (1,1), the upper-left
 asm
 {	ldy x
 	beq @+
-	dey
-	sty colcrs
 
-@	ldy y
-	beq @+
 	dey
-	sty rowcrs
-@
+
+@	sty colcrs
+	mvy #$00 colcrs+1
+
+	ldy y
+	beq @+
+
+	dey
+
+@	sty rowcrs
 };
 end;
 
@@ -403,8 +407,11 @@ procedure TextMode(Mode: byte); assembler;
 @param: Mode - unused value
 *)
 asm
-{
+{	txa:pha
+
 	@clrscr
+
+	pla:tax
 };
 end;
 

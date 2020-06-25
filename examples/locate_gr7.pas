@@ -2,15 +2,18 @@
 program locate_gr7Prg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+
+var
+  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using Locate in graphics mode
 
 procedure MAINProc;
 var
-  key : char;
+  key : byte;
   loc : byte;
 begin  // 2
   InitGraph(7);
@@ -27,7 +30,8 @@ begin  // 2
   SetColor(LOC);
   PutPixel(60, 60);
   MoveTo(60, 60);
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin

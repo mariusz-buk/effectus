@@ -3,6 +3,7 @@
 ; PEEK and POKE demo
 
 BYTE n
+CARD mem
 BYTE CH=764, COL=710
 
 PROC WaitForKey()
@@ -25,7 +26,7 @@ PutE() PrintBE(n)
 
 PutE()
 
-n=Peek(COL)
+n=Peek(710)
 PrintE("Shadow register 710 currently holds:")
 PutE() PrintBE(n)
 
@@ -34,6 +35,10 @@ PutE()
 n=Peek(559)
 PrintE("Shadow register 559 currently holds:")
 PutE() PrintBE(n)
+
+mem=PeekC($0230)
+PrintE("DLISTL:")
+PutE() PrintCE(mem)
 
 PutE() PutE()
 

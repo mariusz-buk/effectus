@@ -20,18 +20,20 @@ FillRect
 FloodFill
 FloodFillH
 MoveRel
+NewBuffer
 PieSlice
 Rectangle
 SetArcCoords
 SetClipRect
+SwitchBuffer
 
 }
 
 
-procedure DisplayBuffer(var a: TFrameBuffer);
+procedure SetDisplayBuffer(var a: TDisplayBuffer);
 (*
 @description:
-
+Set video buffer which is displayed
 *)
 begin
 	sdlstl := a.dl;
@@ -39,43 +41,47 @@ begin
 end;
 
 
-function SetBuffer(var a: TFrameBuffer; mode, bound: byte): TFrameBuffer;
+function NewDisplayBuffer(var a: TDisplayBuffer; mode, bound: byte): TDisplayBuffer;
 (*
 @description:
-
+Initialize new graphical buffer
 *)
 begin
 
  ramtop := bound;
- 
+
  InitGraph(mode);
- 
- a.dl := sdlstl;	
+
+ a.dl := sdlstl;
  a.bp := savmsc;
 
 end;
 
 
-procedure SwitchBuffer(var a,b: TFrameBuffer);
-var tmp: TFrameBuffer;
+procedure SwitchDisplayBuffer(var a,b: TDisplayBuffer);
+(*
+@description:
+Switch graphical buffer between A <> B
+*)
+var tmp: TDisplayBuffer;
     x, y: pointer;
     l: word;
 begin
 
  tmp:=b;
- 
+
  b:=a;
  a:=tmp;
- 
- DisplayBuffer(a);
- FrameBuffer(b);
- 
+
+ SetDisplayBuffer(a);
+ SetActiveBuffer(b);
+
  x:=Scanline(WIN_TOP);
 
- y:=Scanline(WIN_BOTTOM); 
+ y:=Scanline(WIN_BOTTOM);
  l:=word(y);
  y:=Scanline(WIN_TOP);
- 
+
  dec(l, word(y));
 
  fillchar(x, l, 0);
@@ -159,7 +165,7 @@ procedure Circle(x0,y0,radius: word);
 @description:
 Bresenham Circle
 *)
-var	x,y, txp, typ, txm, tym: word;
+var	x,y, dx,dy, txp, typ, txm, tym: word;
 	d: smallint;
 
 	procedure DrawCircle;
@@ -173,51 +179,49 @@ var	x,y, txp, typ, txm, tym: word;
 begin
 
 	x := 0;
+	dx := 0;
+
 	y := radius;
+	dy := y shl 2;
+
 	d := 3 - (radius shl 1);			// Decision criterion
 
 	while (x <= y) do begin
 
-		if d < 0 then begin			// d<0
+		if d >= 0 then begin
 
-			//d := d + (x shl 2) + 6	// Change in decision criterion for y -> y+1
+			d := 4 + d - dy ;
 
-//			inc(d, x shl 2);
-			inc(d, 6);
+			dec(dy, 4);
 
-		end else begin
-
-			//d := d + (x - y) shl 2 + 10;	// Change for y -> y+1, x -> x-1
-			//inc(d, (x - y) shl 2);
-
-//			inc(d, x shl 2);
-			dec(d, y shl 2);
-
-			inc(d, 10);
 			dec(y);
-
 		end;
 
-		inc(d, x shl 2);
+		txp := x0+x;  typ := y0+y;
+		txm := x0-x;  tym := y0-y;
 
-	txp := x0+x;  typ := y0+y;
-	txm := x0-x;  tym := y0-y;
+		DrawCircle;
 
-	DrawCircle;
+		txp := x0+y;  typ := y0+x;
+		txm := x0-y;  tym := y0-x;
 
-	txp := x0+y;  typ := y0+x;
-	txm := x0-y;  tym := y0-x;
+		DrawCircle;
 
-	DrawCircle;
+		d := 6 + d + dx;
 
-	inc(x);
+		inc(dx, 4);
 
+		inc(x);
 	end;
 
 end;
 
 
 procedure SetArcCoords (x,y,xradius,yradius,StAngle,EndAngle : word);
+(*
+@description:
+
+*)
 var a,s: single;
 begin
   LastArcCoords.X:=X;
@@ -264,6 +268,41 @@ begin
 end;
 
 
+
+procedure Ellipse(X, Y, StAngle, EndAngle, xRadius,yRadius: Word); overload;
+(*
+@description:
+Arc draws part of a circle with center at (X,Y), radius Radius, starting from StAngle, stopping at EndAngle. These angles are measured counterclockwise.
+*)
+var i : word;
+    tmpAng : single;
+    curX, curY: smallint;
+begin
+
+ if StAngle > EndAngle then begin
+  i:=StAngle;
+  StAngle:=EndAngle;
+  EndAngle:=i;
+ end;
+
+ SetArcCoords (X,Y,xRadius,yRadius,StAngle,EndAngle);
+
+ MoveTo(LastArcCoords.xstart, LastArcCoords.ystart);
+
+ tmpAng:=StAngle * D_PI_180;
+
+ For i:= StAngle To EndAngle Do
+  Begin
+   curX:= X + Round (xRadius*Cos (tmpAng));
+   curY:= Y - Round (yRadius*Sin (tmpAng));
+
+   LineTo (curX, curY);
+
+   tmpAng:=tmpAng+D_PI_180;
+  End;
+end;
+
+
 procedure PieSlice(X, Y, StAngle, EndAngle, Radius: Word);
 (*
 @description:
@@ -280,13 +319,14 @@ begin
 end;
 
 
-procedure Ellipse(x0, y0, a, b: word);
+procedure Ellipse(x0, y0, a, b: word); overload;
 (*
 @description:
 Bresenham Ellipse with center (X0,Y0) and horizontal radius A, vertical radius B.
 *)
-var	{a2, b2, }error, stopx, stopy: integer;
-        a2, b2, x, y: word;
+var	error, stopx, stopy: integer;
+	x, y: word;
+	a2, b2, _a, _b: cardinal;
 
 	procedure DrawEllipse;
 	var txp, typ, txm, tym: word;
@@ -303,44 +343,53 @@ var	{a2, b2, }error, stopx, stopy: integer;
 begin
 			if (a = 0) or (b = 0) then exit;
 
-			a2 := (a * a) shl 1;
-			b2 := (b * b) shl 1;
-			error := a*a*b;
-			x := 0;
+			_a := a * a;
+			a2 := _a shl 1;
+
+			_b := b * b;
+			b2 := _b shl 1;
+
 			y := b;
+			x := 0;
 			stopy := 0;
-			stopx := word(a2) * b ;
+
+			error := _a * b;
+			stopx := error shl 1;
 
 			while (stopy <= stopx) do begin
 
 				DrawEllipse;
 
-				error := error - word(b2) * x;
 				inc(x);
 				stopy := stopy + b2;
-				if (error <= 0) then begin
+				error := error - stopy;
+
+				if (error < 0) then begin
 					dec(y);
-					error := error + word(a2) * y;
 					stopx := stopx - a2;
+					error := error + stopx;
 				end;
 			end;
 
-			error := b*b*a;
 			x := a;
 			y := 0;
-			stopy := word(b2) * a;
 			stopx := 0;
+
+			error := _b * a;
+			stopy := error shl 1;
+
 			while (stopy >= stopx) do begin
 
 				DrawEllipse;
 
-				error := error - word(a2) * y;
 				inc(y);
 				stopx := stopx + a2;
+				error := error - stopx;
+
 				if (error < 0) then begin
 					dec(x);
-					error := error + word(b2) * x;
 					stopy := stopy - b2;
+					error := error + stopy;
 				end;
 			end;
 end;
@@ -351,8 +400,9 @@ procedure FillEllipse(x0, y0, a, b: word);
 @description:
 Bresenham filled Ellipse with center (X0,Y0) and horizontal radius A, vertical radius B.
 *)
-var	{a2, b2,} error, stopx, stopy: integer;
-	a2, b2,	x, y: word;
+var	error, stopx, stopy: integer;
+	x, y: word;
+	a2, b2, _a, _b: cardinal;
 
 	procedure DrawEllipse;
 	begin
@@ -363,44 +413,53 @@ var	{a2, b2,} error, stopx, stopy: integer;
 begin
 			if (a = 0) or (b = 0) then exit;
 
-			a2 := (a * a) shl 1;
-			b2 := (b * b) shl 1;
-			error := a*a*b;
-			x := 0;
+			_a := a * a;
+			a2 := _a shl 1;
+
+			_b := b * b;
+			b2 := _b shl 1;
+
 			y := b;
+			x := 0;
 			stopy := 0;
-			stopx := word(a2) * b ;
+
+			error := _a * b;
+			stopx := error shl 1;
 
 			while (stopy <= stopx) do begin
 
 				DrawEllipse;
 
-				error := error - word(b2) * x;
 				inc(x);
 				stopy := stopy + b2;
-				if (error <= 0) then begin
+				error := error - stopy;
+
+				if (error < 0) then begin
 					dec(y);
-					error := error + word(a2) * y;
 					stopx := stopx - a2;
+					error := error + stopx;
 				end;
 			end;
 
-			error := b*b*a;
 			x := a;
 			y := 0;
-			stopy := word(b2) * a;
 			stopx := 0;
+
+			error := _b * a;
+			stopy := error shl 1;
+
 			while (stopy >= stopx) do begin
 
 				DrawEllipse;
 
-				error := error - word(a2) * y;
 				inc(y);
 				stopx := stopx + a2;
+				error := error - stopx;
+
 				if (error < 0) then begin
 					dec(x);
-					error := error + word(b2) * x;
 					stopy := stopy - b2;
+					error := error + stopy;
 				end;
 			end;
 end;
@@ -856,7 +915,10 @@ end;
 
 
 procedure ClipLine(x1, y1, x2, y2: smallint);
-// Cohen_Sutherland
+(*
+@description:
+Line clipping (Cohen-Sutherland algorithm)
+*)
 var
    rcode1, rcode2, rcode: byte;
    x, y: smallint;

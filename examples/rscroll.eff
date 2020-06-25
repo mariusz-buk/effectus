@@ -1,0 +1,26 @@
+;------------------------------------
+; Effectus example
+; Scroll
+;------------------------------------
+
+PROC Main()
+
+CARD i, scrloc=88
+BYTE ARRAY screen
+BYTE ARRAY new_dir=[$D7 $D8 $D9 $FF 1 39 40 41]
+BYTE ch, dir
+
+dir = 1
+screen = scrloc
+DO
+FOR i = 0 TO 959 DO
+  screen(i) = ch + i
+OD
+
+IF Rand(10)=0 THEN
+  dir = new_dir(Rand(8))
+FI
+
+ch = ch + dir
+OD
+RETURN

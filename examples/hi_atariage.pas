@@ -2,12 +2,10 @@
 program hi_atariagePrg;
 
 uses
-  SySutils, Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
 
 var
-  intValue : integer;
-  f : file;
   strBuffer : string;
 // Effectus example
 // -------------------------------------
@@ -19,24 +17,23 @@ var
 // 
 // Demo Effectus
 var
-  key : char;
+  key : byte;
 
 procedure MAINProc;
 var
   i : integer;
 begin  // 1
-  assign(f, 'S:'); rewrite(f, 1);
   InitGraph(2);
   GotoXY(5 + 1,  5 + 1);
   strBuffer := Concat('hi atariage', #$9b);
-  Blockwrite(f, strBuffer[1], Length(strBuffer));
+  BPut(6, @strBuffer[1], Length(strBuffer));
   for  i:=0 TO 2 do begin
   Writeln('hi,AtariAge........');
   end;  // for
-  key := ReadKey;
+  key := Get(7);
+  ReadKey;
 end;  // 4
 
 begin
   MAINProc;
-  Close(f);
 end.
