@@ -891,28 +891,22 @@ begin
               params[1] := aList[0] + ' div ' + aList[1];
             end
             else if System.Pos('{MOD}', params[1]) > 0 then begin
-              SplitStr(params[1], '{MOD}', aList);
-              params[1] := aList[0] + ' MOD ' + aList[1];
+              params[1] := ReplaceStr(params[1],'{MOD}',' MOD ');
             end
             else if System.Pos('{AND}', params[1]) > 0 then begin
-              SplitStr(params[1], '{AND}', aList);
-              params[1] := aList[0] + ' AND ' + aList[1];
+              params[1] := ReplaceStr(params[1],'{AND}',' AND ');
             end
             else if System.Pos('{OR}', params[1]) > 0 then begin
-              SplitStr(params[1], '{OR}', aList);
-              params[1] := aList[0] + ' OR ' + aList[1];
+              params[1] := ReplaceStr(params[1],'{OR}',' OR ');
             end
             else if System.Pos('{LSH}', params[1]) > 0 then begin
-              SplitStr(params[1], '{LSH}', aList);
-              params[1] := aList[0] + ' SHL ' + aList[1];
+              params[1] := ReplaceStr(params[1],'{SHL}',' SHL ');
             end
             else if System.Pos('{RSH}', params[1]) > 0 then begin
-              SplitStr(params[1], '{RSH}', aList);
-              params[1] := aList[0] + ' SHR ' + aList[1];
+              params[1] := ReplaceStr(params[1],'{RSH}',' RSH ');
             end
             else if System.Pos('{XOR}', params[1]) > 0 then begin
-              SplitStr(params[1], '{XOR}', aList);
-              params[1] := aList[0] + ' XOR ' + aList[1];
+              params[1] := ReplaceStr(params[1],'{XOR}',' XOR ');
             end;
 
             if not varPtr.isVarStart and prgPtr.isStartBegin then begin
