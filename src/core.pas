@@ -888,23 +888,23 @@ begin
           else begin
             if System.Pos('{DIV}', params[1]) > 0 then begin
               params[1] := ReplaceStr(params[1],'{DIV}',' div ');
-            end
-            else if System.Pos('{MOD}', params[1]) > 0 then begin
+            end;
+            if System.Pos('{MOD}', params[1]) > 0 then begin
               params[1] := ReplaceStr(params[1],'{MOD}',' MOD ');
-            end
-            else if System.Pos('{AND}', params[1]) > 0 then begin
+            end;
+            if System.Pos('{AND}', params[1]) > 0 then begin
               params[1] := ReplaceStr(params[1],'{AND}',' AND ');
-            end
-            else if System.Pos('{OR}', params[1]) > 0 then begin
+            end;
+            if System.Pos('{OR}', params[1]) > 0 then begin
               params[1] := ReplaceStr(params[1],'{OR}',' OR ');
-            end
-            else if System.Pos('{LSH}', params[1]) > 0 then begin
+            end;
+            if System.Pos('{LSH}', params[1]) > 0 then begin
               params[1] := ReplaceStr(params[1],'{SHL}',' SHL ');
-            end
-            else if System.Pos('{RSH}', params[1]) > 0 then begin
+            end;
+            if System.Pos('{RSH}', params[1]) > 0 then begin
               params[1] := ReplaceStr(params[1],'{RSH}',' RSH ');
-            end
-            else if System.Pos('{XOR}', params[1]) > 0 then begin
+            end;
+            if System.Pos('{XOR}', params[1]) > 0 then begin
               params[1] := ReplaceStr(params[1],'{XOR}',' XOR ');
             end;
 
