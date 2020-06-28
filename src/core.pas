@@ -887,8 +887,7 @@ begin
           // Standard assignment
           else begin
             if System.Pos('{DIV}', params[1]) > 0 then begin
-              SplitStr(params[1], '{DIV}', aList);
-              params[1] := aList[0] + ' div ' + aList[1];
+              params[1] := ReplaceStr(params[1],'{DIV}',' div ');
             end
             else if System.Pos('{MOD}', params[1]) > 0 then begin
               params[1] := ReplaceStr(params[1],'{MOD}',' MOD ');
