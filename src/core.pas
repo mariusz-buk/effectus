@@ -149,7 +149,7 @@ begin
         end;
       end;
     end
-    // BYTE ARRAY variable declaration 
+    // BYTE ARRAY variable declaration
     else if VarValue(2, i, _VAR_BYTE_ARRAY) or VarValue(2, i, _VAR_CARD_ARRAY) then begin
       if VarValue(2, i, _VAR_CARD_ARRAY) then begin
         dataType := 'word';
@@ -203,7 +203,7 @@ begin
                         dataType + ' absolute ' + buf + ';';
         end;
       end;
-    end 
+    end
     // TYPE variable declaration
     else if not isVar and VarValue(2, i, _VAR_TYPE_REC) then begin
       isVarDecl := true;
@@ -349,7 +349,7 @@ begin
       stmt := ReplaceStr(stmt, ')', ']');
     end;
   end;
-  
+
   result := stmt;
 end;
 
@@ -736,7 +736,7 @@ begin
         temp03 := Extract(1, params[1], '(');
         temp04 := Extract(1, params[0], '.');
         temp05 := Extract(2, params[0], '.');
-        
+
         // FUNCtion in assignment (right side)
         //temp06 := Extract(2, params[1], '(');
 //        temp06 := params[1];
@@ -760,7 +760,7 @@ begin
             prgPtr.colorValue := temp03;
           end
         end
-        // Standard variable assignment 
+        // Standard variable assignment
         else if (vars.IndexOfName(temp02) >= 0) or (vars.IndexOfName(temp04) >= 0) then begin
           params[0] := ReplaceStr(params[0], '(', '[');
           params[0] := ReplaceStr(params[0], ')', ']');
@@ -842,7 +842,7 @@ begin
                 end;
                 temp04 += paramsEx[i];
                 if i < High(paramsEx) then begin
-                  temp04 += op[i];
+                  temp04 += op[i+1];
                 end;
               end;
               params[1] := temp04;
@@ -1009,7 +1009,7 @@ begin
                        '    .by ';
     end;
 
-    // Machine language mnemonics on the same line 
+    // Machine language mnemonics on the same line
     if Length(temp) > 1 then begin
       temp02 := Extract(2, temp, '[');
       temp02 := ReplaceStr(temp02, ']', '');
@@ -1139,7 +1139,7 @@ begin
     op.Free;
     Exit;
   end;
-  
+
   // PROCedure is found, check the parameters
   if (procs.IndexOfName(procName) >= 0) or (myProcs.IndexOfName(procName) >= 0) then begin
     // Paramater count
@@ -1161,7 +1161,7 @@ begin
         //params[i] := ReplaceStr(params[i], '(', '[');
         //params[i] := ReplaceStr(params[i], ')', ']');
         params2 := CheckParams(i, paramCnt, procName, params[i], params2);
-      end; 
+      end;
     end
     // No parameters
     else if paramCnt = 0 then begin
@@ -1213,10 +1213,10 @@ begin
     //prgPtr.isIfThen := false;
   end
   // Code in IF condition part
-  else if branchPtr.isIfThenNext then begin    
+  else if branchPtr.isIfThenNext then begin
     // Replace () brackets with [] brackets
-    // Bracket '(' is not the first character in condition value 
-    if temp[1] <> '(' then begin    
+    // Bracket '(' is not the first character in condition value
+    if temp[1] <> '(' then begin
       temp := ReplaceStr(temp, '(', '[');
       temp := ReplaceStr(temp, ')', ']');
     end;
@@ -1378,7 +1378,7 @@ var
   i : byte;
   temp : string;
 begin
-  // PROCedure name is on the same line as parameters 
+  // PROCedure name is on the same line as parameters
   if (Length(line) > 1) and (System.Pos('(', line) > 0) then begin
     procName := UpperCase(Extract(1, line, '('));
     params := UpperCase(Extract(2, line, '('));
@@ -1416,7 +1416,7 @@ begin
       end;
     end;
   end;
-  
+
   // PROCedure declaration statement is finished
   if System.Pos(')', line) > 0 then begin
     //prgPtr.isVarArray := false;
@@ -1430,7 +1430,7 @@ begin
       if prgPtr.isStartBegin then begin
         code.add('end;  // e1')
       end;
-      
+
       if varPtr.isFunc then begin
         if prgPtr.isFuncAsm then
           code.Add('function ' + procName + 'Func : ' + varPtr.dataType + '; assembler;')
@@ -1485,7 +1485,7 @@ begin
       if prgPtr.isStartBegin then begin
         code.add('end;  // e2')
       end;
-      
+
       if varPtr.isFunc then begin
         if prgPtr.isFuncAsm then begin
           code.Add('function ' + procName + 'Func(' + ParamVarDecl(params) + ') : ' +
@@ -1531,8 +1531,8 @@ begin
   if prgPtr.isProcName then begin
     prgPtr.procParams += ' ' + line;
   end;
-  
-  // Check for machine code opcode  
+
+  // Check for machine code opcode
   if (System.Pos('[', line) > 0) then begin
     procML.isAsm := true;
 
@@ -1789,7 +1789,7 @@ begin
         // String variable declaration
         else begin
           // Check string dimension and extract string variable
-          temp := '0'; 
+          temp := '0';
           if System.Pos('(', varDeclList[i]) > 0 then begin
             temp := ExtractText(varDeclList[i], '(', ')');
             varDeclList[i] := Extract(1, varDeclList[i], '(');
@@ -1933,7 +1933,7 @@ var
   strUnits : string = '';
 begin
   code.Add('// Effectus auto-generated Mad Pascal source code listing');
-  
+
   prgName := StringReplace(prgName, '-', '', [rfReplaceAll]);
   code.Add('program ' + prgName + 'Prg;' + LineEnding);
   code.Add('uses');
@@ -2051,7 +2051,7 @@ begin
 
     effCode[i] := StringReplace(effCode[i], ' *', '*', [rfReplaceAll]);
     effCode[i] := StringReplace(effCode[i], '* ', '*', [rfReplaceAll]);
-    
+
     effCode[i] := StringReplace(effCode[i], '#', '<>', [rfReplaceAll]);
 
     effCode[i] := ReplaceToken(effCode[i], '/', '/', '{DIV}');
@@ -2152,7 +2152,7 @@ begin
   FilenameSrc := ExtractFilePath(actionFilename);
   pasFile := ExtractFilenameWithoutExt(actionFilename) + '.pas';
   FilenameSrc += pasFile;
-  
+
   //pasFile := GetCurrentDir + PathDelim + FilenameSrc;
   code.SaveToFile(FilenameSrc);
 end;
