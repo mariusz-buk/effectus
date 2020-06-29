@@ -890,7 +890,7 @@ begin
             params[1] := ReplaceStr(params[1],'{AND}',' AND ');
             params[1] := ReplaceStr(params[1],'{OR}',' OR ');
             params[1] := ReplaceStr(params[1],'{LSH}',' SHL ');
-            params[1] := ReplaceStr(params[1],'{RSH}',' RSH ');
+            params[1] := ReplaceStr(params[1],'{RSH}',' SHR ');
             params[1] := ReplaceStr(params[1],'{XOR}',' XOR ');
             if not varPtr.isVarStart and prgPtr.isStartBegin then begin
               // F.e. 'A
