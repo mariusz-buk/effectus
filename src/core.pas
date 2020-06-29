@@ -842,7 +842,7 @@ begin
                 end;
                 temp04 += paramsEx[i];
                 if i < High(paramsEx) then begin
-                  temp04 += op[i+1];
+                  temp04 += op[i]; // this is not correct in all cases
                 end;
               end;
               params[1] := temp04;
@@ -886,28 +886,13 @@ begin
           end
           // Standard assignment
           else begin
-            if System.Pos('{DIV}', params[1]) > 0 then begin
-              params[1] := ReplaceStr(params[1],'{DIV}',' div ');
-            end;
-            if System.Pos('{MOD}', params[1]) > 0 then begin
-              params[1] := ReplaceStr(params[1],'{MOD}',' MOD ');
-            end;
-            if System.Pos('{AND}', params[1]) > 0 then begin
-              params[1] := ReplaceStr(params[1],'{AND}',' AND ');
-            end;
-            if System.Pos('{OR}', params[1]) > 0 then begin
-              params[1] := ReplaceStr(params[1],'{OR}',' OR ');
-            end;
-            if System.Pos('{LSH}', params[1]) > 0 then begin
-              params[1] := ReplaceStr(params[1],'{SHL}',' SHL ');
-            end;
-            if System.Pos('{RSH}', params[1]) > 0 then begin
-              params[1] := ReplaceStr(params[1],'{RSH}',' RSH ');
-            end;
-            if System.Pos('{XOR}', params[1]) > 0 then begin
-              params[1] := ReplaceStr(params[1],'{XOR}',' XOR ');
-            end;
-
+            params[1] := ReplaceStr(params[1],'{DIV}',' div ');
+            params[1] := ReplaceStr(params[1],'{MOD}',' MOD ');
+            params[1] := ReplaceStr(params[1],'{AND}',' AND ');
+            params[1] := ReplaceStr(params[1],'{OR}',' OR ');
+            params[1] := ReplaceStr(params[1],'{LSH}',' LSH ');
+            params[1] := ReplaceStr(params[1],'{RSH}',' RSH ');
+            params[1] := ReplaceStr(params[1],'{XOR}',' XOR ');
             if not varPtr.isVarStart and prgPtr.isStartBegin then begin
               // F.e. 'A
               if params[1][1] = '''' then begin
