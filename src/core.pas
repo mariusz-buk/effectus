@@ -809,19 +809,19 @@ begin
               CheckOper('+', params[1]);
               CheckOper('-', params[1]);
               CheckOper('*', params[1]);
-              CheckOper('DIV', params[1]);  // Integer division, not float number division ('/')
-              CheckOper('MOD', params[1]);
-              CheckOper('AND', params[1]);
-              CheckOper('OR', params[1]);
-              CheckOper('XOR', params[1]);
-              CheckOper('RSH', params[1]);
-              CheckOper('LSH', params[1]);
+              CheckOper('{DIV}', params[1]);  // Integer division, not float number division ('/')
+              CheckOper('{MOD}', params[1]);
+              CheckOper('{AND}', params[1]);
+              CheckOper('{OR}', params[1]);
+              CheckOper('{XOR}', params[1]);
+              CheckOper('{RSH}', params[1]);
+              CheckOper('{LSH}', params[1]);
+              temp04 := '';
               if oper.Count > 0 then begin
                 for j := 0 to 255 do begin
                   for i := 0 to oper.Count - 1 do begin
                     if StrToInt(ExtractDelimited(1, oper.ValueFromIndex[i], [';'])) = j then begin
                       op.Add(oper.Names[i]);
-                      temp04 += oper.Names[i];
                       break;
                     end;
                   end;
@@ -842,11 +842,10 @@ begin
                 end;
                 temp04 += paramsEx[i];
                 if i < High(paramsEx) then begin
-                  temp04 += op[i]; // this is not correct in all cases
+                  temp04 += op[i];
                 end;
               end;
               params[1] := temp04;
-              //writeln('params[1] = ', params[1]);
             end;
           end;
 
@@ -890,7 +889,7 @@ begin
             params[1] := ReplaceStr(params[1],'{MOD}',' MOD ');
             params[1] := ReplaceStr(params[1],'{AND}',' AND ');
             params[1] := ReplaceStr(params[1],'{OR}',' OR ');
-            params[1] := ReplaceStr(params[1],'{LSH}',' LSH ');
+            params[1] := ReplaceStr(params[1],'{LSH}',' SHL ');
             params[1] := ReplaceStr(params[1],'{RSH}',' RSH ');
             params[1] := ReplaceStr(params[1],'{XOR}',' XOR ');
             if not varPtr.isVarStart and prgPtr.isStartBegin then begin
