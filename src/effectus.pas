@@ -37,7 +37,7 @@ uses
 
 var
   i : Byte;
-  isCompileFlagSet : boolean = true;
+  isTranslation : boolean = false;
 
 begin
   CreateLists;
@@ -49,13 +49,13 @@ begin
   GenerateCode;
   
   for i := 1 to ParamCount do begin
-    if ParamStr(i) = '-nc' then begin
-      isCompileFlagSet := false;
-      WriteLn('Translation only...');
+    if ParamStr(i) = '-t' then begin
+      isTranslation := true;
+      Writeln('Translation only...');
       break;
     end;
   end;
-  if isCompileFlagSet then begin
+  if not isTranslation then begin
     Writeln('Compiling to native code...');
     if Compile(FilenameSrc) then begin
       Writeln('Compile error!');

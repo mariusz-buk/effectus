@@ -96,7 +96,7 @@ begin
     TextColor(LightCyan); Write('-i            ');
     TextColor(LightGray); Writeln('Effectus variable usage list');
     
-    TextColor(LightCyan); Write('-nc           ');
+    TextColor(LightCyan); Write('-t            ');
     TextColor(LightGray); Writeln('Effectus only translate source to Mad Pascal');
 
     TextColor(LightCyan); Write('-z            ');
@@ -134,7 +134,7 @@ begin
       isInfo := true
     else if LeftStr(ParamStr(i), 2) = '-c' then
        isClearLog := true
-    else if LeftStr(ParamStr(i), 3) = '-nc' then
+    else if LeftStr(ParamStr(i), 3) = '-t' then
     else if LeftStr(ParamStr(i), 3) = '-z' then
        isVarFastMode := true
     else if LeftStr(ParamStr(i), 3) = '-zb' then
