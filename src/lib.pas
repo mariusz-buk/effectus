@@ -64,7 +64,7 @@ end;
 
 function GetVarValue(valuePos, index : byte) : string;
 begin
-  result := ExtractDelimited(valuePos, vars.ValueFromIndex[index], [';']); 
+  result := ExtractDelimited(valuePos, vars.ValueFromIndex[index], [';']);
 end;
 
 {------------------------------------------------------------------------------
@@ -102,11 +102,7 @@ begin
   repeat
     x := nPos(op, expr, y);
     if x > 0 then begin
-      if Length(op) = 1 then
-        oper.Add(op + '=' + IntToStr(x) + ';0')
-      else begin
-        oper.Add('{' + op + '}=' + IntToStr(x) + ';0')
-      end;
+      oper.Add(op + '=' + IntToStr(x) + ';0')
     end;
     inc(y);
   until x = 0;
@@ -119,7 +115,7 @@ begin
   result := '-2';
   paramsEx := params.Split(',');
   //writeln('(2) scompare params2 = ', params2);
-  
+
   if High(paramsEx) = 1 then begin
     paramsEx[0] := Trim(paramsEx[0]);
     paramsEx[1] := Trim(paramsEx[1]);
@@ -167,7 +163,7 @@ begin
         else begin
           temp02 := ''
         end;
-        
+
         if (temp02 <> '') and (temp02 <> 'SCOMPARE') then begin
           branchPtr.isFuncInIf := true;
           branchPtr.ifThenCode += ' ' + temp02 + '(' + params2 + ') ' +
