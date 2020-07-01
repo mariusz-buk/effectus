@@ -203,7 +203,7 @@ const
 
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
-  _MP_DEVIC_SYSUTILS: array [0..8] of String =
+  _MP_DEVICE_SYSUTILS: array [0..8] of String =
        ('OPEN','CLOSE','PUTD','PRINTD','PRINTBD','PRINTCD','PRINTID',
        'GETD','INPUTSD');
   _MP_STICK: array [0..3] of String =

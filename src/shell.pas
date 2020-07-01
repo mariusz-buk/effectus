@@ -513,7 +513,7 @@ begin
           varPtr.isDefine := true;
         end;
 
-        if IsArrayInString(_MP_DEVIC_SYSUTILS, tempxy.strings[i]) then
+        if IsArrayInString(_MP_DEVICE_SYSUTILS, tempxy.strings[i]) then
            begin
              devicePtr.isDevice := true;
              devicePtr.isSySutils := true;
