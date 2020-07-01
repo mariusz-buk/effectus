@@ -513,16 +513,16 @@ begin
           varPtr.isDefine := true;
         end;
 
-        if IsArrayInString(_MP_DEVICE_SYSUTILS, tempxy.strings[i]) then
+        if IsArrayElementInString(_MP_DEVICE_SYSUTILS, tempxy.strings[i]) then
            begin
              devicePtr.isDevice := true;
              devicePtr.isSySutils := true;
            end
-        else if IsArrayInString(_MP_STICK, tempxy.strings[i]) then
+        else if IsArrayElementInString(_MP_STICK, tempxy.strings[i]) then
              devicePtr.isStick := true
-        else if IsArrayInString(_MP_GRAPHICS, tempxy.strings[i]) then
+        else if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
              devicePtr.isGraphics := true
-        else if IsArrayInString(_MP_SYSUTILS, tempxy.strings[i]) then
+        else if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
              devicePtr.isSySutils := true;
 
       end;

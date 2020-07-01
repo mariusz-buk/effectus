@@ -37,7 +37,7 @@ interface
 Uses
   SySUtils, Classes, StrUtils, decl;
 
-function IsArrayInString(seek : array of String; str : String) : boolean;
+function IsArrayElementInString(seek : array of String; str : String) : boolean;
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 function GetVarValue(valuePos, index : byte) : string;
 function ReplaceToken(code, operand, newOperand01, newOperand02 : string) : string;
@@ -55,7 +55,7 @@ procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringLi
 
 implementation
 
-function IsArrayInString(seek : array of String; str : String) : boolean;
+function IsArrayElementInString(seek : array of String; str : String) : boolean;
 var
   i : integer;
 begin
