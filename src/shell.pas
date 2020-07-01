@@ -513,43 +513,18 @@ begin
           varPtr.isDefine := true;
         end;
 
-        if (System.Pos('OPEN', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('CLOSE', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PUTD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PRINTD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PRINTBD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PRINTCD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PRINTID', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('GETD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('INPUTSD', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          devicePtr.isDevice := true;
-          devicePtr.isSySutils := true;
-        end
-        else if (System.Pos('STICK', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('STRIG', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PADDLE', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PTRIG', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          devicePtr.isStick := true;
-        end
-        else if (System.Pos('GRAPHICS', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PLOT', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('DRAWTO', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('COLOR', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('FILL', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          devicePtr.isGraphics := true;
-        end
-        else if (System.Pos('STRB', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('STRC', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('STRI', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('VALB', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('VALC', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('VALI', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          devicePtr.isSySutils := true;
-        end;
+        if IsArrayInString(_MP_DEVIC_SYSUTILS, tempxy.strings[i]) then
+           begin
+             devicePtr.isDevice := true;
+             devicePtr.isSySutils := true;
+           end
+        else if IsArrayInString(_MP_STICK, tempxy.strings[i]) then
+             devicePtr.isStick := true
+        else if IsArrayInString(_MP_GRAPHICS, tempxy.strings[i]) then
+             devicePtr.isGraphics := true
+        else if IsArrayInString(_MP_SYSUTILS, tempxy.strings[i]) then
+             devicePtr.isSySutils := true;
+
       end;
       WriteLn(' Done!');
       CheckDefine;

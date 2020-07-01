@@ -37,6 +37,7 @@ interface
 Uses
   SySUtils, Classes, StrUtils, decl;
 
+function IsArrayInString(seek : array of String; str : String) : boolean;
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 function GetVarValue(valuePos, index : byte) : string;
 function ReplaceToken(code, operand, newOperand01, newOperand02 : string) : string;
@@ -53,6 +54,20 @@ function IsNumber(src : Char) : Boolean;
 procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringList);
 
 implementation
+
+function IsArrayInString(seek : array of String; str : String) : boolean;
+var
+  i : integer;
+begin
+  for i := 0 to Length(seek)-1 do begin
+    if Pos(seek[i], UpperCase(str)) > 0 then
+       begin
+         Result := true;
+         break;
+       end
+    else Result := false;
+  end;
+end;
 
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 begin
