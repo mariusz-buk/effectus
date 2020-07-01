@@ -2008,28 +2008,28 @@ begin
       effCode[i] := StringReplace(effCode[i], StringOfChar(' ', j), ' ', [rfReplaceAll]);
     end;
 
-    effCode[i] := StringReplace(effCode[i], ' (', '(', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '( ', '(', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], ' )', ')', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' (', '(');
+    effCode[i] := ReplaceStr(effCode[i], '( ', '(');
+    effCode[i] := ReplaceStr(effCode[i], ' )', ')');
 
-    effCode[i] := StringReplace(effCode[i], ' [', '[', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '[ ', '[', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], ' ]', ']', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], ' ] ', ']', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' [', '[');
+    effCode[i] := ReplaceStr(effCode[i], '[ ', '[');
+    effCode[i] := ReplaceStr(effCode[i], ' ]', ']');
+    effCode[i] := ReplaceStr(effCode[i], ' ] ', ']');
 
-    effCode[i] := StringReplace(effCode[i], ' =', '=', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '= ', '=', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' =', '=');
+    effCode[i] := ReplaceStr(effCode[i], '= ', '=');
 
-    effCode[i] := StringReplace(effCode[i], ' +', '+', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '+ ', '+', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' +', '+');
+    effCode[i] := ReplaceStr(effCode[i], '+ ', '+');
 
-    effCode[i] := StringReplace(effCode[i], ' -', '-', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '- ', '-', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' -', '-');
+    effCode[i] := ReplaceStr(effCode[i], '- ', '-');
 
-    effCode[i] := StringReplace(effCode[i], ' *', '*', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '* ', '*', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' *', '*');
+    effCode[i] := ReplaceStr(effCode[i], '* ', '*');
 
-    effCode[i] := StringReplace(effCode[i], '#', '<>', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], '#', '<>');
 
     effCode[i] := ReplaceToken(effCode[i], '/', '/', '{DIV}');
     effCode[i] := ReplaceToken(effCode[i], '&', '&', '{AND}');
