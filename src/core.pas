@@ -1198,25 +1198,25 @@ begin
       temp := ReplaceStr(temp, ')', ']');
     end;
 
-    if System.Pos('{AND}', temp) > 0 then begin
+    if Pos('{AND}', temp) > 0 then begin
       temp := StringReplace(temp, '{AND}', ' AND ', [rfReplaceAll]);
     end;
-    if System.Pos('{OR}', temp) > 0 then begin
+    if Pos('{OR}', temp) > 0 then begin
       temp := StringReplace(temp, '{OR}', ' OR ', [rfReplaceAll]);
     end;
-    if System.Pos('{XOR}', temp) > 0 then begin
+    if Pos('{XOR}', temp) > 0 then begin
       temp := StringReplace(temp, '{XOR}', ' XOR ', [rfReplaceAll]);
     end;
-    if System.Pos('{LSH}', temp) > 0 then begin
+    if Pos('{LSH}', temp) > 0 then begin
       temp := StringReplace(temp, '{LSH}', ' SHL ', [rfReplaceAll]);
     end;
-    if System.Pos('{RSH}', temp) > 0 then begin
+    if Pos('{RSH}', temp) > 0 then begin
       temp := StringReplace(temp, '{RSH}', ' SHR ', [rfReplaceAll]);
     end;
-    if System.Pos('{MOD}', temp) > 0 then begin
+    if Pos('{MOD}', temp) > 0 then begin
       temp := StringReplace(temp, '{MOD}', ' MOD ', [rfReplaceAll]);
     end;
-    if System.Pos('{DIV}', temp) > 0 then begin
+    if Pos('{DIV}', temp) > 0 then begin
       temp := StringReplace(temp, '{DIV}', ' div ', [rfReplaceAll]);
     end;
 

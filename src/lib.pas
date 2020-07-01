@@ -59,13 +59,13 @@ function IsArrayInString(seek : array of String; str : String) : boolean;
 var
   i : integer;
 begin
+  Result := false;
   for i := 0 to Length(seek)-1 do begin
     if Pos(seek[i], UpperCase(str)) > 0 then
        begin
          Result := true;
          break;
        end
-    else Result := false;
   end;
 end;
 
