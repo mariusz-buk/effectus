@@ -2005,7 +2005,7 @@ begin
 
 //     effCode[i] := StringReplace(effCode[i], '  ', ' ', [rfReplaceAll]);
     for j := 2 to 255 do begin
-      effCode[i] := StringReplace(effCode[i], StringOfChar(' ', j), ' ', [rfReplaceAll]);
+      effCode[i] := ReplaceStr(effCode[i], StringOfChar(' ', j), ' ');
     end;
 
     effCode[i] := ReplaceStr(effCode[i], ' (', '(');
