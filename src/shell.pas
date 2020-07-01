@@ -96,7 +96,7 @@ begin
     TextColor(LightCyan); Write('-i            ');
     TextColor(LightGray); Writeln('Effectus variable usage list');
     
-    TextColor(LightCyan); Write('-nc           ');
+    TextColor(LightCyan); Write('-t            ');
     TextColor(LightGray); Writeln('Effectus only translate source to Mad Pascal');
 
     TextColor(LightCyan); Write('-z            ');
@@ -134,7 +134,7 @@ begin
       isInfo := true
     else if LeftStr(ParamStr(i), 2) = '-c' then
        isClearLog := true
-    else if LeftStr(ParamStr(i), 3) = '-nc' then
+    else if LeftStr(ParamStr(i), 3) = '-t' then
     else if LeftStr(ParamStr(i), 3) = '-z' then
        isVarFastMode := true
     else if LeftStr(ParamStr(i), 3) = '-zb' then
@@ -513,43 +513,18 @@ begin
           varPtr.isDefine := true;
         end;
 
-        if (System.Pos('OPEN', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('CLOSE', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PUTD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PRINTD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PRINTBD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PRINTCD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PRINTID', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('GETD', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('INPUTSD', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          devicePtr.isDevice := true;
-          devicePtr.isSySutils := true;
-        end
-        else if (System.Pos('STICK', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('STRIG', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PADDLE', UpperCase(tempxy.strings[i])) > 0) or
-          (System.Pos('PTRIG', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          devicePtr.isStick := true;
-        end
-        else if (System.Pos('GRAPHICS', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('PLOT', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('DRAWTO', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('COLOR', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('FILL', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          devicePtr.isGraphics := true;
-        end
-        else if (System.Pos('STRB', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('STRC', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('STRI', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('VALB', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('VALC', UpperCase(tempxy.strings[i])) > 0)
-             or (System.Pos('VALI', UpperCase(tempxy.strings[i])) > 0) then
-        begin
-          devicePtr.isSySutils := true;
-        end;
+        if IsArrayElementInString(_MP_DEVICE_SYSUTILS, tempxy.strings[i]) then
+           begin
+             devicePtr.isDevice := true;
+             devicePtr.isSySutils := true;
+           end
+        else if IsArrayElementInString(_MP_STICK, tempxy.strings[i]) then
+             devicePtr.isStick := true
+        else if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
+             devicePtr.isGraphics := true
+        else if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
+             devicePtr.isSySutils := true;
+
       end;
       WriteLn(' Done!');
       CheckDefine;
