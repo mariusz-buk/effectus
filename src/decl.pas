@@ -203,14 +203,14 @@ const
 
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
-  _MP_DEVIC_SYSUTILS: array [1..9] of String =
+  _MP_DEVIC_SYSUTILS: array [0..8] of String =
        ('OPEN','CLOSE','PUTD','PRINTD','PRINTBD','PRINTCD','PRINTID',
        'GETD','INPUTSD');
-  _MP_STICK: array [1..4] of String =
+  _MP_STICK: array [0..3] of String =
        ('STICK','STRIG','PADDLE','PTRIG');
-  _MP_GRAPHICS: array [1..5] of String =
+  _MP_GRAPHICS: array [0..4] of String =
        ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
-  _MP_SYSUTILS: array [1..6] of String =
+  _MP_SYSUTILS: array [0..5] of String =
        ('STRB','STRC','STRI','VALB','VALC','VALI');
 
 procedure Init;
