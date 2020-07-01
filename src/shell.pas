@@ -517,12 +517,12 @@ begin
            begin
              devicePtr.isDevice := true;
              devicePtr.isSySutils := true;
-           end
-        else if IsArrayElementInString(_MP_STICK, tempxy.strings[i]) then
-             devicePtr.isStick := true
-        else if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
-             devicePtr.isGraphics := true
-        else if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
+           end;
+        if IsArrayElementInString(_MP_STICK, tempxy.strings[i]) then
+             devicePtr.isStick := true;
+        if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
+             devicePtr.isGraphics := true;
+        if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
              devicePtr.isSySutils := true;
 
       end;
