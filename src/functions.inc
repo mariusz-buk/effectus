@@ -45,7 +45,7 @@
          // STICK, STRIG, PADDLE, PTRIG
          temp02 := ReplaceStr(temp02, '<<x>>', ReplaceKey('<<x>>', procName));
          // INPUTB, INPUTC, INPUTI
-         temp03 := ReplaceStr(temp02, '<<x>>', ReplaceKey('<<x>>', procName));
+         temp03 := ReplaceStr(temp03, '<<x>>', ReplaceKey('<<x>>', procName));
 
          if procName = 'GETD' then begin
            if params2 = '7' then temp01 += LineEnding + '  ReadKey;';
