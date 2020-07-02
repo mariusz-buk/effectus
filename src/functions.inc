@@ -33,82 +33,40 @@
 
        // Function is not in IF condition block
        if not branchPtr.isIfThen and not branchPtr.isIfThenInProgress then begin
-         if procName = 'RAND' then begin
-           temp := '  ' + funcVar + ' := Random(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'PEEK' then begin
-           temp := '  ' + funcVar + ' := Peek(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'PEEKC' then begin
-           temp := '  ' + funcVar + ' := DPeek(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'VALB' then begin
-           temp := '  ' + funcVar + ' := StrToInt(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'VALC' then begin
-           temp := '  ' + funcVar + ' := StrToInt(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'VALI' then begin
-           temp := '  ' + funcVar + ' := StrToInt(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'STICK' then begin
-           temp := '  ' + funcVar + ' := stick[' + params2 + '];';
-           code.Add(temp);
-         end
-         else if procName = 'STRIG' then begin
-           temp := '  ' + funcVar + ' := strig[' + params2 + '];';
-           code.Add(temp);
-         end
-         else if procName = 'PADDLE' then begin
-           temp := '  ' + funcVar + ' := paddl[' + params2 + '];';
-           code.Add(temp);
-         end
-         else if procName = 'PTRIG' then begin
-           temp := '  ' + funcVar + ' := ptrig[' + params2 + '];';
-           code.Add(temp);
-         end
+
+        temp01 := '  ' + funcVar + ' := <<x>>(' + params2 + ');';
+        temp02 := '  <<x>>(' + funcVar + ');';
+        temp03 := '  ' + funcVar + ' := <<x>>[' + params2 + '];';
+        //code.Add(temp);
+
+         if procName = 'RAND' then temp01 := ReplaceStr(temp01, '<<x>>', 'Random')
+         else if procName = 'PEEK' then temp01 := ReplaceStr(temp01, '<<x>>', 'Peek')
+         else if procName = 'PEEKC' then temp01 := ReplaceStr(temp01, '<<x>>', 'DPeek')
+         else if procName = 'VALB' then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
+         else if procName = 'VALC' then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
+         else if procName = 'VALI' then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
+         else if procName = 'INPUTBD' then temp01 := ReplaceStr(temp01, '<<x>>', 'Get')
+         else if procName = 'INPUTCD' then temp01 := ReplaceStr(temp01, '<<x>>', 'Get')
+         else if procName = 'INPUTID' then temp01 := ReplaceStr(temp01, '<<x>>', 'Get')
          else if procName = 'GETD' then begin
-           temp := '  ' + funcVar + ' := Get(' + params2 + ');';
-           if params2 = '7' then begin
-             temp += LineEnding + '  ReadKey;'
-             //temp := '  BlockRead(f, ' + funcVar + ', 1);';
-           end;
-           code.Add(temp);
-         end
-         else if procName = 'INPUTB' then begin
-           temp := '  Readln(' + funcVar + ');';
-           code.Add(temp);
-         end
-         else if procName = 'INPUTC' then begin
-           temp := '  Readln(' + funcVar + ');';
-           code.Add(temp);
-         end
-         else if procName = 'INPUTI' then begin
-           temp := '  Readln(' + funcVar + ');';
-           code.Add(temp);
-         end
-         else if procName = 'INPUTBD' then begin
-           //temp := '  BlockRead(f, ' + funcVar + ', 1);';
-           temp := '  ' + funcVar + ' := Get(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'INPUTCD' then begin
-           //temp := '  BlockRead(f, ' + funcVar + ', 1);';
-           temp := '  ' + funcVar + ' := Get(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'INPUTID' then begin
-           //temp := '  BlockRead(f, ' + funcVar + ', 1);';
-           temp := '  ' + funcVar + ' := Get(' + params2 + ');';
-           code.Add(temp);
-         end
-         else if procName = 'LOCATE' then begin
+           temp01 := ReplaceStr(temp01, '<<x>>', 'Get');
+           if params2 = '7' then temp01 += LineEnding + '  ReadKey;';
+         end;
+
+         if procName = 'STICK' then temp03 := ReplaceStr(temp03, '<<x>>', 'stick')
+         else if procName = 'STRIG' then temp03 := ReplaceStr(temp03, '<<x>>', 'strig')
+         else if procName = 'PADDLE' then temp03 := ReplaceStr(temp03, '<<x>>', 'paddl')
+         else if procName = 'PTRIG' then temp03 := ReplaceStr(temp03, '<<x>>', 'ptrig');
+
+         if procName = 'INPUTB' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln')
+         else if procName = 'INPUTC' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln')
+         else if procName = 'INPUTI' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln');
+
+         if Pos(temp01, '<<x>>') = 0 then code.Add(temp01)
+         else if Pos(temp02, '<<x>>') = 0 then code.Add(temp02)
+         else if Pos(temp03, '<<x>>') = 0 then code.Add(temp03);
+
+         if procName = 'LOCATE' then begin
            if devicePtr.isGr0 then begin
              params := params2.Split(',');
              if High(params) > 0 then begin
@@ -119,8 +77,9 @@
              temp := '  ' + funcVar + ' := GetPixel(' + params2 + ');';
            end;
            code.Add(temp);
-         end
-         else if procName = 'SCOMPARE' then begin
+         end;
+
+         if procName = 'SCOMPARE' then begin
            params := params2.Split(',');
            //writeln('scompare params2 = ', params2);
            if High(params) = 1 then begin
@@ -140,7 +99,7 @@
 //                  branchPtr.ifTempCode := ' ' + funcVar + '=' + params2 + ' ';
 //                end;
 //              end
-//              else begin 
+//              else begin
              temp := '  ' + funcVar + ' := ' + params2 + ';';
              code.Add(temp);
            end;
