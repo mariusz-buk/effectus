@@ -76,7 +76,7 @@
        else if procName = 'GRAPHICS' then begin
          temp := '';
 
-         //if devicePtr.isDevice then begin  
+         //if devicePtr.isDevice then begin
          //  temp := '  assign(f, ''S:''); rewrite(f, 1);' + LineEnding;
          //end;
 
@@ -190,13 +190,13 @@
        end
        else if procName = 'SCOPY' then begin
          params := params2.Split(',');
-         temp := '  ' + params[0] + ' := ' + params[1] + ';'; 
+         temp := '  ' + params[0] + ' := ' + params[1] + ';';
          code.Add(temp);
        end
        else if procName = 'SCOPYS' then begin
          params := params2.Split(',');
          temp := '  ' + params[0] + ' := ' +
-                 'Copy(' + params[1] + ',' + params[2] + ', ' + params[3] + ' - ' + params[2] + ' + 1);'; 
+                 'Copy(' + params[1] + ',' + params[2] + ', ' + params[3] + ' - ' + params[2] + ' + 1);';
          code.Add(temp);
        end
        else if procName = 'SASSIGN' then begin
@@ -232,7 +232,7 @@
        %E	the RETURN character
        %%	output the percent sign
        %S	output as a string
-      
+
        Some examples:
          PrintF("%EA%EB%E")
          PrintF("%EThe sum of %U and %U is %U%E",a,b,a+b
@@ -245,7 +245,7 @@
          temp := params[0];
 
          // Process
-         if System.Pos('%%', temp) > 0 then begin
+         if Pos('%%', temp) > 0 then begin
            //SplitStr(temp, '%%', aList);
            temp := ReplaceStr(temp, '%%', '%{percentEff}');
          end;
@@ -259,7 +259,7 @@
          paramsEx := temp.Split('%');
          for i := 1 to High(paramsEx) do begin
            if UpperCase(paramsEx[i][1]) = 'I' then begin
-             Inc(cnt); 
+             Inc(cnt);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
              params[cnt] := ReplaceStr(params[cnt], ')', ']');
              //temp02 += params[i] + ', ' + QuotedStr(Extract(2, paramsEx[i], 'i', []));
@@ -272,23 +272,23 @@
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'S' then begin
-             Inc(cnt); 
+             Inc(cnt);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
              params[cnt] := ReplaceStr(params[cnt], ')', ']');
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'H' then begin
-             Inc(cnt); 
+             Inc(cnt);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
              params[cnt] := ReplaceStr(params[cnt], ')', ']');
              temp02 += ', ' + QuotedStr('$') + ', HexStr(' + params[cnt] + ', 4), ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'C' then begin
-             Inc(cnt); 
+             Inc(cnt);
              //temp02 += params[i] + ', ' + QuotedStr(Extract(2, paramsEx[i], 'i', []));
              temp02 += ', Chr(' + params[cnt] + '), ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
-           else if System.Pos('{percentEff}', paramsEx[i]) > 0 then begin
+           else if Pos('{percentEff}', paramsEx[i]) > 0 then begin
              SplitStr(paramsEx[i], '{percentEff}', aList);
              if aList.Count = 1 then begin
                temp02 += ', ' + QuotedStr('%');
@@ -296,7 +296,7 @@
              else if aList.Count > 1 then begin
                temp02 += ', ' + QuotedStr('%' + aList[1]);
              end;
-             //temp02 := QuotedStr(Extract(1, temp, '%', [])); 
+             //temp02 := QuotedStr(Extract(1, temp, '%', []));
              //temp02 += ', ' + QuotedStr('%') + QuotedStr(Copy(paramsEx[i], 1, 11));
            end
            else if UpperCase(paramsEx[i][1]) = 'E' then begin
