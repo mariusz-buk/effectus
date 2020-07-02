@@ -513,16 +513,16 @@ begin
           varPtr.isDefine := true;
         end;
 
-        if IsArrayElementInString(_MP_DEVICE_SYSUTILS, tempxy.strings[i]) then
+        if Pos(tempxy.strings[i] + ',', 'OPEN,CLOSE,PUTD,PRINTD,PRINTBD,PRINTCD,PRINTID,GETD,INPUTSD,') > 0 then
            begin
              devicePtr.isDevice := true;
              devicePtr.isSySutils := true;
            end;
-        if IsArrayElementInString(_MP_STICK, tempxy.strings[i]) then
+        if Pos(tempxy.strings[i] + ',', 'STICK,STRIG,PADDLE,PTRIG,') > 0 then
              devicePtr.isStick := true;
-        if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
+        if Pos(tempxy.strings[i] + ',', 'GRAPHICS,PLOT,DRAWTO,COLOR,FILL,') > 0 then
              devicePtr.isGraphics := true;
-        if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
+        if Pos(tempxy.strings[i] + ',', 'STRB,STRC,STRI,VALB,VALC,VALI,') > 0 then
              devicePtr.isSySutils := true;
 
       end;

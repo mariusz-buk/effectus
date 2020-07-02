@@ -203,16 +203,6 @@ const
 
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
-  _MP_DEVICE_SYSUTILS: array [0..8] of string =
-       ('OPEN','CLOSE','PUTD','PRINTD','PRINTBD','PRINTCD','PRINTID',
-       'GETD','INPUTSD');
-  _MP_STICK: array [0..3] of string =
-       ('STICK','STRIG','PADDLE','PTRIG');
-  _MP_GRAPHICS: array [0..4] of string =
-       ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
-  _MP_SYSUTILS: array [0..5] of string =
-       ('STRB','STRC','STRI','VALB','VALC','VALI');
-
   _REPLACMENT : array [0..16, 0..1] of string = (
     ('RAND','Random'),
     ('PEEK','Peek'),
