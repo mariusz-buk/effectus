@@ -1198,27 +1198,13 @@ begin
       temp := ReplaceStr(temp, ')', ']');
     end;
 
-    if Pos('{AND}', temp) > 0 then begin
-      temp := ReplaceStr(temp, '{AND}', ' AND ');
-    end;
-    if Pos('{OR}', temp) > 0 then begin
-      temp := ReplaceStr(temp, '{OR}', ' OR ');
-    end;
-    if Pos('{XOR}', temp) > 0 then begin
-      temp := ReplaceStr(temp, '{XOR}', ' XOR ');
-    end;
-    if Pos('{LSH}', temp) > 0 then begin
-      temp := ReplaceStr(temp, '{LSH}', ' SHL ');
-    end;
-    if Pos('{RSH}', temp) > 0 then begin
-      temp := ReplaceStr(temp, '{RSH}', ' SHR ');
-    end;
-    if Pos('{MOD}', temp) > 0 then begin
-      temp := ReplaceStr(temp, '{MOD}', ' MOD ');
-    end;
-    if Pos('{DIV}', temp) > 0 then begin
-      temp := ReplaceStr(temp, '{DIV}', ' div ');
-    end;
+    temp := ReplaceStr(temp, '{AND}', ' AND ');
+    temp := ReplaceStr(temp, '{OR}', ' OR ');
+    temp := ReplaceStr(temp, '{XOR}', ' XOR ');
+    temp := ReplaceStr(temp, '{LSH}', ' SHL ');
+    temp := ReplaceStr(temp, '{RSH}', ' SHR ');
+    temp := ReplaceStr(temp, '{MOD}', ' MOD ');
+    temp := ReplaceStr(temp, '{DIV}', ' div ');
 
     // Check special character assignment, f.e. 'T
     if Pos('=', temp) > 0 then begin
