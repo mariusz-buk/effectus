@@ -37,7 +37,7 @@ interface
 Uses
   SySUtils, Classes, StrUtils, decl;
 
-function ReplaceKey(marker, inKey : string) : string;
+function ReplaceKey(outStr, inKey : string) : string;
 function IsArrayElementInString(seek : array of string; str : string) : boolean;
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 function GetVarValue(valuePos, index : byte) : string;
@@ -56,11 +56,11 @@ procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringLi
 
 implementation
 
-function ReplaceKey(marker, inKey : string) : string;
+function ReplaceKey(outStr, inKey : string) : string;
 var
   i : integer;
 begin
-  Result := marker;
+  Result := outStr;
   for i := Low(_REPLACMENT) to High(_REPLACMENT) do begin
     if _REPLACMENT[i][0] = inKey then begin
       Result := _REPLACMENT[i][1];
