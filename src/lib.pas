@@ -60,7 +60,7 @@ var
   i : integer;
 begin
   Result := false;
-  for i := 0 to Length(seek)-1 do begin
+  for i := Low(seek) to High(seek) do begin
     if Pos(seek[i], UpperCase(str)) > 0 then begin
       Result := true;
       break;
