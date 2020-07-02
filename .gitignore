@@ -5,6 +5,7 @@ src/backup
 .DS_Store
 geany
 /src/lib/
+/src/effectus
 **/*.ppu
 **/*.o
 /src/lib

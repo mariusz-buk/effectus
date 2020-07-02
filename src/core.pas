@@ -149,7 +149,7 @@ begin
         end;
       end;
     end
-    // BYTE ARRAY variable declaration 
+    // BYTE ARRAY variable declaration
     else if VarValue(2, i, _VAR_BYTE_ARRAY) or VarValue(2, i, _VAR_CARD_ARRAY) then begin
       if VarValue(2, i, _VAR_CARD_ARRAY) then begin
         dataType := 'word';
@@ -203,7 +203,7 @@ begin
                         dataType + ' absolute ' + buf + ';';
         end;
       end;
-    end 
+    end
     // TYPE variable declaration
     else if not isVar and VarValue(2, i, _VAR_TYPE_REC) then begin
       isVarDecl := true;
@@ -349,7 +349,7 @@ begin
       stmt := ReplaceStr(stmt, ')', ']');
     end;
   end;
-  
+
   result := stmt;
 end;
 
@@ -736,7 +736,7 @@ begin
         temp03 := Extract(1, params[1], '(');
         temp04 := Extract(1, params[0], '.');
         temp05 := Extract(2, params[0], '.');
-        
+
         // FUNCtion in assignment (right side)
         //temp06 := Extract(2, params[1], '(');
 //        temp06 := params[1];
@@ -760,7 +760,7 @@ begin
             prgPtr.colorValue := temp03;
           end
         end
-        // Standard variable assignment 
+        // Standard variable assignment
         else if (vars.IndexOfName(temp02) >= 0) or (vars.IndexOfName(temp04) >= 0) then begin
           params[0] := ReplaceStr(params[0], '(', '[');
           params[0] := ReplaceStr(params[0], ')', ']');
@@ -809,19 +809,19 @@ begin
               CheckOper('+', params[1]);
               CheckOper('-', params[1]);
               CheckOper('*', params[1]);
-              CheckOper('DIV', params[1]);  // Integer division, not float number division ('/')
-              CheckOper('MOD', params[1]);
-              CheckOper('AND', params[1]);
-              CheckOper('OR', params[1]);
-              CheckOper('XOR', params[1]);
-              CheckOper('RSH', params[1]);
-              CheckOper('LSH', params[1]);
+              CheckOper('{DIV}', params[1]);  // Integer division, not float number division ('/')
+              CheckOper('{MOD}', params[1]);
+              CheckOper('{AND}', params[1]);
+              CheckOper('{OR}', params[1]);
+              CheckOper('{XOR}', params[1]);
+              CheckOper('{RSH}', params[1]);
+              CheckOper('{LSH}', params[1]);
+              temp04 := '';
               if oper.Count > 0 then begin
                 for j := 0 to 255 do begin
                   for i := 0 to oper.Count - 1 do begin
                     if StrToInt(ExtractDelimited(1, oper.ValueFromIndex[i], [';'])) = j then begin
                       op.Add(oper.Names[i]);
-                      temp04 += oper.Names[i];
                       break;
                     end;
                   end;
@@ -846,7 +846,6 @@ begin
                 end;
               end;
               params[1] := temp04;
-              //writeln('params[1] = ', params[1]);
             end;
           end;
 
@@ -886,35 +885,13 @@ begin
           end
           // Standard assignment
           else begin
-            if System.Pos('{DIV}', params[1]) > 0 then begin
-              SplitStr(params[1], '{DIV}', aList);
-              params[1] := aList[0] + ' div ' + aList[1];
-            end
-            else if System.Pos('{MOD}', params[1]) > 0 then begin
-              SplitStr(params[1], '{MOD}', aList);
-              params[1] := aList[0] + ' MOD ' + aList[1];
-            end
-            else if System.Pos('{AND}', params[1]) > 0 then begin
-              SplitStr(params[1], '{AND}', aList);
-              params[1] := aList[0] + ' AND ' + aList[1];
-            end
-            else if System.Pos('{OR}', params[1]) > 0 then begin
-              SplitStr(params[1], '{OR}', aList);
-              params[1] := aList[0] + ' OR ' + aList[1];
-            end
-            else if System.Pos('{LSH}', params[1]) > 0 then begin
-              SplitStr(params[1], '{LSH}', aList);
-              params[1] := aList[0] + ' SHL ' + aList[1];
-            end
-            else if System.Pos('{RSH}', params[1]) > 0 then begin
-              SplitStr(params[1], '{RSH}', aList);
-              params[1] := aList[0] + ' SHR ' + aList[1];
-            end
-            else if System.Pos('{XOR}', params[1]) > 0 then begin
-              SplitStr(params[1], '{XOR}', aList);
-              params[1] := aList[0] + ' XOR ' + aList[1];
-            end;
-
+            params[1] := ReplaceStr(params[1],'{DIV}',' div ');
+            params[1] := ReplaceStr(params[1],'{MOD}',' MOD ');
+            params[1] := ReplaceStr(params[1],'{AND}',' AND ');
+            params[1] := ReplaceStr(params[1],'{OR}',' OR ');
+            params[1] := ReplaceStr(params[1],'{LSH}',' SHL ');
+            params[1] := ReplaceStr(params[1],'{RSH}',' SHR ');
+            params[1] := ReplaceStr(params[1],'{XOR}',' XOR ');
             if not varPtr.isVarStart and prgPtr.isStartBegin then begin
               // F.e. 'A
               if params[1][1] = '''' then begin
@@ -1009,7 +986,7 @@ begin
                        '    .by ';
     end;
 
-    // Machine language mnemonics on the same line 
+    // Machine language mnemonics on the same line
     if Length(temp) > 1 then begin
       temp02 := Extract(2, temp, '[');
       temp02 := ReplaceStr(temp02, ']', '');
@@ -1139,7 +1116,7 @@ begin
     op.Free;
     Exit;
   end;
-  
+
   // PROCedure is found, check the parameters
   if (procs.IndexOfName(procName) >= 0) or (myProcs.IndexOfName(procName) >= 0) then begin
     // Paramater count
@@ -1161,7 +1138,7 @@ begin
         //params[i] := ReplaceStr(params[i], '(', '[');
         //params[i] := ReplaceStr(params[i], ')', ']');
         params2 := CheckParams(i, paramCnt, procName, params[i], params2);
-      end; 
+      end;
     end
     // No parameters
     else if paramCnt = 0 then begin
@@ -1213,33 +1190,33 @@ begin
     //prgPtr.isIfThen := false;
   end
   // Code in IF condition part
-  else if branchPtr.isIfThenNext then begin    
+  else if branchPtr.isIfThenNext then begin
     // Replace () brackets with [] brackets
-    // Bracket '(' is not the first character in condition value 
-    if temp[1] <> '(' then begin    
+    // Bracket '(' is not the first character in condition value
+    if temp[1] <> '(' then begin
       temp := ReplaceStr(temp, '(', '[');
       temp := ReplaceStr(temp, ')', ']');
     end;
 
-    if System.Pos('{AND}', temp) > 0 then begin
+    if Pos('{AND}', temp) > 0 then begin
       temp := StringReplace(temp, '{AND}', ' AND ', [rfReplaceAll]);
     end;
-    if System.Pos('{OR}', temp) > 0 then begin
+    if Pos('{OR}', temp) > 0 then begin
       temp := StringReplace(temp, '{OR}', ' OR ', [rfReplaceAll]);
     end;
-    if System.Pos('{XOR}', temp) > 0 then begin
+    if Pos('{XOR}', temp) > 0 then begin
       temp := StringReplace(temp, '{XOR}', ' XOR ', [rfReplaceAll]);
     end;
-    if System.Pos('{LSH}', temp) > 0 then begin
+    if Pos('{LSH}', temp) > 0 then begin
       temp := StringReplace(temp, '{LSH}', ' SHL ', [rfReplaceAll]);
     end;
-    if System.Pos('{RSH}', temp) > 0 then begin
+    if Pos('{RSH}', temp) > 0 then begin
       temp := StringReplace(temp, '{RSH}', ' SHR ', [rfReplaceAll]);
     end;
-    if System.Pos('{MOD}', temp) > 0 then begin
+    if Pos('{MOD}', temp) > 0 then begin
       temp := StringReplace(temp, '{MOD}', ' MOD ', [rfReplaceAll]);
     end;
-    if System.Pos('{DIV}', temp) > 0 then begin
+    if Pos('{DIV}', temp) > 0 then begin
       temp := StringReplace(temp, '{DIV}', ' div ', [rfReplaceAll]);
     end;
 
@@ -1378,7 +1355,7 @@ var
   i : byte;
   temp : string;
 begin
-  // PROCedure name is on the same line as parameters 
+  // PROCedure name is on the same line as parameters
   if (Length(line) > 1) and (System.Pos('(', line) > 0) then begin
     procName := UpperCase(Extract(1, line, '('));
     params := UpperCase(Extract(2, line, '('));
@@ -1416,7 +1393,7 @@ begin
       end;
     end;
   end;
-  
+
   // PROCedure declaration statement is finished
   if System.Pos(')', line) > 0 then begin
     //prgPtr.isVarArray := false;
@@ -1430,7 +1407,7 @@ begin
       if prgPtr.isStartBegin then begin
         code.add('end;  // e1')
       end;
-      
+
       if varPtr.isFunc then begin
         if prgPtr.isFuncAsm then
           code.Add('function ' + procName + 'Func : ' + varPtr.dataType + '; assembler;')
@@ -1485,7 +1462,7 @@ begin
       if prgPtr.isStartBegin then begin
         code.add('end;  // e2')
       end;
-      
+
       if varPtr.isFunc then begin
         if prgPtr.isFuncAsm then begin
           code.Add('function ' + procName + 'Func(' + ParamVarDecl(params) + ') : ' +
@@ -1531,8 +1508,8 @@ begin
   if prgPtr.isProcName then begin
     prgPtr.procParams += ' ' + line;
   end;
-  
-  // Check for machine code opcode  
+
+  // Check for machine code opcode
   if (System.Pos('[', line) > 0) then begin
     procML.isAsm := true;
 
@@ -1789,7 +1766,7 @@ begin
         // String variable declaration
         else begin
           // Check string dimension and extract string variable
-          temp := '0'; 
+          temp := '0';
           if System.Pos('(', varDeclList[i]) > 0 then begin
             temp := ExtractText(varDeclList[i], '(', ')');
             varDeclList[i] := Extract(1, varDeclList[i], '(');
@@ -1933,7 +1910,7 @@ var
   strUnits : string = '';
 begin
   code.Add('// Effectus auto-generated Mad Pascal source code listing');
-  
+
   prgName := StringReplace(prgName, '-', '', [rfReplaceAll]);
   code.Add('program ' + prgName + 'Prg;' + LineEnding);
   code.Add('uses');
@@ -2028,31 +2005,31 @@ begin
 
 //     effCode[i] := StringReplace(effCode[i], '  ', ' ', [rfReplaceAll]);
     for j := 2 to 255 do begin
-      effCode[i] := StringReplace(effCode[i], StringOfChar(' ', j), ' ', [rfReplaceAll]);
+      effCode[i] := ReplaceStr(effCode[i], StringOfChar(' ', j), ' ');
     end;
 
-    effCode[i] := StringReplace(effCode[i], ' (', '(', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '( ', '(', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], ' )', ')', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' (', '(');
+    effCode[i] := ReplaceStr(effCode[i], '( ', '(');
+    effCode[i] := ReplaceStr(effCode[i], ' )', ')');
 
-    effCode[i] := StringReplace(effCode[i], ' [', '[', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '[ ', '[', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], ' ]', ']', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], ' ] ', ']', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' [', '[');
+    effCode[i] := ReplaceStr(effCode[i], '[ ', '[');
+    effCode[i] := ReplaceStr(effCode[i], ' ]', ']');
+    effCode[i] := ReplaceStr(effCode[i], ' ] ', ']');
 
-    effCode[i] := StringReplace(effCode[i], ' =', '=', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '= ', '=', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' =', '=');
+    effCode[i] := ReplaceStr(effCode[i], '= ', '=');
 
-    effCode[i] := StringReplace(effCode[i], ' +', '+', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '+ ', '+', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' +', '+');
+    effCode[i] := ReplaceStr(effCode[i], '+ ', '+');
 
-    effCode[i] := StringReplace(effCode[i], ' -', '-', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '- ', '-', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' -', '-');
+    effCode[i] := ReplaceStr(effCode[i], '- ', '-');
 
-    effCode[i] := StringReplace(effCode[i], ' *', '*', [rfReplaceAll]);
-    effCode[i] := StringReplace(effCode[i], '* ', '*', [rfReplaceAll]);
-    
-    effCode[i] := StringReplace(effCode[i], '#', '<>', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], ' *', '*');
+    effCode[i] := ReplaceStr(effCode[i], '* ', '*');
+
+    effCode[i] := ReplaceStr(effCode[i], '#', '<>');
 
     effCode[i] := ReplaceToken(effCode[i], '/', '/', '{DIV}');
     effCode[i] := ReplaceToken(effCode[i], '&', '&', '{AND}');
@@ -2152,7 +2129,7 @@ begin
   FilenameSrc := ExtractFilePath(actionFilename);
   pasFile := ExtractFilenameWithoutExt(actionFilename) + '.pas';
   FilenameSrc += pasFile;
-  
+
   //pasFile := GetCurrentDir + PathDelim + FilenameSrc;
   code.SaveToFile(FilenameSrc);
 end;

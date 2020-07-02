@@ -37,6 +37,7 @@ interface
 Uses
   SySUtils, Classes, StrUtils, decl;
 
+function IsArrayElementInString(seek : array of String; str : String) : boolean;
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 function GetVarValue(valuePos, index : byte) : string;
 function ReplaceToken(code, operand, newOperand01, newOperand02 : string) : string;
@@ -54,6 +55,19 @@ procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringLi
 
 implementation
 
+function IsArrayElementInString(seek : array of String; str : String) : boolean;
+var
+  i : integer;
+begin
+  Result := false;
+  for i := 0 to Length(seek)-1 do begin
+    if Pos(seek[i], UpperCase(str)) > 0 then begin
+      Result := true;
+      break;
+    end
+  end;
+end;
+
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 begin
   if ExtractDelimited(valuePos, vars.ValueFromIndex[index], [';']) = compareValue then
@@ -64,7 +78,7 @@ end;
 
 function GetVarValue(valuePos, index : byte) : string;
 begin
-  result := ExtractDelimited(valuePos, vars.ValueFromIndex[index], [';']); 
+  result := ExtractDelimited(valuePos, vars.ValueFromIndex[index], [';']);
 end;
 
 {------------------------------------------------------------------------------
@@ -102,11 +116,7 @@ begin
   repeat
     x := nPos(op, expr, y);
     if x > 0 then begin
-      if Length(op) = 1 then
-        oper.Add(op + '=' + IntToStr(x) + ';0')
-      else begin
-        oper.Add('{' + op + '}=' + IntToStr(x) + ';0')
-      end;
+      oper.Add(op + '=' + IntToStr(x) + ';0')
     end;
     inc(y);
   until x = 0;
@@ -119,7 +129,7 @@ begin
   result := '-2';
   paramsEx := params.Split(',');
   //writeln('(2) scompare params2 = ', params2);
-  
+
   if High(paramsEx) = 1 then begin
     paramsEx[0] := Trim(paramsEx[0]);
     paramsEx[1] := Trim(paramsEx[1]);
@@ -167,7 +177,7 @@ begin
         else begin
           temp02 := ''
         end;
-        
+
         if (temp02 <> '') and (temp02 <> 'SCOMPARE') then begin
           branchPtr.isFuncInIf := true;
           branchPtr.ifThenCode += ' ' + temp02 + '(' + params2 + ') ' +
