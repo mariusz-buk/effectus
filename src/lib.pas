@@ -86,20 +86,20 @@ end;
  -----------------------------------------------------------------------------}
 function ReplaceToken(code, operand, newOperand01, newOperand02 : string) : string;
 begin
-  if (System.Pos(operand, code) > 1) and (System.Pos('"', code) > 0)
-     and (System.Pos(operand, code) > System.Pos('"', code)) then
+  if (Pos(operand, code) > 1) and (Pos('"', code) > 0)
+     and (Pos(operand, code) > Pos('"', code)) then
   begin
   end
-  else if System.Pos(operand, code) > 0 then begin
+  else if Pos(operand, code) > 0 then begin
     if operand = newOperand01 then begin
-      code := StringReplace(code, ' ' + operand, operand, [rfReplaceAll]);
-      code := StringReplace(code, operand + ' ', newOperand01, [rfReplaceAll]);
-      code := StringReplace(code, operand, newOperand02, [rfReplaceAll]);
+      code := ReplaceStr(code, ' ' + operand, operand);
+      code := ReplaceStr(code, operand + ' ', newOperand01);
+      code := ReplaceStr(code, operand, newOperand02);
     end
     else begin
-      code := StringReplace(code, ' ' + operand + ' ', newOperand01, [rfReplaceAll]);
-      code := StringReplace(code, operand + ' ', newOperand01, [rfReplaceAll]);
-      code := StringReplace(code, ' ' + operand, newOperand02, [rfReplaceAll]);
+      code := ReplaceStr(code, ' ' + operand + ' ', newOperand01);
+      code := ReplaceStr(code, operand + ' ', newOperand01);
+      code := ReplaceStr(code, ' ' + operand, newOperand02);
     end;
   end;
   result := code;
@@ -202,8 +202,8 @@ Examples:
 function ExtractText(Str : String; Ch1, Ch2 : Char) : String;
 begin
   result := Copy(Str,
-                 System.Pos(Ch1, Str) + 1,
-                 RPos(Ch2, Str) - System.Pos(Ch1, Str) - 1);
+                 Pos(Ch1, Str) + 1,
+                 RPos(Ch2, Str) - Pos(Ch1, Str) - 1);
   if Trim(result) = '' then begin
     result := str;
   end;
@@ -229,11 +229,11 @@ function Replace(Str : String; Ch1, Ch2 : Char) : String;
 var
   i : Integer;
 begin
-  i := System.Pos(Ch1, Str);
+  i := Pos(Ch1, Str);
   Delete(Str, i, 1);
   Insert(Ch2, Str, i);
   Result := Str;
-//  Result := StuffString(Str, System.Pos(Ch1, Str), 1, Ch2);
+//  Result := StuffString(Str, Pos(Ch1, Str), 1, Ch2);
 end;
 
 {------------------------------------------------------------------------------
