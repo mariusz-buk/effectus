@@ -41,20 +41,18 @@
          if procName = 'RAND' then temp01 := ReplaceStr(temp01, '<<x>>', 'Random')
          else if procName = 'PEEK' then temp01 := ReplaceStr(temp01, '<<x>>', 'Peek')
          else if procName = 'PEEKC' then temp01 := ReplaceStr(temp01, '<<x>>', 'DPeek')
-         else if procName = 'VALB' then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
-         else if procName = 'VALC' then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
-         else if procName = 'VALI' then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
-         else if procName = 'INPUTBD' then temp01 := ReplaceStr(temp01, '<<x>>', 'Get')
-         else if procName = 'INPUTCD' then temp01 := ReplaceStr(temp01, '<<x>>', 'Get')
-         else if procName = 'INPUTID' then temp01 := ReplaceStr(temp01, '<<x>>', 'Get')
+
+         else if (procName = 'VALB') or (procName = 'VALC') or (procName = 'VALI')
+           then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
+         else if (procName = 'INPUTBD') or (procName = 'INPUTCD') or (procName = 'INPUTID')
+           then temp01 := ReplaceStr(temp01, '<<x>>', 'Get')
          else if procName = 'GETD' then begin
            temp01 := ReplaceStr(temp01, '<<x>>', 'Get');
            if params2 = '7' then temp01 += LineEnding + '  ReadKey;';
          end;
 
-         if procName = 'INPUTB' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln')
-         else if procName = 'INPUTC' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln')
-         else if procName = 'INPUTI' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln');
+         if (procName = 'INPUTB') or (procName = 'INPUTC') or (procName = 'INPUTI')
+           then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln');
 
          if procName = 'STICK' then temp03 := ReplaceStr(temp03, '<<x>>', 'stick')
          else if procName = 'STRIG' then temp03 := ReplaceStr(temp03, '<<x>>', 'strig')
