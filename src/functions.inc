@@ -38,25 +38,13 @@
          temp02 := '  <<x>>(' + funcVar + ');';
          temp03 := '  ' + funcVar + ' := <<x>>[' + params2 + '];';
 
-         if procName = 'RAND' then temp01 := ReplaceStr(temp01, '<<x>>', 'Random')
-         else if procName = 'PEEK' then temp01 := ReplaceStr(temp01, '<<x>>', 'Peek')
-         else if procName = 'PEEKC' then temp01 := ReplaceStr(temp01, '<<x>>', 'DPeek')
-         else if (procName = 'VALB') or (procName = 'VALC') or (procName = 'VALI')
-           then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
-         else if (procName = 'INPUTBD') or (procName = 'INPUTCD') or (procName = 'INPUTID')
-           then temp01 := ReplaceStr(temp01, '<<x>>', 'Get')
-         else if procName = 'GETD' then begin
-           temp01 := ReplaceStr(temp01, '<<x>>', 'Get');
+         temp01 := ReplaceStr(temp01, '<<x>>', ReplaceKey('<<x>>', procName));
+         temp02 := ReplaceStr(temp02, '<<x>>', ReplaceKey('<<x>>', procName));
+         temp03 := ReplaceStr(temp02, '<<x>>', ReplaceKey('<<x>>', procName));
+
+         if procName = 'GETD' then begin
            if params2 = '7' then temp01 += LineEnding + '  ReadKey;';
          end;
-
-         if (procName = 'INPUTB') or (procName = 'INPUTC') or (procName = 'INPUTI')
-           then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln');
-
-         if procName = 'STICK' then temp03 := ReplaceStr(temp03, '<<x>>', 'stick')
-         else if procName = 'STRIG' then temp03 := ReplaceStr(temp03, '<<x>>', 'strig')
-         else if procName = 'PADDLE' then temp03 := ReplaceStr(temp03, '<<x>>', 'paddl')
-         else if procName = 'PTRIG' then temp03 := ReplaceStr(temp03, '<<x>>', 'ptrig');
 
          if Pos(temp01, '<<x>>') = 0 then code.Add(temp01)
          else if Pos(temp02, '<<x>>') = 0 then code.Add(temp02)
