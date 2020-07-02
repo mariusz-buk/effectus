@@ -6,7 +6,6 @@ src/backup
 geany
 /src/lib/
 /src/effectus
-/bin/macos/effectus
 **/*.ppu
 **/*.o
 /src/lib
