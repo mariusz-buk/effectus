@@ -917,16 +917,16 @@ begin
                   //writeln('extracted text = ', temp01);
                   if funcs.IndexOfName(temp01) >= 0 then begin
                     if UpperCase(temp01) = 'RAND' then
-                      temp04 := 'Random';
-                    if UpperCase(temp01) = 'PEEK' then
-                      temp04 := 'Peek';
-                    if UpperCase(temp01) = 'PEEKC' then
-                      temp04 := 'DPeek';
-                    if UpperCase(temp01) = 'VALB' then
-                      temp04 := 'StrToInt';
-                    if UpperCase(temp01) = 'VALC' then
-                      temp04 := 'StrToInt';
-                    if UpperCase(temp01) = 'VALI' then begin
+                      temp04 := 'Random'
+                    else if UpperCase(temp01) = 'PEEK' then
+                      temp04 := 'Peek'
+                    else if UpperCase(temp01) = 'PEEKC' then
+                      temp04 := 'DPeek'
+                    else if UpperCase(temp01) = 'VALB' then
+                      temp04 := 'StrToInt'
+                    else if UpperCase(temp01) = 'VALC' then
+                      temp04 := 'StrToInt'
+                    else if UpperCase(temp01) = 'VALI' then begin
                       temp04 := 'StrToInt';
                     end;
                     temp03 := Extract(1, params[1], '[');
