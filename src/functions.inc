@@ -34,10 +34,9 @@
        // Function is not in IF condition block
        if not branchPtr.isIfThen and not branchPtr.isIfThenInProgress then begin
 
-        temp01 := '  ' + funcVar + ' := <<x>>(' + params2 + ');';
-        temp02 := '  <<x>>(' + funcVar + ');';
-        temp03 := '  ' + funcVar + ' := <<x>>[' + params2 + '];';
-        //code.Add(temp);
+         temp01 := '  ' + funcVar + ' := <<x>>(' + params2 + ');';
+         temp02 := '  <<x>>(' + funcVar + ');';
+         temp03 := '  ' + funcVar + ' := <<x>>[' + params2 + '];';
 
          if procName = 'RAND' then temp01 := ReplaceStr(temp01, '<<x>>', 'Random')
          else if procName = 'PEEK' then temp01 := ReplaceStr(temp01, '<<x>>', 'Peek')
@@ -53,14 +52,14 @@
            if params2 = '7' then temp01 += LineEnding + '  ReadKey;';
          end;
 
+         if procName = 'INPUTB' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln')
+         else if procName = 'INPUTC' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln')
+         else if procName = 'INPUTI' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln');
+
          if procName = 'STICK' then temp03 := ReplaceStr(temp03, '<<x>>', 'stick')
          else if procName = 'STRIG' then temp03 := ReplaceStr(temp03, '<<x>>', 'strig')
          else if procName = 'PADDLE' then temp03 := ReplaceStr(temp03, '<<x>>', 'paddl')
          else if procName = 'PTRIG' then temp03 := ReplaceStr(temp03, '<<x>>', 'ptrig');
-
-         if procName = 'INPUTB' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln')
-         else if procName = 'INPUTC' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln')
-         else if procName = 'INPUTI' then temp02 := ReplaceStr(temp02, '<<x>>', 'Readln');
 
          if Pos(temp01, '<<x>>') = 0 then code.Add(temp01)
          else if Pos(temp02, '<<x>>') = 0 then code.Add(temp02)
