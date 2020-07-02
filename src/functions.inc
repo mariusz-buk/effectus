@@ -41,7 +41,6 @@
          if procName = 'RAND' then temp01 := ReplaceStr(temp01, '<<x>>', 'Random')
          else if procName = 'PEEK' then temp01 := ReplaceStr(temp01, '<<x>>', 'Peek')
          else if procName = 'PEEKC' then temp01 := ReplaceStr(temp01, '<<x>>', 'DPeek')
-
          else if (procName = 'VALB') or (procName = 'VALC') or (procName = 'VALI')
            then temp01 := ReplaceStr(temp01, '<<x>>', 'StrToInt')
          else if (procName = 'INPUTBD') or (procName = 'INPUTCD') or (procName = 'INPUTID')
