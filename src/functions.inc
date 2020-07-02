@@ -38,8 +38,13 @@
          temp02 := '  <<x>>(' + funcVar + ');';
          temp03 := '  ' + funcVar + ' := <<x>>[' + params2 + '];';
 
+         // ReplaceKey function works on _REPLACMENT array
+
+         // PEEK, PEEKC, VALB, VALC, VALI, INPUTBD, INPUTCD, INPUTID, GETD
          temp01 := ReplaceStr(temp01, '<<x>>', ReplaceKey('<<x>>', procName));
+         // STICK, STRIG, PADDLE, PTRIG
          temp02 := ReplaceStr(temp02, '<<x>>', ReplaceKey('<<x>>', procName));
+         // INPUTB, INPUTC, INPUTI
          temp03 := ReplaceStr(temp02, '<<x>>', ReplaceKey('<<x>>', procName));
 
          if procName = 'GETD' then begin

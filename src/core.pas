@@ -916,6 +916,8 @@ begin
                   temp01 := Extract(1, temp01, '[');
                   //writeln('extracted text = ', temp01);
                   if funcs.IndexOfName(temp01) >= 0 then begin
+                    // ReplaceKey function works on _REPLACMENT array
+                    // RAND, PEEK, PEEKC, VALB, VALC, VALI
                     temp04 := ReplaceKey(temp04, UpperCase(temp01));
                     temp03 := Extract(1, params[1], '[');
                     code.Add('  ' + params[0] + ' := ' + temp03 +
