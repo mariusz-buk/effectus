@@ -103,7 +103,7 @@ type
 
     // Temporary storage
     str01, str02 : string;
-    
+
     isDefine : boolean;
     isFunc : boolean;
   end;
@@ -156,13 +156,13 @@ var
   code : TStringList;
   effCode : TStringList;
   isClearLog : boolean = false;
-  
+
   isVarFastMode : boolean = false;
   isByteFastMode : boolean = false;
   isPointerFastMode : boolean = false;
   isWordFastMode : boolean = false;
   cntByteFastMode : byte = 0;
-  
+
   FuncList : TStringList;
   defineList : TStringList;
   filenameSrc : string;
@@ -190,7 +190,7 @@ var
 
   varCnt : byte = 0;
   tempProc : string;
-  
+
 const
   _VAR_SCALAR     = '0';
   _VAR_MEM_ADDR   = '1';
@@ -203,15 +203,35 @@ const
 
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
-  _MP_DEVICE_SYSUTILS: array [0..8] of String =
+  _MP_DEVICE_SYSUTILS: array [0..8] of string =
        ('OPEN','CLOSE','PUTD','PRINTD','PRINTBD','PRINTCD','PRINTID',
        'GETD','INPUTSD');
-  _MP_STICK: array [0..3] of String =
+  _MP_STICK: array [0..3] of string =
        ('STICK','STRIG','PADDLE','PTRIG');
-  _MP_GRAPHICS: array [0..4] of String =
+  _MP_GRAPHICS: array [0..4] of string =
        ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
-  _MP_SYSUTILS: array [0..5] of String =
+  _MP_SYSUTILS: array [0..5] of string =
        ('STRB','STRC','STRI','VALB','VALC','VALI');
+
+  _REPLACMENT : array [0..16, 0..1] of string = (
+    ('RAND','Random'),
+    ('PEEK','Peek'),
+    ('PEEKC','DPeek'),
+    ('VALB','StrToInt'),
+    ('VALC','StrToInt'),
+    ('VALI','StrToInt'),
+    ('INPUTBD','Get'),
+    ('INPUTCD','Get'),
+    ('INPUTID','Get'),
+    ('GETD','Get'),
+    ('STICK','stick'),
+    ('STRIG','strig'),
+    ('PADDLE','paddl'),
+    ('PTRIG','ptrig'),
+    ('INPUTB','Readln'),
+    ('INPUTC','Readln'),
+    ('INPUTI','Readln')
+  );
 
 procedure Init;
 procedure CreateLists;
@@ -238,7 +258,7 @@ begin
   defineList.Clear;
   aList.Clear;
 
-  // Action! keywords  
+  // Action! keywords
   keywords.Add('MODULE=0');
   keywords.Add('PROC=0');
   keywords.Add('FUNC=0');
@@ -273,7 +293,7 @@ begin
   dataTypes.Add('SBYTE=3');
   dataTypes.Add('TYPE=4');
 
-  // Action! PROCedures  
+  // Action! PROCedures
   procs.Add('Print=4');
   procs.Add('PrintE=4');
   procs.Add('PrintD=4');
@@ -285,32 +305,32 @@ begin
   procs.Add('PrintC=4');
   procs.Add('PrintCE=4');
   procs.Add('PrintCD=4');
-  procs.Add('PrintCDE=4'); 
+  procs.Add('PrintCDE=4');
   procs.Add('PrintI=4');
   procs.Add('PrintIE=4');
   procs.Add('PrintID=4');
   procs.Add('PrintIDE=4');
   procs.Add('PrintF=4');
   procs.Add('Put=4');
-  procs.Add('PutE=4'); 
+  procs.Add('PutE=4');
   procs.Add('PutD=4');
   procs.Add('PutDE=4');
   procs.Add('InputS=4');
   procs.Add('InputSD=4');
   procs.Add('InputMD=4');
-  procs.Add('Open=4'); 
+  procs.Add('Open=4');
   procs.Add('Close=4');
   procs.Add('XIO=4');
   procs.Add('Note=4');
   procs.Add('Point=4');
   procs.Add('Graphics=4');
-  procs.Add('SetColor=4'); 
+  procs.Add('SetColor=4');
   procs.Add('Plot=4');
   procs.Add('DrawTo=4');
   procs.Add('Fill=4');
   procs.Add('Position=4');
   procs.Add('Sound=4');
-  procs.Add('SndRst=4'); 
+  procs.Add('SndRst=4');
   procs.Add('SCopy=4');
   procs.Add('SCopyS=4');
   procs.Add('SAssign=4');
@@ -324,7 +344,7 @@ begin
   procs.Add('Poke=4');
   procs.Add('PokeC=4');
 
-  // PROCedure parameters  
+  // PROCedure parameters
   procParams.Add('Print=1;1');
   procParams.Add('PrintE=1;1');
   procParams.Add('PutE=0');
@@ -336,7 +356,7 @@ begin
   procParams.Add('PrintCE=1;4');
   procParams.Add('Put=1;2');
   procParams.Add('PrintF=255;255');
-  
+
   procParams.Add('Graphics=1;2');
   procParams.Add('Plot=2;4;2');
   procParams.Add('DrawTo=2;4;2');
@@ -346,23 +366,23 @@ begin
 
   procParams.Add('Poke=2;4;2');
   procParams.Add('PokeC=2;4;4');
-  
+
   procParams.Add('Zero=2;4;4');
   procParams.Add('SetBlock=3;4;4;2');
   procParams.Add('MoveBlock=3;4;4;4');
-  
+
   procParams.Add('Sound=4;2;2;2;2');
   procParams.Add('SndRst=0');
-  
+
   procParams.Add('SCopy=2;1;1');
   procParams.Add('SCopyS=4;1;1;2;2');
   procParams.Add('SAssign=4;1;1;2;2');
   procParams.Add('StrB=2;2;1');
   procParams.Add('StrC=2;4;1');
   procParams.Add('StrI=2;3;1');
-  
+
   procParams.Add('InputS=1;1');
-  
+
   procParams.Add('Open=4;2;1;2;2');
   procParams.Add('Close=1;2');
   procParams.Add('PutD=2;2;2');
@@ -377,13 +397,13 @@ begin
   procParams.Add('PrintIDE=2;2;3');
   procParams.Add('InputSD=2;2;1');
   procParams.Add('InputMD=3;2;1;2');
-  
+
   //PROC XIO(BYTE chan,0,cmd,auxl,aux2,<filestring))
   procParams.Add('XIO=6;2;2;2;2;2;1');
 
   // Action! variables
   funcs.Add('Color=0');
-  
+
   // Action! FUNCtions
   //funcs.Add('EOF=0');
   funcs.Add('Rand=1');
