@@ -917,7 +917,7 @@ begin
                   //writeln('extracted text = ', temp01);
                   if funcs.IndexOfName(temp01) >= 0 then begin
                     // ReplaceKey function works on _REPLACMENT array
-                    if Pos(temp01 + ',', 'RAND,PEEK,PEEKC,VALB,VALC,VALI,') > 0 then
+                    if Pos(',' + temp01 + ',', ',RAND,PEEK,PEEKC,VALB,VALC,VALI,') > 0 then
                       temp04 := ReplaceKey(temp04, UpperCase(temp01));
                     temp03 := Extract(1, params[1], '[');
                     code.Add('  ' + params[0] + ' := ' + temp03 +
