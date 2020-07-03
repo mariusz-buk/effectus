@@ -34,6 +34,9 @@
        // Function is not in IF condition block
        if not branchPtr.isIfThen and not branchPtr.isIfThenInProgress then begin
 
+         // doubled delmiter - to be sure ;)
+         temp := ',' + procName + ',';
+
          // RAND, PEEK, PEEKC, VALB, VALC, VALI, GETD, INPUTBD, INPUTCD, INPUTID
          temp01 := '  ' + funcVar + ' := <<x>>(' + params2 + ');';
          // INPUTB, INPUTC, INPUTI
@@ -43,11 +46,11 @@
          // ReplaceKey function works on _REPLACMENT array
          temp04 := ReplaceKey('<<x>>', procName);
 
-         if Pos(procName + ',', 'RAND,PEEK,PEEKC,VALB,VALC,VALI,GETD,INPUTBD,INPUTCD,INPUTID,') > 0 then
+         if Pos(temp, ',RAND,PEEK,PEEKC,VALB,VALC,VALI,GETD,INPUTBD,INPUTCD,INPUTID,') > 0 then
            temp01 := ReplaceStr(temp01, '<<x>>', temp04)
-         else if Pos(procName + ',', 'INPUTB,INPUTC,INPUTI,') > 0 then
+         else if Pos(temp, ',INPUTB,INPUTC,INPUTI,') > 0 then
            temp02 := ReplaceStr(temp02, '<<x>>', temp04)
-         else if Pos(procName + ',', 'STICK,STRIG,PADDLE,PTRIG,') > 0 then
+         else if Pos(temp, ',STICK,STRIG,PADDLE,PTRIG,') > 0 then
            temp03 := ReplaceStr(temp03, '<<x>>', temp04);
 
          if procName = 'GETD' then begin
