@@ -201,6 +201,8 @@ const
   _VAR_SCALAR_DEFAULT = '6';
   _VAR_TYPE_REC   = '7';
 
+  _MARKER = '<<x>>';
+
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
   _MP_DEVICE_SYSUTILS: array [0..8] of string =
