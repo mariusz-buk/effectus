@@ -34,7 +34,7 @@
        // Function is not in IF condition block
        if not branchPtr.isIfThen and not branchPtr.isIfThenInProgress then begin
 
-         // doubled delmiter - to be sure ;)
+         // doubled delimiter - to be sure ;)
          temp := ',' + procName + ',';
 
          // RAND, PEEK, PEEKC, VALB, VALC, VALI, GETD, INPUTBD, INPUTCD, INPUTID
