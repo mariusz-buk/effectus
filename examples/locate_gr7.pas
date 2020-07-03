@@ -2,11 +2,8 @@
 program locate_gr7Prg;
 
 uses
-  Crt, SySutils, Graph, CIO;
+  Crt, Graph;
 
-
-var
-  strBuffer : string;
 // Effectus example
 // -------------------------------------
 // Using Locate in graphics mode

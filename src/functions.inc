@@ -34,25 +34,29 @@
        // Function is not in IF condition block
        if not branchPtr.isIfThen and not branchPtr.isIfThenInProgress then begin
 
-         // PEEK, PEEKC, VALB, VALC, VALI, INPUTBD, INPUTCD, INPUTID, GETD
+         // RAND, PEEK, PEEKC, VALB, VALC, VALI, GETD, INPUTBD, INPUTCD, INPUTID
          temp01 := '  ' + funcVar + ' := <<x>>(' + params2 + ');';
          // INPUTB, INPUTC, INPUTI
          temp02 := '  <<x>>(' + funcVar + ');';
          // STICK, STRIG, PADDLE, PTRIG
          temp03 := '  ' + funcVar + ' := <<x>>[' + params2 + '];';
-
          // ReplaceKey function works on _REPLACMENT array
-         temp01 := ReplaceStr(temp01, '<<x>>', ReplaceKey('<<x>>', procName));
-         temp02 := ReplaceStr(temp02, '<<x>>', ReplaceKey('<<x>>', procName));
-         temp03 := ReplaceStr(temp03, '<<x>>', ReplaceKey('<<x>>', procName));
+         temp04 := ReplaceKey('<<x>>', procName);
+
+         if Pos(procName + ',', 'RAND,PEEK,PEEKC,VALB,VALC,VALI,GETD,INPUTBD,INPUTCD,INPUTID,') > 0 then
+           temp01 := ReplaceStr(temp01, '<<x>>', temp04)
+         else if Pos(procName + ',', 'INPUTB,INPUTC,INPUTI,') > 0 then
+           temp02 := ReplaceStr(temp02, '<<x>>', temp04)
+         else if Pos(procName + ',', 'STICK,STRIG,PADDLE,PTRIG,') > 0 then
+           temp03 := ReplaceStr(temp03, '<<x>>', temp04);
 
          if procName = 'GETD' then begin
            if params2 = '7' then temp01 += LineEnding + '  ReadKey;';
          end;
 
-         if Pos(temp01, '<<x>>') = 0 then code.Add(temp01)
-         else if Pos(temp02, '<<x>>') = 0 then code.Add(temp02)
-         else if Pos(temp03, '<<x>>') = 0 then code.Add(temp03);
+         if Pos('<<x>>', temp01) = 0 then code.Add(temp01)
+         else if Pos('<<x>>', temp02) = 0 then code.Add(temp02)
+         else if Pos('<<x>>', temp03) = 0 then code.Add(temp03);
 
          if procName = 'LOCATE' then begin
            if devicePtr.isGr0 then begin

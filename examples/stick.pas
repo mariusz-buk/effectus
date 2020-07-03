@@ -2,7 +2,7 @@
 program stickPrg;
 
 uses
-  Crt, Joystick;
+  Crt, SySutils, Joystick;
 
 // Effectus example
 // -------------------------------------

@@ -75,7 +75,7 @@ var
 begin
   Result := false;
   for i := Low(seek) to High(seek) do begin
-    if Pos(seek[i], UpperCase(str)) > 0 then begin
+    if Pos(seek[i], str) > 0 then begin
       Result := true;
       break;
     end
