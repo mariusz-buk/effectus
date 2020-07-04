@@ -45,14 +45,14 @@ SBYTE ARRAY as temporary solution for BYTE ARRAY string definitions
   BYTE CH=764, COL=710, BYTE GRACTL=$D01D
 
 - TYPE declaration
-  
+
   TYPE REC = [
     BYTE day, month CARD year
     BYTE height
   ]
 
 - Declaring array variables pointing to memory address
-  
+
   BYTE ARRAY arrD=28000
   CARD ARRAY arr=$8000
 
@@ -85,7 +85,7 @@ PROCedures:
   PRINT, PRINTE, PRINTB, PRINTBE, PRINTI, PRINTIE, PRINTC, PRINTCE, PRINTF, PUT, PUTE
 
 FUNCtions:
-  GETD, INPUTB, INPUTC, INPUTI, SCOMPARE, VALB, VALC, VALI 
+  GETD, INPUTB, INPUTC, INPUTI, SCOMPARE, VALB, VALC, VALI
 
 Arithmetic manipulation
 -----------------------
@@ -109,7 +109,7 @@ PROCedures:
   PRINTBD, PRINTBDE, PRINTCD, PRINTCDE, PRINTID, PRINTIDE,
   INPUTSD, INPUTMD
 
-FUNCtions:  
+FUNCtions:
   INPUTBD, INPUTCD, INPUTID
 
 - Printing to text modes by using PrintD and PrintDE is allowed
@@ -135,8 +135,8 @@ Inline machine language
   [
     $8E 710  ; BACKGROUND COLOR
     $8C 712  ; BORDER COLOR
-    $8D 752  ; CURSOR VISIBILITY 
-    $A5 $A5 $8D 755  ; CHARACTERS UPSIDE DOWN? 
+    $8D 752  ; CURSOR VISIBILITY
+    $A5 $A5 $8D 755  ; CHARACTERS UPSIDE DOWN?
     $A5 $A3 $8D 85 0  ; COLUMN FOR TEXT
     $A5 $A4 $8D 84 0  ; ROW FOR TEXT
     $60]
@@ -182,7 +182,7 @@ Available options:
   -i   Information about declared variables, PROCedures, FUNCtions and DEFINE constants
   -o:  Binary file extension
   -c   Clear summarized log file
-  -nc  Effectus only translate source to Mad Pascal
+  -t  Effectus only translate source to Mad Pascal
   -z   Variable zero page address
   -zb  BYTE variable zero page address
   -zw  CARD (word) variable zero page address
