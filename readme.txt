@@ -182,7 +182,7 @@ Available options:
   -i   Information about declared variables, PROCedures, FUNCtions and DEFINE constants
   -o:  Binary file extension
   -c   Clear summarized log file
-  -t  Effectus only translate source to Mad Pascal
+  -t   Effectus only translate source to Mad Pascal
   -z   Variable zero page address
   -zb  BYTE variable zero page address
   -zw  CARD (word) variable zero page address
