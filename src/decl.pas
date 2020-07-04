@@ -1,21 +1,23 @@
 {
-  Program: Effectus - Action! language parser and cross-assembler to native code
+  Program: Effectus - Action! language parser and cross-assembler to native binary code
            for Atari 8-bit home computers
 
-  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+  Authors : Bostjan Gorisek (Effectus)
+            Tebe (Mad Assembler, Mad Pascal)
+            zbyti, Mariusz Buk (Effectus support, new features, bug fixes and refactoring)
 
   Unit file  : decl.pas
   Description: Declaration and destruction code
 
-  Effectus generates MADS Assembler source code and native binary code for 8-bit
-  Atari home computers from Action! language source code listings.
-  Program is compiled with Free Pascal 3.0.4
+  Effectus parses Action! language source code listings and generates native binary code
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.  
+
+  Effectus is compiled with Free Pascal 3.0.4.  
 
   References:
-  http://www.freepascal.org/
-  http://gury.atari8.info/effectus/
-  https://github.com/mariusz-buk/effectus
-  http://mads.atari8.info/mads.html
+    https://github.com/mariusz-buk/effectus
+    http://freeweb.siol.net/diomedes/effectus/
+    http://mads.atari8.info/
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation, either version 3
@@ -37,7 +39,7 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.5';  // Effectus version
+  VERSION = '0.5.1';  // Effectus version
 
 type
   // Program flag variables
@@ -150,7 +152,7 @@ type
 var
   procs, funcs : TStringList;
   keywords : TStringList;
-  vars : TStringList;  // Variables
+  vars : TStringList;
   ProcParams : TStringList;  // PROCedure parameters
   dataTypes : TStringList;
   code : TStringList;
@@ -170,8 +172,8 @@ var
   CurLine : LongInt;
   optOutput,
   optBinExt,
-  meditMADS_log_dir : String;
-  actionFilename : String = '';
+  meditMADS_log_dir : string;
+  actionFilename : string = '';
   isInfo : Boolean = False;  // Information about variables, procedures and functions
   myProcs, myFuncs : TStringList;
   oper : TStringList;
@@ -190,6 +192,7 @@ var
 
   varCnt : byte = 0;
   tempProc : string;
+  filePath : string;
 
 const
   _VAR_SCALAR     = '0';
@@ -200,14 +203,13 @@ const
   _VAR_CARD_ARRAY = '5';
   _VAR_SCALAR_DEFAULT = '6';
   _VAR_TYPE_REC   = '7';
-
-  _MARKER = '<<x>>';
+  
+  _MARKER = '<<x>>';  
 
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
   _MP_DEVICE_SYSUTILS: array [0..8] of string =
-       ('OPEN','CLOSE','PUTD','PRINTD','PRINTBD','PRINTCD','PRINTID',
-       'GETD','INPUTSD');
+       ('OPEN', 'CLOSE', 'PUTD', 'PRINTD', 'PRINTBD', 'PRINTCD', 'PRINTID', 'GETD', 'INPUTSD');
   _MP_STICK: array [0..3] of string =
        ('STICK','STRIG','PADDLE','PTRIG');
   _MP_GRAPHICS: array [0..4] of string =

@@ -1,22 +1,23 @@
 {
-  Program: Effectus - Action! language parser and cross-assembler to native code
+  Program: Effectus - Action! language parser and cross-assembler to native binary code
            for Atari 8-bit home computers
 
-  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+  Authors : Bostjan Gorisek (Effectus)
+            Tebe (Mad Assembler, Mad Pascal)
+            zbyti, Mariusz Buk (Effectus support, new features, bug fixes and refactoring)
 
   Unit file  : lib.pas
   Description: Supporting routines
 
-  Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
-  for 8-bit Atari home computers from Action! language source code listings.
-  Program is compiled with Free Pascal 3.0.4.
+  Effectus parses Action! language source code listings and generates native binary code
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.  
+
+  Effectus is compiled with Free Pascal 3.0.4.  
 
   References:
-  http://www.freepascal.org/
-  http://gury.atari8.info/effectus/
-  http://freeweb.siol.net/diomedes/effectus/
-  https://github.com/mariusz-buk/effectus
-  http://mads.atari8.info/mads.html
+    https://github.com/mariusz-buk/effectus
+    http://freeweb.siol.net/diomedes/effectus/
+    http://mads.atari8.info/
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation, either version 3
@@ -75,7 +76,7 @@ var
 begin
   Result := false;
   for i := Low(seek) to High(seek) do begin
-    if Pos(seek[i], str) > 0 then begin
+    if Pos(seek[i], UpperCase(str)) > 0 then begin
       Result := true;
       break;
     end

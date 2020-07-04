@@ -1,22 +1,23 @@
 {
-  Program: Effectus - Action! language parser and cross-assembler to native code
+  Program: Effectus - Action! language parser and cross-assembler to native binary code
            for Atari 8-bit home computers
 
-  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+  Authors : Bostjan Gorisek (Effectus)
+            Tebe (Mad Assembler, Mad Pascal)
+            zbyti, Mariusz Buk (Effectus support, new features, bug fixes and refactoring)
 
   Unit file  : shell.pas
   Description: Shell command prompt routines
 
-  Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
-  for 8-bit Atari home computers from Action! language source code listings.
-  Program is compiled with Free Pascal 3.0.4.
+  Effectus parses Action! language source code listings and generates native binary code
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.  
+
+  Effectus is compiled with Free Pascal 3.0.4.  
 
   References:
-  http://www.freepascal.org/
-  http://gury.atari8.info/effectus/
-  http://freeweb.siol.net/diomedes/effectus/
-  https://github.com/mariusz-buk/effectus
-  http://mads.atari8.info/mads.html
+    https://github.com/mariusz-buk/effectus
+    http://freeweb.siol.net/diomedes/effectus/
+    http://mads.atari8.info/
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation, either version 3
@@ -63,21 +64,21 @@ begin
     //WriteLn('Effectus ' + VERSION + ' (i386-win32 32-bit Windows platform console version)');
 {$endif}
 {$endif}
-    Write('Action! language parser and cross-assembler to native code for Atari 8-bit home computers');
+    WriteLn('Action! language parser to native binary code for Atari 8-bit home computers');
+    WriteLn('written by Bostjan Gorisek from Slovenia');
     TextColor(White);
-    WriteLn(' written by Bostjan Gorisek from Slovenia');
     WriteLn('References:');
-    WriteLn('http://freeweb.siol.net/diomedes/effectus/');
-    WriteLn('https://github.com/mariusz-buk/effectus');
-    WriteLn('http://gury.atari8.info/effectus/');
+    WriteLn('  https://github.com/mariusz-buk/effectus');
+    WriteLn('  http://freeweb.siol.net/diomedes/effectus/');
+    //WriteLn('  http://gury.atari8.info/effectus/');
     WriteLn('');
     TextColor(LightCyan);
     WriteLn('Mad Pascal and MAD Assembler (MADS) are products written by Tomasz Biela (Tebe) from Poland');
     TextColor(White);
     WriteLn('References:');
-    WriteLn('http://mads.atari8.info/');
-    WriteLn('https://github.com/tebe6502/Mad-Assembler');
-    WriteLn('https://github.com/tebe6502/Mad-Pascal');
+    WriteLn('  http://mads.atari8.info/');
+    WriteLn('  https://github.com/tebe6502/Mad-Assembler');
+    WriteLn('  https://github.com/tebe6502/Mad-Pascal');
     //WriteLn('https://atariage.com/forums/topic/291426-effectus-action-cross-compiler-using-mad-assembler-mads/');
     WriteLn('');
     TextColor(LightGreen);
@@ -160,7 +161,7 @@ var
   logFile : String;
   logFileTotal : String;
   filenamePart : string;
-  filePath : string;
+//  filePath : string;
   i : word;
 begin
   logFile := GetCurrentDir + PathDelim + 'efflog.txt';
@@ -228,7 +229,7 @@ begin
 
   AProcess.Parameters.Clear;
 
-  filePath := ExtractFilePath(filename);
+  //filePath := ExtractFilePath(filename);
   filenamePart := ExtractFilenameWithoutExt(filename) + '.a65';
   AProcess.Parameters.Add(AnsiQuotedStr(filePath + filenamePart, '"'));
 
@@ -372,7 +373,7 @@ begin
   if not varPtr.isDefine then Exit;
   varPtr.isDefine := false;
 
-  Write('2. pass...');
+  //Write('2. pass...');
   for i := 0 to effCode.Count - 1 do begin
     temp := Trim(effCode[i]);
     temp := ReplaceStr(temp, ' = ', '=');
@@ -383,7 +384,7 @@ begin
       continue;
     end;
     // Find DEFINE constants as substitutes for real statement values
-    // Parse each command or statement delimited by space ignoring words in "" pairs
+    // Parse each command or statement delimited by space ignoring words inside "" pair
     A := temp.Split(' ', '"', '"');
     if High(a) >= 0 then begin
       for j := 0 to High(a) do begin
@@ -464,7 +465,7 @@ begin
       end;
     end;
   end;
-  Writeln(' Done!');
+  //Writeln(' Done!');
 end;
 
 {------------------------------------------------------------------------------
@@ -472,10 +473,13 @@ end;
  -----------------------------------------------------------------------------}
 procedure ReadSource(filename : string);
 var
-  i : LongInt;
+  i, j : LongInt;
   tempxy : TStringList;
+  includeFile : TStringList;
+  A : TStringArray;
 begin
   tempxy := TStringlist.create;
+  includeFile := TStringlist.create;
   try
     try
       // Check if source file exists
@@ -488,6 +492,8 @@ begin
 
       // Load source file to string list
       tempxy.loadfromfile(filename);
+      filePath := ExtractFilePath(filename);
+      
       //GetCurrentDir + PathDelim
       devicePtr.isDevice := false;
       //devicePtr.isDeviceOpen := false;
@@ -496,7 +502,7 @@ begin
       devicePtr.isSySutils := false;
       prgPtr.isByteBuffer := false;
       varPtr.isDefine := false;
-      Write('1. pass... ');
+      //Write('1. pass... ');
       for i := 0 to tempxy.Count - 1 do begin
         tempxy.strings[i] := Trim(tempxy.strings[i]);
         tempxy.strings[i] := ReplaceStr(tempxy.strings[i], 'MODULE', '');
@@ -504,29 +510,72 @@ begin
         // Remove character with Ascii code 9 from Action! listing lines
         tempxy.strings[i] := ReplaceStr(tempxy.strings[i], Chr(9), '');
 
-        // Add Action! listing line
-        effCode.add(tempxy.strings[i]);
-
-        // Check DEFINE statement
-        if Pos('DEFINE ', UpperCase(tempxy.strings[i])) = 1 then begin
-        //if tempxy.strings[i] = 'DEFINE' then begin
-          varPtr.isDefine := true;
+        // Check for INCLUDE file
+        if Pos('INCLUDE ', UpperCase(tempxy.strings[i])) = 1 then begin
+          A := tempxy.strings[i].Split(' ');
+          if High(a) = 1 then begin
+            a[1] := ExtractText(a[1], '"', '"');
+            a[1] := Extract(2, a[1], ':');
+          
+            //writeln(GetCurrentDir + a[1]);
+            writeln('INCLUDE file is processed: ', filePath + a[1]);
+            
+            if FileExists(filePath + a[1]) then begin
+              //includeFile.loadfromfile(GetCurrentDir + PathDelim + a[1]);
+              includeFile.loadfromfile(filePath + a[1]);
+              for j := 0 to includeFile.Count - 1 do begin
+                includeFile.strings[j] := Trim(includeFile.strings[j]);
+  
+                // Check DEFINE statement
+                if Pos('DEFINE ', UpperCase(includeFile.strings[j])) = 1 then begin
+                //if tempxy.strings[i] = 'DEFINE' then begin
+                  varPtr.isDefine := true;
+                end;
+  
+                if IsArrayElementInString(_MP_DEVICE_SYSUTILS, includeFile.strings[j]) then begin
+                  devicePtr.isDevice := true;
+                  devicePtr.isSySutils := true;
+                end;
+                if IsArrayElementInString(_MP_STICK, includeFile.strings[j]) then
+                     devicePtr.isStick := true;
+                if IsArrayElementInString(_MP_GRAPHICS, includeFile.strings[j]) then
+                     devicePtr.isGraphics := true;
+                if IsArrayElementInString(_MP_SYSUTILS, includeFile.strings[j]) then
+                     devicePtr.isSySutils := true;
+                     
+                // Add Action! listing line
+                effCode.add(includeFile.strings[j]);
+              end;
+            end
+            else begin
+              writeln('INCLUDE file ' + filePath + a[1] + ' not found!');
+              //PathDelim
+            end;
+          end;
+        end
+        else begin
+          // Push Action! listing line to the list
+          effCode.add(tempxy.strings[i]);
+          
+          // Check DEFINE statement
+          if Pos('DEFINE ', UpperCase(tempxy.strings[i])) = 1 then begin
+          //if tempxy.strings[i] = 'DEFINE' then begin
+            varPtr.isDefine := true;
+          end;
+  
+          if IsArrayElementInString(_MP_DEVICE_SYSUTILS, tempxy.strings[i]) then begin
+            devicePtr.isDevice := true;
+            devicePtr.isSySutils := true;
+          end;
+          if IsArrayElementInString(_MP_STICK, tempxy.strings[i]) then
+               devicePtr.isStick := true;
+          if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
+               devicePtr.isGraphics := true;
+          if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
+               devicePtr.isSySutils := true;          
         end;
-
-        if IsArrayElementInString(_MP_DEVICE_SYSUTILS, tempxy.strings[i]) then
-           begin
-             devicePtr.isDevice := true;
-             devicePtr.isSySutils := true;
-           end;
-        if IsArrayElementInString(_MP_STICK, tempxy.strings[i]) then
-             devicePtr.isStick := true;
-        if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
-             devicePtr.isGraphics := true;
-        if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
-             devicePtr.isSySutils := true;
-
       end;
-      WriteLn(' Done!');
+      //WriteLn(' Done!');
       CheckDefine;
 
       except
@@ -539,6 +588,7 @@ begin
     end;
   finally
     tempxy.Free;
+    includeFile.Free;
   end;
 end;
 
