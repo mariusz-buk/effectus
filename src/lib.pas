@@ -10,9 +10,9 @@
   Description: Supporting routines
 
   Effectus parses Action! language source code listings and generates native binary code
-  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.  
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
 
-  Effectus is compiled with Free Pascal 3.0.4.  
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
     https://github.com/mariusz-buk/effectus
@@ -75,8 +75,9 @@ var
   i : integer;
 begin
   Result := false;
+  str := UpperCase(str);
   for i := Low(seek) to High(seek) do begin
-    if Pos(seek[i], UpperCase(str)) > 0 then begin
+    if Pos(seek[i], str) > 0 then begin
       Result := true;
       break;
     end
