@@ -917,9 +917,22 @@ begin
                   temp01 := Extract(1, temp01, '[');
                   //writeln('extracted text = ', temp01);
                   if funcs.IndexOfName(temp01) >= 0 then begin
-                    // ReplaceKey function works on _REPLACMENT array
-                    if Pos(',' + temp01 + ',', ',RAND,PEEK,PEEKC,VALB,VALC,VALI,') > 0 then
-                      temp04 := ReplaceKey(temp04, UpperCase(temp01));
+//                   // ReplaceKey function works on _REPLACEMENT array
+//                   if Pos(',' + temp01 + ',', ',RAND,PEEK,PEEKC,VALB,VALC,VALI,') > 0 then begin                    
+//                     temp04 := ReplaceKey(temp04, UpperCase(temp01));
+                    if UpperCase(temp01) = 'RAND' then
+                      temp04 := 'Random'
+                    else if UpperCase(temp01) = 'PEEK' then
+                      temp04 := 'Peek'
+                    else if UpperCase(temp01) = 'PEEKC' then
+                      temp04 := 'DPeek'
+                    else if UpperCase(temp01) = 'VALB' then
+                      temp04 := 'StrToInt'
+                    else if UpperCase(temp01) = 'VALC' then
+                      temp04 := 'StrToInt'
+                    else if UpperCase(temp01) = 'VALI' then begin
+                      temp04 := 'StrToInt';                  
+                    end;
                     temp03 := Extract(1, params[1], '[');
                     code.Add('  ' + params[0] + ' := ' + temp03 +
                              '[' + temp04 + '(' + temp02 + ')];');
