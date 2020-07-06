@@ -217,7 +217,7 @@ const
   _MP_SYSUTILS: array [0..5] of string =
        ('STRB','STRC','STRI','VALB','VALC','VALI');
 
-  _REPLACMENT : array [0..16, 0..1] of string = (
+  _REPLACEMENT : array [0..16, 0..1] of string = (
     ('RAND','Random'),
     ('PEEK','Peek'),
     ('PEEKC','DPeek'),

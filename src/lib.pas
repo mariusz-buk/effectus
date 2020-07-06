@@ -62,9 +62,9 @@ var
   i : integer;
 begin
   Result := outStr;
-  for i := Low(_REPLACMENT) to High(_REPLACMENT) do begin
-    if _REPLACMENT[i][0] = inKey then begin
-      Result := _REPLACMENT[i][1];
+  for i := Low(_REPLACEMENT) to High(_REPLACEMENT) do begin
+    if _REPLACEMENT[i][0] = inKey then begin
+      Result := _REPLACEMENT[i][1];
       break;
     end
   end;
