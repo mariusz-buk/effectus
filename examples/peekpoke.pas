@@ -5,7 +5,6 @@ uses
   Crt, Graph;
 
 // Effectus example
-// -------------------------------------
 // PEEK and POKE demo
 var
   n : byte;
@@ -40,19 +39,19 @@ begin  // 6
   Writeln('Shadow register 559 currently holds:');
   Writeln('');
   Writeln(n);
+  Writeln('');
   mem := DPeek($0230);
-  Writeln('DLISTL:');
+  Writeln('Display List Pointer(DLISTL/DLISTH)');
+  Writeln('address:');
   Writeln('');
   Writeln(mem);
-  Writeln('');
-  Writeln('');
-  Writeln('POKE demonstration');
+  Write('', eol, '', eol, 'POKE demonstration', eol, '');
   Writeln('Press any key to change color!');
   WAITFORKEYProc;
   COL := 0;
   Writeln('Press any key to change color again!');
   WAITFORKEYProc;
-  Poke(710, 230);
+  Poke(710, 212);
   Writeln('And again!');
   WAITFORKEYProc;
   n := 65;
