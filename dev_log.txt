@@ -5,7 +5,6 @@ Effectus - Missing features and bug issues
 Not yet supported
 -----------------
 
-- INCLUDE files
 - SET directive addressing
 - Note and Point PROCedures for working with disk drives
 - No proper error handling is done yet, so it happens that no errors show on the screen

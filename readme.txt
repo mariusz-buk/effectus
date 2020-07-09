@@ -1,6 +1,6 @@
-================
-  Effectus 0.5
-================
+==================
+  Effectus 0.5.1
+==================
 
 This is new version of Effectus, done from scratch. This is new branch version, currently only
 for Windows platform. Other platforms will be supported when vital parts of the program will be
@@ -77,6 +77,13 @@ Sound
 
 PROCedures: SOUND, SNDRST
 
+INCLUDE files
+-------------
+
+Files can be included, starting in the same directory as main compiled listing code.
+Currently one level of included files is supported. This means only main listing program can read
+files with INCLUDE directive, but not any other files, even if they have this directive called in.
+
 String manipulation
 -------------------
 
@@ -117,7 +124,8 @@ FUNCtions:
 Inline machine language
 -----------------------
 
-- Support for inline machine language directly in the body of code listing
+- Support for inline machine language anywhere in the body of code listing (after variable
+  declaration)
 
   Examples:
     [$A9$21$8D$02C6$0$60]
@@ -140,6 +148,20 @@ Inline machine language
     $A5 $A3 $8D 85 0  ; COLUMN FOR TEXT
     $A5 $A4 $8D 84 0  ; ROW FOR TEXT
     $60]
+    
+You can send parameters to machine language routines. The compiler stores parameters using
+A, X and Y registers, then zero-page addresses from $A3 to $AF are used.
+
+Address      nth byte of parameters
+-------      -----------------------
+ A register   1st
+ X register   2nd
+ Y register   3rd
+ $A3          4th
+ $A4          5th
+ :            :
+ :            :
+ $AF          16th
 
 System manipulation
 -------------------
@@ -202,9 +224,8 @@ You can read about missing features and bug issues in additional file dev_log.tx
 
 Written by Bostjan Gorisek from Slovenia
 References:
-  http://gury.atari8.info/effectus/
-  http://freeweb.siol.net/diomedes/effectus/
   https://github.com/mariusz-buk/effectus
+  http://freeweb.siol.net/diomedes/effectus/
 
 Mad Pascal and MAD Assembler (MADS) are products written by Tomasz Biela (Tebe) from Poland
 References:
