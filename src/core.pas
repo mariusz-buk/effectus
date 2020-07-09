@@ -10,9 +10,9 @@
   Description: Core routines for processing Action! source code listings
 
   Effectus parses Action! language source code listings and generates native binary code
-  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.  
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
 
-  Effectus is compiled with Free Pascal 3.0.4.  
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
     https://github.com/mariusz-buk/effectus
@@ -443,7 +443,7 @@ var
   asmOpcode : array[0..3] of string[10] =
     ('lda', 'ldx', 'ldy', 'mva');
   actionVar : array[3..15] of string[3] =
-    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15');
+    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af');
   paramsAsm : string = '';
   asmOpcodeCnt : byte = 0;
   asmcnt : byte = 0;
@@ -484,9 +484,10 @@ begin
         branchPtr.isEndIfNext := false;
         branchPtr.isElseNext := false;
         branchPtr.isElseIfNext := false;
+        branchPtr.isWhileDoNext := false;  // 0.5.1 ??
       end
       else if (UpperCase(temp) = 'THEN') and branchPtr.isIfThenNext then begin
-        branchPtr.ifThenCode += ' then begin';  // (* 1 *)
+        branchPtr.ifThenCode += ' then begin';
         code.Add(branchPtr.ifThenCode);
         branchPtr.ifThenCode := '';
         branchPtr.isEndIfNext := true;
@@ -764,7 +765,7 @@ begin
         // Standard variable assignment
         else if (vars.IndexOfName(temp02) >= 0) or (vars.IndexOfName(temp04) >= 0) then begin
           params[0] := ReplaceStr(params[0], '(', '[');
-          params[0] := ReplaceStr(params[0], ')', ']');
+          params[0] := ReplaceStr(params[0], ')', ']');  // (* 1 *)
           // ENTRY=DATA+10
           // ENTRY.NUM1=30
           if (vars.IndexOfName(temp04) >= 0) and
@@ -838,7 +839,7 @@ begin
                       VarValue(2, vars.IndexOfName(temp03), _VAR_CARD_ARRAY)) then
                   begin
                     paramsEx[i] := ReplaceStr(paramsEx[i], '(', '[');
-                    paramsEx[i] := ReplaceStr(paramsEx[i], ')', ']');
+                    paramsEx[i] := ReplaceStr(paramsEx[i], ')', ']');  // (* 2 *)
                   end;
                 end;
                 temp04 += paramsEx[i];
@@ -1186,8 +1187,7 @@ begin
 
   // Branch statements control
   if (UpperCase(temp) <> 'THEN') and
-     branchPtr.isIfThen and
-     not branchPtr.isIfThenNext then
+     branchPtr.isIfThen and not branchPtr.isIfThenNext then
   begin
     //prgPtr.ifthenCode += temp;
     branchPtr.isIfThenNext := true;
@@ -1197,10 +1197,48 @@ begin
   else if branchPtr.isIfThenNext then begin
     // Replace () brackets with [] brackets
     // Bracket '(' is not the first character in condition value
-    if temp[1] <> '(' then begin
-      temp := ReplaceStr(temp, '(', '[');
-      temp := ReplaceStr(temp, ')', ']');
-    end;
+    //writeln('if temp = ', temp, ' ', Copy(temp, 1, 4), ' temp[Length(temp)] = ', temp[Length(temp)]);
+//     if (Pos(' AND ', temp) = 0) and (Pos(' OR ', temp) = 0) then begin
+//       temp := ReplaceStr(temp, '(', '[');
+//       temp := ReplaceStr(temp, ')', ']  (* 5 *) ');
+//       temp := '(' + temp + ')';
+//     end
+//     else begin
+      if (temp[1] = '(') and (temp[Length(temp)] = ')') then begin
+        temp := ExtractText(temp, '(', ')');
+        //writeln('extracted text = ', temp);
+        temp := ReplaceStr(temp, '(', '[');
+        temp := ReplaceStr(temp, ')', ']');  // (* 3 *)
+        temp := '(' + temp + ')';      
+      end
+      else if (Copy(temp, 1, 4) = 'AND(') and (temp[Length(temp)] = ')') then begin
+        temp := ExtractText(temp, '(', ')');
+        //writeln('extracted text AND = ', temp);
+        temp := ReplaceStr(temp, '(', '[');
+        temp := ReplaceStr(temp, ')', ']');  // (* AND *)
+        temp := 'AND (' + temp + ')';
+      end
+      else if (Copy(temp, 1, 3) = 'OR(') and (temp[Length(temp)] = ')') then begin
+        temp := ExtractText(temp, '(', ')');
+        //writeln('extracted text OR = ', temp);
+        temp := ReplaceStr(temp, '(', '[');
+        temp := ReplaceStr(temp, ')', ']');  // (* AND *)
+        temp := 'OR (' + temp + ')';
+      end
+      else begin
+        if (temp[1] <> '(') then begin
+          temp := ReplaceStr(temp, '(', '[');
+          temp := ReplaceStr(temp, ')', ']');  // (* 4 *)
+        end;
+        //temp := '(' + temp + ')';
+      end;
+    //end;
+    //else begin
+      //if (temp[1] <> '(') or (Copy(temp, 1, 4) <> 'AND(') then begin
+//        temp := ReplaceStr(temp, '(', '[');
+//        temp := ReplaceStr(temp, ')', ']  (* 3 *) ');
+      //end;
+    //end;
 
     temp := ReplaceStr(temp, '{AND}', ' AND ');
     temp := ReplaceStr(temp, '{OR}', ' OR ');
@@ -1219,13 +1257,15 @@ begin
           //params[1] := Char(params[1][2]);
           temp03 := IntToStr(Ord(temp03[2]));
         end;
-        temp := temp02 + '=' + temp03;
+        temp := temp02 + '=' + temp03;  // + ')';
       end;
     end;
     if branchPtr.ifTempCode = '' then begin
       temp := CheckEOF(temp);
-      if not branchPtr.isFuncInIf then
-        branchPtr.ifThenCode += temp;  // If 1 if 2
+      //writeln('if temp = ', temp, ' ifThenCode = ', branchPtr.ifThenCode);
+      if not branchPtr.isFuncInIf then begin
+        branchPtr.ifThenCode += ' ' + temp + ' ';  //'(* 1 *) ' + temp + ' (* 2 *)';  // If 1 if 2
+      end;
     end
     //else begin
     //  branchPtr.ifthenCode += branchPtr.ifTempCode + ' (* IF3 *) ';
@@ -1338,7 +1378,7 @@ var
   asmOpcode : array[0..3] of string[10] =
     ('lda', 'ldx', 'ldy', 'mva');
   actionVar : array[3..15] of string[3] =
-    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15');
+    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af');
   paramsAsm : string = '';
   asmOpcodeCnt : byte = 0;
   asmcnt : byte = 0;

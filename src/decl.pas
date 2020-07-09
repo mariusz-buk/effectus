@@ -10,9 +10,9 @@
   Description: Declaration and destruction code
 
   Effectus parses Action! language source code listings and generates native binary code
-  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.  
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
 
-  Effectus is compiled with Free Pascal 3.0.4.  
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
     https://github.com/mariusz-buk/effectus
@@ -209,11 +209,11 @@ const
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
   _MP_DEVICE_SYSUTILS: array [0..8] of string =
-       ('OPEN', 'CLOSE', 'PUTD', 'PRINTD', 'PRINTBD', 'PRINTCD', 'PRINTID', 'GETD', 'INPUTSD');
+    ('OPEN', 'CLOSE', 'PUTD', 'PRINTD', 'PRINTBD', 'PRINTCD', 'PRINTID', 'GETD', 'INPUTSD');
   _MP_STICK: array [0..3] of string =
-       ('STICK','STRIG','PADDLE','PTRIG');
+    ('STICK','STRIG','PADDLE','PTRIG');
   _MP_GRAPHICS: array [0..4] of string =
-       ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
+    ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
   _MP_SYSUTILS: array [0..5] of string =
        ('STRB','STRC','STRI','VALB','VALC','VALI');
 

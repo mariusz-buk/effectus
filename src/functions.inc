@@ -1,22 +1,23 @@
 {
-  Program: Effectus - Action! language parser and cross-assembler to native code
+  Program: Effectus - Action! language parser and cross-assembler to native binary code
            for Atari 8-bit home computers
 
-  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+  Authors : Bostjan Gorisek (Effectus)
+            Tebe (Mad Assembler, Mad Pascal)
+            zbyti, Mariusz Buk (Effectus support, new features, bug fixes and refactoring)
 
   Unit file  : functions.inc
-  Description: Main project file
+  Description: Emulated Action! functions
 
-  Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
-  for 8-bit Atari home computers from Action! language source code listings.
-  Program is compiled with Free Pascal 3.0.4.
+  Effectus parses Action! language source code listings and generates native binary code
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
+
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
-  http://www.freepascal.org/
-  http://gury.atari8.info/effectus/
-  http://freeweb.siol.net/diomedes/effectus/
-  https://github.com/mariusz-buk/effectus
-  http://mads.atari8.info/mads.html
+    https://github.com/mariusz-buk/effectus
+    http://freeweb.siol.net/diomedes/effectus/
+    http://mads.atari8.info/
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation, either version 3
@@ -31,8 +32,12 @@
 }
        branchPtr.isFuncInIf := false;
 
+       if branchPtr.isIfThen and branchPtr.isIfThenInProgress then begin
+         FuncInIfCond(procName, temp, params2);
+       end
+       else begin
        // Function is not in IF condition block
-       if not branchPtr.isIfThen and not branchPtr.isIfThenInProgress then begin
+       //if not branchPtr.isIfThen and not branchPtr.isIfThenInProgress then begin
 
          // doubled delimiter - to be sure ;)
          temp := ',' + procName + ',';
@@ -56,6 +61,8 @@
          if procName = 'GETD' then begin
            if params2 = '7' then temp01 += LineEnding + '  ReadKey;';
          end;
+
+         //writeln('temp01 = ', temp01);
 
          if Pos(_MARKER, temp01) = 0 then code.Add(temp01)
          else if Pos(_MARKER, temp02) = 0 then code.Add(temp02)
@@ -99,8 +106,8 @@
              code.Add(temp);
            end;
          end;
-       end
-       // Function is in IF condition block
-       else begin
-         FuncInIfCond(procName, temp, params2);
        end;
+       // Function is in IF condition block
+//         else begin
+//           FuncInIfCond(procName, temp, params2);
+//         end;

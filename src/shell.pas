@@ -10,9 +10,9 @@
   Description: Shell command prompt routines
 
   Effectus parses Action! language source code listings and generates native binary code
-  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.  
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
 
-  Effectus is compiled with Free Pascal 3.0.4.  
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
     https://github.com/mariusz-buk/effectus
@@ -200,7 +200,8 @@ begin
 
   AStringList.Insert(0, 'Filename: ' + filename);
   AStringList.Insert(1, FormatDateTime('c', Now));
-  AStringList.Add('--------------------------------------------------------------------------------');
+  AStringList.Add(
+    '--------------------------------------------------------------------------------');
 
   // Save the output to a file
   AStringList.SaveToFile(logFile);
@@ -516,10 +517,10 @@ begin
           if High(a) = 1 then begin
             a[1] := ExtractText(a[1], '"', '"');
             a[1] := Extract(2, a[1], ':');
-          
+
             //writeln(GetCurrentDir + a[1]);
             writeln('INCLUDE file is processed: ', filePath + a[1]);
-            
+
             if FileExists(filePath + a[1]) then begin
               //includeFile.loadfromfile(GetCurrentDir + PathDelim + a[1]);
               includeFile.loadfromfile(filePath + a[1]);
@@ -542,7 +543,7 @@ begin
                      devicePtr.isGraphics := true;
                 if IsArrayElementInString(_MP_SYSUTILS, includeFile.strings[j]) then
                      devicePtr.isSySutils := true;
-                     
+
                 // Add Action! listing line
                 effCode.add(includeFile.strings[j]);
               end;
@@ -556,7 +557,7 @@ begin
         else begin
           // Push Action! listing line to the list
           effCode.add(tempxy.strings[i]);
-          
+
           // Check DEFINE statement
           if Pos('DEFINE ', UpperCase(tempxy.strings[i])) = 1 then begin
           //if tempxy.strings[i] = 'DEFINE' then begin
@@ -572,7 +573,7 @@ begin
           if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
                devicePtr.isGraphics := true;
           if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
-               devicePtr.isSySutils := true;          
+               devicePtr.isSySutils := true;
         end;
       end;
       //WriteLn(' Done!');
