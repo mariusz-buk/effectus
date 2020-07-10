@@ -148,102 +148,11 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_0143
+	jmp l_0085
 
 ; ------------------------------------------------------------
 
 .local	SYSTEM						; UNIT
-
-.local	PEEK						; FUNCTION | ASSEMBLER | REGISTER
-
-; ------------------------------------------------------------
-
-; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-; as Pointer
-	mva :STACKORIGIN,x A
-	mva :STACKORIGIN+STACKWIDTH,x A+1
-	dex
-
-; ---------------------  ASM Block 001  ---------------------
-
-	ldy #0
-	mva (edx),y Result
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-A	= edx
-RESULT	= DATAORIGIN+$000B
-
-@VarData	= RESULT
-@VarDataSize	= 1
-
-	rts						; ret
-.endl
-
-.local	DPEEK						; FUNCTION | ASSEMBLER | REGISTER
-
-; ------------------------------------------------------------
-
-; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-; as Pointer
-	mva :STACKORIGIN,x A
-	mva :STACKORIGIN+STACKWIDTH,x A+1
-	dex
-
-; ---------------------  ASM Block 002  ---------------------
-
-	ldy #0
-	mva (edx),y Result
-	iny
-	mva (edx),y Result+1
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push WORD / SMALLINT / SHORTREAL / POINTER
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-	mva RESULT+1 :STACKORIGIN+STACKWIDTH,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-A	= edx
-RESULT	= DATAORIGIN+$000C
-
-@VarData	= RESULT
-@VarDataSize	= 2
-
-	rts						; ret
-.endl
 
 .local	POKE						; PROCEDURE | ASSEMBLER | REGISTER
 
@@ -450,7 +359,7 @@ NMIEN	= $D40E
 
 ; ------------------------------------------------------------
 
-TEXTATTR	= DATAORIGIN+$000E
+TEXTATTR	= DATAORIGIN+$000B
 CONSOL	= $D01F
 CN_START_SELECT_OPTION	= $00
 CN_SELECT_OPTION	= $01
@@ -555,41 +464,79 @@ EGAMONOHI	= $03
 VGALO	= $0A
 VGAMED	= $1F
 VGAHI	= $18
-WIN_LEFT	= DATAORIGIN+$000F
-WIN_RIGHT	= DATAORIGIN+$0011
-WIN_TOP	= DATAORIGIN+$0013
-WIN_BOTTOM	= DATAORIGIN+$0015
-GRAPHRESULT	= DATAORIGIN+$0017
-GETCOLOR	= DATAORIGIN+$0018
-adr.LASTARCCOORDS	= DATAORIGIN+$0019
+WIN_LEFT	= DATAORIGIN+$000C
+WIN_RIGHT	= DATAORIGIN+$000E
+WIN_TOP	= DATAORIGIN+$0010
+WIN_BOTTOM	= DATAORIGIN+$0012
+GRAPHRESULT	= DATAORIGIN+$0014
+GETCOLOR	= DATAORIGIN+$0015
+adr.LASTARCCOORDS	= DATAORIGIN+$0016
 .var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-LASTARCCOORDS.X	= DATAORIGIN+$0019
-LASTARCCOORDS.Y	= DATAORIGIN+$001B
-LASTARCCOORDS.XSTART	= DATAORIGIN+$001D
-LASTARCCOORDS.YSTART	= DATAORIGIN+$001F
-LASTARCCOORDS.XEND	= DATAORIGIN+$0021
-LASTARCCOORDS.YEND	= DATAORIGIN+$0023
-CURRENTX	= DATAORIGIN+$0025
-CURRENTY	= DATAORIGIN+$0027
-VIDEORAM	= DATAORIGIN+$0029
-SCANLINE_WIDTH	= DATAORIGIN+$002B
+LASTARCCOORDS.X	= DATAORIGIN+$0016
+LASTARCCOORDS.Y	= DATAORIGIN+$0018
+LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
+LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
+LASTARCCOORDS.XEND	= DATAORIGIN+$001E
+LASTARCCOORDS.YEND	= DATAORIGIN+$0020
+CURRENTX	= DATAORIGIN+$0022
+CURRENTY	= DATAORIGIN+$0024
+VIDEORAM	= DATAORIGIN+$0026
+SCANLINE_WIDTH	= DATAORIGIN+$0028
 
 .endl							; UNIT GRAPH
 
 .local	WAITFORKEYPROC					; PROCEDURE
 
-; --- WhileProlog
-l_0206
+; optimize OK (examples\include.pas), line = 16
 
-; optimize OK (examples\peekpoke.pas), line = 17
+	mva #$FF CH
+
+; --- WhileProlog
+l_013F
+
+; optimize OK (examples\include.pas), line = 17
 
 	lda CH
 	cmp #$FF
-	jeq l_0206
+	jeq l_013F
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
 
-; optimize OK (examples\peekpoke.pas), line = 19
+.local	PRINTTEXTPROC					; PROCEDURE
 
-	mva #$FF CH
+; optimize FAIL (100, examples\include.pas), line = 23
+	@printSTRING #CODEORIGIN+$0000
+	@printEOL
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
+
+.local	CHANGECOLORPROC					; PROCEDURE
+
+; optimize OK (examples\include.pas), line = 28
+
+	lda #$32
+	sta $02C6
+
+; optimize OK (examples\include.pas), line = 29
+
+	lda #$A0
+	sta $02C8
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -603,180 +550,50 @@ l_0206
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 24
+; optimize FAIL (100, examples\include.pas), line = 34
 	@print #$7D
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 25
-	@printSTRING #CODEORIGIN+$0000
+; optimize FAIL (100, examples\include.pas), line = 35
+	@printSTRING #CODEORIGIN+$000D
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 26
-	@printSTRING #CODEORIGIN+$0013
+; optimize FAIL (100, examples\include.pas), line = 36
+	@printSTRING #CODEORIGIN+$0020
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 27
-	@printSTRING #CODEORIGIN+$0027
+; optimize FAIL (100, examples\include.pas), line = 37
+	@printSTRING #CODEORIGIN+$0037
 	@printEOL
 
-; optimize OK (examples\peekpoke.pas), line = 28
-
-	lda #$00
-	sta :bp+1
-	ldy CH
-	lda (:bp),y
-	sta N
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 29
-	@printSTRING #CODEORIGIN+$0029
+; optimize FAIL (100, examples\include.pas), line = 38
+	@printSTRING #CODEORIGIN+$0039
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 30
-	@printSTRING #CODEORIGIN+$0026
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 31
-	lda N
-	jsr @printBYTE._a
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 32
-	@printSTRING #CODEORIGIN+$0026
-	@printEOL
-
-; optimize OK (examples\peekpoke.pas), line = 33
-
-	lda $02C6
-	sta N
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 34
-	@printSTRING #CODEORIGIN+$004F
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 35
-	@printSTRING #CODEORIGIN+$0026
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 36
-	lda N
-	jsr @printBYTE._a
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 37
-	@printSTRING #CODEORIGIN+$0026
-	@printEOL
-
-; optimize OK (examples\peekpoke.pas), line = 38
-
-	lda $022F
-	sta N
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 39
-	@printSTRING #CODEORIGIN+$0075
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 40
-	@printSTRING #CODEORIGIN+$0026
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 41
-	lda N
-	jsr @printBYTE._a
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 42
-	@printSTRING #CODEORIGIN+$0026
-	@printEOL
-
-; optimize OK (examples\peekpoke.pas), line = 43
-
-	lda $0230
-	sta MEM
-	lda $0230+1
-	sta MEM+1
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 44
-	@printSTRING #CODEORIGIN+$009B
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 45
-	@printSTRING #CODEORIGIN+$00C0
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 46
-	@printSTRING #CODEORIGIN+$0026
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 47
-	lda MEM
-	ldy MEM+1
-	jsr @printWORD._ay
-	@printEOL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 48
-	@printSTRING #CODEORIGIN+$0026
-	@print #$9B
-	@printSTRING #CODEORIGIN+$0026
-	@print #$9B
-	@printSTRING #CODEORIGIN+$00CA
-	@print #$9B
-	@printSTRING #CODEORIGIN+$0026
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 49
-	@printSTRING #CODEORIGIN+$00DE
-	@printEOL
-
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 50
+; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 39
 	jsr WAITFORKEYPROC
 
-; optimize OK (examples\peekpoke.pas), line = 51
-
-	mva #$00 COL
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 52
-	@printSTRING #CODEORIGIN+$00FE
+; optimize FAIL (100, examples\include.pas), line = 40
+	@printSTRING #CODEORIGIN+$0036
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 53
-	jsr WAITFORKEYPROC
+; optimize FAIL ('PRINTTEXTPROC', examples\include.pas), line = 41
+	jsr PRINTTEXTPROC
 
-; optimize OK (examples\peekpoke.pas), line = 54
-
-	lda #$D4
-	sta $02C6
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 55
-	@printSTRING #CODEORIGIN+$0124
+; optimize FAIL (100, examples\include.pas), line = 42
+	@printSTRING #CODEORIGIN+$0036
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 56
-	jsr WAITFORKEYPROC
-
-; optimize OK (examples\peekpoke.pas), line = 57
-
-	mva #$41 N
-
-; optimize OK (examples\peekpoke.pas), line = 58
-
-	sta $02C6
-
-; optimize FAIL (100, examples\peekpoke.pas), line = 59
-	@printSTRING #CODEORIGIN+$0130
+; optimize FAIL (100, examples\include.pas), line = 43
+	@printSTRING #CODEORIGIN+$005E
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 60
+; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 44
 	jsr WAITFORKEYPROC
 
-; optimize OK (examples\peekpoke.pas), line = 61
+; optimize FAIL ('CHANGECOLORPROC', examples\include.pas), line = 45
+	jsr CHANGECOLORPROC
 
-	mva #$B8 N
-
-; optimize OK (examples\peekpoke.pas), line = 62
-
-	ldy COL
-	lda N
-	sta $0000,y
-
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 63
+; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 46
 	jsr WAITFORKEYPROC
 @exit
 	.ifdef @new
@@ -788,17 +605,14 @@ l_0206
 	eif
 	rts						; ret
 .endl
-l_0143
+l_0085
 
-; optimize FAIL ('MAINPROC', examples\peekpoke.pas), line = 67
+; optimize FAIL ('MAINPROC', examples\include.pas), line = 50
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-N	= DATAORIGIN+$002C
-MEM	= DATAORIGIN+$002D
 CH	= $02FC
-COL	= $02C6
 @exit
 
 @halt	ldx #0
@@ -874,10 +688,10 @@ ATARI
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $27 $00 $00 $00 $17
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 47
+VARDATASIZE	= 41
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -888,20 +702,12 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $11 $45 $66 $66 $65 $63 $74 $75  $73 $20 $65 $78 $61 $6D $70 $6C  $65 $3A $00 $12 $50 $45 $45 $4B
-.by  $20 $64 $65 $6D $6F $6E $73 $74  $72 $61 $74 $69 $6F $6E $00 $00  $00 $24 $53 $68 $61 $64 $6F $77
-.by  $20 $72 $65 $67 $69 $73 $74 $65  $72 $20 $37 $36 $34 $20 $63 $75  $72 $72 $65 $6E $74 $6C $79 $20
-.by  $68 $6F $6C $64 $73 $3A $00 $24  $53 $68 $61 $64 $6F $77 $20 $72  $65 $67 $69 $73 $74 $65 $72 $20
-.by  $37 $31 $30 $20 $63 $75 $72 $72  $65 $6E $74 $6C $79 $20 $68 $6F  $6C $64 $73 $3A $00 $24 $53 $68
-.by  $61 $64 $6F $77 $20 $72 $65 $67  $69 $73 $74 $65 $72 $20 $35 $35  $39 $20 $63 $75 $72 $72 $65 $6E
-.by  $74 $6C $79 $20 $68 $6F $6C $64  $73 $3A $00 $23 $44 $69 $73 $70  $6C $61 $79 $20 $4C $69 $73 $74
-.by  $20 $50 $6F $69 $6E $74 $65 $72  $28 $44 $4C $49 $53 $54 $4C $2F  $44 $4C $49 $53 $54 $48 $29 $00
-.by  $08 $61 $64 $64 $72 $65 $73 $73  $3A $00 $12 $50 $4F $4B $45 $20  $64 $65 $6D $6F $6E $73 $74 $72
-.by  $61 $74 $69 $6F $6E $00 $1E $50  $72 $65 $73 $73 $20 $61 $6E $79  $20 $6B $65 $79 $20 $74 $6F $20
-.by  $63 $68 $61 $6E $67 $65 $20 $63  $6F $6C $6F $72 $21 $00 $24 $50  $72 $65 $73 $73 $20 $61 $6E $79
-.by  $20 $6B $65 $79 $20 $74 $6F $20  $63 $68 $61 $6E $67 $65 $20 $63  $6F $6C $6F $72 $20 $61 $67 $61
-.by  $69 $6E $21 $00 $0A $41 $6E $64  $20 $61 $67 $61 $69 $6E $21 $00  $0A $4C $61 $73 $74 $20 $74 $69
-.by  $6D $65 $21 $00
+.by  $0B $48 $65 $6C $6C $6F $20 $77  $6F $72 $6C $64 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
+.by  $78 $61 $6D $70 $6C $65 $3A $00  $15 $49 $4E $43 $4C $55 $44 $45  $20 $64 $65 $6D $6F $6E $73 $74
+.by  $72 $61 $74 $69 $6F $6E $00 $00  $00 $23 $50 $72 $65 $73 $73 $20  $61 $6E $79 $20 $6B $65 $79 $20
+.by  $61 $6E $64 $20 $73 $65 $65 $20  $6D $79 $20 $67 $72 $65 $65 $74  $69 $6E $67 $73 $21 $00 $1E $50
+.by  $72 $65 $73 $73 $20 $61 $6E $79  $20 $6B $65 $79 $20 $74 $6F $20  $63 $68 $61 $6E $67 $65 $20 $63
+.by  $6F $6C $6F $72 $21 $00
 .endm
 
 	end

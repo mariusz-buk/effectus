@@ -20,6 +20,7 @@ effectus examples\func.eff
 effectus examples\gr9.eff
 effectus examples\gr_w1k.eff
 effectus examples\hi_atariage.eff
+effectus examples\include.eff
 effectus examples\inline_asm.eff
 effectus examples\inpnum.eff
 effectus examples\input.eff

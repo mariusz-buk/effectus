@@ -1,22 +1,23 @@
 {
-  Program: Effectus - Action! language parser and cross-assembler to native code
+  Program: Effectus - Action! language parser and cross-assembler to native binary code
            for Atari 8-bit home computers
 
-  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+  Authors : Bostjan Gorisek (Effectus)
+            Tebe (Mad Assembler, Mad Pascal)
+            zbyti, Mariusz Buk (Effectus support, new features, bug fixes and refactoring)
 
   Unit file  : core.pas
   Description: Core routines for processing Action! source code listings
 
-  Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
-  for 8-bit Atari home computers from Action! language source code listings.
-  Program is compiled with Free Pascal 3.0.4.
+  Effectus parses Action! language source code listings and generates native binary code
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
+
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
-  http://www.freepascal.org/
-  http://gury.atari8.info/effectus/
-  http://freeweb.siol.net/diomedes/effectus/
-  https://github.com/mariusz-buk/effectus
-  http://mads.atari8.info/mads.html
+    https://github.com/mariusz-buk/effectus
+    http://freeweb.siol.net/diomedes/effectus/
+    http://mads.atari8.info/
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation, either version 3
@@ -183,7 +184,7 @@ begin
       // f.e.: BYTE ARRAY BYTES=[10 20 30 40]
       // f.e.: CARD ARRAY BYTES=[1000 23504 30000 65221]
       else begin
-        if (System.Pos(',', buf) > 0) or varPtr.isByteArrayNoSpace then begin
+        if (Pos(',', buf) > 0) or varPtr.isByteArrayNoSpace then begin
           //buf := QuotedStr(ExtractText(buf, '[', ']'));
           //buf := '1 2 3 4';
           params := buf.Split(',');
@@ -320,11 +321,11 @@ function CheckEOF(stmt : string) : string;
 var
   temp : string;
 begin
-  if (System.Pos('EOF(', UpperCase(stmt)) > 0) or
-     (System.Pos('EOF[', UpperCase(stmt)) > 0) then
+  if (Pos('EOF(', UpperCase(stmt)) > 0) or
+     (Pos('EOF[', UpperCase(stmt)) > 0) then
   begin
     //EOF(1)=0
-    if System.Pos('=', UpperCase(stmt)) > 0 then begin
+    if Pos('=', UpperCase(stmt)) > 0 then begin
       temp := Extract(2, stmt, '=');
       if temp = '0' then begin
         stmt := 'not eof(f)';
@@ -362,7 +363,7 @@ var
   temp02 : string;
   j : byte;
 begin
-  if System.Pos('$', temp) > 0 then begin
+  if Pos('$', temp) > 0 then begin
     if Length(temp) > 3 then begin
       params := temp.Split('$');
       if High(params) > 0 then begin
@@ -442,7 +443,7 @@ var
   asmOpcode : array[0..3] of string[10] =
     ('lda', 'ldx', 'ldy', 'mva');
   actionVar : array[3..15] of string[3] =
-    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15');
+    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af');
   paramsAsm : string = '';
   asmOpcodeCnt : byte = 0;
   asmcnt : byte = 0;
@@ -483,9 +484,10 @@ begin
         branchPtr.isEndIfNext := false;
         branchPtr.isElseNext := false;
         branchPtr.isElseIfNext := false;
+        branchPtr.isWhileDoNext := false;  // 0.5.1 ??
       end
       else if (UpperCase(temp) = 'THEN') and branchPtr.isIfThenNext then begin
-        branchPtr.ifThenCode += ' then begin';  // (* 1 *)
+        branchPtr.ifThenCode += ' then begin';
         code.Add(branchPtr.ifThenCode);
         branchPtr.ifThenCode := '';
         branchPtr.isEndIfNext := true;
@@ -593,30 +595,30 @@ begin
     end
   end
   // Check for variable assignment statement
-  else if (System.Pos('=', temp) > 0) and
+  else if (Pos('=', temp) > 0) and
           not branchPtr.isIfThenInProgress then
   begin
     // Check if equal character (=) exists in comments (between string quotes "" in PROC or FUNC)
-    if (System.Pos('=', temp) > 1) and
-       (System.Pos('"', temp) > 0) and
-       (System.Pos('=', temp) > System.Pos('"', temp)) then
+    if (Pos('=', temp) > 1) and
+       (Pos('"', temp) > 0) and
+       (Pos('=', temp) > Pos('"', temp)) then
     begin
       // Handle PROCedures with string parameters
-      if System.Pos('(', temp) > 0 then begin
+      if Pos('(', temp) > 0 then begin
         // PROCedure name
         procName := UpperCase(Extract(1, temp, '('));
         // PROCedure parameters
         //params2 := Extract(2, line, '(', []);
         params2 := ExtractText(line, '(', ')');
         // Check if FUNCtion is assigned to some variable
-        if (System.Pos('=', procName) > 0) then begin
+        if (Pos('=', procName) > 0) then begin
           funcVar := Extract(1, procName, '=');
           procName := Extract(2, procName, '=');
         end;
       end;
     end
     // Pointer variable value assignment
-    else if System.Pos('^=', temp) > 0 then begin
+    else if Pos('^=', temp) > 0 then begin
       temp02 := Extract(1, temp, '^');
       params2 := Extract(2, temp, '=');
       if VarValue(2, vars.IndexOfName(temp02), _VAR_POINTER) then begin
@@ -624,43 +626,43 @@ begin
       end;
     end
     // Double variable assignment
-    else if System.Pos('==', temp) > 0 then begin
+    else if Pos('==', temp) > 0 then begin
       SplitStr(temp, '==', aList);
 
-      if System.Pos('{MOD}', aList[1]) > 0 then begin
+      if Pos('{MOD}', aList[1]) > 0 then begin
         params2 := aList[0];
         SplitStr(temp, '{MOD}', aList);
-        temp := StringReplace(aList[1], '{MOD}', '', [rfReplaceAll]);
+        temp := ReplaceStr(aList[1], '{MOD}', '');
         code.Add('  ' + params2 + ' := ' + params2 + ' MOD ' + temp + ';');
       end
-      else if System.Pos('{AND}', aList[1]) > 0 then begin
+      else if Pos('{AND}', aList[1]) > 0 then begin
         params2 := aList[0];
         SplitStr(temp, '{AND}', aList);
-        temp := StringReplace(aList[1], '{AND}', '', [rfReplaceAll]);
+        temp := ReplaceStr(aList[1], '{AND}', '');
         code.Add('  ' + params2 + ' := ' + params2 + ' AND ' + temp + ';');
       end
-      else if System.Pos('{OR}', aList[1]) > 0 then begin
+      else if Pos('{OR}', aList[1]) > 0 then begin
         params2 := aList[0];
         SplitStr(temp, '{OR}', aList);
-        temp := StringReplace(aList[1], '{OR}', '', [rfReplaceAll]);
+        temp := ReplaceStr(aList[1], '{OR}', '');
         code.Add('  ' + params2 + ' := ' + params2 + ' OR ' + temp + ';');
       end
-      else if System.Pos('{XOR}', aList[1]) > 0 then begin
+      else if Pos('{XOR}', aList[1]) > 0 then begin
         params2 := aList[0];
         SplitStr(temp, '{XOR}', aList);
-        temp := StringReplace(aList[1], '{XOR}', '', [rfReplaceAll]);
+        temp := ReplaceStr(aList[1], '{XOR}', '');
         code.Add('  ' + params2 + ' := ' + params2 + ' XOR ' + temp + ';');
       end
-      else if System.Pos('{LSH}', aList[1]) > 0 then begin
+      else if Pos('{LSH}', aList[1]) > 0 then begin
         params2 := aList[0];
         SplitStr(temp, '{LSH}', aList);
-        temp := StringReplace(aList[1], '{LSH}', '', [rfReplaceAll]);
+        temp := ReplaceStr(aList[1], '{LSH}', '');
         code.Add('  ' + params2 + ' := ' + params2 + ' SHL ' + temp + ';');
       end
-      else if System.Pos('{RSH}', aList[1]) > 0 then begin
+      else if Pos('{RSH}', aList[1]) > 0 then begin
         params2 := aList[0];
         SplitStr(temp, '{RSH}', aList);
-        temp := StringReplace(aList[1], '{RSH}', '', [rfReplaceAll]);
+        temp := ReplaceStr(aList[1], '{RSH}', '');
         code.Add('  ' + params2 + ' := ' + params2 + ' SHR ' + temp + ';');
       end
       else begin
@@ -668,7 +670,7 @@ begin
         params2 := Extract(2, aList[1], aList[1][1]);
         temp02 := '';
         // DL(4)==+1
-        if System.Pos('(', aList[0]) > 0 then begin
+        if Pos('(', aList[0]) > 0 then begin
           temp02 := aList[0];
           aList[0] := Extract(1, aList[0], '(');
         end;
@@ -763,13 +765,13 @@ begin
         // Standard variable assignment
         else if (vars.IndexOfName(temp02) >= 0) or (vars.IndexOfName(temp04) >= 0) then begin
           params[0] := ReplaceStr(params[0], '(', '[');
-          params[0] := ReplaceStr(params[0], ')', ']');
+          params[0] := ReplaceStr(params[0], ')', ']');  // (* 1 *)
           // ENTRY=DATA+10
           // ENTRY.NUM1=30
           if (vars.IndexOfName(temp04) >= 0) and
              VarValue(2, vars.IndexOfName(temp04), _VAR_POINTER) then
           begin
-            if (vars.IndexOfName(temp04) >= 0) and (System.Pos('.', temp02) > 0) then begin
+            if (vars.IndexOfName(temp04) >= 0) and (Pos('.', temp02) > 0) then begin
               //ENTRY.NUM1=30
               if (vars.IndexOfName(temp05) >= 0) and (ExtractDelimited(
                     6, vars.ValueFromIndex[vars.IndexOfName(temp05)], [';']) <> '') then
@@ -829,7 +831,7 @@ begin
               end;
               temp04 := '';
               for i := 0 to High(paramsEx) do begin
-                if System.Pos('(', paramsEx[i]) > 0 then begin
+                if Pos('(', paramsEx[i]) > 0 then begin
                   // Assignment is ARRAY BYTE or ARRAY CARD variable
                   temp03 := Extract(1, paramsEx[i], '(');
                   if (vars.IndexOfName(temp03) >= 0) and
@@ -837,7 +839,7 @@ begin
                       VarValue(2, vars.IndexOfName(temp03), _VAR_CARD_ARRAY)) then
                   begin
                     paramsEx[i] := ReplaceStr(paramsEx[i], '(', '[');
-                    paramsEx[i] := ReplaceStr(paramsEx[i], ')', ']');
+                    paramsEx[i] := ReplaceStr(paramsEx[i], ')', ']');  // (* 2 *)
                   end;
                 end;
                 temp04 += paramsEx[i];
@@ -916,6 +918,9 @@ begin
                   temp01 := Extract(1, temp01, '[');
                   //writeln('extracted text = ', temp01);
                   if funcs.IndexOfName(temp01) >= 0 then begin
+//                   // ReplaceKey function works on _REPLACEMENT array
+//                   if Pos(',' + temp01 + ',', ',RAND,PEEK,PEEKC,VALB,VALC,VALI,') > 0 then begin                    
+//                     temp04 := ReplaceKey(temp04, UpperCase(temp01));
                     if UpperCase(temp01) = 'RAND' then
                       temp04 := 'Random'
                     else if UpperCase(temp01) = 'PEEK' then
@@ -927,7 +932,7 @@ begin
                     else if UpperCase(temp01) = 'VALC' then
                       temp04 := 'StrToInt'
                     else if UpperCase(temp01) = 'VALI' then begin
-                      temp04 := 'StrToInt';
+                      temp04 := 'StrToInt';                  
                     end;
                     temp03 := Extract(1, params[1], '[');
                     code.Add('  ' + params[0] + ' := ' + temp03 +
@@ -946,7 +951,7 @@ begin
     end;
   end
   // Start of inline machine language
-  else if (System.Pos('[', temp) > 0) and
+  else if (Pos('[', temp) > 0) and
           not procML.isAsm and
           not varPtr.isTypeDataType then
   begin
@@ -991,7 +996,7 @@ begin
       temp02 := Extract(2, temp, '[');
       temp02 := ReplaceStr(temp02, ']', '');
       AsmBytes(temp02);
-      if System.Pos(']', temp) > 0 then begin
+      if Pos(']', temp) > 0 then begin
         if prgPtr.isFuncAsm and varPtr.isFunc then begin
           procML.strAsm += LineEnding + '  mva #0 result';
           //  procML.strAsm += #13#10'  .by $60';
@@ -1013,7 +1018,7 @@ begin
     Exit;
   end
   // End of inline machine language
-  else if (System.Pos(']', temp) > 0) and procML.isAsm then begin
+  else if (Pos(']', temp) > 0) and procML.isAsm then begin
     // Machine language mnemonics on the same line
     if Length(temp) > 1 then begin
       temp02 := Extract(1, temp, ']');
@@ -1057,13 +1062,13 @@ begin
     Exit;
   end
   // Check for PROCedure
-  else if (System.Pos('(', temp) > 0) and not varPtr.isFunc then begin
+  else if (Pos('(', temp) > 0) and not varPtr.isFunc then begin
     // PROCedure name
     procName := UpperCase(Extract(1, temp, '('));
     // PROCedure parameters
     params2 := ExtractText(line, '(', ')');
     // Check if FUNCtion is assigned to some variable
-    if (System.Pos('=', procName) > 0) then begin
+    if (Pos('=', procName) > 0) then begin
       funcVar := Extract(1, procName, '=');
       procName := Extract(2, procName, '=');
       Code.add('func ' + temp);
@@ -1077,8 +1082,8 @@ begin
     end;
   end
   else if varPtr.isFunc and
-          (System.Pos('(', temp) > 0) and
-          (System.Pos('RETURN', UpperCase(temp)) > 0) then
+          (Pos('(', temp) > 0) and
+          (Pos('RETURN', UpperCase(temp)) > 0) then
   begin
     params2 := ExtractText(line, '(', ')');
     Code.add('  result := ' + params2 + ';');
@@ -1100,7 +1105,7 @@ begin
 
   // End of PROCedure or FUNCtion
   if (UpperCase(Trim(line)) = 'RETURN') then
-     //or (prgPtr.isFuncAsm and (System.Pos(']', line) > 0)) then
+     //or (prgPtr.isFuncAsm and (Pos(']', line) > 0)) then
   begin
     if branchPtr.isIfThen then begin
       code.Add('exit;' + LineEnding);
@@ -1182,8 +1187,7 @@ begin
 
   // Branch statements control
   if (UpperCase(temp) <> 'THEN') and
-     branchPtr.isIfThen and
-     not branchPtr.isIfThenNext then
+     branchPtr.isIfThen and not branchPtr.isIfThenNext then
   begin
     //prgPtr.ifthenCode += temp;
     branchPtr.isIfThenNext := true;
@@ -1193,35 +1197,59 @@ begin
   else if branchPtr.isIfThenNext then begin
     // Replace () brackets with [] brackets
     // Bracket '(' is not the first character in condition value
-    if temp[1] <> '(' then begin
-      temp := ReplaceStr(temp, '(', '[');
-      temp := ReplaceStr(temp, ')', ']');
-    end;
+    //writeln('if temp = ', temp, ' ', Copy(temp, 1, 4), ' temp[Length(temp)] = ', temp[Length(temp)]);
+//     if (Pos(' AND ', temp) = 0) and (Pos(' OR ', temp) = 0) then begin
+//       temp := ReplaceStr(temp, '(', '[');
+//       temp := ReplaceStr(temp, ')', ']  (* 5 *) ');
+//       temp := '(' + temp + ')';
+//     end
+//     else begin
+      if (temp[1] = '(') and (temp[Length(temp)] = ')') then begin
+        temp := ExtractText(temp, '(', ')');
+        //writeln('extracted text = ', temp);
+        temp := ReplaceStr(temp, '(', '[');
+        temp := ReplaceStr(temp, ')', ']');  // (* 3 *)
+        temp := '(' + temp + ')';      
+      end
+      else if (Copy(temp, 1, 4) = 'AND(') and (temp[Length(temp)] = ')') then begin
+        temp := ExtractText(temp, '(', ')');
+        //writeln('extracted text AND = ', temp);
+        temp := ReplaceStr(temp, '(', '[');
+        temp := ReplaceStr(temp, ')', ']');  // (* AND *)
+        temp := 'AND (' + temp + ')';
+      end
+      else if (Copy(temp, 1, 3) = 'OR(') and (temp[Length(temp)] = ')') then begin
+        temp := ExtractText(temp, '(', ')');
+        //writeln('extracted text OR = ', temp);
+        temp := ReplaceStr(temp, '(', '[');
+        temp := ReplaceStr(temp, ')', ']');  // (* AND *)
+        temp := 'OR (' + temp + ')';
+      end
+      else begin
+        if (temp[1] <> '(') then begin
+          temp := ReplaceStr(temp, '(', '[');
+          temp := ReplaceStr(temp, ')', ']');  // (* 4 *)
+        end;
+        //temp := '(' + temp + ')';
+      end;
+    //end;
+    //else begin
+      //if (temp[1] <> '(') or (Copy(temp, 1, 4) <> 'AND(') then begin
+//        temp := ReplaceStr(temp, '(', '[');
+//        temp := ReplaceStr(temp, ')', ']  (* 3 *) ');
+      //end;
+    //end;
 
-    if Pos('{AND}', temp) > 0 then begin
-      temp := StringReplace(temp, '{AND}', ' AND ', [rfReplaceAll]);
-    end;
-    if Pos('{OR}', temp) > 0 then begin
-      temp := StringReplace(temp, '{OR}', ' OR ', [rfReplaceAll]);
-    end;
-    if Pos('{XOR}', temp) > 0 then begin
-      temp := StringReplace(temp, '{XOR}', ' XOR ', [rfReplaceAll]);
-    end;
-    if Pos('{LSH}', temp) > 0 then begin
-      temp := StringReplace(temp, '{LSH}', ' SHL ', [rfReplaceAll]);
-    end;
-    if Pos('{RSH}', temp) > 0 then begin
-      temp := StringReplace(temp, '{RSH}', ' SHR ', [rfReplaceAll]);
-    end;
-    if Pos('{MOD}', temp) > 0 then begin
-      temp := StringReplace(temp, '{MOD}', ' MOD ', [rfReplaceAll]);
-    end;
-    if Pos('{DIV}', temp) > 0 then begin
-      temp := StringReplace(temp, '{DIV}', ' div ', [rfReplaceAll]);
-    end;
+    temp := ReplaceStr(temp, '{AND}', ' AND ');
+    temp := ReplaceStr(temp, '{OR}', ' OR ');
+    temp := ReplaceStr(temp, '{XOR}', ' XOR ');
+    temp := ReplaceStr(temp, '{LSH}', ' SHL ');
+    temp := ReplaceStr(temp, '{RSH}', ' SHR ');
+    temp := ReplaceStr(temp, '{MOD}', ' MOD ');
+    temp := ReplaceStr(temp, '{DIV}', ' div ');
 
     // Check special character assignment, f.e. 'T
-    if System.Pos('=', temp) > 0 then begin
+    if Pos('=', temp) > 0 then begin
       temp02 := Extract(1, temp, '=');
       temp03 := Extract(2, temp, '=');
       if temp03 <> '' then begin
@@ -1229,13 +1257,15 @@ begin
           //params[1] := Char(params[1][2]);
           temp03 := IntToStr(Ord(temp03[2]));
         end;
-        temp := temp02 + '=' + temp03;
+        temp := temp02 + '=' + temp03;  // + ')';
       end;
     end;
     if branchPtr.ifTempCode = '' then begin
       temp := CheckEOF(temp);
-      if not branchPtr.isFuncInIf then
-        branchPtr.ifThenCode += temp;  // If 1 if 2
+      //writeln('if temp = ', temp, ' ifThenCode = ', branchPtr.ifThenCode);
+      if not branchPtr.isFuncInIf then begin
+        branchPtr.ifThenCode += ' ' + temp + ' ';  //'(* 1 *) ' + temp + ' (* 2 *)';  // If 1 if 2
+      end;
     end
     //else begin
     //  branchPtr.ifthenCode += branchPtr.ifTempCode + ' (* IF3 *) ';
@@ -1348,7 +1378,7 @@ var
   asmOpcode : array[0..3] of string[10] =
     ('lda', 'ldx', 'ldy', 'mva');
   actionVar : array[3..15] of string[3] =
-    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15');
+    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af');
   paramsAsm : string = '';
   asmOpcodeCnt : byte = 0;
   asmcnt : byte = 0;
@@ -1356,15 +1386,15 @@ var
   temp : string;
 begin
   // PROCedure name is on the same line as parameters
-  if (Length(line) > 1) and (System.Pos('(', line) > 0) then begin
+  if (Length(line) > 1) and (Pos('(', line) > 0) then begin
     procName := UpperCase(Extract(1, line, '('));
     params := UpperCase(Extract(2, line, '('));
     prgPtr.strAsmDecl := '';
 
     // PROC KBGET=$F302()
     // CARD FUNC MultiplyB=*(BYTE a,x)
-    if System.Pos('=', line) > 0 then begin
-      if System.Pos('*', line) > 0 then
+    if Pos('=', line) > 0 then begin
+      if Pos('*', line) > 0 then
         prgPtr.isFuncAsm := true
       else begin
         prgPtr.isProcAddr := true;
@@ -1395,12 +1425,12 @@ begin
   end;
 
   // PROCedure declaration statement is finished
-  if System.Pos(')', line) > 0 then begin
+  if Pos(')', line) > 0 then begin
     //prgPtr.isVarArray := false;
     prgPtr.isProcParams := false;
     prgPtr.isProc := false;
     // PROCedure with no parameters
-    if System.Pos('()', line) > 0 then begin
+    if Pos('()', line) > 0 then begin
       varPtr.isParamVarOver := true;
       paramCntx := 0;
 
@@ -1447,7 +1477,7 @@ begin
       //code.Add('procedure ' + procName + '(' + prgPtr.procParams + ');');
 
       if prgPtr.isProcAddr or prgPtr.isFuncAsm then begin
-        if System.Pos('=', prgPtr.procParams) > 0 then begin
+        if Pos('=', prgPtr.procParams) > 0 then begin
           procName := Extract(1, prgPtr.procParams, '=');
           //prgPtr.strAsmDecl := ExtractText(line, '=', '(');
         end
@@ -1510,7 +1540,7 @@ begin
   end;
 
   // Check for machine code opcode
-  if (System.Pos('[', line) > 0) then begin
+  if (Pos('[', line) > 0) then begin
     procML.isAsm := true;
 
     if prgPtr.isFuncAsm then begin
@@ -1559,7 +1589,7 @@ begin
       temp := Extract(2, line, '[');
       temp := ReplaceStr(temp, ']', '');
       AsmBytes(temp);
-      if System.Pos(']', line) > 0 then begin
+      if Pos(']', line) > 0 then begin
         if prgPtr.isFuncAsm and varPtr.isFunc then begin
           procML.strAsm += LineEnding + '  mva #0 result';
           //  procML.strAsm += #13#10'  .by $60';
@@ -1596,8 +1626,8 @@ begin
   end;
 
   // End of predefined values for BYTE ARRAY declaration statement
-  if varPtr.isByteArray and (System.Pos(']', line) > 0) then begin
-    if (System.Pos('],', line) > 0) then begin
+  if varPtr.isByteArray and (Pos(']', line) > 0) then begin
+    if (Pos('],', line) > 0) then begin
       varPtr.dataType := 'byte';
       varPtr.arrayDataType := varPtr.dataType;
       varPtr.isArrayDataType := true;
@@ -1609,7 +1639,7 @@ begin
       prgPtr.isVarArray := false;
     end;
 
-    if (System.Pos('=', varPtr.byteArray) > 0) then begin
+    if (Pos('=', varPtr.byteArray) > 0) then begin
       varPtr.str01 := Extract(1, varPtr.byteArray, '=');
       varPtr.byteArray := Extract(2, varPtr.byteArray, '[');
       varPtr.str01 := StringReplace(varPtr.str01, ', ', '', []);
@@ -1621,8 +1651,8 @@ begin
     Exit;
   end
   // End of predefined values for CARD ARRAY declaration statement
-  else if varPtr.isCardArray and (System.Pos(']', line) > 0) then begin
-    if (System.Pos('],', line) > 0) then begin
+  else if varPtr.isCardArray and (Pos(']', line) > 0) then begin
+    if (Pos('],', line) > 0) then begin
       varPtr.dataType := 'word';
       varPtr.arrayDataType := varPtr.dataType;
       varPtr.isArrayDataType := true;
@@ -1634,7 +1664,7 @@ begin
       prgPtr.isVarArray := false;
     end;
 
-    if (System.Pos('=', varPtr.cardArray) > 0) then begin
+    if (Pos('=', varPtr.cardArray) > 0) then begin
       varPtr.str01 := Extract(1, varPtr.cardArray, '=');
       varPtr.cardArray := Extract(2, varPtr.cardArray, '[');
       varPtr.str01 := StringReplace(varPtr.str01, ', ', '', []);
@@ -1646,10 +1676,10 @@ begin
     Exit;
   end
   else if varPtr.isTypeDataType then begin
-    if System.Pos('[', line) > 0 then begin
+    if Pos('[', line) > 0 then begin
       line := ReplaceStr(line, '[', '');
     end
-    else if System.Pos(']', line) > 0 then begin
+    else if Pos(']', line) > 0 then begin
       varPtr.isTypeDataType := false;
       temp := vars[vars.IndexOfName(varPtr.typeDataTypeVar)];
       temp += ';1';
@@ -1726,11 +1756,11 @@ begin
     for i := 0 to High(varDeclList) do begin
       //varDeclList[i] := Trim(varDeclList[i]);
       // Scalar predeclared variable value or memory address assignment variable expected
-      if (System.Pos('=', varDeclList[i]) > 0) and not varPtr.isArrayDataType then begin
+      if (Pos('=', varDeclList[i]) > 0) and not varPtr.isArrayDataType then begin
         //and not varPtr.isByteArray then begin
         params := varDeclList[i].Split('=');
         // Scalar predeclared variable value expected
-        if System.Pos('[', varDeclList[i]) > 0 then begin
+        if Pos('[', varDeclList[i]) > 0 then begin
           //temp := ExtractText(params[1], '[', ']');
           vars.Add(params[0] + '=' + varPtr.dataType + ';6;' + ExtractText(params[1], '[', ']') +
                    ';0;' + prgPtr.strProcName + ';0;0');
@@ -1751,12 +1781,12 @@ begin
       // String variable declaration
       else if varPtr.isArrayDataType and (varPtr.arrayDataType = 'string') then begin
         // String variable constant declaration
-        if System.Pos('=', varDeclList[i]) > 0 then begin
+        if Pos('=', varDeclList[i]) > 0 then begin
           params := varDeclList[i].Split('=');
 
           // Check string dimension and extract string variable
           temp := '0';
-          if System.Pos('(', params[0]) > 0 then begin
+          if Pos('(', params[0]) > 0 then begin
             temp := ExtractText(params[0], '(', ')');
             params[0] := Extract(1, params[0], '(');
           end;
@@ -1767,7 +1797,7 @@ begin
         else begin
           // Check string dimension and extract string variable
           temp := '0';
-          if System.Pos('(', varDeclList[i]) > 0 then begin
+          if Pos('(', varDeclList[i]) > 0 then begin
             temp := ExtractText(varDeclList[i], '(', ')');
             varDeclList[i] := Extract(1, varDeclList[i], '(');
           end;
@@ -1780,17 +1810,17 @@ begin
         temp02 := '';
         params := varDeclList[i].Split('=');
         // Check string dimension and extract string variable
-        if System.Pos('(', varDeclList[i]) > 0 then begin
+        if Pos('(', varDeclList[i]) > 0 then begin
           temp := ExtractText(varDeclList[i], '(', ')');
           varDeclList[i] := Extract(1, varDeclList[i], '(');
         end
         // Predeclared value is expected
-        else if System.Pos('[', params[1]) > 0 then begin
+        else if Pos('[', params[1]) > 0 then begin
           temp := '0';
           varPtr.isByteArray := true;
           varPtr.byteArray := Extract(2, params[1], '[');
           // Predeclared values are not separated with space
-          if System.Pos(']', params[1]) > 0 then begin
+          if Pos(']', params[1]) > 0 then begin
             varPtr.isByteArray := false;
             varPtr.isArrayDataType := false;
             varPtr.isByteArrayNoSpace := true;
@@ -1836,12 +1866,12 @@ begin
         temp02 := '';
         params := varDeclList[i].Split('=');
         // Check string dimension and extract string variable
-        if System.Pos('(', varDeclList[i]) > 0 then begin
+        if Pos('(', varDeclList[i]) > 0 then begin
           temp := ExtractText(varDeclList[i], '(', ')');
           varDeclList[i] := Extract(1, varDeclList[i], '(');
         end
         // Predeclared value is expected
-        else if System.Pos('[', params[1]) > 0 then begin
+        else if Pos('[', params[1]) > 0 then begin
           temp := '0';
           varPtr.isCardArray := true;
           varPtr.cardArray := Extract(2, params[1], '[');
@@ -1911,7 +1941,7 @@ var
 begin
   code.Add('// Effectus auto-generated Mad Pascal source code listing');
 
-  prgName := StringReplace(prgName, '-', '', [rfReplaceAll]);
+  prgName := ReplaceStr(prgName, '-', '');
   code.Add('program ' + prgName + 'Prg;' + LineEnding);
   code.Add('uses');
 
@@ -1933,22 +1963,13 @@ begin
 
   code.Add('  Crt' + strUnits + ';' + LineEnding);
 
-  //if prgPtr.isByteBuffer or devicePtr.isDevice or devicePtr.isDeviceOpen then begin
-   if devicePtr.isDevice then begin
-     code.Add(LineEnding + 'var');
-   end;
+  if devicePtr.isDevice then begin
+    code.Add(LineEnding + 'var');
+  end;
 
-//   if prgPtr.isByteBuffer then begin
-//     code.Add('  intValue : integer;');
-//   end;
-
-//   if devicePtr.isDeviceOpen then begin
-//     code.Add('  f : file;');
-//   end;
-
-   if devicePtr.isDevice then begin
-     code.Add('  strBuffer : string;');
-   end;
+  if devicePtr.isDevice then begin
+    code.Add('  strBuffer : string;');
+  end;
 
   // Data type declaration initialization
   varPtr.isVar := false;
@@ -2041,12 +2062,12 @@ begin
     effCode[i] := ReplaceToken(effCode[i], 'MOD', '{MOD}', '{MOD}');
 
     effCode[i] := ReplaceStr(effCode[i], ', ', ',');
-    effCode[i] := StringReplace(effCode[i], 'IF(', 'IF (', [rfReplaceAll]);
+    effCode[i] := ReplaceStr(effCode[i], 'IF(', 'IF (');
 
     // Check if comments character ";" is between string quotes ""
-    if (System.Pos(';', temp) > 1) then begin
-      if (System.Pos('"', temp) > 0)
-         and (System.Pos(';', temp) > System.Pos('"', temp)) then
+    if (Pos(';', temp) > 1) then begin
+      if (Pos('"', temp) > 0)
+         and (Pos(';', temp) > Pos('"', temp)) then
       begin
       end
       else begin

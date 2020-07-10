@@ -1,21 +1,23 @@
 {
-  Program: Effectus - Action! language parser and cross-assembler to native code
+  Program: Effectus - Action! language parser and cross-assembler to native binary code
            for Atari 8-bit home computers
 
-  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+  Authors : Bostjan Gorisek (Effectus)
+            Tebe (Mad Assembler, Mad Pascal)
+            zbyti, Mariusz Buk (Effectus support, new features, bug fixes and refactoring)
 
   Unit file  : decl.pas
   Description: Declaration and destruction code
 
-  Effectus generates MADS Assembler source code and native binary code for 8-bit
-  Atari home computers from Action! language source code listings.
-  Program is compiled with Free Pascal 3.0.4
+  Effectus parses Action! language source code listings and generates native binary code
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
+
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
-  http://www.freepascal.org/
-  http://gury.atari8.info/effectus/
-  https://github.com/mariusz-buk/effectus
-  http://mads.atari8.info/mads.html
+    https://github.com/mariusz-buk/effectus
+    http://freeweb.siol.net/diomedes/effectus/
+    http://mads.atari8.info/
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation, either version 3
@@ -37,7 +39,7 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.5';  // Effectus version
+  VERSION = '0.5.1';  // Effectus version
 
 type
   // Program flag variables
@@ -103,7 +105,7 @@ type
 
     // Temporary storage
     str01, str02 : string;
-    
+
     isDefine : boolean;
     isFunc : boolean;
   end;
@@ -150,19 +152,19 @@ type
 var
   procs, funcs : TStringList;
   keywords : TStringList;
-  vars : TStringList;  // Variables
+  vars : TStringList;
   ProcParams : TStringList;  // PROCedure parameters
   dataTypes : TStringList;
   code : TStringList;
   effCode : TStringList;
   isClearLog : boolean = false;
-  
+
   isVarFastMode : boolean = false;
   isByteFastMode : boolean = false;
   isPointerFastMode : boolean = false;
   isWordFastMode : boolean = false;
   cntByteFastMode : byte = 0;
-  
+
   FuncList : TStringList;
   defineList : TStringList;
   filenameSrc : string;
@@ -170,8 +172,8 @@ var
   CurLine : LongInt;
   optOutput,
   optBinExt,
-  meditMADS_log_dir : String;
-  actionFilename : String = '';
+  meditMADS_log_dir : string;
+  actionFilename : string = '';
   isInfo : Boolean = False;  // Information about variables, procedures and functions
   myProcs, myFuncs : TStringList;
   oper : TStringList;
@@ -190,7 +192,8 @@ var
 
   varCnt : byte = 0;
   tempProc : string;
-  
+  filePath : string;
+
 const
   _VAR_SCALAR     = '0';
   _VAR_MEM_ADDR   = '1';
@@ -200,18 +203,39 @@ const
   _VAR_CARD_ARRAY = '5';
   _VAR_SCALAR_DEFAULT = '6';
   _VAR_TYPE_REC   = '7';
+  
+  _MARKER = '<<x>>';  
 
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
-  _MP_DEVICE_SYSUTILS: array [0..8] of String =
-       ('OPEN','CLOSE','PUTD','PRINTD','PRINTBD','PRINTCD','PRINTID',
-       'GETD','INPUTSD');
-  _MP_STICK: array [0..3] of String =
-       ('STICK','STRIG','PADDLE','PTRIG');
-  _MP_GRAPHICS: array [0..4] of String =
-       ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
-  _MP_SYSUTILS: array [0..5] of String =
+  _MP_DEVICE_SYSUTILS: array [0..8] of string =
+    ('OPEN', 'CLOSE', 'PUTD', 'PRINTD', 'PRINTBD', 'PRINTCD', 'PRINTID', 'GETD', 'INPUTSD');
+  _MP_STICK: array [0..3] of string =
+    ('STICK','STRIG','PADDLE','PTRIG');
+  _MP_GRAPHICS: array [0..4] of string =
+    ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
+  _MP_SYSUTILS: array [0..5] of string =
        ('STRB','STRC','STRI','VALB','VALC','VALI');
+
+  _REPLACEMENT : array [0..16, 0..1] of string = (
+    ('RAND','Random'),
+    ('PEEK','Peek'),
+    ('PEEKC','DPeek'),
+    ('VALB','StrToInt'),
+    ('VALC','StrToInt'),
+    ('VALI','StrToInt'),
+    ('INPUTBD','Get'),
+    ('INPUTCD','Get'),
+    ('INPUTID','Get'),
+    ('GETD','Get'),
+    ('STICK','stick'),
+    ('STRIG','strig'),
+    ('PADDLE','paddl'),
+    ('PTRIG','ptrig'),
+    ('INPUTB','Readln'),
+    ('INPUTC','Readln'),
+    ('INPUTI','Readln')
+  );
 
 procedure Init;
 procedure CreateLists;
@@ -238,7 +262,7 @@ begin
   defineList.Clear;
   aList.Clear;
 
-  // Action! keywords  
+  // Action! keywords
   keywords.Add('MODULE=0');
   keywords.Add('PROC=0');
   keywords.Add('FUNC=0');
@@ -273,7 +297,7 @@ begin
   dataTypes.Add('SBYTE=3');
   dataTypes.Add('TYPE=4');
 
-  // Action! PROCedures  
+  // Action! PROCedures
   procs.Add('Print=4');
   procs.Add('PrintE=4');
   procs.Add('PrintD=4');
@@ -285,32 +309,32 @@ begin
   procs.Add('PrintC=4');
   procs.Add('PrintCE=4');
   procs.Add('PrintCD=4');
-  procs.Add('PrintCDE=4'); 
+  procs.Add('PrintCDE=4');
   procs.Add('PrintI=4');
   procs.Add('PrintIE=4');
   procs.Add('PrintID=4');
   procs.Add('PrintIDE=4');
   procs.Add('PrintF=4');
   procs.Add('Put=4');
-  procs.Add('PutE=4'); 
+  procs.Add('PutE=4');
   procs.Add('PutD=4');
   procs.Add('PutDE=4');
   procs.Add('InputS=4');
   procs.Add('InputSD=4');
   procs.Add('InputMD=4');
-  procs.Add('Open=4'); 
+  procs.Add('Open=4');
   procs.Add('Close=4');
   procs.Add('XIO=4');
   procs.Add('Note=4');
   procs.Add('Point=4');
   procs.Add('Graphics=4');
-  procs.Add('SetColor=4'); 
+  procs.Add('SetColor=4');
   procs.Add('Plot=4');
   procs.Add('DrawTo=4');
   procs.Add('Fill=4');
   procs.Add('Position=4');
   procs.Add('Sound=4');
-  procs.Add('SndRst=4'); 
+  procs.Add('SndRst=4');
   procs.Add('SCopy=4');
   procs.Add('SCopyS=4');
   procs.Add('SAssign=4');
@@ -324,7 +348,7 @@ begin
   procs.Add('Poke=4');
   procs.Add('PokeC=4');
 
-  // PROCedure parameters  
+  // PROCedure parameters
   procParams.Add('Print=1;1');
   procParams.Add('PrintE=1;1');
   procParams.Add('PutE=0');
@@ -336,7 +360,7 @@ begin
   procParams.Add('PrintCE=1;4');
   procParams.Add('Put=1;2');
   procParams.Add('PrintF=255;255');
-  
+
   procParams.Add('Graphics=1;2');
   procParams.Add('Plot=2;4;2');
   procParams.Add('DrawTo=2;4;2');
@@ -346,23 +370,23 @@ begin
 
   procParams.Add('Poke=2;4;2');
   procParams.Add('PokeC=2;4;4');
-  
+
   procParams.Add('Zero=2;4;4');
   procParams.Add('SetBlock=3;4;4;2');
   procParams.Add('MoveBlock=3;4;4;4');
-  
+
   procParams.Add('Sound=4;2;2;2;2');
   procParams.Add('SndRst=0');
-  
+
   procParams.Add('SCopy=2;1;1');
   procParams.Add('SCopyS=4;1;1;2;2');
   procParams.Add('SAssign=4;1;1;2;2');
   procParams.Add('StrB=2;2;1');
   procParams.Add('StrC=2;4;1');
   procParams.Add('StrI=2;3;1');
-  
+
   procParams.Add('InputS=1;1');
-  
+
   procParams.Add('Open=4;2;1;2;2');
   procParams.Add('Close=1;2');
   procParams.Add('PutD=2;2;2');
@@ -377,13 +401,13 @@ begin
   procParams.Add('PrintIDE=2;2;3');
   procParams.Add('InputSD=2;2;1');
   procParams.Add('InputMD=3;2;1;2');
-  
+
   //PROC XIO(BYTE chan,0,cmd,auxl,aux2,<filestring))
   procParams.Add('XIO=6;2;2;2;2;2;1');
 
   // Action! variables
   funcs.Add('Color=0');
-  
+
   // Action! FUNCtions
   //funcs.Add('EOF=0');
   funcs.Add('Rand=1');

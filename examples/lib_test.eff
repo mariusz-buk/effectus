@@ -1,0 +1,22 @@
+; Effectus example
+; User library for INCLUDE demo
+
+PROC WaitForKey()
+
+CH = 255
+WHILE CH = 255 DO OD
+
+RETURN
+
+PROC PrintText()
+
+PrintE("Hello world")
+
+RETURN
+
+PROC ChangeColor()
+
+Poke(710, 50)
+Poke(712, 160)
+
+RETURN

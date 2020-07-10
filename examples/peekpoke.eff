@@ -1,5 +1,4 @@
 ; Effectus example
-;-------------------------------------
 ; PEEK and POKE demo
 
 BYTE n
@@ -23,33 +22,31 @@ PutE()
 n=Peek(CH)
 PrintE("Shadow register 764 currently holds:")
 PutE() PrintBE(n)
-
 PutE()
 
 n=Peek(710)
 PrintE("Shadow register 710 currently holds:")
 PutE() PrintBE(n)
-
 PutE()
 
 n=Peek(559)
 PrintE("Shadow register 559 currently holds:")
 PutE() PrintBE(n)
+PutE()
 
 mem=PeekC($0230)
-PrintE("DLISTL:")
+PrintE("Display List Pointer (DLISTL/DLISTH)")
+PrintE("address:")
 PutE() PrintCE(mem)
 
-PutE() PutE()
-
-PrintE("POKE demonstration")
+PrintF("%E%EPOKE demonstration%E")
 PrintE("Press any key to change color!")
 WaitForKey()
 COL=0
 
 PrintE("Press any key to change color again!")
 WaitForKey()
-Poke(710,230)
+Poke(710,212)
 
 PrintE("And again!")
 WaitForKey()

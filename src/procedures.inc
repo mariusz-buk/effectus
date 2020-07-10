@@ -1,22 +1,23 @@
 {
-  Program: Effectus - Action! language parser and cross-assembler to native code
+  Program: Effectus - Action! language parser and cross-assembler to native binary code
            for Atari 8-bit home computers
 
-  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+  Authors : Bostjan Gorisek (Effectus)
+            Tebe (Mad Assembler, Mad Pascal)
+            zbyti, Mariusz Buk (Effectus support, new features, bug fixes and refactoring)
 
   Unit file  : procedures.inc
-  Description: Main project file
+  Description: Emulated Action! procedures
 
-  Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
-  for 8-bit Atari home computers from Action! language source code listings.
-  Program is compiled with Free Pascal 3.0.4.
+  Effectus parses Action! language source code listings and generates native binary code
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
+
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
-  http://www.freepascal.org/
-  http://gury.atari8.info/effectus/
-  http://freeweb.siol.net/diomedes/effectus/
-  https://github.com/mariusz-buk/effectus
-  http://mads.atari8.info/mads.html
+    https://github.com/mariusz-buk/effectus
+    http://freeweb.siol.net/diomedes/effectus/
+    http://mads.atari8.info/
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation, either version 3
@@ -76,7 +77,7 @@
        else if procName = 'GRAPHICS' then begin
          temp := '';
 
-         //if devicePtr.isDevice then begin  
+         //if devicePtr.isDevice then begin
          //  temp := '  assign(f, ''S:''); rewrite(f, 1);' + LineEnding;
          //end;
 
@@ -111,6 +112,7 @@
        else if procName = 'POKE' then begin
          temp := '  Poke(' + params2 + ');';
          code.Add(temp);
+         //writeln('poke = ', temp);
        end
        else if procName = 'POKEC' then begin
          temp := '  DPoke(' + params2 + ');';
@@ -190,13 +192,13 @@
        end
        else if procName = 'SCOPY' then begin
          params := params2.Split(',');
-         temp := '  ' + params[0] + ' := ' + params[1] + ';'; 
+         temp := '  ' + params[0] + ' := ' + params[1] + ';';
          code.Add(temp);
        end
        else if procName = 'SCOPYS' then begin
          params := params2.Split(',');
          temp := '  ' + params[0] + ' := ' +
-                 'Copy(' + params[1] + ',' + params[2] + ', ' + params[3] + ' - ' + params[2] + ' + 1);'; 
+                 'Copy(' + params[1] + ',' + params[2] + ', ' + params[3] + ' - ' + params[2] + ' + 1);';
          code.Add(temp);
        end
        else if procName = 'SASSIGN' then begin
@@ -232,7 +234,7 @@
        %E	the RETURN character
        %%	output the percent sign
        %S	output as a string
-      
+
        Some examples:
          PrintF("%EA%EB%E")
          PrintF("%EThe sum of %U and %U is %U%E",a,b,a+b
@@ -245,7 +247,7 @@
          temp := params[0];
 
          // Process
-         if System.Pos('%%', temp) > 0 then begin
+         if Pos('%%', temp) > 0 then begin
            //SplitStr(temp, '%%', aList);
            temp := ReplaceStr(temp, '%%', '%{percentEff}');
          end;
@@ -259,7 +261,7 @@
          paramsEx := temp.Split('%');
          for i := 1 to High(paramsEx) do begin
            if UpperCase(paramsEx[i][1]) = 'I' then begin
-             Inc(cnt); 
+             Inc(cnt);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
              params[cnt] := ReplaceStr(params[cnt], ')', ']');
              //temp02 += params[i] + ', ' + QuotedStr(Extract(2, paramsEx[i], 'i', []));
@@ -272,23 +274,23 @@
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'S' then begin
-             Inc(cnt); 
+             Inc(cnt);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
              params[cnt] := ReplaceStr(params[cnt], ')', ']');
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'H' then begin
-             Inc(cnt); 
+             Inc(cnt);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
              params[cnt] := ReplaceStr(params[cnt], ')', ']');
              temp02 += ', ' + QuotedStr('$') + ', HexStr(' + params[cnt] + ', 4), ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'C' then begin
-             Inc(cnt); 
+             Inc(cnt);
              //temp02 += params[i] + ', ' + QuotedStr(Extract(2, paramsEx[i], 'i', []));
              temp02 += ', Chr(' + params[cnt] + '), ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
-           else if System.Pos('{percentEff}', paramsEx[i]) > 0 then begin
+           else if Pos('{percentEff}', paramsEx[i]) > 0 then begin
              SplitStr(paramsEx[i], '{percentEff}', aList);
              if aList.Count = 1 then begin
                temp02 += ', ' + QuotedStr('%');
@@ -296,7 +298,7 @@
              else if aList.Count > 1 then begin
                temp02 += ', ' + QuotedStr('%' + aList[1]);
              end;
-             //temp02 := QuotedStr(Extract(1, temp, '%', [])); 
+             //temp02 := QuotedStr(Extract(1, temp, '%', []));
              //temp02 += ', ' + QuotedStr('%') + QuotedStr(Copy(paramsEx[i], 1, 11));
            end
            else if UpperCase(paramsEx[i][1]) = 'E' then begin

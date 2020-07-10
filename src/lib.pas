@@ -1,22 +1,23 @@
 {
-  Program: Effectus - Action! language parser and cross-assembler to native code
+  Program: Effectus - Action! language parser and cross-assembler to native binary code
            for Atari 8-bit home computers
 
-  Authors : Bostjan Gorisek (Effectus), Tebe (Mad Assembler, Mad Pascal)
+  Authors : Bostjan Gorisek (Effectus)
+            Tebe (Mad Assembler, Mad Pascal)
+            zbyti, Mariusz Buk (Effectus support, new features, bug fixes and refactoring)
 
   Unit file  : lib.pas
   Description: Supporting routines
 
-  Effectus generates Mad Pascal and Mad Assembler source code listings to native binary code
-  for 8-bit Atari home computers from Action! language source code listings.
-  Program is compiled with Free Pascal 3.0.4.
+  Effectus parses Action! language source code listings and generates native binary code
+  for 8-bit Atari home computers by using excellent Mad Pascal and Mad Assembler languages.
+
+  Effectus is compiled with Free Pascal 3.0.4.
 
   References:
-  http://www.freepascal.org/
-  http://gury.atari8.info/effectus/
-  http://freeweb.siol.net/diomedes/effectus/
-  https://github.com/mariusz-buk/effectus
-  http://mads.atari8.info/mads.html
+    https://github.com/mariusz-buk/effectus
+    http://freeweb.siol.net/diomedes/effectus/
+    http://mads.atari8.info/
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU General Public License as published by the Free Software Foundation, either version 3
@@ -37,7 +38,8 @@ interface
 Uses
   SySUtils, Classes, StrUtils, decl;
 
-function IsArrayElementInString(seek : array of String; str : String) : boolean;
+function ReplaceKey(outStr, inKey : string) : string;
+function IsArrayElementInString(seek : array of string; str : string) : boolean;
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 function GetVarValue(valuePos, index : byte) : string;
 function ReplaceToken(code, operand, newOperand01, newOperand02 : string) : string;
@@ -55,13 +57,27 @@ procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringLi
 
 implementation
 
-function IsArrayElementInString(seek : array of String; str : String) : boolean;
+function ReplaceKey(outStr, inKey : string) : string;
+var
+  i : integer;
+begin
+  Result := outStr;
+  for i := Low(_REPLACEMENT) to High(_REPLACEMENT) do begin
+    if _REPLACEMENT[i][0] = inKey then begin
+      Result := _REPLACEMENT[i][1];
+      break;
+    end
+  end;
+end;
+
+function IsArrayElementInString(seek : array of string; str : string) : boolean;
 var
   i : integer;
 begin
   Result := false;
-  for i := 0 to Length(seek)-1 do begin
-    if Pos(seek[i], UpperCase(str)) > 0 then begin
+  str := UpperCase(str);
+  for i := Low(seek) to High(seek) do begin
+    if Pos(seek[i], str) > 0 then begin
       Result := true;
       break;
     end
@@ -86,20 +102,20 @@ end;
  -----------------------------------------------------------------------------}
 function ReplaceToken(code, operand, newOperand01, newOperand02 : string) : string;
 begin
-  if (System.Pos(operand, code) > 1) and (System.Pos('"', code) > 0)
-     and (System.Pos(operand, code) > System.Pos('"', code)) then
+  if (Pos(operand, code) > 1) and (Pos('"', code) > 0)
+     and (Pos(operand, code) > Pos('"', code)) then
   begin
   end
-  else if System.Pos(operand, code) > 0 then begin
+  else if Pos(operand, code) > 0 then begin
     if operand = newOperand01 then begin
-      code := StringReplace(code, ' ' + operand, operand, [rfReplaceAll]);
-      code := StringReplace(code, operand + ' ', newOperand01, [rfReplaceAll]);
-      code := StringReplace(code, operand, newOperand02, [rfReplaceAll]);
+      code := ReplaceStr(code, ' ' + operand, operand);
+      code := ReplaceStr(code, operand + ' ', newOperand01);
+      code := ReplaceStr(code, operand, newOperand02);
     end
     else begin
-      code := StringReplace(code, ' ' + operand + ' ', newOperand01, [rfReplaceAll]);
-      code := StringReplace(code, operand + ' ', newOperand01, [rfReplaceAll]);
-      code := StringReplace(code, ' ' + operand, newOperand02, [rfReplaceAll]);
+      code := ReplaceStr(code, ' ' + operand + ' ', newOperand01);
+      code := ReplaceStr(code, operand + ' ', newOperand01);
+      code := ReplaceStr(code, ' ' + operand, newOperand02);
     end;
   end;
   result := code;
@@ -202,8 +218,8 @@ Examples:
 function ExtractText(Str : String; Ch1, Ch2 : Char) : String;
 begin
   result := Copy(Str,
-                 System.Pos(Ch1, Str) + 1,
-                 RPos(Ch2, Str) - System.Pos(Ch1, Str) - 1);
+                 Pos(Ch1, Str) + 1,
+                 RPos(Ch2, Str) - Pos(Ch1, Str) - 1);
   if Trim(result) = '' then begin
     result := str;
   end;
@@ -229,11 +245,11 @@ function Replace(Str : String; Ch1, Ch2 : Char) : String;
 var
   i : Integer;
 begin
-  i := System.Pos(Ch1, Str);
+  i := Pos(Ch1, Str);
   Delete(Str, i, 1);
   Insert(Ch2, Str, i);
   Result := Str;
-//  Result := StuffString(Str, System.Pos(Ch1, Str), 1, Ch2);
+//  Result := StuffString(Str, Pos(Ch1, Str), 1, Ch2);
 end;
 
 {------------------------------------------------------------------------------
