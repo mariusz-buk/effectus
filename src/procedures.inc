@@ -142,6 +142,30 @@
          code.Add(temp);
        end
        else if procName = 'SETBLOCK' then begin
+         params := params2.Split(',');
+         //params[0] := 'pointer(' + Trim(params[0]) + ')';
+         params[0] := Trim(params[0]);
+         
+         if vars.IndexOfName(params[0]) >= 0 then begin
+           //writeln('params[0] = ', params[0]);
+           //if VarValue(2, vars.IndexOfName(params[0]), _VAR_SCALAR) then begin
+           if VarValue(2, vars.IndexOfName(params[0]), _VAR_BYTE_ARRAY) or
+              VarValue(2, vars.IndexOfName(params[0]), _VAR_CARD_ARRAY) then
+           begin           
+             //params[j] := '@' + params[j];
+             //params[0] := 'pointer(' + params[0] + ')';
+           end
+           else begin
+             params[0] := 'pointer(' + params[0] + ')';
+           end;           
+         end
+         else begin
+           params[0] := 'pointer(' + params[0] + ')';
+         end;
+         
+         params[1] := Trim(params[1]);
+         params[2] := Trim(params[2]);
+         params2 := params[0] + ', ' + params[1] + ', ' + params[2];
          temp := '  FillChar(' + params2 + ');';
          code.Add(temp);
        end
