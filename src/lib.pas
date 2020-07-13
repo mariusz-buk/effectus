@@ -159,7 +159,7 @@ begin
   end;
 end;
 
-procedure FuncInIfCond(procName, temp, params2 : string);  //; compare : string);
+procedure FuncInIfCond(procName, temp, params2 : string);
 var
   //params : TStringArray;
   temp02 : string;

@@ -39,7 +39,7 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.5.1';  // Effectus version
+  VERSION = '0.5.2 Beta';  // Effectus version
 
 type
   // Program flag variables
@@ -118,26 +118,20 @@ type
     isElseIfNext : boolean;
     isEndIfNext : boolean;
     isIfThenInProgress : boolean;
-    ifThenCode : string;
-    ifTempCode : string;
     isFuncInIf : boolean;
 
-    isFor : boolean;
-    isForDoNext : boolean;
-    isForToNext : boolean;
-    isForOdNext : boolean;
+    isFor : boolean;     // FOR branch
+    isWhile : boolean;   // WHILE branch
+    isRepeat : boolean;  // DO branch
+    isUntil : boolean;   // UNTIL condition
+    
+    ifThenCode : string;
+    //ifTempCode : string;
     forCode : string;
-    forCnt : byte;
-
-    isWhile : boolean;
-    isWhileDoNext : boolean;
-    isWhileOdNext : boolean;
     whileCode : string;
-    whileCnt : byte;
-
-    isDoOd : boolean;
-    isUntil : boolean;
     untilCode : string;
+    
+    Count : word;
   end;
 
   // Device support variables
@@ -180,8 +174,8 @@ var
 
   dataValue : string;
   prgPtr : TPrgPtr;
-  branchPtr : TBranchPtr;
   varPtr : TVarPtr;
+  branchPtr : TBranchPtr;
   devicePtr : TDevicePtr;
   paramCntx : byte;
   paramTypes : string;
@@ -189,6 +183,7 @@ var
 
   operators : TStringArray;
   aList : TStringList;
+  branchList : TStringList;
 
   varCnt : byte = 0;
   tempProc : string;
@@ -261,6 +256,7 @@ begin
   myFuncs.Clear;
   defineList.Clear;
   aList.Clear;
+  branchList.Clear;
 
   // Action! keywords
   keywords.Add('MODULE=0');
@@ -476,6 +472,7 @@ begin
   defineList := TStringList.Create;
   oper := TStringlist.create;
   aList := TStringlist.create;
+  branchList := TStringlist.create;
 end;
 
 {------------------------------------------------------------------------------
@@ -497,6 +494,7 @@ begin
   defineList.Free;
   oper.Free;
   aList.Free;
+  branchList.Free;
 end;
 
 end.

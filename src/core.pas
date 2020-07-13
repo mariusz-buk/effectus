@@ -429,8 +429,6 @@ begin
   prgPtr.isVarArray := true;
   varPtr.isVarXY := false;
   prgPtr.isCheckVar := false;
-  branchPtr.forCnt := 0;
-  branchPtr.whileCnt := 0;
   prgPtr.isStartBegin := false;
   varCnt := 0;
 end;
@@ -463,140 +461,26 @@ begin
   oper.Clear;
 
   temp := Strip(line, ' ');
+  //writeln('temp = ', temp);
+  //readln;
 
   // Check for Action! keywords
   offset := keywords.IndexOfName(temp);
-  if offset >= 0 then begin  //and (offset < 65535) then begin
+  if offset >= 0 then begin
     if UpperCase(temp) = 'EXIT' then begin
       code.Add('  break;');
       Exit;
     end;
 
-    // The keyword is a branch
-    k := StrToInt(ExtractDelimited(1, keywords.ValueFromIndex[offset], [';']));
-    if k = 1 then begin
-      // IF branch
-      if (UpperCase(temp) = 'IF') then begin  //or (UpperCase(temp) = 'IF(') then begin
-        branchPtr.isIfThen := true;
-        branchPtr.isIfThenInProgress := true;
-        branchPtr.ifThenCode := '  if ';
-        branchPtr.isIfThenNext := false;
-        branchPtr.isEndIfNext := false;
-        branchPtr.isElseNext := false;
-        branchPtr.isElseIfNext := false;
-        branchPtr.isWhileDoNext := false;  // 0.5.1 ??
-      end
-      else if (UpperCase(temp) = 'THEN') and branchPtr.isIfThenNext then begin
-        branchPtr.ifThenCode += ' then begin';
-        code.Add(branchPtr.ifThenCode);
-        branchPtr.ifThenCode := '';
-        branchPtr.isEndIfNext := true;
-        branchPtr.isIfThenInProgress := false;
-      end
-      // ELSE branch
-      else if (UpperCase(temp) = 'ELSE') then begin //and prgPtr.isElseNext then begin
-        branchPtr.ifThenCode := '  else begin';
-        code.Add('  end');
-        code.Add(branchPtr.ifThenCode);
-        branchPtr.ifThenCode := '';
-        branchPtr.isEndIfNext := true;
-      end
-      else if UpperCase(temp) = 'ELSEIF' then begin
-        branchPtr.isIfThen := true;
-        branchPtr.isIfThenInProgress := true;
-        branchPtr.ifThenCode := '  end' + LineEnding + '  else if ';
-        branchPtr.isIfThenNext := false;
-        branchPtr.isEndIfNext := false;
-        branchPtr.isElseNext := false;
-        branchPtr.isElseIfNext := false;
-      end
-      else if UpperCase(Trim(temp)) = 'FI' then begin
-        code.Add('  end;  // if');
-        branchPtr.isIfThen := false;
-        branchPtr.isIfThenNext := false;
-        branchPtr.isEndIfNext := false;
-        branchPtr.ifThenCode := '';
-      end
-      // FOR branch
-      else if UpperCase(temp) = 'FOR' then begin
-        branchPtr.isFor := true;
-        branchPtr.forCode := '  for ';
-        branchPtr.isForToNext := false;
-        branchPtr.isForDoNext := false;
-        branchPtr.isForOdNext := false;
-        Inc(branchPtr.forCnt);
-      end
-      else if (UpperCase(temp) = 'TO') and branchPtr.isForToNext then begin
-        //prgPtr.forCode += ' to ';
-        branchPtr.isForDoNext := true;
-        //branchPtr.isForToNext := false;
-        //code.Add(prgPtr.forCode);
-        //prgPtr.forCode := '';
-      end
-      else if (UpperCase(temp) = 'DO') and
-              branchPtr.isForDoNext and not branchPtr.isForOdNext then
-      begin
-        branchPtr.forCode += ' do begin';
-        branchPtr.isForOdNext := true;
-        code.Add(branchPtr.forCode);
-        branchPtr.forCode := '';
-      end
-      else if branchPtr.isForOdNext and (UpperCase(temp) = 'OD') then begin
-        code.Add('  end;  // for');
-        Dec(branchPtr.forCnt);
-        if branchPtr.forCnt = 0 then begin
-          branchPtr.isFor := false;
-          branchPtr.isForToNext := false;
-          branchPtr.isForDoNext := false;
-          branchPtr.isForOdNext := false;
-        end;
-      end
-      // WHILE branch
-      else if UpperCase(temp) = 'WHILE' then begin
-        branchPtr.isWhile := true;
-        branchPtr.whileCode := '';
-        branchPtr.isWhileDoNext := true;
-        branchPtr.isWhileOdNext := false;
-        Inc(branchPtr.whileCnt);
-      end
-      else if (UpperCase(temp) = 'DO') and branchPtr.isWhileDoNext then begin
-        branchPtr.whileCode += ' do begin';
-        branchPtr.isWhileOdNext := true;
-        code.Add(branchPtr.whileCode);
-        branchPtr.whileCode := '';
-      end
-      else if branchPtr.isWhileOdNext and (UpperCase(temp) = 'OD') then begin
-        code.Add('  end;  // while');
-        Dec(branchPtr.whileCnt);
-        if branchPtr.whileCnt = 0 then begin
-          branchPtr.isWhile := false;
-          branchPtr.isWhileDoNext := false;
-          branchPtr.isWhileOdNext := false;
-        end;
-      end
-      else if (UpperCase(temp) = 'DO') then begin
-        branchPtr.isDoOd := true;
-        code.Add('  repeat');
-      end
-      else if (UpperCase(temp) = 'UNTIL') and branchPtr.isDoOd then begin
-        branchPtr.isDoOd := false;
-        branchPtr.isUntil := true;
-        branchPtr.untilCode := '';
-      end
-      else if (UpperCase(temp) = 'OD') and branchPtr.isDoOd then begin
-        branchPtr.isDoOd := false;
-        // Undefinite loop
-        code.Add('  until 0 = 1;');
-      end
-      else if (UpperCase(temp) = 'OD') and branchPtr.isUntil then
-      begin
-        code.Add('  until ' + branchPtr.untilCode + ';');
-      end
-    end
+    // Branch and condition logic
+    {$i branches.inc}
   end
   // Check for variable assignment statement
   else if (Pos('=', temp) > 0) and
-          not branchPtr.isIfThenInProgress then
+          not branchPtr.isIfThenInProgress and
+          not branchPtr.isFor and
+          not branchPtr.isWhile and
+          not branchPtr.isUntil then
   begin
     // Check if equal character (=) exists in comments (between string quotes "" in PROC or FUNC)
     if (Pos('=', temp) > 1) and
@@ -721,7 +605,7 @@ begin
                 end;
                 else begin
                   code.Add('  ' + aList[0] + ' := ' + aList[0] + ' ' +
-                           temp[1] + ' ' + params2 + ';');
+                           temp[1] + ' ' + params2 + ';  // a1');
                 end;
               end;
             end;
@@ -738,11 +622,6 @@ begin
         temp03 := Extract(1, params[1], '(');
         temp04 := Extract(1, params[0], '.');
         temp05 := Extract(2, params[0], '.');
-
-        // FUNCtion in assignment (right side)
-        //temp06 := Extract(2, params[1], '(');
-//        temp06 := params[1];
-
 //        writeln('t = ', temp, ' / t02 = ', temp02, ' / t03 = ', temp03,
 //                ' / t04 = ', temp04, ' / t05 = ', temp05, ' / t06 = ', temp06);
 
@@ -751,8 +630,7 @@ begin
           // FUNCtion name
           funcVar := temp02;
           procName := UpperCase(Extract(1, temp03, '('));
-            // PROCedure parameters
-            //params2 := Extract(2, line, '(', []);
+          // PROCedure parameters
           params2 := ExtractText(line, '(', ')');
         end
         // Check Action! predeclared variables
@@ -765,7 +643,7 @@ begin
         // Standard variable assignment
         else if (vars.IndexOfName(temp02) >= 0) or (vars.IndexOfName(temp04) >= 0) then begin
           params[0] := ReplaceStr(params[0], '(', '[');
-          params[0] := ReplaceStr(params[0], ')', ']');  // (* 1 *)
+          params[0] := ReplaceStr(params[0], ')', ']');
           // ENTRY=DATA+10
           // ENTRY.NUM1=30
           if (vars.IndexOfName(temp04) >= 0) and
@@ -858,7 +736,7 @@ begin
              (params[1][1] = '@') then
           begin
             varPtr.isPointerAddress := true;
-            code.Add('  ' + params[0] + ' := ' + params[1] + ';');
+            code.Add('  ' + params[0] + ' := ' + params[1] + ';  // a2');
           end
           //n2 = n1 /// n2 := word(@n1);
           else if (vars.IndexOfName(temp02) >= 0) and
@@ -899,50 +777,37 @@ begin
               if params[1][1] = '''' then begin
                 params[1] := IntToStr(Ord(params[1][2]));
               end;
-              if (branchPtr.isFor and branchPtr.isForToNext and not branchPtr.isForDoNext) then
-              begin
-              end
-              else if branchPtr.isUntil and not branchPtr.isDoOd then begin
-              end
-              else begin
-                if branchPtr.isWhile and branchPtr.isWhileDoNext and
-                   not branchPtr.isWhileOdNext then
-                begin
-                end
-                else begin
-                  // Check if assignment is BYTE ARRAY or CARD ARRAY with FUNCtion as index element
-                  // Action! dir = new_dir(Rand(8))
-                  // MP!     dir := new_dir[Rand[8]];
-                  temp01 := ExtractText(params[1], '[', ']');
-                  temp02 := ExtractText(temp01, '[', ']');
-                  temp01 := Extract(1, temp01, '[');
-                  //writeln('extracted text = ', temp01);
-                  if funcs.IndexOfName(temp01) >= 0 then begin
+              // Check if assignment is BYTE ARRAY or CARD ARRAY with FUNCtion as index element
+              // Action! dir = new_dir(Rand(8))
+              // MP!     dir := new_dir[Rand[8]];
+              temp01 := ExtractText(params[1], '[', ']');
+              temp02 := ExtractText(temp01, '[', ']');
+              temp01 := Extract(1, temp01, '[');
+              //writeln('extracted text = ', temp01);
+              if funcs.IndexOfName(temp01) >= 0 then begin
 //                   // ReplaceKey function works on _REPLACEMENT array
-//                   if Pos(',' + temp01 + ',', ',RAND,PEEK,PEEKC,VALB,VALC,VALI,') > 0 then begin                    
+//                   if Pos(',' + temp01 + ',', ',RAND,PEEK,PEEKC,VALB,VALC,VALI,') > 0 then begin
 //                     temp04 := ReplaceKey(temp04, UpperCase(temp01));
-                    if UpperCase(temp01) = 'RAND' then
-                      temp04 := 'Random'
-                    else if UpperCase(temp01) = 'PEEK' then
-                      temp04 := 'Peek'
-                    else if UpperCase(temp01) = 'PEEKC' then
-                      temp04 := 'DPeek'
-                    else if UpperCase(temp01) = 'VALB' then
-                      temp04 := 'StrToInt'
-                    else if UpperCase(temp01) = 'VALC' then
-                      temp04 := 'StrToInt'
-                    else if UpperCase(temp01) = 'VALI' then begin
-                      temp04 := 'StrToInt';                  
-                    end;
-                    temp03 := Extract(1, params[1], '[');
-                    code.Add('  ' + params[0] + ' := ' + temp03 +
-                             '[' + temp04 + '(' + temp02 + ')];');
-                  end
-                  // Normal assignment
-                  else begin
-                    code.Add('  ' + params[0] + ' := ' + params[1] + ';');  // ' + line + ' *** ' + inttostr(linenum));
-                  end;
+                if UpperCase(temp01) = 'RAND' then
+                  temp04 := 'Random'
+                else if UpperCase(temp01) = 'PEEK' then
+                  temp04 := 'Peek'
+                else if UpperCase(temp01) = 'PEEKC' then
+                  temp04 := 'DPeek'
+                else if UpperCase(temp01) = 'VALB' then
+                  temp04 := 'StrToInt'
+                else if UpperCase(temp01) = 'VALC' then
+                  temp04 := 'StrToInt'
+                else if UpperCase(temp01) = 'VALI' then begin
+                  temp04 := 'StrToInt';
                 end;
+                temp03 := Extract(1, params[1], '[');
+                code.Add('  ' + params[0] + ' := ' + temp03 +
+                         '[' + temp04 + '(' + temp02 + ')];');
+              end
+              // Normal assignment
+              else begin
+                code.Add('  ' + params[0] + ' := ' + params[1] + ';  // a3');
               end;
             end;
           end;
@@ -952,8 +817,7 @@ begin
   end
   // Start of inline machine language
   else if (Pos('[', temp) > 0) and
-          not procML.isAsm and
-          not varPtr.isTypeDataType then
+          not procML.isAsm and not varPtr.isTypeDataType then
   begin
     procML.isAsm := true;
 
@@ -1045,8 +909,6 @@ begin
     prgPtr.isFuncAsm := false;
     varPtr.isFunc := false;
     prgPtr.isBegin := false;
-    branchPtr.forCnt := 0;
-    branchPtr.whileCnt := 0;
     varCnt := 0;
 
     op.Free;
@@ -1071,15 +933,14 @@ begin
     if (Pos('=', procName) > 0) then begin
       funcVar := Extract(1, procName, '=');
       procName := Extract(2, procName, '=');
-      Code.add('func ' + temp);
-    end
-    // FUNC in IF condition
-    else begin
-      if branchPtr.isIfThenInProgress then begin
-        branchPtr.ifTempCode := '';
-        //prgPtr.ifThenCode += 'value (* test *) ';
-      end;
+      //Code.add('func ' + temp);
     end;
+    // FUNC in IF condition
+//     else begin
+//       if branchPtr.isIfThenInProgress then begin
+//         branchPtr.ifTempCode := '';
+//       end;
+//     end;
   end
   else if varPtr.isFunc and
           (Pos('(', temp) > 0) and
@@ -1091,16 +952,6 @@ begin
     ResetVar;
     op.Free;
     Exit;
-  end;
-
-  if branchPtr.isWhileDoNext and not branchPtr.isWhileOdNext then begin
-    temp := CheckEOF(temp);
-    // In case only one command exists in while condition then it must be checked automatically
-    // if condition is true (f.e. i > 0)
-    if vars.IndexOfName(temp) >= 0 then begin
-      temp += ' > 0'
-    end;
-    branchPtr.whileCode += ' ' + temp;  // + ' (* w1 *) ';
   end;
 
   // End of PROCedure or FUNCtion
@@ -1120,6 +971,17 @@ begin
     ResetVar;
     op.Free;
     Exit;
+  end;
+
+  // WHILE condition
+  if branchPtr.isWhile then begin
+    temp := CheckEOF(temp);
+    // In case only one command exists in while condition then it must be checked automatically
+    // if condition is true (f.e. i > 0)
+    if vars.IndexOfName(temp) >= 0 then begin
+      temp += ' > 0'
+    end;
+    branchPtr.whileCode += ' ' + temp;
   end;
 
   // PROCedure is found, check the parameters
@@ -1185,61 +1047,58 @@ begin
     {$i functions.inc}
   end;
 
+  if branchPtr.isFor then begin
+    branchPtr.forCode += ' ' + temp;    
+  end;
+
+  if branchPtr.isUntil then begin
+    temp := CheckEOF(temp);
+    branchPtr.untilCode += ' ' + temp;
+  end;
+
   // Branch statements control
   if (UpperCase(temp) <> 'THEN') and
      branchPtr.isIfThen and not branchPtr.isIfThenNext then
   begin
-    //prgPtr.ifthenCode += temp;
     branchPtr.isIfThenNext := true;
-    //prgPtr.isIfThen := false;
   end
   // Code in IF condition part
   else if branchPtr.isIfThenNext then begin
     // Replace () brackets with [] brackets
     // Bracket '(' is not the first character in condition value
-    //writeln('if temp = ', temp, ' ', Copy(temp, 1, 4), ' temp[Length(temp)] = ', temp[Length(temp)]);
 //     if (Pos(' AND ', temp) = 0) and (Pos(' OR ', temp) = 0) then begin
 //       temp := ReplaceStr(temp, '(', '[');
-//       temp := ReplaceStr(temp, ')', ']  (* 5 *) ');
+//       temp := ReplaceStr(temp, ')', ']');
 //       temp := '(' + temp + ')';
 //     end
 //     else begin
-      if (temp[1] = '(') and (temp[Length(temp)] = ')') then begin
-        temp := ExtractText(temp, '(', ')');
-        //writeln('extracted text = ', temp);
+    if (temp[1] = '(') and (temp[Length(temp)] = ')') then begin
+      temp := ExtractText(temp, '(', ')');
+      //writeln('extracted text = ', temp);
+      temp := ReplaceStr(temp, '(', '[');
+      temp := ReplaceStr(temp, ')', ']');
+      temp := '(' + temp + ')';
+    end
+    else if (Copy(temp, 1, 4) = 'AND(') and (temp[Length(temp)] = ')') then begin
+      temp := ExtractText(temp, '(', ')');
+      //writeln('extracted text AND = ', temp);
+      temp := ReplaceStr(temp, '(', '[');
+      temp := ReplaceStr(temp, ')', ']');
+      temp := 'AND (' + temp + ')';
+    end
+    else if (Copy(temp, 1, 3) = 'OR(') and (temp[Length(temp)] = ')') then begin
+      temp := ExtractText(temp, '(', ')');
+      //writeln('extracted text OR = ', temp);
+      temp := ReplaceStr(temp, '(', '[');
+      temp := ReplaceStr(temp, ')', ']');
+      temp := 'OR (' + temp + ')';
+    end
+    else begin
+      if (temp[1] <> '(') then begin
         temp := ReplaceStr(temp, '(', '[');
-        temp := ReplaceStr(temp, ')', ']');  // (* 3 *)
-        temp := '(' + temp + ')';      
-      end
-      else if (Copy(temp, 1, 4) = 'AND(') and (temp[Length(temp)] = ')') then begin
-        temp := ExtractText(temp, '(', ')');
-        //writeln('extracted text AND = ', temp);
-        temp := ReplaceStr(temp, '(', '[');
-        temp := ReplaceStr(temp, ')', ']');  // (* AND *)
-        temp := 'AND (' + temp + ')';
-      end
-      else if (Copy(temp, 1, 3) = 'OR(') and (temp[Length(temp)] = ')') then begin
-        temp := ExtractText(temp, '(', ')');
-        //writeln('extracted text OR = ', temp);
-        temp := ReplaceStr(temp, '(', '[');
-        temp := ReplaceStr(temp, ')', ']');  // (* AND *)
-        temp := 'OR (' + temp + ')';
-      end
-      else begin
-        if (temp[1] <> '(') then begin
-          temp := ReplaceStr(temp, '(', '[');
-          temp := ReplaceStr(temp, ')', ']');  // (* 4 *)
-        end;
-        //temp := '(' + temp + ')';
+        temp := ReplaceStr(temp, ')', ']');  // (
       end;
-    //end;
-    //else begin
-      //if (temp[1] <> '(') or (Copy(temp, 1, 4) <> 'AND(') then begin
-//        temp := ReplaceStr(temp, '(', '[');
-//        temp := ReplaceStr(temp, ')', ']  (* 3 *) ');
-      //end;
-    //end;
-
+    end;
     temp := ReplaceStr(temp, '{AND}', ' AND ');
     temp := ReplaceStr(temp, '{OR}', ' OR ');
     temp := ReplaceStr(temp, '{XOR}', ' XOR ');
@@ -1257,33 +1116,15 @@ begin
           //params[1] := Char(params[1][2]);
           temp03 := IntToStr(Ord(temp03[2]));
         end;
-        temp := temp02 + '=' + temp03;  // + ')';
+        temp := temp02 + '=' + temp03;
       end;
     end;
-    if branchPtr.ifTempCode = '' then begin
+    //if branchPtr.ifTempCode = '' then begin
       temp := CheckEOF(temp);
-      //writeln('if temp = ', temp, ' ifThenCode = ', branchPtr.ifThenCode);
       if not branchPtr.isFuncInIf then begin
-        branchPtr.ifThenCode += ' ' + temp + ' ';  //'(* 1 *) ' + temp + ' (* 2 *)';  // If 1 if 2
+        branchPtr.ifThenCode += ' ' + temp + ' ';
       end;
-    end
-    //else begin
-    //  branchPtr.ifthenCode += branchPtr.ifTempCode + ' (* IF3 *) ';
-    //end;
-  end
-  else if (UpperCase(temp) <> 'TO') and
-          branchPtr.isFor and not branchPtr.isForToNext then
-  begin
-    branchPtr.isForToNext := true;
-  end
-  else if branchPtr.isForToNext then begin
-    //temp := ReplaceStr(temp, 'TO', '');
-    temp := ReplaceStr(temp, '=', ':=');
-    branchPtr.forCode += ' ' + temp;
-  end
-  else if branchPtr.isUntil then begin
-    temp := CheckEOF(temp);
-    branchPtr.untilCode := ' ' + temp;
+    //end
   end;
   op.Free;
 end;
@@ -2000,15 +1841,15 @@ begin
   prgPtr.isProcAddr := false;
   prgPtr.isFuncAsm := false;
   prgPtr.isStartBegin := false;
-  //devicePtr.isOpen := false;
   varPtr.isFunc := false;
   prgPtr.isBegin := false;
   // Branch variables initialization
-  branchPtr.forCnt := 0;
-  branchPtr.whileCnt := 0;
+  branchPtr.isFor := false;
+  branchPtr.isWhile := false;
   branchPtr.isUntil := false;
   branchPtr.untilCode := '';
-  branchPtr.ifTempCode := '';
+  //branchPtr.ifTempCode := '';
+  branchPtr.Count := 0;
 
   operators := TStringArray.Create(
     '+', '-', '{DIV}', '*', '{MOD}', '{AND}', '{OR}', '{XOR}', '{LSH}', '{RSH}');
