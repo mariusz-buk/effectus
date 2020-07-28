@@ -4,11 +4,10 @@ program fsPrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Finescroll by greblus
 // Modification by Gury (keypress check)
 var
@@ -25,7 +24,7 @@ var
 procedure CHNDLProc;
 begin  // 6
   tmp := ndl[28];
-  if tmp<2 then begin
+  if  tmp  <  2  then begin
   ndl[28] := 255;
   tmp := ndl[29]-1;
   ndl[29] := tmp;
@@ -34,18 +33,18 @@ begin  // 6
   tmp := ndl[28]-2;
   ndl[28] := tmp;
   end;  // if
-end;  // 4
+end;
 
 procedure SCROLProc;
 begin  // 6
   hsc := j;
   j := j+1;
-  if j=17 then begin
+  if  j=17  then begin
   CHNDLProc;
   j := 0;
   k := k+1;
   end;  // if
-  if k=14 then begin
+  if  k=14  then begin
   ndl[28] := tmpl;
   ndl[29] := tmph;
   k := 0;
@@ -54,7 +53,7 @@ begin  // 6
   {
     .by $4C $62 $E4 
   };
-end;  // 4
+end;
 
 procedure MAINProc;
 var
@@ -72,21 +71,21 @@ begin  // 1
   sav := 40000;
   col0 := 14;
   col1 := 14;
-  for  i:=1 to 23 do begin
+ for i:=1 to 23 do begin
   Write('line:', i, '', eol, '');
-  end;  // for
+  end;
   Write('Action!');
   tmpl := ndl[28];
   tmph := ndl[29];
   i := clock;
  while clock=i do begin
-  end;  // while
+  end;
   nmi := 0;
   vvblkd := word(@SCROLProc);
   nmi := $40;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

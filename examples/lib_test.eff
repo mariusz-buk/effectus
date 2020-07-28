@@ -1,4 +1,5 @@
 ; Effectus example
+; ----------------
 ; User library for INCLUDE demo
 
 PROC WaitForKey()

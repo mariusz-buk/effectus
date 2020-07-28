@@ -4,11 +4,10 @@ program proc_asmPrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using local PROCedures using machine
 // language
 var
@@ -20,7 +19,7 @@ procedure PokeTestProc(d : byte); assembler;
   lda d
     .by $8D $C6 $02 $60 
   };
-end;  // 2
+end;
 procedure TESTProc(CURSOR : byte; BACK : byte; BORDER : byte; X : byte; Y : byte; UPDOWN : byte); assembler;
   asm
   {
@@ -32,7 +31,7 @@ procedure TESTProc(CURSOR : byte; BACK : byte; BORDER : byte; X : byte; Y : byte
   mva UPDOWN $a5
     .by $8E $C6 $02 $8C $C8 $02 $8D $F0 $02 $A5 $A5 $8D $F3 $02 $A5 $A3 $8D $55 $00 $A5 $A4 $8D $54 $00 $60 
   };
-end;  // 2
+end;
 procedure MAINProc;
 var
   n1 : word;
@@ -51,7 +50,7 @@ begin  // 1
   POKETESTProc(144);
   KEY := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

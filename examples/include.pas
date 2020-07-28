@@ -5,8 +5,10 @@ uses
   Crt, Graph;
 
 // Effectus example
+// ----------------
 // INCLUDE demo
 // Effectus example
+// ----------------
 // User library for INCLUDE demo
 var
   CH : byte absolute 764;
@@ -15,19 +17,19 @@ procedure WAITFORKEYProc;
 begin  // 1
   CH := 255;
  WHILE CH=255 do begin
-  end;  // while
-end;  // 4
+  end;
+end;
 
 procedure PRINTTEXTProc;
 begin  // 6
   Writeln('Hello world');
-end;  // 4
+end;
 
 procedure CHANGECOLORProc;
 begin  // 6
   Poke(710, 50);
   Poke(712, 160);
-end;  // 4
+end;
 
 procedure MAINProc;
 begin  // 6
@@ -44,7 +46,7 @@ begin  // 6
   WAITFORKEYProc;
   CHANGECOLORProc;
   WAITFORKEYProc;
-end;  // 4
+end;
 
 begin
   MAINProc;

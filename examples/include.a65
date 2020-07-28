@@ -487,14 +487,14 @@ SCANLINE_WIDTH	= DATAORIGIN+$0028
 
 .local	WAITFORKEYPROC					; PROCEDURE
 
-; optimize OK (examples\include.pas), line = 16
+; optimize OK (examples\include.pas), line = 18
 
 	mva #$FF CH
 
 ; --- WhileProlog
 l_013F
 
-; optimize OK (examples\include.pas), line = 17
+; optimize OK (examples\include.pas), line = 19
 
 	lda CH
 	cmp #$FF
@@ -512,7 +512,7 @@ l_013F
 
 .local	PRINTTEXTPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\include.pas), line = 23
+; optimize FAIL (100, examples\include.pas), line = 25
 	@printSTRING #CODEORIGIN+$0000
 	@printEOL
 @exit
@@ -528,12 +528,12 @@ l_013F
 
 .local	CHANGECOLORPROC					; PROCEDURE
 
-; optimize OK (examples\include.pas), line = 28
+; optimize OK (examples\include.pas), line = 30
 
 	lda #$32
 	sta $02C6
 
-; optimize OK (examples\include.pas), line = 29
+; optimize OK (examples\include.pas), line = 31
 
 	lda #$A0
 	sta $02C8
@@ -550,50 +550,50 @@ l_013F
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\include.pas), line = 34
+; optimize FAIL (100, examples\include.pas), line = 36
 	@print #$7D
 
-; optimize FAIL (100, examples\include.pas), line = 35
+; optimize FAIL (100, examples\include.pas), line = 37
 	@printSTRING #CODEORIGIN+$000D
 	@printEOL
 
-; optimize FAIL (100, examples\include.pas), line = 36
+; optimize FAIL (100, examples\include.pas), line = 38
 	@printSTRING #CODEORIGIN+$0020
 	@printEOL
 
-; optimize FAIL (100, examples\include.pas), line = 37
+; optimize FAIL (100, examples\include.pas), line = 39
 	@printSTRING #CODEORIGIN+$0037
 	@printEOL
 
-; optimize FAIL (100, examples\include.pas), line = 38
+; optimize FAIL (100, examples\include.pas), line = 40
 	@printSTRING #CODEORIGIN+$0039
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 39
+; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 41
 	jsr WAITFORKEYPROC
-
-; optimize FAIL (100, examples\include.pas), line = 40
-	@printSTRING #CODEORIGIN+$0036
-	@printEOL
-
-; optimize FAIL ('PRINTTEXTPROC', examples\include.pas), line = 41
-	jsr PRINTTEXTPROC
 
 ; optimize FAIL (100, examples\include.pas), line = 42
 	@printSTRING #CODEORIGIN+$0036
 	@printEOL
 
-; optimize FAIL (100, examples\include.pas), line = 43
+; optimize FAIL ('PRINTTEXTPROC', examples\include.pas), line = 43
+	jsr PRINTTEXTPROC
+
+; optimize FAIL (100, examples\include.pas), line = 44
+	@printSTRING #CODEORIGIN+$0036
+	@printEOL
+
+; optimize FAIL (100, examples\include.pas), line = 45
 	@printSTRING #CODEORIGIN+$005E
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 44
+; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 46
 	jsr WAITFORKEYPROC
 
-; optimize FAIL ('CHANGECOLORPROC', examples\include.pas), line = 45
+; optimize FAIL ('CHANGECOLORPROC', examples\include.pas), line = 47
 	jsr CHANGECOLORPROC
 
-; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 46
+; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 48
 	jsr WAITFORKEYPROC
 @exit
 	.ifdef @new
@@ -607,7 +607,7 @@ l_013F
 .endl
 l_0085
 
-; optimize FAIL ('MAINPROC', examples\include.pas), line = 50
+; optimize FAIL ('MAINPROC', examples\include.pas), line = 52
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

@@ -4,11 +4,10 @@ program inpnumPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Input numeric values
 // using InputB, InputI and InputC
 
@@ -33,7 +32,7 @@ begin  // 2
   Writeln(n3);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

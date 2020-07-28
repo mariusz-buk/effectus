@@ -4,11 +4,10 @@ program bitwisePrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Logical (bitwise) manipulation demo
 var
   key : byte;
@@ -61,7 +60,7 @@ begin  // 1
   Writeln(b);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

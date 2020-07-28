@@ -581,13 +581,13 @@ SCANLINE_WIDTH	= DATAORIGIN+$002B
 ; --- WhileProlog
 l_0206
 
-; optimize OK (examples\peekpoke.pas), line = 17
+; optimize OK (examples\peekpoke.pas), line = 18
 
 	lda CH
 	cmp #$FF
 	jeq l_0206
 
-; optimize OK (examples\peekpoke.pas), line = 19
+; optimize OK (examples\peekpoke.pas), line = 20
 
 	mva #$FF CH
 @exit
@@ -603,22 +603,22 @@ l_0206
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 24
+; optimize FAIL (100, examples\peekpoke.pas), line = 25
 	@print #$7D
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 25
+; optimize FAIL (100, examples\peekpoke.pas), line = 26
 	@printSTRING #CODEORIGIN+$0000
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 26
+; optimize FAIL (100, examples\peekpoke.pas), line = 27
 	@printSTRING #CODEORIGIN+$0013
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 27
+; optimize FAIL (100, examples\peekpoke.pas), line = 28
 	@printSTRING #CODEORIGIN+$0027
 	@printEOL
 
-; optimize OK (examples\peekpoke.pas), line = 28
+; optimize OK (examples\peekpoke.pas), line = 29
 
 	lda #$00
 	sta :bp+1
@@ -626,93 +626,93 @@ l_0206
 	lda (:bp),y
 	sta N
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 29
+; optimize FAIL (100, examples\peekpoke.pas), line = 30
 	@printSTRING #CODEORIGIN+$0029
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 30
+; optimize FAIL (100, examples\peekpoke.pas), line = 31
 	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 31
+; optimize FAIL (100, examples\peekpoke.pas), line = 32
 	lda N
 	jsr @printBYTE._a
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 32
+; optimize FAIL (100, examples\peekpoke.pas), line = 33
 	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize OK (examples\peekpoke.pas), line = 33
+; optimize OK (examples\peekpoke.pas), line = 34
 
 	lda $02C6
 	sta N
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 34
+; optimize FAIL (100, examples\peekpoke.pas), line = 35
 	@printSTRING #CODEORIGIN+$004F
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 35
+; optimize FAIL (100, examples\peekpoke.pas), line = 36
 	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 36
+; optimize FAIL (100, examples\peekpoke.pas), line = 37
 	lda N
 	jsr @printBYTE._a
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 37
+; optimize FAIL (100, examples\peekpoke.pas), line = 38
 	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize OK (examples\peekpoke.pas), line = 38
+; optimize OK (examples\peekpoke.pas), line = 39
 
 	lda $022F
 	sta N
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 39
+; optimize FAIL (100, examples\peekpoke.pas), line = 40
 	@printSTRING #CODEORIGIN+$0075
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 40
+; optimize FAIL (100, examples\peekpoke.pas), line = 41
 	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 41
+; optimize FAIL (100, examples\peekpoke.pas), line = 42
 	lda N
 	jsr @printBYTE._a
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 42
+; optimize FAIL (100, examples\peekpoke.pas), line = 43
 	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize OK (examples\peekpoke.pas), line = 43
+; optimize OK (examples\peekpoke.pas), line = 44
 
 	lda $0230
 	sta MEM
 	lda $0230+1
 	sta MEM+1
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 44
+; optimize FAIL (100, examples\peekpoke.pas), line = 45
 	@printSTRING #CODEORIGIN+$009B
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 45
+; optimize FAIL (100, examples\peekpoke.pas), line = 46
 	@printSTRING #CODEORIGIN+$00C0
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 46
+; optimize FAIL (100, examples\peekpoke.pas), line = 47
 	@printSTRING #CODEORIGIN+$0026
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 47
+; optimize FAIL (100, examples\peekpoke.pas), line = 48
 	lda MEM
 	ldy MEM+1
 	jsr @printWORD._ay
 	@printEOL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 48
+; optimize FAIL (100, examples\peekpoke.pas), line = 49
 	@printSTRING #CODEORIGIN+$0026
 	@print #$9B
 	@printSTRING #CODEORIGIN+$0026
@@ -721,62 +721,62 @@ l_0206
 	@print #$9B
 	@printSTRING #CODEORIGIN+$0026
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 49
+; optimize FAIL (100, examples\peekpoke.pas), line = 50
 	@printSTRING #CODEORIGIN+$00DE
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 50
+; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 51
 	jsr WAITFORKEYPROC
 
-; optimize OK (examples\peekpoke.pas), line = 51
+; optimize OK (examples\peekpoke.pas), line = 52
 
 	mva #$00 COL
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 52
+; optimize FAIL (100, examples\peekpoke.pas), line = 53
 	@printSTRING #CODEORIGIN+$00FE
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 53
+; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 54
 	jsr WAITFORKEYPROC
 
-; optimize OK (examples\peekpoke.pas), line = 54
+; optimize OK (examples\peekpoke.pas), line = 55
 
 	lda #$D4
 	sta $02C6
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 55
+; optimize FAIL (100, examples\peekpoke.pas), line = 56
 	@printSTRING #CODEORIGIN+$0124
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 56
+; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 57
 	jsr WAITFORKEYPROC
-
-; optimize OK (examples\peekpoke.pas), line = 57
-
-	mva #$41 N
 
 ; optimize OK (examples\peekpoke.pas), line = 58
 
+	mva #$41 N
+
+; optimize OK (examples\peekpoke.pas), line = 59
+
 	sta $02C6
 
-; optimize FAIL (100, examples\peekpoke.pas), line = 59
+; optimize FAIL (100, examples\peekpoke.pas), line = 60
 	@printSTRING #CODEORIGIN+$0130
 	@printEOL
 
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 60
+; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 61
 	jsr WAITFORKEYPROC
 
-; optimize OK (examples\peekpoke.pas), line = 61
+; optimize OK (examples\peekpoke.pas), line = 62
 
 	mva #$B8 N
 
-; optimize OK (examples\peekpoke.pas), line = 62
+; optimize OK (examples\peekpoke.pas), line = 63
 
 	ldy COL
 	lda N
 	sta $0000,y
 
-; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 63
+; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 64
 	jsr WAITFORKEYPROC
 @exit
 	.ifdef @new
@@ -790,7 +790,7 @@ l_0206
 .endl
 l_0143
 
-; optimize FAIL ('MAINPROC', examples\peekpoke.pas), line = 67
+; optimize FAIL ('MAINPROC', examples\peekpoke.pas), line = 68
 	jsr MAINPROC
 
 ; ------------------------------------------------------------

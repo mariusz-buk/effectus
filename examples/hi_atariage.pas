@@ -4,11 +4,10 @@ program hi_atariagePrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Printing on device #6 allowing to
 // display text in gr. mode 1 and 2
 // 
@@ -27,12 +26,12 @@ begin  // 1
   GotoXY(5 + 1,  5 + 1);
   strBuffer := Concat('hi atariage', #$9b);
   BPut(6, @strBuffer[1], Length(strBuffer));
-  for  i:=0 TO 2 do begin
+ FOR i:=0 TO 2 do begin
   Writeln('hi,AtariAge........');
-  end;  // for
+  end;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

@@ -1,4 +1,5 @@
 ; Effectus example
+; ----------------
 ; INCLUDE demo
 
 BYTE CH=764

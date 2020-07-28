@@ -2,10 +2,10 @@
 program funcPrg;
 
 uses
-  Crt, Joystick;
+  Crt, SySutils, Joystick;
 
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using custom/local FUNCtion
 
 function SumFunc(nn1 : word; nn2 : word) : word;
@@ -14,7 +14,7 @@ var
 begin  // 2
   res := nn1+nn2;
   result := res;
-end;  // 3
+end;
 procedure MAINProc;
 var
   n1 : word;
@@ -38,11 +38,15 @@ begin  // 1
   Writeln(n3);
   Writeln('');
   Writeln('Press trigger');
- WHILE Strig[0]=1 do begin
-  end;  // while
+ WHILE STRIG[0]=1 do begin
+  end;
   Writeln('Trigger pressed');
   Writeln('Program finished!');
-end;  // 4
+  repeat
+ UNTIL STRIG[0]=0;
+  Writeln('Trigger pressed');
+  Writeln('Program finished!');
+end;
 
 begin
   MAINProc;

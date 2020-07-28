@@ -4,11 +4,10 @@ program inputsdPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Device I/O demo using InputSD and
 // InputMD procedures to read text file
 // 
@@ -38,7 +37,7 @@ begin  // 1
   Cls(1);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

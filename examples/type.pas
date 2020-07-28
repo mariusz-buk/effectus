@@ -4,13 +4,11 @@ program typePrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
-// --------------------------------------
 // Effectus example
+// ----------------
 // TYPE declaration demo
-// --------------------------------------
 type
   REC = record
   day : byte;
@@ -41,7 +39,7 @@ begin  // 1
   Writeln(weightData);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

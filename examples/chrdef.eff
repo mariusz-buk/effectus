@@ -1,5 +1,5 @@
 ; Effectus example
-; - - - - - - - - - - - - - - - - - -
+; ----------------
 ; Character set redefinition demo
 
 BYTE CH=$2FC,

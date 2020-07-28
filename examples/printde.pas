@@ -4,10 +4,10 @@ program printdePrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
-// EFFECTUS EXAMPLE:
+// EFFECTUS EXAMPLE
+// ----------------
 // DEVICE INPUT/OUTPUT DEMONSTRATION
 
 procedure MAINProc;
@@ -46,7 +46,7 @@ begin  // 2
   Cls(1);
   KEY := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

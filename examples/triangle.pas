@@ -4,11 +4,10 @@ program trianglePrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Graphics triangle demo
 var
   x : byte;
@@ -43,7 +42,7 @@ begin  // 1
   Writeln('Triangle');
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

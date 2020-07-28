@@ -4,11 +4,10 @@ program diskgetPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Device I/O demo using GetD and EOF
 // routines
 // Sample file: H1:TESTNUM.TXT
@@ -23,10 +22,10 @@ begin  // 1
   Write('GetD and EOF example', eol, '', eol, '');
   Cls(1);
   Opn(1, 4, 0, 'H1:TESTNUM.TXT');
-  for  i:=1 to 15 do begin
+ FOR i:=1 to 15 do begin
   n := Get(1);
   Write(Chr(n));
-  end;  // for
+  end;
   Cls(1);
   Write('', eol, 'All numbers read!', eol, '', eol, '');
 // PRINTE("Read numbers again:")
@@ -39,7 +38,7 @@ begin  // 1
 // PRINTF("%E%EAll numbers are read again!%E")
   KEY := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

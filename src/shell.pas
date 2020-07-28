@@ -123,7 +123,7 @@ begin
     if ParamStr(i)[1] <> '-' then begin
       actionFilename := ParamStr(i);
       // Check for eff extension of Effectus source code listing file
-      if Pos('.eff', LowerCase(actionFilename)) < 1 then begin
+      if Pos('.', LowerCase(actionFilename)) = 0 then begin
         actionFilename += '.eff';
       end;
       prgName := ExtractFilenameWithoutExt(actionFilename);
@@ -161,7 +161,6 @@ var
   logFile : String;
   logFileTotal : String;
   filenamePart : string;
-//  filePath : string;
   i : word;
 begin
   logFile := GetCurrentDir + PathDelim + 'efflog.txt';
@@ -177,10 +176,7 @@ begin
   end;
 
   AProcess.Executable := GetCurrentDir + PathDelim + 'mp';
-
-  //  AProcess.Parameters.Add(AnsiQuotedStr(GetCurrentDir + '\bin\roto.pas', '"'));
   AProcess.Parameters.Add(AnsiQuotedStr(filename, '"'));
-
   AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes, poStdErrToOutPut];
   AProcess.Execute;
 
@@ -287,9 +283,8 @@ begin
       // Data type information
       if LowerCase(dataType) = 'word' then
         dataType := 'CARD'
-      else if LowerCase(dataType) = 'integer' then begin
-        dataType := 'INT';
-      end
+      else if LowerCase(dataType) = 'integer' then
+        dataType := 'INT'
       else if dataType = 'string' then begin
         dataType := 'SBYTE ARRAY';
       end;
@@ -297,9 +292,8 @@ begin
       // Data type extra information
       if dataTypeExt = '1' then
         dataTypeExt := 'Memory address'
-      else if dataTypeExt = '2' then begin
-        dataTypeExt := 'String';
-      end
+      else if dataTypeExt = '2' then
+        dataTypeExt := 'String'
       else if dataTypeExt = '3' then begin
         dataType += ' POINTER';
         dataTypeExt := 'Pointer';
@@ -369,7 +363,7 @@ var
   defineValue : string;
   i, j : word;
   temp : string;
-  A: TStringArray;
+  A : TStringArray;
 begin
   if not varPtr.isDefine then Exit;
   varPtr.isDefine := false;
@@ -390,9 +384,8 @@ begin
     if High(a) >= 0 then begin
       for j := 0 to High(a) do begin
         //writeln('a[j] = ', a[j]);
-        if UpperCase(a[j]) = 'DEFINE' then begin
-          varPtr.isDefine := true;
-        end
+        if UpperCase(a[j]) = 'DEFINE' then
+          varPtr.isDefine := true
         else if varPtr.isDefine then begin
           a[j] := StringReplace(a[j], '=', '{', []);
           defineName := Extract(1, a[j], '{');
@@ -505,6 +498,9 @@ begin
       varPtr.isDefine := false;
       //Write('1. pass... ');
       for i := 0 to tempxy.Count - 1 do begin
+        // Extra, non-standard directives
+        //{$i extra.inc}
+      
         tempxy.strings[i] := Trim(tempxy.strings[i]);
         tempxy.strings[i] := ReplaceStr(tempxy.strings[i], 'MODULE', '');
 
@@ -526,13 +522,11 @@ begin
               includeFile.loadfromfile(filePath + a[1]);
               for j := 0 to includeFile.Count - 1 do begin
                 includeFile.strings[j] := Trim(includeFile.strings[j]);
-  
+
                 // Check DEFINE statement
-                if Pos('DEFINE ', UpperCase(includeFile.strings[j])) = 1 then begin
-                //if tempxy.strings[i] = 'DEFINE' then begin
-                  varPtr.isDefine := true;
-                end;
-  
+                if Pos('DEFINE ', UpperCase(includeFile.strings[j])) = 1 then
+                     varPtr.isDefine := true;
+
                 if IsArrayElementInString(_MP_DEVICE_SYSUTILS, includeFile.strings[j]) then begin
                   devicePtr.isDevice := true;
                   devicePtr.isSySutils := true;
@@ -545,12 +539,11 @@ begin
                      devicePtr.isSySutils := true;
 
                 // Add Action! listing line
-                effCode.add(includeFile.strings[j]);
+                effCode.Add(includeFile.strings[j]);
               end;
             end
             else begin
               writeln('INCLUDE file ' + filePath + a[1] + ' not found!');
-              //PathDelim
             end;
           end;
         end

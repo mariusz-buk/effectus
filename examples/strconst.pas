@@ -4,11 +4,10 @@ program strconstPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // String manipulation demo
 // 
 // SBYTE ARRAY as temporary substitution
@@ -26,7 +25,7 @@ begin  // 2
   Writeln(B);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

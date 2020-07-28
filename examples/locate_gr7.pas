@@ -2,10 +2,12 @@
 program locate_gr7Prg;
 
 uses
-  Crt, Graph;
+  Crt, SySutils, Graph, CIO;
 
+var
+  strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using Locate in graphics mode
 
 procedure MAINProc;
@@ -29,7 +31,7 @@ begin  // 2
   MoveTo(60, 60);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

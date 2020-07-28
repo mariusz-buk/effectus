@@ -5,7 +5,7 @@ uses
   Crt, Graph;
 
 // Effectus example
-// -------------------------------------
+// ----------------
 // Graphics mode 9 demo
 // Butterfly  by michael mitchell
 // Original date: 01/20/85
@@ -35,7 +35,7 @@ begin  // 2
   Y := Random(190);
   J := Random(50);
   K := Random(190);
-  for  I:=1 TO 9400 do begin
+ For I:=1 TO 9400 do begin
   PutPixel(X, Y);
   MoveTo(X, Y);
   LineTo(J, K);
@@ -47,47 +47,47 @@ begin  // 2
   Inc(J, C);
   Inc(K, D);
   Q := Random(50);
-  if Q>40 then begin
+  if  Q>40  then begin
   Inc(COL);
   end;  // if
-  if COL>14 then begin
+  if  COL>14  then begin
   COL := 1;
   end;  // if
   SetColor(COL);
-  if X>=79 then begin
+  if  X>=79  then begin
   A := -A;
   Inc(X, A);
   end;  // if
-  if J>=79 then begin
+  if  J>=79  then begin
   C := -C;
   Inc(J, C);
   end;  // if
-  if J<=0 then begin
+  if  J<=0  then begin
   C := -C;
   Inc(J, C);
   end;  // if
-  if X<=0 then begin
+  if  X<=0  then begin
   A := -A;
   Inc(X, A);
   end;  // if
-  if Y>=191 then begin
+  if  Y>=191  then begin
   B := -B;
   Inc(Y, B);
   end;  // if
-  if K>=191 then begin
+  if  K>=191  then begin
   D := -D;
   Inc(K, D);
   end;  // if
-  if K<=0 then begin
+  if  K<=0  then begin
   D := -D;
   Inc(K, D);
   end;  // if
-  if Y<=0 then begin
+  if  Y<=0  then begin
   B := -B;
   Inc(Y, B);
   end;  // if
-  end;  // for
-end;  // 4
+  end;
+end;
 
 begin
   DEMO2Proc;

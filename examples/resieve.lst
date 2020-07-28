@@ -1,1065 +1,1024 @@
-mads 2.1.0
-  3726 					opt l+
-    95
-    96 				.print 'RUNLIB: ',RUNLIB,'..',*
-    96 				RUNLIB: $2030..$216D
-    97
-    98 				; ------------------------------------------------------------
-    99
-   100 216D			START
-   101 216D BA				tsx
-   102 216E 8E 0E 23			stx MAIN.@halt+1
+mads 2.1.0 build 8 (23 Dec 19)
+   388 					opt l+
+   101
+   102 				.print 'ZPAGE: ',fxptr,'..',zpend-1
+   102 				ZPAGE: $0080..$00D7
    103
-   104 					.ifdef fmulinit
-   105 					fmulinit
-   106 					eif
+   104 				.print 'RTLIB: ',RTLIB,'..',*-1
+   104 				RTLIB: $2023..$2177
+   105
+   106 				; ------------------------------------------------------------
    107
-   108 = 000B			VLEN	= VARDATASIZE-VARINITSIZE
-   109 = 4330			VADR	= DATAORIGIN+VARINITSIZE
-   110
-   111 					ift VADR > $BFFF
-   112 					ert 'Invalid memory address range ',VADR
-   113 					eli (VLEN>0) && (VLEN<=256)
-   114 2171 A2 F5			ldx #256-VLEN
-   115 2173 A9 00			lda #0
-   116 2175 9D 3B 42 E8 D0 FA		sta:rne VADR+VLEN-256,x+
-   117 					eli VLEN>0
-   118 					@fill #VADR #VLEN #0
-   119 					eif
-   120
-   121 217B A2 0F			ldx #$0f
-   122 217D BD 40 03 9D 11 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
-   123
-   124 2186 E8				inx		; X = 0 !!!
-   125 2187 86 8E			stx bp		; lo BP = 0
-   126
-   127 2189				UNITINITIALIZATION
-Macro: UNITINITIALIZATION [Source: resieve.a65]
+   108 2178			START
+   109 2178 BA				tsx
+   110 2179 8E 12 23			stx MAIN.@halt+1
+   111
+   112 					.ifdef fmulinit
+   113 					fmulinit
+   114 					eif
+   115
+   116 = 000B			VLEN	= VARDATASIZE-VARINITSIZE
+   117 = 4334			VADR	= DATAORIGIN+VARINITSIZE
+   118
+   119 					ift VADR > $BFFF
+   120 					ert 'Invalid memory address range ',VADR
+   121 					eli (VLEN>0) && (VLEN<=256)
+   122 217C A2 F5			ldx #256-VLEN
+   123 217E A9 00			lda #0
+   124 2180 9D 3F 42 E8 D0 FA		sta:rne VADR+VLEN-256,x+
+   125 					eli VLEN>0
+   126 					@fill #VADR #VLEN #0
+   127 					eif
    128
-   129 2189			.local	MAIN						; PROCEDURE
-   130
-   131 2189 4C 0A 23			jmp l_0037
+   129 					.ifdef MAIN.@DEFINES.ROMOFF
+   130 					icl 'atari\romoff.asm'
+   131 					.endif
    132
-   133 				; ------------------------------------------------------------
+   133 2186 A9 3F 85 82 A9 43 + 	mwa #PROGRAMSTACK psptr
    134
-   135 218C			.local	SYSTEM						; UNIT
-   136
-   137 218C			.local	FILLCHAR_0051					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
-   138
-   139 				; ------------------------------------------------------------
+   135 218E A2 0F			ldx #$0f					; DOS II+/D ParamStr
+   136 2190 BD 40 03 9D 15 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   137
+   138 2199 E8				inx						; X = 0
+   139 219A 86 90			stx bp						; BP = 0
    140
-   141 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-   142 				; as Pointer
-   143 218C B5 98 85 82			mva :STACKORIGIN,x VALUE
-   144 2190 CA				dex						; sub bx, 1
-   145
-   146 				; ------------------------------------------------------------
-   147
-   148 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   149 				; as Pointer
-   150 2191 B5 98 85 8A			mva :STACKORIGIN,x COUNT
-   151 2195 B5 A8 85 8B			mva :STACKORIGIN+STACKWIDTH,x COUNT+1
-   152 2199 CA				dex						; sub bx, 1
-   153
-   154 				; ------------------------------------------------------------
-   155
-   156 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   157 				; as Pointer
-   158 219A B5 98 85 86			mva :STACKORIGIN,x A
-   159 219E B5 A8 85 87			mva :STACKORIGIN+STACKWIDTH,x A+1
-   160 21A2 CA				dex						; sub bx, 1
-   161
-   162 				; ---------------------  ASM Block 024  ---------------------
-   163
-   164 21A3 20 25 21			jsr @fill
+   141 219C 8E 08 D2			stx audctl					; reset POKEY
+   142 219F A9 03			lda #3
+   143 21A1 8D 0F D2			sta skctl
+   144
+   145 21A4 CA				dex						; X = 255
+   146
+   147 21A5				UNITINITIALIZATION
+Macro: UNITINITIALIZATION [Source: resieve.a65]
+   148
+   149 21A5			.local	MAIN						; PROCEDURE
+   150
+   151 21A5 4C 0E 23			jmp l_002A
+   152
+   153 				; ------------------------------------------------------------
+   154
+   155 21A8			.local	SYSTEM						; UNIT
+   156
+   157 21A8			.local	FILLCHAR_0065					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
+   158
+   159 				; ------------------------------------------------------------
+   160
+   161 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+   162 				; as Pointer
+   163 21A8 B5 98 85 84			mva :STACKORIGIN,x VALUE
+   164 21AC CA				dex
    165
-   166
-   167 				; ------------------------------------------------------------
-   168
-   169 = 0086			A	= edx
-   170 = 008A			COUNT	= ecx
-   171 = 0082			VALUE	= eax
-   172 21A6			@exit
-   173 					.ifdef @new
-   174 					@FreeMem #@VarData #@VarDataSize
-   175 					eif
-   176 21A6 60				rts						; ret
-   177 				.endl
-   178
-   179 				; ------------------------------------------------------------
-   180
-   181 = 0648			M_PI_2	= $0648
-   182 = 0192			D_PI_2	= $0192
-   183 = 0004			D_PI_180	= $0004
-   184 = 0000			MGTIA	= $0000
-   185 = 0080			MVBXE	= $0080
-   186 = 0000			VBXE_XDLADR	= $0000
-   187 = 0100			VBXE_BCBADR	= $0100
-   188 = 1000			VBXE_MAPADR	= $1000
-   189 = 5000			VBXE_OVRADR	= $5000
-   190 = B000			VBXE_WINDOW	= $B000
-   191 = 0000			IDLI	= $0000
-   192 = 0001			IVBL	= $0001
-   193 = 00FE			CH_DELCHR	= $00FE
-   194 = 009B			CH_ENTER	= $009B
-   195 = 001B			CH_ESC	= $001B
-   196 = 001C			CH_CURS_UP	= $001C
-   197 = 001D			CH_CURS_DOWN	= $001D
-   198 = 001E			CH_CURS_LEFT	= $001E
-   199 = 001F			CH_CURS_RIGHT	= $001F
-   200 = 007F			CH_TAB	= $007F
-   201 = 009B			CH_EOL	= $009B
-   202 = 007D			CH_CLR	= $007D
-   203 = 00FD			CH_BELL	= $00FD
-   204 = 007E			CH_DEL	= $007E
-   205 = 009C			CH_DELLINE	= $009C
-   206 = 009D			CH_INSLINE	= $009D
-   207 = 0000			COLOR_BLACK	= $0000
-   208 = 000E			COLOR_WHITE	= $000E
-   209 = 0032			COLOR_RED	= $0032
-   210 = 0096			COLOR_CYAN	= $0096
-   211 = 0068			COLOR_VIOLET	= $0068
-   212 = 00C4			COLOR_GREEN	= $00C4
-   213 = 0074			COLOR_BLUE	= $0074
-   214 = 00EE			COLOR_YELLOW	= $00EE
-   215 = 0028			COLOR_ORANGE	= $0028
-   216 = 00E4			COLOR_BROWN	= $00E4
-   217 = 003C			COLOR_LIGHTRED	= $003C
-   218 = 0004			COLOR_GRAY1	= $0004
-   219 = 0006			COLOR_GRAY2	= $0006
-   220 = 000A			COLOR_GRAY3	= $000A
-   221 = 00CC			COLOR_LIGHTGREEN	= $00CC
-   222 = 007C			COLOR_LIGHTBLUE	= $007C
-   223 = 0004			FMOPENREAD	= $0004
-   224 = 0008			FMOPENWRITE	= $0008
-   225 = 0009			FMOPENAPPEND	= $0009
-   226 = 000C			FMOPENREADWRITE	= $000C
-   227 = 2323			SCREENWIDTH	= DATAORIGIN+$0000
-   228 = 2325			SCREENHEIGHT	= DATAORIGIN+$0002
-   229 = 2327			DATESEPARATOR	= DATAORIGIN+$0004
-   230 = D014			TVSYSTEM	= $D014
-   231 = 02C0			adr.PALETTE	= $02C0
-   232 21A7			.var PALETTE	= adr.PALETTE .word
-   233 = D012			adr.HPALETTE	= $D012
-   234 21A7			.var HPALETTE	= adr.HPALETTE .word
-   235 = 2328			FILEMODE	= DATAORIGIN+$0005
-   236 = 2329			SCREENMODE	= DATAORIGIN+$0006
-   237 = 232A			IORESULT	= DATAORIGIN+$0007
-   238 = 232B			EOLN	= DATAORIGIN+$0008
-   239 = 232C			RNDSEED	= DATAORIGIN+$0009
-   240
-   241 = 21A7 C0 02		PALETTE
-   241 = 21A9 12 D0		HPALETTE
-   241 				.endl							; UNIT SYSTEM
-   242
-   243 				; ------------------------------------------------------------
-   244
-   245 21AB			.local	DOS						; UNIT
-   246
-   247 				; ------------------------------------------------------------
-   248
-   249 = D014			PALNTSC	= $D014
-   250
-   251 				.endl							; UNIT DOS
-   252
-   253 				; ------------------------------------------------------------
-   254
-   255 21AB			.local	STRUTILS					; UNIT
-   256
-   257 				; ------------------------------------------------------------
-   258
-   259 				.endl							; UNIT STRUTILS
-   260
-   261 				; ------------------------------------------------------------
-   262
-   263 21AB			.local	SYSUTILS					; UNIT
-   264
-   265 				; ------------------------------------------------------------
-   266
-   267 = 0001			FAREADONLY	= $0001
-   268 = 0002			FAHIDDEN	= $0002
-   269 = 0004			FASYSFILE	= $0004
-   270 = 0008			FAVOLUMEID	= $0008
-   271 = 0010			FADIRECTORY	= $0010
-   272 = 0020			FAARCHIVE	= $0020
-   273 = 003F			FAANYFILE	= $003F
-   274
-   275 				.endl							; UNIT SYSUTILS
-   276
-   277 				; ------------------------------------------------------------
-   278
-   279 21AB			.local	ATARI						; UNIT
-   280
-   281 				; ------------------------------------------------------------
-   282
-   283 = 0012			RTCLOK	= $0012
-   284 = 004D			ATRACT	= $004D
-   285 = 0052			LMARGIN	= $0052
-   286 = 0053			RMARGIN	= $0053
-   287 = 0054			ROWCRS	= $0054
-   288 = 0055			COLCRS	= $0055
-   289 = 0057			DINDEX	= $0057
-   290 = 0058			SAVMSC	= $0058
-   291 = 006A			RAMTOP	= $006A
-   292 = 0200			VDSLST	= $0200
-   293 = 0230			SDLSTL	= $0230
-   294 = 0290			TXTROW	= $0290
-   295 = 0291			TXTCOL	= $0291
-   296 = 0293			TINDEX	= $0293
-   297 = 0294			TXTMSC	= $0294
-   298 = 022F			SDMCTL	= $022F
-   299 = 026F			GPRIOR	= $026F
-   300 = 02F0			CRSINH	= $02F0
-   301 = 02F3			CHACT	= $02F3
-   302 = 02F4			CHBAS	= $02F4
-   303 = 02FC			CH	= $02FC
-   304 = 02C0			PCOLR0	= $02C0
-   305 = 02C1			PCOLR1	= $02C1
-   306 = 02C2			PCOLR2	= $02C2
-   307 = 02C3			PCOLR3	= $02C3
-   308 = 02C4			COLOR0	= $02C4
-   309 = 02C5			COLOR1	= $02C5
-   310 = 02C6			COLOR2	= $02C6
-   311 = 02C7			COLOR3	= $02C7
-   312 = 02C8			COLOR4	= $02C8
-   313 = 02C8			COLBAKS	= $02C8
-   314 = D000			HPOSP0	= $D000
-   315 = D001			HPOSP1	= $D001
-   316 = D002			HPOSP2	= $D002
-   317 = D003			HPOSP3	= $D003
-   318 = D004			HPOSM0	= $D004
-   319 = D005			HPOSM1	= $D005
-   320 = D006			HPOSM2	= $D006
-   321 = D007			HPOSM3	= $D007
-   322 = D008			SIZEP0	= $D008
-   323 = D009			SIZEP1	= $D009
-   324 = D00A			SIZEP2	= $D00A
-   325 = D00B			SIZEP3	= $D00B
-   326 = D00C			SIZEM	= $D00C
-   327 = D00D			GRAFP0	= $D00D
-   328 = D00E			GRAFP1	= $D00E
-   329 = D00F			GRAFP2	= $D00F
-   330 = D010			GRAFP3	= $D010
-   331 = D011			GRAFM	= $D011
-   332 = D004			P0PF	= $D004
-   333 = D014			PAL	= $D014
-   334 = D012			COLPM0	= $D012
-   335 = D013			COLPM1	= $D013
-   336 = D014			COLPM2	= $D014
-   337 = D015			COLPM3	= $D015
-   338 = D016			COLPF0	= $D016
-   339 = D017			COLPF1	= $D017
-   340 = D018			COLPF2	= $D018
-   341 = D019			COLPF3	= $D019
-   342 = D01A			COLBK	= $D01A
-   343 = D01B			PRIOR	= $D01B
-   344 = D01D			GRACTL	= $D01D
-   345 = D01E			HITCLR	= $D01E
-   346 = D200			AUDF1	= $D200
-   347 = D201			AUDC1	= $D201
-   348 = D202			AUDF2	= $D202
-   349 = D203			AUDC2	= $D203
-   350 = D204			AUDF3	= $D204
-   351 = D205			AUDC3	= $D205
-   352 = D206			AUDF4	= $D206
-   353 = D207			AUDC4	= $D207
-   354 = D208			AUDCTL	= $D208
-   355 = D20F			SKSTAT	= $D20F
-   356 = D301			PORTB	= $D301
-   357 = D400			DMACTL	= $D400
-   358 = D401			CHACTL	= $D401
-   359 = D402			DLISTL	= $D402
-   360 = D404			HSCROL	= $D404
-   361 = D405			VSCROL	= $D405
-   362 = D407			PMBASE	= $D407
-   363 = D409			CHBASE	= $D409
-   364 = D40A			WSYNC	= $D40A
-   365 = D40B			VCOUNT	= $D40B
-   366 = D40C			PENH	= $D40C
-   367 = D40D			PENV	= $D40D
-   368 = D40E			NMIEN	= $D40E
+   166 				; ------------------------------------------------------------
+   167
+   168 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   169 				; as Pointer
+   170 21AD B5 98 85 8C			mva :STACKORIGIN,x COUNT
+   171 21B1 B5 A8 85 8D			mva :STACKORIGIN+STACKWIDTH,x COUNT+1
+   172 21B5 CA				dex
+   173
+   174 				; ------------------------------------------------------------
+   175
+   176 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   177 				; as Pointer
+   178 21B6 B5 98 85 88			mva :STACKORIGIN,x A
+   179 21BA B5 A8 85 89			mva :STACKORIGIN+STACKWIDTH,x A+1
+   180 21BE CA				dex
+   181
+   182 				; ---------------------  ASM Block 024  ---------------------
+   183
+   184 21BF 20 36 20			jsr @fill
+   185
+   186
+   187 				; ------------------------------------------------------------
+   188
+   189 = 0088			A	= edx
+   190 = 008C			COUNT	= ecx
+   191 = 0084			VALUE	= eax
+   192 21C2			@exit
+   193 					.ifdef @new
+   194 					lda <@VarData
+   195 					sta :ztmp
+   196 					lda >@VarData
+   197 					ldy #@VarDataSize-1
+   198 					jmp @FreeMem
+   199 					eif
+   200 21C2 60				rts						; ret
+   201 				.endl
+   202
+   203 				; ------------------------------------------------------------
+   204
+   205 = 0101			__PORTB_BANKS	= $0101
+   206 = 0648			M_PI_2	= $0648
+   207 = 0192			D_PI_2	= $0192
+   208 = 0004			D_PI_180	= $04
+   209 = 0000			MGTIA	= $00
+   210 = 0080			MVBXE	= $80
+   211 = 0000			VBXE_XDLADR	= $00
+   212 = 0100			VBXE_BCBADR	= $0100
+   213 = 1000			VBXE_MAPADR	= $1000
+   214 = 5000			VBXE_OVRADR	= $5000
+   215 = B000			VBXE_WINDOW	= $B000
+   216 = 0000			IDLI	= $00
+   217 = 0001			IVBL	= $01
+   218 = 00FE			CH_DELCHR	= $FE
+   219 = 009B			CH_ENTER	= $9B
+   220 = 001B			CH_ESC	= $1B
+   221 = 001C			CH_CURS_UP	= $1C
+   222 = 001D			CH_CURS_DOWN	= $1D
+   223 = 001E			CH_CURS_LEFT	= $1E
+   224 = 001F			CH_CURS_RIGHT	= $1F
+   225 = 007F			CH_TAB	= $7F
+   226 = 009B			CH_EOL	= $9B
+   227 = 007D			CH_CLR	= $7D
+   228 = 00FD			CH_BELL	= $FD
+   229 = 007E			CH_DEL	= $7E
+   230 = 009C			CH_DELLINE	= $9C
+   231 = 009D			CH_INSLINE	= $9D
+   232 = 0000			COLOR_BLACK	= $00
+   233 = 000E			COLOR_WHITE	= $0E
+   234 = 0032			COLOR_RED	= $32
+   235 = 0096			COLOR_CYAN	= $96
+   236 = 0068			COLOR_VIOLET	= $68
+   237 = 00C4			COLOR_GREEN	= $C4
+   238 = 0074			COLOR_BLUE	= $74
+   239 = 00EE			COLOR_YELLOW	= $EE
+   240 = 0028			COLOR_ORANGE	= $28
+   241 = 00E4			COLOR_BROWN	= $E4
+   242 = 003C			COLOR_LIGHTRED	= $3C
+   243 = 0004			COLOR_GRAY1	= $04
+   244 = 0006			COLOR_GRAY2	= $06
+   245 = 000A			COLOR_GRAY3	= $0A
+   246 = 00CC			COLOR_LIGHTGREEN	= $CC
+   247 = 007C			COLOR_LIGHTBLUE	= $7C
+   248 = 0004			FMOPENREAD	= $04
+   249 = 0008			FMOPENWRITE	= $08
+   250 = 0009			FMOPENAPPEND	= $09
+   251 = 000C			FMOPENREADWRITE	= $0C
+   252 = 2327			SCREENWIDTH	= DATAORIGIN+$0000
+   253 = 2329			SCREENHEIGHT	= DATAORIGIN+$0002
+   254 = 232B			DATESEPARATOR	= DATAORIGIN+$0004
+   255 = D014			TVSYSTEM	= $D014
+   256 = 02C0			adr.PALETTE	= $02C0
+   257 21C3			.var PALETTE	= adr.PALETTE .word
+   258 = D012			adr.HPALETTE	= $D012
+   259 21C3			.var HPALETTE	= adr.HPALETTE .word
+   260 = 232C			FILEMODE	= DATAORIGIN+$0005
+   261 = 232D			GRAPHMODE	= DATAORIGIN+$0006
+   262 = 232E			IORESULT	= DATAORIGIN+$0007
+   263 = 232F			EOLN	= DATAORIGIN+$0008
+   264 = 2330			RNDSEED	= DATAORIGIN+$0009
+   265
+   266 = 21C3 C0 02		PALETTE
+   266 = 21C5 12 D0		HPALETTE
+   266 				.endl							; UNIT SYSTEM
+   267
+   268 				; ------------------------------------------------------------
+   269
+   270 21C7			.local	ATARI						; UNIT
+   271
+   272 				; ------------------------------------------------------------
+   273
+   274 = 0012			RTCLOK	= $12
+   275 = 004D			ATRACT	= $4D
+   276 = 0052			LMARGIN	= $52
+   277 = 0053			RMARGIN	= $53
+   278 = 0054			ROWCRS	= $54
+   279 = 0055			COLCRS	= $55
+   280 = 0057			DINDEX	= $57
+   281 = 0058			SAVMSC	= $58
+   282 = 0062			PALNTS	= $62
+   283 = 006A			RAMTOP	= $6A
+   284 = 0200			VDSLST	= $0200
+   285 = 0230			SDLSTL	= $0230
+   286 = 0290			TXTROW	= $0290
+   287 = 0291			TXTCOL	= $0291
+   288 = 0293			TINDEX	= $0293
+   289 = 0294			TXTMSC	= $0294
+   290 = 022F			SDMCTL	= $022F
+   291 = 026F			GPRIOR	= $026F
+   292 = 02F0			CRSINH	= $02F0
+   293 = 02F3			CHACT	= $02F3
+   294 = 02F4			CHBAS	= $02F4
+   295 = 02FC			CH	= $02FC
+   296 = 02C0			PCOLR0	= $02C0
+   297 = 02C1			PCOLR1	= $02C1
+   298 = 02C2			PCOLR2	= $02C2
+   299 = 02C3			PCOLR3	= $02C3
+   300 = 02C4			COLOR0	= $02C4
+   301 = 02C5			COLOR1	= $02C5
+   302 = 02C6			COLOR2	= $02C6
+   303 = 02C7			COLOR3	= $02C7
+   304 = 02C8			COLOR4	= $02C8
+   305 = 02C8			COLBAKS	= $02C8
+   306 = D000			HPOSP0	= $D000
+   307 = D001			HPOSP1	= $D001
+   308 = D002			HPOSP2	= $D002
+   309 = D003			HPOSP3	= $D003
+   310 = D004			HPOSM0	= $D004
+   311 = D005			HPOSM1	= $D005
+   312 = D006			HPOSM2	= $D006
+   313 = D007			HPOSM3	= $D007
+   314 = D008			SIZEP0	= $D008
+   315 = D009			SIZEP1	= $D009
+   316 = D00A			SIZEP2	= $D00A
+   317 = D00B			SIZEP3	= $D00B
+   318 = D00C			SIZEM	= $D00C
+   319 = D00D			GRAFP0	= $D00D
+   320 = D00E			GRAFP1	= $D00E
+   321 = D00F			GRAFP2	= $D00F
+   322 = D010			GRAFP3	= $D010
+   323 = D011			GRAFM	= $D011
+   324 = D004			P0PF	= $D004
+   325 = D014			PAL	= $D014
+   326 = D012			COLPM0	= $D012
+   327 = D013			COLPM1	= $D013
+   328 = D014			COLPM2	= $D014
+   329 = D015			COLPM3	= $D015
+   330 = D016			COLPF0	= $D016
+   331 = D017			COLPF1	= $D017
+   332 = D018			COLPF2	= $D018
+   333 = D019			COLPF3	= $D019
+   334 = D01A			COLBK	= $D01A
+   335 = D01B			PRIOR	= $D01B
+   336 = D01D			GRACTL	= $D01D
+   337 = D01E			HITCLR	= $D01E
+   338 = D200			AUDF1	= $D200
+   339 = D201			AUDC1	= $D201
+   340 = D202			AUDF2	= $D202
+   341 = D203			AUDC2	= $D203
+   342 = D204			AUDF3	= $D204
+   343 = D205			AUDC3	= $D205
+   344 = D206			AUDF4	= $D206
+   345 = D207			AUDC4	= $D207
+   346 = D208			AUDCTL	= $D208
+   347 = D20F			SKSTAT	= $D20F
+   348 = D301			PORTB	= $D301
+   349 = D400			DMACTL	= $D400
+   350 = D401			CHACTL	= $D401
+   351 = D402			DLISTL	= $D402
+   352 = D404			HSCROL	= $D404
+   353 = D405			VSCROL	= $D405
+   354 = D407			PMBASE	= $D407
+   355 = D409			CHBASE	= $D409
+   356 = D40A			WSYNC	= $D40A
+   357 = D40B			VCOUNT	= $D40B
+   358 = D40C			PENH	= $D40C
+   359 = D40D			PENV	= $D40D
+   360 = D40E			NMIEN	= $D40E
+   361
+   362 				.endl							; UNIT ATARI
+   363
+   364 				; ------------------------------------------------------------
+   365
+   366 21C7			.local	CRT						; UNIT
+   367
+   368 				; ------------------------------------------------------------
    369
-   370 				.endl							; UNIT ATARI
-   371
-   372 				; ------------------------------------------------------------
-   373
-   374 21AB			.local	CRT						; UNIT
-   375
-   376 				; ------------------------------------------------------------
-   377
-   378 = 232E			TEXTATTR	= DATAORIGIN+$000B
-   379 = D01F			CONSOL	= $D01F
-   380 = 0000			CN_START_SELECT_OPTION	= $0000
-   381 = 0001			CN_SELECT_OPTION	= $0001
-   382 = 0002			CN_START_OPTION	= $0002
-   383 = 0003			CN_OPTION	= $0003
-   384 = 0004			CN_START_SELECT	= $0004
-   385 = 0005			CN_SELECT	= $0005
-   386 = 0006			CN_START	= $0006
-   387 = 0007			CN_NONE	= $0007
-   388 = 0000			BW40	= $0000
-   389 = 0001			CO40	= $0001
-   390 = 0002			BW80	= $0002
-   391 = 0003			CO80	= $0003
-   392 = 0007			MONO	= $0007
-   393 = 0001			C40	= $0001
-   394 = 0003			C80	= $0003
-   395 = 0000			BLACK	= $0000
-   396 = 0001			BLUE	= $0001
-   397 = 0002			GREEN	= $0002
-   398 = 0003			CYAN	= $0003
-   399 = 0004			RED	= $0004
-   400 = 0005			MAGENTA	= $0005
-   401 = 0006			BROWN	= $0006
-   402 = 0007			LIGHTGRAY	= $0007
-   403 = 0008			DARKGRAY	= $0008
-   404 = 0009			LIGHTBLUE	= $0009
-   405 = 000A			LIGHTGREEN	= $000A
-   406 = 000B			LIGHTCYAN	= $000B
-   407 = 000C			LIGHTRED	= $000C
-   408 = 000D			LIGHTMAGENTA	= $000D
-   409 = 000E			YELLOW	= $000E
-   410 = 000F			WHITE	= $000F
-   411 = 0080			BLINK	= $0080
-   412
-   413 				.endl							; UNIT CRT
-   414
-   415 21AB			.local	SIEVEPROC					; PROCEDURE
-   416
-   417 				; optimize OK (examples\resieve.pas), line = 19
-   418
-   419 21AB A5 14 8D 30 43		mva RTCLOCK FRAME
-   420
-   421 				; --- WhileProlog
-   422 21B0			l_0089
-   423
-   424 				; optimize OK (examples\resieve.pas), line = 20
-   425
-   426 21B0 AD 30 43			lda FRAME
-   427 21B3 C5 14			cmp RTCLOCK
-   428 21B5 D0 03			jne l_009A
-   429 21B7 4C B0 21			jmp l_0089
-   430 21BA			l_009A
-   431
-   432 				; optimize OK (examples\resieve.pas), line = 22
-   433
-   434 21BA AD 21 23			lda FLAGS
-   435 21BD 85 86			sta :edx
-   436 21BF AD 22 23			lda FLAGS+1
-   437 21C2 85 87			sta :edx+1
-   438 21C4 A9 FE			lda #$FE
-   439 21C6 85 8A			sta :ecx
-   440 21C8 A9 1F			lda #$1F
-   441 21CA 85 8B			sta :ecx+1
-   442 21CC A9 01			lda #$01
-   443 21CE 85 82			sta :eax
-   444 21D0 20 25 21			jsr @fill
-   445 				; --- For
-   446
-   447 				; optimize OK (examples\resieve.pas), line = 23
-   448
-   449 21D3 A9 02 8D 31 43		mva #$02 N
-   450 21D8 A9 00 8D 32 43		mva #$00 N+1
-   451
-   452 				; optimize OK (examples\resieve.pas), line = 23
-   453
-   454 21DD AD 2F 43 8D 35 43		mva SQRCOUNT @FORTMP_00A8
-   455 				; --- To
-   456 21E3			l_00AB
+   370 = 2332			TEXTATTR	= DATAORIGIN+$000B
+   371 = D01F			CONSOL	= $D01F
+   372 = 0000			CN_START_SELECT_OPTION	= $00
+   373 = 0001			CN_SELECT_OPTION	= $01
+   374 = 0002			CN_START_OPTION	= $02
+   375 = 0003			CN_OPTION	= $03
+   376 = 0004			CN_START_SELECT	= $04
+   377 = 0005			CN_SELECT	= $05
+   378 = 0006			CN_START	= $06
+   379 = 0007			CN_NONE	= $07
+   380 = 0000			BW40	= $00
+   381 = 0001			CO40	= $01
+   382 = 0002			BW80	= $02
+   383 = 0003			CO80	= $03
+   384 = 0007			MONO	= $07
+   385 = 0001			C40	= $01
+   386 = 0003			C80	= $03
+   387 = 0000			BLACK	= $00
+   388 = 0001			BLUE	= $01
+   389 = 0002			GREEN	= $02
+   390 = 0003			CYAN	= $03
+   391 = 0004			RED	= $04
+   392 = 0005			MAGENTA	= $05
+   393 = 0006			BROWN	= $06
+   394 = 0007			LIGHTGRAY	= $07
+   395 = 0008			DARKGRAY	= $08
+   396 = 0009			LIGHTBLUE	= $09
+   397 = 000A			LIGHTGREEN	= $0A
+   398 = 000B			LIGHTCYAN	= $0B
+   399 = 000C			LIGHTRED	= $0C
+   400 = 000D			LIGHTMAGENTA	= $0D
+   401 = 000E			YELLOW	= $0E
+   402 = 000F			WHITE	= $0F
+   403 = 0080			BLINK	= $80
+   404
+   405 				.endl							; UNIT CRT
+   406
+   407 21C7			.local	SIEVEPROC					; PROCEDURE
+   408
+   409 				; --- WhileProlog
+   410 21C7			l_0089
+   411
+   412 				; optimize OK (examples\resieve.pas), line = 23
+   413
+   414 21C7 AD 34 43			lda FRAME
+   415 21CA C5 14			cmp RTCLOCK
+   416 21CC F0 F9			jeq l_0089
+   417
+   418 				; optimize OK (examples\resieve.pas), line = 25
+   419
+   420 21CE AD 25 23			lda FLAGS
+   421 21D1 85 88			sta :edx
+   422 21D3 AD 26 23			lda FLAGS+1
+   423 21D6 85 89			sta :edx+1
+   424 21D8 A9 FE			lda #$FE
+   425 21DA 85 8C			sta :ecx
+   426 21DC A9 1F			lda #$1F
+   427 21DE 85 8D			sta :ecx+1
+   428 21E0 A9 01			lda #$01
+   429 21E2 85 84			sta :eax
+   430 21E4 20 36 20			jsr @fill
+   431 				; --- For
+   432
+   433 				; optimize OK (examples\resieve.pas), line = 26
+   434
+   435 21E7 A9 02 8D 35 43		mva #$02 N
+   436 21EC A9 00 8D 36 43		mva #$00 N+1
+   437
+   438 				; optimize OK (examples\resieve.pas), line = 26
+   439
+   440 21F1 AD 33 43 8D 02 22		mva SQRCOUNT :@FORTMP?00A4_0
+   441 21F7			l_00A7
+   442 				; --- ForToDoCondition
+   443
+   444 				; optimize OK (examples\resieve.pas), line = 26
+   445
+   446 21F7 AD 36 43			lda N+1
+   447 21FA C9 00			cmp #$00
+   448 21FC D0 05			bne @+
+   449 21FE AD 35 43			lda N
+   450 = 2202			.def :@FORTMP?00A4_0 = *+1
+   451 2201 C9 00			cmp #$00
+   452 2203			@
+   453 2203 90 02			scc
+   454 2205 D0 74			jne l_00B3
+   455
+   456 				; optimize OK (examples\resieve.pas), line = 27
    457
-   458 				; --- ForToDoCondition
-   459
-   460 				; optimize OK (examples\resieve.pas), line = 23
-   461
-   462 21E3 AD 32 43			lda N+1
-   463 21E6 C9 00			cmp #$00
-   464 21E8 D0 06			bne @+
-   465 21EA AD 31 43			lda N
-   466 21ED CD 35 43			cmp @FORTMP_00A8
-   467 21F0			@
-   468 21F0 90 02			scc
-   469 21F2 D0 6D			jne l_00B7
-   470
-   471 				; optimize OK (examples\resieve.pas), line = 24
-   472
-   473 21F4 AD 21 23			lda FLAGS
-   474 21F7 18 6D 31 43			add N
-   475 21FB A8				tay
-   476 21FC AD 22 23			lda FLAGS+1
-   477 21FF 6D 32 43			adc N+1
-   478 2202 85 8F			sta :bp+1
-   479 2204 B1 8E			lda (:bp),y
-   480 2206 C9 01			cmp #$01
-   481 2208 D0 4D			jne l_00CB
-   482
-   483 				; optimize OK (examples\resieve.pas), line = 25
-   484
-   485 220A AD 32 43			lda N+1
-   486 220D 85 83			sta :eax+1
-   487 220F AD 31 43			lda N
-   488 2212 0A				asl @
-   489 2213 26 83			rol :eax+1
-   490 2215 8D 33 43			sta K
-   491 2218 A5 83			lda :eax+1
-   492 221A 8D 34 43			sta K+1
-   493
-   494 				; --- WhileProlog
-   495 221D			l_00D6
-   496
-   497 				; optimize OK (examples\resieve.pas), line = 26
-   498
-   499 221D AD 34 43			lda K+1
-   500 2220 C9 1F			cmp #$1F
-   501 2222 D0 05			bne @+
-   502 2224 AD 33 43			lda K
-   503 2227 C9 FF			cmp #$FF
-   504 2229			@
-   505 2229 90 02			bcc @+
-   506 222B D0 2A			jne l_00E4
-   507 222D			@
-   508
-   509 				; optimize OK (examples\resieve.pas), line = 27
-   510
-   511 222D AD 21 23			lda FLAGS
-   512 2230 18 6D 33 43			add K
-   513 2234 A8				tay
-   514 2235 AD 22 23			lda FLAGS+1
-   515 2238 6D 34 43			adc K+1
-   516 223B 85 8F			sta :bp+1
-   517 223D A9 00			lda #$00
-   518 223F 91 8E			sta (:bp),y
-   519
-   520 				; optimize OK (examples\resieve.pas), line = 28
+   458 2207 AD 25 23			lda FLAGS
+   459 220A 18 6D 35 43			add N
+   460 220E A8				tay
+   461 220F AD 26 23			lda FLAGS+1
+   462 2212 6D 36 43			adc N+1
+   463 2215 85 91			sta :bp+1
+   464 2217 B1 90			lda (:bp),y
+   465 2219 C9 01			cmp #$01
+   466 221B D0 51			jne l_00C7
+   467
+   468 				; optimize OK (examples\resieve.pas), line = 28
+   469
+   470 221D A9 02			lda #$02
+   471 221F 85 8C			sta :ecx
+   472 2221 A9 00			lda #$00
+   473 2223 85 8D			sta :ecx+1
+   474 2225 AD 35 43			lda N
+   475 2228 85 84			sta :eax
+   476 222A AD 36 43			lda N+1
+   477 222D 85 85			sta :eax+1
+   478 					.ifdef fmulinit
+   479 					fmulu_16
+   480 					els
+   481 222F 20 7E 20			imulCX
+   482 					eif
+   483 2232 A5 84			lda :eax
+   484 2234 8D 37 43			sta K
+   485 2237 A5 85			lda :eax+1
+   486
+   487 				; --- WhileProlog
+   488 2239 4C 60 22			jmp l_00D3
+   489 223C			l_00D4
+   490
+   491 				; optimize OK (examples\resieve.pas), line = 30
+   492
+   493 223C AD 25 23			lda FLAGS
+   494 223F 18 6D 37 43			add K
+   495 2243 A8				tay
+   496 2244 AD 26 23			lda FLAGS+1
+   497 2247 6D 38 43			adc K+1
+   498 224A 85 91			sta :bp+1
+   499 224C A9 00			lda #$00
+   500 224E 91 90			sta (:bp),y
+   501
+   502 				; optimize OK (examples\resieve.pas), line = 31
+   503
+   504 2250 AD 37 43			lda K
+   505 2253 18 6D 35 43			add N
+   506 2257 8D 37 43			sta K
+   507 225A AD 38 43			lda K+1
+   508 225D 6D 36 43			adc N+1
+   509 2260			l_00D3
+   510 2260 8D 38 43			sta K+1
+   511
+   512 				; optimize OK (examples\resieve.pas), line = 29
+   513
+   514 2263 C9 20			cmp #$20
+   515 2265 D0 05			bne @+
+   516 2267 AD 37 43			lda K
+   517 226A C9 00			cmp #$00
+   518 226C			@
+   519 226C 90 CE			jcc l_00D4
+   520 226E			l_00C7
    521
-   522 2241 AD 33 43			lda K
-   523 2244 18 6D 31 43			add N
-   524 2248 8D 33 43			sta K
-   525 224B AD 34 43			lda K+1
-   526 224E 6D 32 43			adc N+1
-   527 2251 8D 34 43			sta K+1
-   528 2254 4C 1D 22			jmp l_00D6
-   529 2257			l_00E4
-   530 2257			l_00CB
-   531
-   532 				; --- ForToDoEpilog
-   533 2257 EE 31 43 D0 03 EE + 	inw N						; inc ptr word [CounterAddress]
-   534
-   535 225F D0 82			jne l_00AB
+   522 				; --- ForToDoEpilog
+   523 226E EE 35 43			inc N
+   524 2271 D0 84			jne l_00A7
+   525 2273 EE 36 43			inc N+1
+   526 2276 F0 03 4C F7 21		jne l_00A7
+   527 227B			l_00B3
+   528
+   529 				; ------------------------------------------------------------
+   530
+   531 = 4333			SQRCOUNT	= DATAORIGIN+$200C
+   532 = 4334			FRAME	= DATAORIGIN+$200D
+   533 = 4335			N	= DATAORIGIN+$200E
+   534 = 4337			K	= DATAORIGIN+$2010
+   535 = 0000			@FORTMP_00A4	= $00
    536
-   537 2261			l_00B7
-   538
-   539 				; ------------------------------------------------------------
-   540
-   541 = 432F			SQRCOUNT	= DATAORIGIN+$200C
-   542 = 4330			FRAME	= DATAORIGIN+$200D
-   543 = 4331			N	= DATAORIGIN+$200E
-   544 = 4333			K	= DATAORIGIN+$2010
-   545 = 4335			@FORTMP_00A8	= DATAORIGIN+$2012
-   546
-   547 = 432F			@VarData	= SQRCOUNT
-   548 = 0008			@VarDataSize	= 8
-   549
-   550 2261			@exit
-   551 					.ifdef @new
-   552 					@FreeMem #@VarData #@VarDataSize
-   553 					eif
-   554 2261 60				rts						; ret
-   555 				.endl
+   537 = 4333			@VarData	= SQRCOUNT
+   538 = 0006			@VarDataSize	= 6
+   539
+   540 227B			@exit
+   541 					.ifdef @new
+   542 					lda <@VarData
+   543 					sta :ztmp
+   544 					lda >@VarData
+   545 					ldy #@VarDataSize-1
+   546 					jmp @FreeMem
+   547 					eif
+   548 227B 60				rts						; ret
+   549 				.endl
+   550
+   551 227C			.local	MAINPROC					; PROCEDURE
+   552
+   553 				; optimize OK (examples\resieve.pas), line = 42
+   554
+   555 227C A9 00 85 14			mva #$00 RTCLOCK
    556
-   557 2262			.local	MAINPROC					; PROCEDURE
-   558
-   559 				; optimize OK (examples\resieve.pas), line = 39
-   560
-   561 2262 A9 00 85 14			mva #$00 RTCLOCK
+   557 				; optimize FAIL ('SIEVEPROC', examples\resieve.pas), line = 43
+   558 2280 20 C7 21			jsr SIEVEPROC
+   559
+   560 				; optimize FAIL (100, examples\resieve.pas), line = 44
+   561 					@printSTRING #CODEORIGIN+$0000
+   561 				 LDY> CODEORIGIN+$0000\ LDA< CODEORIGIN+$0000\ JSR @PRINTSTRING
+   561 2283 A0 20		 LDY> CODEORIGIN+$0000
+   561 2285 A9 00		 LDA< CODEORIGIN+$0000
+   561 2287 20 AB 20		 JSR @PRINTSTRING
    562
-   563 				; optimize FAIL ('SIEVEPROC', examples\resieve.pas), line = 40
-   564 2266 20 AB 21			jsr SIEVEPROC
-   565
-   566 				; optimize FAIL (100, examples\resieve.pas), line = 41
-   567 					@printSTRING #CODEORIGIN+$000D
-   567 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
-   567 2269 A0 20		 LDY> CODEORIGIN+$000D
-   567 226B A9 0D		 LDA< CODEORIGIN+$000D
-   567 226D 20 39 20		 JSR @PRINTSTRING
-   568
-   569 				; optimize FAIL (100, examples\resieve.pas), line = 42
-   570 					@printSTRING #CODEORIGIN+$001B
-   570 				 LDY> CODEORIGIN+$001B\ LDA< CODEORIGIN+$001B\ JSR @PRINTSTRING
-   570 2270 A0 20		 LDY> CODEORIGIN+$001B
-   570 2272 A9 1B		 LDA< CODEORIGIN+$001B
-   570 2274 20 39 20		 JSR @PRINTSTRING
-   571 					@print #$9B
-   571 				 LDY# $9B\ JSR @PRINT
-   571 2277 A0 9B		 LDY# $9B
-   571 2279 20 30 20		 JSR @PRINT
-   572 					@print #$20
-   572 				 LDY# $20\ JSR @PRINT
-   572 227C A0 20		 LDY# $20
-   572 227E 20 30 20		 JSR @PRINT
-   573 2281 E8				inx
-   574 2282 A5 14 95 98			mva RTCLOCK :STACKORIGIN,x
-   575 2286 20 8E 20			jsr @printBYTE
-   576 2289 CA				dex
-   577 					@printSTRING #CODEORIGIN+$001D
-   577 				 LDY> CODEORIGIN+$001D\ LDA< CODEORIGIN+$001D\ JSR @PRINTSTRING
-   577 228A A0 20		 LDY> CODEORIGIN+$001D
-   577 228C A9 1D		 LDA< CODEORIGIN+$001D
-   577 228E 20 39 20		 JSR @PRINTSTRING
-   578 				; --- For
-   579
-   580 				; optimize OK (examples\resieve.pas), line = 43
+   563 				; optimize FAIL (100, examples\resieve.pas), line = 45
+   564 					@printSTRING #CODEORIGIN+$000E
+   564 				 LDY> CODEORIGIN+$000E\ LDA< CODEORIGIN+$000E\ JSR @PRINTSTRING
+   564 228A A0 20		 LDY> CODEORIGIN+$000E
+   564 228C A9 0E		 LDA< CODEORIGIN+$000E
+   564 228E 20 AB 20		 JSR @PRINTSTRING
+   565 					@print #$9B
+   565 				 LDY# $9B\ JSR @PRINT
+   565 2291 A0 9B		 LDY# $9B
+   565 2293 20 A2 20		 JSR @PRINT
+   566 					@print #$20
+   566 				 LDY# $20\ JSR @PRINT
+   566 2296 A0 20		 LDY# $20
+   566 2298 20 A2 20		 JSR @PRINT
+   567 229B A5 14			lda RTCLOCK
+   568 229D 20 DC 20			jsr @printBYTE._a
+   569 					@printSTRING #CODEORIGIN+$0010
+   569 				 LDY> CODEORIGIN+$0010\ LDA< CODEORIGIN+$0010\ JSR @PRINTSTRING
+   569 22A0 A0 20		 LDY> CODEORIGIN+$0010
+   569 22A2 A9 10		 LDA< CODEORIGIN+$0010
+   569 22A4 20 AB 20		 JSR @PRINTSTRING
+   570 				; --- For
+   571
+   572 				; optimize OK (examples\resieve.pas), line = 46
+   573
+   574 22A7 A9 02 8D 3B 43		mva #$02 N
+   575 22AC A9 00 8D 3C 43		mva #$00 N+1
+   576
+   577 				; optimize OK (examples\resieve.pas), line = 46
+   578
+   579 22B1			l_0117
+   580 				; --- ForToDoCondition
    581
-   582 2291 A9 02 8D 37 43		mva #$02 N
-   583 2296 A9 00 8D 38 43		mva #$00 N+1
-   584
-   585 				; optimize OK (examples\resieve.pas), line = 43
-   586
-   587 				; --- To
-   588 229B			l_011D
+   582 				; optimize OK (examples\resieve.pas), line = 46
+   583
+   584 22B1 AD 3C 43			lda N+1
+   585 22B4 C9 20			cmp #$20
+   586 22B6 D0 03			sne
+   587 22B8 AD 3B 43			lda N
+   588 22BB B0 28			jcs l_0123
    589
-   590 				; --- ForToDoCondition
+   590 				; optimize OK (examples\resieve.pas), line = 47
    591
-   592 				; optimize OK (examples\resieve.pas), line = 43
-   593
-   594 229B AD 38 43			lda N+1
-   595 229E C9 1F			cmp #$1F
-   596 22A0 D0 05			bne @+
-   597 22A2 AD 37 43			lda N
-   598 22A5 C9 FF			cmp #$FF
-   599 22A7			@
-   600 22A7 90 02			scc
-   601 22A9 D0 28			jne l_0129
-   602
-   603 				; optimize OK (examples\resieve.pas), line = 44
-   604
-   605 22AB AD 21 23			lda FLAGS
-   606 22AE 18 6D 37 43			add N
-   607 22B2 A8				tay
-   608 22B3 AD 22 23			lda FLAGS+1
-   609 22B6 6D 38 43			adc N+1
-   610 22B9 85 8F			sta :bp+1
-   611 22BB B1 8E			lda (:bp),y
-   612 22BD C9 01			cmp #$01
-   613 22BF D0 08			jne l_013D
+   592 22BD AD 25 23			lda FLAGS
+   593 22C0 18 6D 3B 43			add N
+   594 22C4 A8				tay
+   595 22C5 AD 26 23			lda FLAGS+1
+   596 22C8 6D 3C 43			adc N+1
+   597 22CB 85 91			sta :bp+1
+   598 22CD B1 90			lda (:bp),y
+   599 22CF C9 01			cmp #$01
+   600 22D1 D0 08			jne l_0137
+   601
+   602 				; optimize FAIL (0, examples\resieve.pas), line = 48
+   603 22D3 EE 3D 43			inc COUNT
+   604 22D6 D0 03			sne
+   605 22D8 EE 3E 43			inc COUNT+1
+   606 22DB			l_0137
+   607
+   608 				; --- ForToDoEpilog
+   609 22DB EE 3B 43			inc N
+   610 22DE D0 D1			jne l_0117
+   611 22E0 EE 3C 43			inc N+1
+   612 22E3 D0 CC			jne l_0117
+   613 22E5			l_0123
    614
-   615 				; optimize FAIL (0, examples\resieve.pas), line = 45
-   616 22C1 EE 39 43 D0 03 EE + 	inw COUNT
-   617 22C9			l_013D
-   618
-   619 				; --- ForToDoEpilog
-   620 22C9 EE 37 43 D0 03 EE + 	inw N						; inc ptr word [CounterAddress]
-   621
-   622 22D1 D0 C8			jne l_011D
+   615 				; optimize FAIL (100, examples\resieve.pas), line = 51
+   616 					@printSTRING #CODEORIGIN+$000D
+   616 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
+   616 22E5 A0 20		 LDY> CODEORIGIN+$000D
+   616 22E7 A9 0D		 LDA< CODEORIGIN+$000D
+   616 22E9 20 AB 20		 JSR @PRINTSTRING
+   617 					@print #$9B
+   617 				 LDY# $9B\ JSR @PRINT
+   617 22EC A0 9B		 LDY# $9B
+   617 22EE 20 A2 20		 JSR @PRINT
+   618 					@print #$20
+   618 				 LDY# $20\ JSR @PRINT
+   618 22F1 A0 20		 LDY# $20
+   618 22F3 20 A2 20		 JSR @PRINT
+   619 22F6 AD 3D 43			lda COUNT
+   620 22F9 AC 3E 43			ldy COUNT+1
+   621 22FC 20 ED 20			jsr @printWORD._ay
+   622 					@printSTRING #CODEORIGIN+$001A
+   622 				 LDY> CODEORIGIN+$001A\ LDA< CODEORIGIN+$001A\ JSR @PRINTSTRING
+   622 22FF A0 20		 LDY> CODEORIGIN+$001A
+   622 2301 A9 1A		 LDA< CODEORIGIN+$001A
+   622 2303 20 AB 20		 JSR @PRINTSTRING
    623
-   624 22D3			l_0129
-   625
-   626 				; optimize FAIL (100, examples\resieve.pas), line = 48
-   627 					@printSTRING #CODEORIGIN+$001A
-   627 				 LDY> CODEORIGIN+$001A\ LDA< CODEORIGIN+$001A\ JSR @PRINTSTRING
-   627 22D3 A0 20		 LDY> CODEORIGIN+$001A
-   627 22D5 A9 1A		 LDA< CODEORIGIN+$001A
-   627 22D7 20 39 20		 JSR @PRINTSTRING
-   628 					@print #$9B
-   628 				 LDY# $9B\ JSR @PRINT
-   628 22DA A0 9B		 LDY# $9B
-   628 22DC 20 30 20		 JSR @PRINT
-   629 					@print #$20
-   629 				 LDY# $20\ JSR @PRINT
-   629 22DF A0 20		 LDY# $20
-   629 22E1 20 30 20		 JSR @PRINT
-   630 22E4 E8				inx
-   631 22E5 AD 39 43 95 98		mva COUNT :STACKORIGIN,x
-   632 22EA AD 3A 43 95 A8		mva COUNT+1 :STACKORIGIN+STACKWIDTH,x
-   633 22EF 20 88 20			jsr @printWORD
-   634 22F2 CA				dex
-   635 					@printSTRING #CODEORIGIN+$0027
-   635 				 LDY> CODEORIGIN+$0027\ LDA< CODEORIGIN+$0027\ JSR @PRINTSTRING
-   635 22F3 A0 20		 LDY> CODEORIGIN+$0027
-   635 22F5 A9 27		 LDA< CODEORIGIN+$0027
-   635 22F7 20 39 20		 JSR @PRINTSTRING
-   636
-   637 				; optimize OK (examples\resieve.pas), line = 49
+   624 				; --- WhileProlog
+   625 2306			l_0159
+   626
+   627 				; optimize OK (examples\resieve.pas), line = 52
+   628
+   629 2306 AD FC 02			lda CH
+   630 2309 C9 FF			cmp #$FF
+   631 230B F0 F9			jeq l_0159
+   632
+   633 				; ------------------------------------------------------------
+   634
+   635 = 433B			N	= DATAORIGIN+$2014
+   636 = 433D			COUNT	= DATAORIGIN+$2016
+   637 = 1FFF			@FORTMP_0114	= $1FFF
    638
-   639 22FA A9 FF 8D FC 02		mva #$FF CH
-   640
-   641 				; --- WhileProlog
-   642 22FF			l_0161
-   643
-   644 				; optimize OK (examples\resieve.pas), line = 50
-   645
-   646 22FF AD FC 02			lda CH
-   647 2302 C9 FF			cmp #$FF
-   648 2304 D0 03			jne l_0170
-   649 2306 4C FF 22			jmp l_0161
-   650 2309			l_0170
-   651
-   652 				; ------------------------------------------------------------
+   639 = 433B			@VarData	= N
+   640 = 0004			@VarDataSize	= 4
+   641
+   642 230D			@exit
+   643 					.ifdef @new
+   644 					lda <@VarData
+   645 					sta :ztmp
+   646 					lda >@VarData
+   647 					ldy #@VarDataSize-1
+   648 					jmp @FreeMem
+   649 					eif
+   650 230D 60				rts						; ret
+   651 				.endl
+   652 230E			l_002A
    653
-   654 = 4337			N	= DATAORIGIN+$2014
-   655 = 4339			COUNT	= DATAORIGIN+$2016
-   656 = 1FFF			@FORTMP_011A	= $1FFF
-   657
-   658 = 4337			@VarData	= N
-   659 = 0004			@VarDataSize	= 4
-   660
-   661 2309			@exit
-   662 					.ifdef @new
-   663 					@FreeMem #@VarData #@VarDataSize
-   664 					eif
-   665 2309 60				rts						; ret
-   666 				.endl
-   667 230A			l_0037
-   668
-   669 				; optimize FAIL ('MAINPROC', examples\resieve.pas), line = 55
-   670 230A 20 62 22			jsr MAINPROC
-   671
-   672 				; ------------------------------------------------------------
-   673
-   674 = 02FC			CH	= $02FC
-   675 = 0014			RTCLOCK	= $0014
-   676 = 232F			adr.FLAGS	= DATAORIGIN+$000C
-   677 230D			.var FLAGS	= adr.FLAGS .word
-   678 230D			@exit
-   679
-   680 230D A2 00		@halt	ldx #0
-   681 230F 9A				txs
+   654 				; optimize FAIL ('MAINPROC', examples\resieve.pas), line = 57
+   655 230E 20 7C 22			jsr MAINPROC
+   656
+   657 				; ------------------------------------------------------------
+   658
+   659 = 02FC			CH	= $02FC
+   660 = 0014			RTCLOCK	= $14
+   661 = 2333			adr.FLAGS	= DATAORIGIN+$000C
+   662 2311			.var FLAGS	= adr.FLAGS .word
+   663 2311			@exit
+   664
+   665 2311 A2 00		@halt	ldx #0
+   666 2313 9A				txs
+   667 					.ifdef MAIN.@DEFINES.ROMOFF
+   668 					inc portb
+   669 					.endif
+   670
+   671 2314 60				rts
+   672
+   673 				; ------------------------------------------------------------
+   674
+   675 2315 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+   676
+   677 				; ------------------------------------------------------------
+   678
+   679 2325			.local	@DEFINES
+   680 2325			ATARI
+   681 				.endl
    682
-   683 2310 60				rts
+   683 = 2325 33 23		FLAGS
+   683 				.endl							; MAIN
    684
    685 				; ------------------------------------------------------------
-   686
-   687 2311 00 00 00 00 00 00 + IOCB@COPY	:16 brk
-   688
-   689 				; ------------------------------------------------------------
-   690
-   691 2321			.local	@DEFINES
-   692 2321			ATARI
-   693 				.endl
-   694
-   695 = 2321 2F 23		FLAGS
-   695 				.endl							; MAIN
-   696
-   697 				; ------------------------------------------------------------
-   698 				; ------------------------------------------------------------
-   699
-   700 				.macro	UNITINITIALIZATION
-   701 				
-   702 					.ifdef MAIN.SYSTEM.@UnitInit
-   703 					jsr MAIN.SYSTEM.@UnitInit
-   704 					eif
-   705 				
-   706 					.ifdef MAIN.DOS.@UnitInit
-   707 					jsr MAIN.DOS.@UnitInit
-   708 					eif
-   709 				
-   710 					.ifdef MAIN.STRUTILS.@UnitInit
-   711 					jsr MAIN.STRUTILS.@UnitInit
-   712 					eif
-   713 				
-   714 					.ifdef MAIN.SYSUTILS.@UnitInit
-   715 					jsr MAIN.SYSUTILS.@UnitInit
-   716 					eif
-   717 				
-   718 					.ifdef MAIN.ATARI.@UnitInit
-   719 					jsr MAIN.ATARI.@UnitInit
-   720 					eif
-   721 				
-   722 					.ifdef MAIN.CRT.@UnitInit
-   723 					jsr MAIN.CRT.@UnitInit
-   724 					eif
-   725 				.endm
-   726
-   727 				; ------------------------------------------------------------
-   728
-   729 					ift .SIZEOF(MAIN.SYSTEM) > 0
-   730 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-   730 				SYSTEM: $218C..$21AA
-   731 					eif
-   732
-   733 					ift .SIZEOF(MAIN.DOS) > 0
-   734 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-   735 					eif
-   736
-   737 					ift .SIZEOF(MAIN.STRUTILS) > 0
-   738 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-   739 					eif
-   740
-   741 					ift .SIZEOF(MAIN.SYSUTILS) > 0
-   742 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-   743 					eif
-   744
-   745 					ift .SIZEOF(MAIN.ATARI) > 0
-   746 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
-   747 					eif
-   748
-   749 					ift .SIZEOF(MAIN.CRT) > 0
-   750 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-   751 					eif
-   752
-   753 					.print 'CODE: ',CODEORIGIN,'..',*-1
-   753 				CODE: $2000..$2322
-   754
-   755 				; ------------------------------------------------------------
-   756
-   757 2323			DATAORIGIN
-   758 2323 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   759 233B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   760 2353 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   761 236B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   762 2383 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   763 239B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   764 23B3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   765 23CB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   766 23E3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   767 23FB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   768 2413 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   769 242B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   770 2443 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   771 245B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   772 2473 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   773 248B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   774 24A3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   775 24BB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   776 24D3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   777 24EB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   778 2503 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   779 251B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   780 2533 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   781 254B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   782 2563 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   783 257B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   784 2593 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   785 25AB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   786 25C3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   787 25DB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   788 25F3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   789 260B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   790 2623 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   791 263B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   792 2653 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   793 266B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   794 2683 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   795 269B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   796 26B3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   797 26CB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   798 26E3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   799 26FB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   800 2713 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   801 272B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   802 2743 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   803 275B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   804 2773 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   805 278B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   806 27A3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   807 27BB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   808 27D3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   809 27EB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   810 2803 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   811 281B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   812 2833 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   813 284B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   814 2863 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   815 287B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   816 2893 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   817 28AB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   818 28C3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   819 28DB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   820 28F3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   821 290B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   822 2923 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   823 293B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   824 2953 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   825 296B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   826 2983 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   827 299B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   828 29B3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   829 29CB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   830 29E3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   831 29FB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   832 2A13 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   833 2A2B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   834 2A43 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   835 2A5B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   836 2A73 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   837 2A8B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   838 2AA3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   839 2ABB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   840 2AD3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   841 2AEB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   842 2B03 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   843 2B1B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   844 2B33 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   845 2B4B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   846 2B63 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   847 2B7B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   848 2B93 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   849 2BAB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   850 2BC3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   851 2BDB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   852 2BF3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   853 2C0B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   854 2C23 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   855 2C3B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   856 2C53 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   857 2C6B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   858 2C83 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   859 2C9B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   860 2CB3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   861 2CCB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   862 2CE3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   863 2CFB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   864 2D13 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   865 2D2B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   866 2D43 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   867 2D5B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   868 2D73 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   869 2D8B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   870 2DA3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   871 2DBB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   872 2DD3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   873 2DEB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   874 2E03 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   875 2E1B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   876 2E33 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   877 2E4B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   878 2E63 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   879 2E7B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   880 2E93 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   881 2EAB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   882 2EC3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   883 2EDB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   884 2EF3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   885 2F0B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   886 2F23 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   887 2F3B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   888 2F53 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   889 2F6B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   890 2F83 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   891 2F9B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   892 2FB3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   893 2FCB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   894 2FE3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   895 2FFB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   896 3013 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   897 302B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   898 3043 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   899 305B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   900 3073 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   901 308B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   902 30A3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   903 30BB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   904 30D3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   905 30EB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   906 3103 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   907 311B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   908 3133 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   909 314B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   910 3163 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   911 317B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   912 3193 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   913 31AB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   914 31C3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   915 31DB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   916 31F3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   917 320B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   918 3223 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   919 323B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   920 3253 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   921 326B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   922 3283 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   923 329B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   924 32B3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   925 32CB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   926 32E3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   927 32FB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   928 3313 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   929 332B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   930 3343 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   931 335B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   932 3373 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   933 338B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   934 33A3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   935 33BB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   936 33D3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   937 33EB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   938 3403 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   939 341B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   940 3433 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   941 344B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   942 3463 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   943 347B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   944 3493 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   945 34AB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   946 34C3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   947 34DB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   948 34F3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   949 350B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   950 3523 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   951 353B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   952 3553 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   953 356B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   954 3583 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   955 359B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   956 35B3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   957 35CB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   958 35E3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   959 35FB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   960 3613 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   961 362B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   962 3643 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   963 365B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   964 3673 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   965 368B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   966 36A3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   967 36BB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   968 36D3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   969 36EB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   970 3703 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   971 371B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   972 3733 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   973 374B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   974 3763 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   975 377B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   976 3793 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   977 37AB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   978 37C3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   979 37DB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   980 37F3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   981 380B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   982 3823 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   983 383B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   984 3853 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   985 386B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   986 3883 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   987 389B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   988 38B3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   989 38CB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   990 38E3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   991 38FB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   992 3913 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   993 392B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   994 3943 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   995 395B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   996 3973 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   997 398B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   998 39A3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-   999 39BB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1000 39D3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1001 39EB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1002 3A03 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1003 3A1B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1004 3A33 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1005 3A4B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1006 3A63 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1007 3A7B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1008 3A93 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1009 3AAB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1010 3AC3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1011 3ADB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1012 3AF3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1013 3B0B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1014 3B23 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1015 3B3B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1016 3B53 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1017 3B6B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1018 3B83 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1019 3B9B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1020 3BB3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1021 3BCB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1022 3BE3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1023 3BFB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1024 3C13 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1025 3C2B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1026 3C43 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1027 3C5B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1028 3C73 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1029 3C8B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1030 3CA3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1031 3CBB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1032 3CD3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1033 3CEB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1034 3D03 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1035 3D1B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1036 3D33 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1037 3D4B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1038 3D63 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1039 3D7B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1040 3D93 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1041 3DAB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1042 3DC3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1043 3DDB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1044 3DF3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1045 3E0B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1046 3E23 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1047 3E3B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1048 3E53 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1049 3E6B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1050 3E83 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1051 3E9B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1052 3EB3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1053 3ECB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1054 3EE3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1055 3EFB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1056 3F13 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1057 3F2B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1058 3F43 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1059 3F5B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1060 3F73 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1061 3F8B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1062 3FA3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1063 3FBB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1064 3FD3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1065 3FEB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1066 4003 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1067 401B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1068 4033 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1069 404B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1070 4063 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1071 407B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1072 4093 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1073 40AB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1074 40C3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1075 40DB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1076 40F3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1077 410B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1078 4123 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1079 413B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1080 4153 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1081 416B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1082 4183 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1083 419B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1084 41B3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1085 41CB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1086 41E3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1087 41FB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1088 4213 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1089 422B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1090 4243 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1091 425B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1092 4273 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1093 428B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1094 42A3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1095 42BB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1096 42D3 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1097 42EB 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1098 4303 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1099 431B 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $5B
-  1100
-  1101 = 200D			VARINITSIZE	= *-DATAORIGIN
-  1102 = 2018			VARDATASIZE	= 8216
-  1103
-  1104 = 433B			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
-  1105
-  1106 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-  1106 				DATA: $2323..$433B
-  1107
-  1108 02E0-02E1> 6D 21			run START
-  1109
-  1110 				; ------------------------------------------------------------
-  1111
-  1112 				.macro	STATICDATA
-  1113 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $0C $45 $66  $66 $65 $63 $74 $75 $73 $20 $30
-  1114 				.by  $2E $34 $00 $00 $00 $08 $20 $4A  $49 $46 $46 $49 $45 $53 $00 $07  $20 $50 $52 $49 $4D $45 $53 $00
-  1115 				.endm
-  1116
-  1117 					end
+   686 				; ------------------------------------------------------------
+   687
+   688 				.macro	UNITINITIALIZATION
+   689 				
+   690 					.ifdef MAIN.SYSTEM.@UnitInit
+   691 					jsr MAIN.SYSTEM.@UnitInit
+   692 					eif
+   693 				
+   694 					.ifdef MAIN.ATARI.@UnitInit
+   695 					jsr MAIN.ATARI.@UnitInit
+   696 					eif
+   697 				
+   698 					.ifdef MAIN.CRT.@UnitInit
+   699 					jsr MAIN.CRT.@UnitInit
+   700 					eif
+   701 				.endm
+   702
+   703 				; ------------------------------------------------------------
+   704
+   705 					ift .SIZEOF(MAIN.SYSTEM) > 0
+   706 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+   706 				SYSTEM: $21A8..$21C6
+   707 					eif
+   708
+   709 					ift .SIZEOF(MAIN.ATARI) > 0
+   710 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+   711 					eif
+   712
+   713 					ift .SIZEOF(MAIN.CRT) > 0
+   714 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+   715 					eif
+   716
+   717 					.print 'CODE: ',CODEORIGIN,'..',*-1
+   717 				CODE: $2000..$2326
+   718
+   719 				; ------------------------------------------------------------
+   720
+   721 2327			DATAORIGIN
+   722 2327 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   723 233F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   724 2357 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   725 236F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   726 2387 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   727 239F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   728 23B7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   729 23CF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   730 23E7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   731 23FF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   732 2417 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   733 242F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   734 2447 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   735 245F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   736 2477 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   737 248F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   738 24A7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   739 24BF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   740 24D7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   741 24EF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   742 2507 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   743 251F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   744 2537 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   745 254F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   746 2567 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   747 257F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   748 2597 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   749 25AF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   750 25C7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   751 25DF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   752 25F7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   753 260F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   754 2627 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   755 263F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   756 2657 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   757 266F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   758 2687 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   759 269F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   760 26B7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   761 26CF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   762 26E7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   763 26FF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   764 2717 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   765 272F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   766 2747 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   767 275F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   768 2777 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   769 278F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   770 27A7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   771 27BF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   772 27D7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   773 27EF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   774 2807 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   775 281F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   776 2837 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   777 284F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   778 2867 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   779 287F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   780 2897 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   781 28AF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   782 28C7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   783 28DF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   784 28F7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   785 290F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   786 2927 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   787 293F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   788 2957 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   789 296F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   790 2987 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   791 299F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   792 29B7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   793 29CF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   794 29E7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   795 29FF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   796 2A17 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   797 2A2F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   798 2A47 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   799 2A5F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   800 2A77 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   801 2A8F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   802 2AA7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   803 2ABF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   804 2AD7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   805 2AEF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   806 2B07 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   807 2B1F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   808 2B37 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   809 2B4F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   810 2B67 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   811 2B7F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   812 2B97 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   813 2BAF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   814 2BC7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   815 2BDF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   816 2BF7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   817 2C0F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   818 2C27 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   819 2C3F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   820 2C57 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   821 2C6F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   822 2C87 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   823 2C9F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   824 2CB7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   825 2CCF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   826 2CE7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   827 2CFF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   828 2D17 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   829 2D2F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   830 2D47 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   831 2D5F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   832 2D77 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   833 2D8F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   834 2DA7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   835 2DBF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   836 2DD7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   837 2DEF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   838 2E07 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   839 2E1F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   840 2E37 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   841 2E4F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   842 2E67 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   843 2E7F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   844 2E97 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   845 2EAF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   846 2EC7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   847 2EDF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   848 2EF7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   849 2F0F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   850 2F27 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   851 2F3F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   852 2F57 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   853 2F6F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   854 2F87 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   855 2F9F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   856 2FB7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   857 2FCF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   858 2FE7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   859 2FFF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   860 3017 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   861 302F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   862 3047 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   863 305F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   864 3077 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   865 308F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   866 30A7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   867 30BF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   868 30D7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   869 30EF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   870 3107 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   871 311F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   872 3137 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   873 314F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   874 3167 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   875 317F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   876 3197 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   877 31AF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   878 31C7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   879 31DF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   880 31F7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   881 320F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   882 3227 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   883 323F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   884 3257 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   885 326F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   886 3287 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   887 329F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   888 32B7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   889 32CF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   890 32E7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   891 32FF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   892 3317 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   893 332F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   894 3347 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   895 335F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   896 3377 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   897 338F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   898 33A7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   899 33BF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   900 33D7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   901 33EF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   902 3407 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   903 341F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   904 3437 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   905 344F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   906 3467 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   907 347F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   908 3497 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   909 34AF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   910 34C7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   911 34DF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   912 34F7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   913 350F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   914 3527 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   915 353F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   916 3557 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   917 356F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   918 3587 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   919 359F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   920 35B7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   921 35CF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   922 35E7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   923 35FF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   924 3617 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   925 362F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   926 3647 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   927 365F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   928 3677 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   929 368F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   930 36A7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   931 36BF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   932 36D7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   933 36EF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   934 3707 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   935 371F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   936 3737 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   937 374F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   938 3767 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   939 377F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   940 3797 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   941 37AF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   942 37C7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   943 37DF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   944 37F7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   945 380F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   946 3827 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   947 383F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   948 3857 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   949 386F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   950 3887 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   951 389F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   952 38B7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   953 38CF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   954 38E7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   955 38FF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   956 3917 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   957 392F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   958 3947 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   959 395F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   960 3977 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   961 398F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   962 39A7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   963 39BF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   964 39D7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   965 39EF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   966 3A07 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   967 3A1F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   968 3A37 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   969 3A4F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   970 3A67 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   971 3A7F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   972 3A97 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   973 3AAF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   974 3AC7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   975 3ADF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   976 3AF7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   977 3B0F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   978 3B27 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   979 3B3F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   980 3B57 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   981 3B6F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   982 3B87 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   983 3B9F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   984 3BB7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   985 3BCF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   986 3BE7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   987 3BFF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   988 3C17 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   989 3C2F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   990 3C47 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   991 3C5F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   992 3C77 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   993 3C8F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   994 3CA7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   995 3CBF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   996 3CD7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   997 3CEF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   998 3D07 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+   999 3D1F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1000 3D37 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1001 3D4F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1002 3D67 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1003 3D7F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1004 3D97 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1005 3DAF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1006 3DC7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1007 3DDF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1008 3DF7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1009 3E0F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1010 3E27 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1011 3E3F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1012 3E57 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1013 3E6F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1014 3E87 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1015 3E9F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1016 3EB7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1017 3ECF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1018 3EE7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1019 3EFF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1020 3F17 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1021 3F2F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1022 3F47 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1023 3F5F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1024 3F77 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1025 3F8F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1026 3FA7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1027 3FBF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1028 3FD7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1029 3FEF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1030 4007 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1031 401F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1032 4037 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1033 404F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1034 4067 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1035 407F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1036 4097 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1037 40AF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1038 40C7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1039 40DF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1040 40F7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1041 410F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1042 4127 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1043 413F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1044 4157 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1045 416F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1046 4187 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1047 419F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1048 41B7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1049 41CF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1050 41E7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1051 41FF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1052 4217 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1053 422F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1054 4247 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1055 425F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1056 4277 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1057 428F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1058 42A7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1059 42BF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1060 42D7 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1061 42EF 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1062 4307 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1063 431F 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $5B
+  1064
+  1065 = 200D			VARINITSIZE	= *-DATAORIGIN
+  1066 = 2018			VARDATASIZE	= 8216
+  1067
+  1068 = 433F			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+  1069
+  1070 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+  1070 				DATA: $2327..$433F
+  1071
+  1072 02E0-02E1> 78 21			run START
+  1073
+  1074 				; ------------------------------------------------------------
+  1075
+  1076 				.macro	STATICDATA
+  1077 				.by  $0C $45 $66 $66 $65 $63 $74 $75  $73 $20 $30 $2E $35 $00 $00 $00  $08 $20 $4A $49 $46 $46 $49 $45
+  1078 				.by  $53 $00 $07 $20 $50 $52 $49 $4D  $45 $53 $00
+  1079 				.endm
+  1080
+  1081 					end

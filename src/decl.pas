@@ -39,7 +39,7 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.5.1';  // Effectus version
+  VERSION = '0.5.2';  // Effectus version
 
 type
   // Program flag variables
@@ -114,30 +114,23 @@ type
   TBranchPtr = record
     isIfThen : boolean;
     isIfThenNext : boolean;
-    isElseNext : boolean;
-    isElseIfNext : boolean;
     isEndIfNext : boolean;
     isIfThenInProgress : boolean;
-    ifThenCode : string;
-    ifTempCode : string;
     isFuncInIf : boolean;
+    isUndefRepeat : boolean;
 
-    isFor : boolean;
-    isForDoNext : boolean;
-    isForToNext : boolean;
-    isForOdNext : boolean;
+    isFor : boolean;     // FOR branch
+    isWhile : boolean;   // WHILE branch
+    isRepeat : boolean;  // DO branch
+    isUntil : boolean;   // UNTIL condition
+
+    ifThenCode : string;
+    //ifTempCode : string;
     forCode : string;
-    forCnt : byte;
-
-    isWhile : boolean;
-    isWhileDoNext : boolean;
-    isWhileOdNext : boolean;
     whileCode : string;
-    whileCnt : byte;
-
-    isDoOd : boolean;
-    isUntil : boolean;
     untilCode : string;
+
+    Count : word;
   end;
 
   // Device support variables
@@ -174,14 +167,14 @@ var
   optBinExt,
   meditMADS_log_dir : string;
   actionFilename : string = '';
-  isInfo : Boolean = False;  // Information about variables, procedures and functions
+
   myProcs, myFuncs : TStringList;
   oper : TStringList;
 
   dataValue : string;
   prgPtr : TPrgPtr;
-  branchPtr : TBranchPtr;
   varPtr : TVarPtr;
+  branchPtr : TBranchPtr;
   devicePtr : TDevicePtr;
   paramCntx : byte;
   paramTypes : string;
@@ -189,10 +182,17 @@ var
 
   operators : TStringArray;
   aList : TStringList;
+  branchList : TStringList;
 
   varCnt : byte = 0;
   tempProc : string;
   filePath : string;
+
+  isPas : boolean = false;
+  isAsm : boolean = false;
+
+  // Information about variables, PROCedures and FUNCtions
+  isInfo : Boolean = False;
 
 const
   _VAR_SCALAR     = '0';
@@ -204,38 +204,43 @@ const
   _VAR_SCALAR_DEFAULT = '6';
   _VAR_TYPE_REC   = '7';
   
-  _MARKER = '<<x>>';  
+  _MARKER = '<<x>>';
 
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
   _MP_DEVICE_SYSUTILS: array [0..8] of string =
     ('OPEN', 'CLOSE', 'PUTD', 'PRINTD', 'PRINTBD', 'PRINTCD', 'PRINTID', 'GETD', 'INPUTSD');
   _MP_STICK: array [0..3] of string =
-    ('STICK','STRIG','PADDLE','PTRIG');
+    ('STICK', 'STRIG', 'PADDLE', 'PTRIG');
   _MP_GRAPHICS: array [0..4] of string =
-    ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
+    ('GRAPHICS', 'PLOT', 'DRAWTO', 'COLOR', 'FILL');
   _MP_SYSUTILS: array [0..5] of string =
-       ('STRB','STRC','STRI','VALB','VALC','VALI');
+    ('STRB', 'STRC', 'STRI', 'VALB', 'VALC', 'VALI');
 
   _REPLACEMENT : array [0..16, 0..1] of string = (
-    ('RAND','Random'),
-    ('PEEK','Peek'),
-    ('PEEKC','DPeek'),
-    ('VALB','StrToInt'),
-    ('VALC','StrToInt'),
-    ('VALI','StrToInt'),
-    ('INPUTBD','Get'),
-    ('INPUTCD','Get'),
-    ('INPUTID','Get'),
-    ('GETD','Get'),
-    ('STICK','stick'),
-    ('STRIG','strig'),
-    ('PADDLE','paddl'),
-    ('PTRIG','ptrig'),
-    ('INPUTB','Readln'),
-    ('INPUTC','Readln'),
-    ('INPUTI','Readln')
+    ('RAND', 'Random'),
+    ('PEEK', 'Peek'),
+    ('PEEKC', 'DPeek'),
+    ('VALB', 'StrToInt'),
+    ('VALC', 'StrToInt'),
+    ('VALI', 'StrToInt'),
+    ('INPUTBD', 'Get'),
+    ('INPUTCD', 'Get'),
+    ('INPUTID', 'Get'),
+    ('GETD', 'Get'),
+    ('STICK', 'stick'),
+    ('STRIG', 'strig'),
+    ('PADDLE', 'paddl'),
+    ('PTRIG', 'ptrig'),
+    ('INPUTB', 'Readln'),
+    ('INPUTC', 'Readln'),
+    ('INPUTI', 'Readln')
   );
+
+  _ASM_OPCODE : array[0..3] of string[10] =
+    ('lda', 'ldx', 'ldy', 'mva');
+  _ACTION_ZERO_PAGE : array[3..15] of string[3] =
+    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af');
 
 procedure Init;
 procedure CreateLists;
@@ -261,6 +266,7 @@ begin
   myFuncs.Clear;
   defineList.Clear;
   aList.Clear;
+  branchList.Clear;
 
   // Action! keywords
   keywords.Add('MODULE=0');
@@ -286,6 +292,10 @@ begin
   keywords.Add('UNTIL=1');
   keywords.Add('DO=1');
   keywords.Add('OD=1');
+  // Non-standard end branch statements
+  keywords.Add('ODWHILE=1');
+  keywords.Add('ODFOR=1');
+  //keywords.Add('ODREPEAT=1');
 
   // Data types
   dataTypes.Add('BYTE=1');
@@ -453,8 +463,6 @@ begin
   procParams.Add('InputCD=1;2');
   procParams.Add('InputID=1;2');
   procParams.Add('SCompare=2;1;1');
-
-  //ProcBuf.CaseSensitive := False;
 end;
 
 {------------------------------------------------------------------------------
@@ -476,6 +484,7 @@ begin
   defineList := TStringList.Create;
   oper := TStringlist.create;
   aList := TStringlist.create;
+  branchList := TStringlist.create;
 end;
 
 {------------------------------------------------------------------------------
@@ -497,6 +506,7 @@ begin
   defineList.Free;
   oper.Free;
   aList.Free;
+  branchList.Free;
 end;
 
 end.

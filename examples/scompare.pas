@@ -4,11 +4,10 @@ program scomparePrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using SCompare function
 // 
 // SBYTE ARRAY as temporary substitution
@@ -34,10 +33,10 @@ begin  // 2
   Writeln('Value of comparison by SCompare is:');
   Writeln(value);
   Writeln('');
-  if value<0 then begin
+  if  value<0  then begin
   Writeln('str2 is greater than str1');
   end
-  else if value=0 then begin
+  else if  value=0  then begin
   Writeln('str1 and str2 are equal');
   end
   else begin
@@ -55,7 +54,7 @@ begin  // 2
   end;  // if
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

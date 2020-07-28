@@ -38,11 +38,9 @@
          code.Add(temp);
        end
        else if procName = 'PRINTE' then begin
-         //writeln('params[0] = ', Trim(params[0]), '*');
-         if (params[0] = '""') or (UpperCase(params[0]) = 'PRINTE()') then begin
-           //writeln('2.) params[0] = ', params[0], '**');
-           params2 := QuotedStr('');
-         end;
+         if (params[0] = '""') or (UpperCase(params[0]) = 'PRINTE()') then
+              params2 := QuotedStr('');
+
          temp := '  Writeln(' + params2 + ');';
          code.Add(temp);
        end
@@ -76,16 +74,7 @@
        end
        else if procName = 'GRAPHICS' then begin
          temp := '';
-
-         //if devicePtr.isDevice then begin
-         //  temp := '  assign(f, ''S:''); rewrite(f, 1);' + LineEnding;
-         //end;
-
          devicePtr.isGr0 := params2 = '0';
-//          if params2 = '0' then begin
-//            devicePtr.isGr0 := true
-//          end
-
          temp += '  InitGraph(' + params2 + ');';
          code.Add(temp);
        end
@@ -112,7 +101,6 @@
        else if procName = 'POKE' then begin
          temp := '  Poke(' + params2 + ');';
          code.Add(temp);
-         //writeln('poke = ', temp);
        end
        else if procName = 'POKEC' then begin
          temp := '  DPoke(' + params2 + ');';
@@ -142,6 +130,25 @@
          code.Add(temp);
        end
        else if procName = 'SETBLOCK' then begin
+         params := params2.Split(',');
+         params[0] := Trim(params[0]);
+         if vars.IndexOfName(params[0]) >= 0 then begin
+           if VarValue(2, vars.IndexOfName(params[0]), _VAR_BYTE_ARRAY) or
+              VarValue(2, vars.IndexOfName(params[0]), _VAR_CARD_ARRAY) then
+           begin
+             //params[j] := '@' + params[j];
+             //params[0] := 'pointer(' + params[0] + ')';
+           end
+           else begin
+             params[0] := 'pointer(' + params[0] + ')';
+           end;
+         end
+         else begin
+           params[0] := 'pointer(' + params[0] + ')';
+         end;
+         params[1] := Trim(params[1]);
+         params[2] := Trim(params[2]);
+         params2 := params[0] + ', ' + params[1] + ', ' + params[2];
          temp := '  FillChar(' + params2 + ');';
          code.Add(temp);
        end
@@ -149,10 +156,9 @@
          params := params2.Split(',');
          params[0] := Trim(params[0]);
          params[1] := Trim(params[1]);
+         if IsNumber(params[1][1]) then
+              params[1] := 'pointer(' + Trim(params[1]) + ')';
 
-         if IsNumber(params[1][1]) then begin
-           params[1] := 'pointer(' + Trim(params[1]) + ')';
-         end;
          params2 := Trim(params[1]) + ', pointer(' + Trim(params[0]) + '), ' + params[2];
          temp := '  Move(' + params2 + ');';
          code.Add(temp);
@@ -169,13 +175,7 @@
          code.Add(temp);
        end
        else if procName = 'PUT' then begin
-//          if params2[1] = '''' then begin
-//            temp := Extract(2, params2, '''');
-//            temp := '  Write(' + QuotedStr(temp) + ');  // test put';
-//          end
-//          else begin
-           temp := '  Write(Chr(' + params2 + '));';
-         //end;
+         temp := '  Write(Chr(' + params2 + '));';
          code.Add(temp);
        end
        else if procName = 'STRB' then begin
@@ -245,16 +245,11 @@
          // Format string definition
          params := params2.Split(',', '"', '"');
          temp := params[0];
-
-         // Process
-         if Pos('%%', temp) > 0 then begin
-           //SplitStr(temp, '%%', aList);
-           temp := ReplaceStr(temp, '%%', '%{percentEff}');
-         end;
+         if Pos('%%', temp) > 0 then
+              temp := ReplaceStr(temp, '%%', '%{percentEff}');
 
          temp := ExtractText(temp, '"', '"');
          temp02 := QuotedStr(Extract(1, temp, '%'));
-         //temp02 := QuotedStr(ReplaceStr(temp02, '"', '')) + ', ';
 
          // "line: %i%E",i
          // "line: %s%E",str
@@ -264,7 +259,6 @@
              Inc(cnt);
              params[cnt] := ReplaceStr(params[cnt], '(', '[');
              params[cnt] := ReplaceStr(params[cnt], ')', ']');
-             //temp02 += params[i] + ', ' + QuotedStr(Extract(2, paramsEx[i], 'i', []));
              temp02 += ', ' + params[cnt] + ', ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if UpperCase(paramsEx[i][1]) = 'U' then begin
@@ -287,7 +281,6 @@
            end
            else if UpperCase(paramsEx[i][1]) = 'C' then begin
              Inc(cnt);
-             //temp02 += params[i] + ', ' + QuotedStr(Extract(2, paramsEx[i], 'i', []));
              temp02 += ', Chr(' + params[cnt] + '), ' + QuotedStr(Copy(paramsEx[i], 2, Length(paramsEx[i]) - 1));
            end
            else if Pos('{percentEff}', paramsEx[i]) > 0 then begin
@@ -334,29 +327,13 @@
           end;
        end
        else if (procName = 'CLOSE') then begin
-         //if devicePtr.isOpen then begin
-         //  devicePtr.isOpen := false;
-           //procedure Cls(chn: byte); assembler;
-           //temp := '  Close(f);';
-           temp := '  Cls(' + params2 + ');';
-           code.Add(temp);
-         //end;
+         //procedure Cls(chn: byte); assembler;
+         temp := '  Cls(' + params2 + ');';
+         code.Add(temp);
        end
        else if procName = 'PUTD' then begin
          params := params2.Split(',');
          if High(params) > 0 then begin
-//            // F.e. 'A
-//            if params[1][1] = '''' then begin
-//              temp := Extract(2, params[1], '''');
-//              //temp := QuotedStr(IntToStr(ord(temp)));
-//            end
-//            else begin
-           //  temp := 'Concat(Chr(' + params[1] + '), ' + QuotedStr('') + ')';
-           //  temp := 'Concat(' + temp + ', ' + QuotedStr('') + ');';
-             //temp := params[1];
-//           end;
-           //temp := '  strBuffer := ' + temp + ';' + LineEnding;
-           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            // Put(6, ord('A'*));
            temp := '  Put(' + params[0] + ', ' + params[1] + ');';
            code.Add(temp);
@@ -372,13 +349,8 @@
          temp03 := StringReplace(params2, ',', '{', []);
          params := temp03.Split('{');
          if High(params) > 0 then begin
-           //Position(6,  'hi);  Blockwrite(f, atariage'[1], length(atariage'));
-           //Blockwrite(f,  'hi atariage'[1], length( 'hi atariage'));
-           //temp03 := StringReplace(params2, ',', '{', []);
-           //temp03 := Extract(2, temp03, '{');
            temp := '  strBuffer := ' + params[1] + ';' + LineEnding;
            //temp := '  GotoXY(' + prgPtr.posX + ', ' + prgPtr.posY + ');' + LineEnding;
-           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -400,7 +372,6 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -409,7 +380,6 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := Concat(IntToStr(' + params[1] + '), #$9b);' + LineEnding;
-           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -418,7 +388,6 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -427,7 +396,6 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := Concat(IntToStr(' + params[1] + '), #$9b);' + LineEnding;
-           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;
@@ -436,7 +404,6 @@
          params := params2.Split(',');
          if High(params) > 0 then begin
            temp := '  strBuffer := IntToStr(' + params[1] + ');' + LineEnding;
-           //temp += '  Blockwrite(f, strBuffer[1], Length(strBuffer));';
            temp += '  BPut(' + params[0] + ', @strBuffer[1], Length(strBuffer));';
            code.Add(temp);
          end;

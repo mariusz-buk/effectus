@@ -4,11 +4,10 @@ program locate_gr0Prg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using Locate in text mode 0
 
 procedure MAINProc;
@@ -30,7 +29,7 @@ begin  // 2
   Write(Chr(LOC));
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

@@ -4,11 +4,10 @@ program chrdefPrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// - - - - - - - - - - - - - - - - - -
+// ----------------
 // Character set redefinition demo
 // NEW CHARACTER DATA
 var
@@ -50,10 +49,11 @@ begin  // 6
 // CHECK FOR SPACE KEY PRESSED
   CH := 255;
   repeat
-  until  CH=33;
+ UNTIL CH=33;
+  CH := 255;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

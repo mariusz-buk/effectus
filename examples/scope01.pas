@@ -4,11 +4,10 @@ program scope01Prg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Variable assignment and its scope
 var
   key : byte;
@@ -18,7 +17,7 @@ procedure CHANGEProc;
 begin  // 1
   n1 := 10;
   Writeln(n1);
-end;  // 4
+end;
 
 procedure MAINProc;
 begin  // 6
@@ -26,7 +25,7 @@ begin  // 6
   CHANGEProc;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

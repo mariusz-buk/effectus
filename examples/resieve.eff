@@ -1,3 +1,8 @@
+; Effectus example
+; ----------------
+; Benchmark test
+; calculating prime numbers
+
 BYTE ch=764      ; ESC = 28
 BYTE RTCLOCK=20 ; sys timer
 BYTE ARRAY FLAGS(8191)
@@ -30,7 +35,7 @@ PROC main()
 
  RTCLOCK=0
  sieve()
- PRINTF("Effectus 0.4")
+ PRINTF("Effectus 0.5")
  PRINTF("%E %U JIFFIES",RTCLOCK)
 
  FOR N=2 TO 8191

@@ -5,7 +5,7 @@ uses
   Crt, Graph;
 
 // Effectus example
-// - - - - - - - - - - - - - - - - - -
+// ----------------
 // Display list interrupt (DLI) demo
 var
   DL : array[0..21] of byte = ($70, $70, $70, $42, $00, $40, $2, $2, $2, $2, $F0, $2, $2, $2, $2, $2, $70, $70, $70, $41, $00, $20);
@@ -28,9 +28,9 @@ begin  // 1
   VDSLST := word(@DLI);
   NMIEN := $C0;
  WHILE CH=$FF do begin
-  end;  // while
+  end;
   InitGraph(0);
-end;  // 4
+end;
 
 begin
   MAINProc;

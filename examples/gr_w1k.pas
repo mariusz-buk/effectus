@@ -4,11 +4,10 @@ program gr_w1kPrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Graphics demonstration
 // 
 // Graphics Program by w1k
@@ -22,14 +21,14 @@ begin  // 1
   PutPixel(X0, Y0);
   MoveTo(X0, Y0);
   LineTo(X1, Y1);
-end;  // 4
+end;
 
 procedure DEMOProc;
 begin  // 6
-  for  i:=0 to 79 do begin
+ FOR i:=0 to 79 do begin
   LINKAProc(0, 0, 159, I);
-  end;  // for
-end;  // 4
+  end;
+end;
 
 procedure HLPROGRAMProc;
 begin  // 6
@@ -39,7 +38,7 @@ begin  // 6
   Writeln('STLAC');
   KLAVESA := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   HLPROGRAMProc;

@@ -4,12 +4,10 @@ program definePrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
-// --------------------------------------
 // Effectus example
-// --------------------------------------
+// ----------------
 var
   key : byte;
 
@@ -28,12 +26,12 @@ begin  // 1
   Writeln('Cls,Newline');
   Writeln('');
   Writeln('Count from 1 to max');
-  for  n:=1 to 3 do begin
+ FOR n:=1 to 3 do begin
   Writeln(n);
-  end;  // for
+  end;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   DEFINE_TESTProc;

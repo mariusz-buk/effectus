@@ -159,7 +159,7 @@ begin
   end;
 end;
 
-procedure FuncInIfCond(procName, temp, params2 : string);  //; compare : string);
+procedure FuncInIfCond(procName, temp, params2 : string);
 var
   //params : TStringArray;
   temp02 : string;
@@ -277,37 +277,6 @@ begin
   end;
   Result:= nSep;
 end;
-
-// function Split(const str : string; const separator : string): TStringArray;
-// var
-//   i, n: integer;
-//   strline, strfield: string;
-// begin
-//   n:= Occurs(str, separator);
-//   SetLength(Result, n + 1);
-//   i := 0;
-//   strline:= str;
-//   repeat
-//     if Pos(separator, strline) > 0 then begin
-//       strfield:= Copy(strline, 1, Pos(separator, strline) - 1);
-//       strline:= Copy(strline, Pos(separator, strline) + 1,
-//                      Length(strline) - pos(separator,strline));
-//     end
-//     else begin
-//       strfield:= strline;
-//       strline:= '';
-//     end;
-//     Result[i]:= strfield;
-//     Inc(i);
-//   until strline= '';
-//   if Result[High(Result)] = '' then SetLength(Result, Length(Result) -1);
-// end;
-
-// procedure SplitText(const aDelimiter,s: String; aList: TStringList);
-// begin
-//   aList.LineBreak := aDelimiter;
-//   aList.Text := s;
-// end;
 
 procedure SplitStr(const Source, Delimiter: String; var DelimitedList: TStringList);
 var

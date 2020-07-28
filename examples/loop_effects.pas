@@ -4,11 +4,10 @@ program loop_effectsPrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Loop effects by ascrnet
 // http://www.atariage.com/forums/topic/112501-effectus-new-atari-cross-compiler-alpha-stage/page__st__25
 // Demo Effectus
@@ -24,8 +23,8 @@ begin  // 2
   strBuffer := IntToStr( i);
   BPut(6, @strBuffer[1], Length(strBuffer));
   Poke(710, i);
-  until 0 = 1;
-end;  // 4
+  until false;
+end;
 
 begin
   MAINProc;

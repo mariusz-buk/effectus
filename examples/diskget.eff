@@ -1,5 +1,5 @@
 ; Effectus example
-;-------------------------------------
+; ----------------
 ; Device I/O demo using GetD and EOF
 ; routines
 ; Sample file: H1:TESTNUM.TXT

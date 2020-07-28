@@ -4,18 +4,17 @@ program callosPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Calling OS routines by using PROC
 // memory assignment
 
 procedure TEXTProc;
 begin  // 6
   Writeln('Press two keys to scroll up!');
-end;  // 4
+end;
 
 // Scroll screen
 procedure SCROLLProc;
@@ -24,7 +23,7 @@ begin
     jsr $F7F7
     rts
   };
-end;  // 5
+end;
 // Keyclick sound
 procedure CLICKProc;
 begin
@@ -32,7 +31,7 @@ begin
     jsr $F983
     rts
   };
-end;  // 5
+end;
 // Read key
 procedure KBGETProc;
 begin
@@ -40,7 +39,7 @@ begin
     jsr $F302
     rts
   };
-end;  // 5
+end;
 // Cassette-beep sound
 procedure BEEPWAITProc(times : byte);
 begin
@@ -48,7 +47,7 @@ begin
     jsr $FDFC
     rts
   };
-end;  // 6
+end;
 procedure MAINProc;
 var
   N : byte;
@@ -59,13 +58,13 @@ begin  // 2
   TEXTProc;
   BEEPWAITProc(1);
   KBGETProc;
-  for  N:=1 TO 20 do begin
+ FOR N:=1 TO 20 do begin
   CLICKProc;
   SCROLLProc;
-  end;  // for
+  end;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

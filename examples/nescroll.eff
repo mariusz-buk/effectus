@@ -1,0 +1,59 @@
+; Effectus example
+; ----------------
+; Horizontal scrolling demo
+
+BYTE ARRAY
+  DL=[$70$70$70$52$00$40$52$60$40$52$C0$40$41$00$20]
+
+BYTE
+  HSCROL=$D404,
+  RANDOM=$D20A
+
+CARD
+  SDLSTL=$230,
+  SCREENI=[$4000]
+
+PROC WAIT=*(BYTE F)[$18$65$14$C5$14$D0$FC$60]
+
+PROC MAIN()
+  BYTE
+    HSCROLI=$CA,
+    A,B,C
+
+  SDLSTL=DL
+  HSCROLI=$F
+
+  DO
+    IF HSCROLI=$B THEN
+      A=(RANDOM&15)+33
+      B=(RANDOM&15)+33
+      C=(RANDOM&15)+33
+
+      POKE(SCREENI,A)
+      POKE(SCREENI+$60,B)
+      POKE(SCREENI+$C0,C)
+
+      POKE(SCREENI+$30,A)
+      POKE(SCREENI+$30+$60,B)
+      POKE(SCREENI+$30+$C0,C)
+
+      DL(4)==+1
+      DL(7)==+1
+      DL($A)==+1
+
+      SCREENI==+1
+
+      IF DL(4)=$30 THEN
+        DL(4)=0
+        DL(7)=$60
+        DL($A)=$C0
+        SCREENI=$4000
+      FI
+
+      HSCROLI=$F
+    FI
+
+    HSCROL=HSCROLI HSCROLI==-1
+    WAIT(1)
+  OD
+RETURN

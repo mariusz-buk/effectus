@@ -1,3 +1,8 @@
+; Effectus example
+; ----------------
+; Graphics demo with benchmark test
+; using iterations
+
 BYTE ch=764     ; ESC = 28
 
 BYTE RTCLOCK=20 ; sys timer

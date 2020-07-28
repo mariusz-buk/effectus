@@ -32,13 +32,14 @@
 }
        branchPtr.isFuncInIf := false;
 
-       if branchPtr.isIfThen and branchPtr.isIfThenInProgress then begin
+       // Function is in IF condition block
+       if (branchPtr.isIfThen and branchPtr.isIfThenInProgress) or
+          branchPtr.isWhile or branchPtr.isUntil then
+       begin
          FuncInIfCond(procName, temp, params2);
        end
-       else begin
        // Function is not in IF condition block
-       //if not branchPtr.isIfThen and not branchPtr.isIfThenInProgress then begin
-
+       else begin
          // doubled delimiter - to be sure ;)
          temp := ',' + procName + ',';
 
@@ -48,7 +49,7 @@
          temp02 := '  ' + _MARKER + '(' + funcVar + ');';
          // STICK, STRIG, PADDLE, PTRIG
          temp03 := '  ' + funcVar + ' := ' + _MARKER + '[' + params2 + '];';
-         // ReplaceKey function works on _REPLACMENT array
+         // ReplaceKey function works on _REPLACEMENT array
          temp04 := ReplaceKey(_MARKER, procName);
 
          if Pos(temp, ',RAND,PEEK,PEEKC,VALB,VALC,VALI,GETD,INPUTBD,INPUTCD,INPUTID,') > 0 then
@@ -61,8 +62,6 @@
          if procName = 'GETD' then begin
            if params2 = '7' then temp01 += LineEnding + '  ReadKey;';
          end;
-
-         //writeln('temp01 = ', temp01);
 
          if Pos(_MARKER, temp01) = 0 then code.Add(temp01)
          else if Pos(_MARKER, temp02) = 0 then code.Add(temp02)
@@ -94,20 +93,8 @@
              else begin
                params2 := '1'
              end;
-//              if branchPtr.isIfThenInProgress then begin
-//                if branchPtr.ifTempCode = '' then begin
-//                  funcVar := '  intValue ';
-//                  temp := '  ' + funcVar + ' := ' + params2 + ';';
-//                  branchPtr.ifTempCode := ' ' + funcVar + '=' + params2 + ' ';
-//                end;
-//              end
-//              else begin
              temp := '  ' + funcVar + ' := ' + params2 + ';';
              code.Add(temp);
            end;
          end;
        end;
-       // Function is in IF condition block
-//         else begin
-//           FuncInIfCond(procName, temp, params2);
-//         end;

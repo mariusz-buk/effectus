@@ -5,7 +5,7 @@ uses
   Crt, SySutils, Joystick;
 
 // Effectus example
-// -------------------------------------
+// ----------------
 // Joystick demo
 // (using Stick and Strig functions)
 
@@ -20,9 +20,9 @@ begin  // 2
   B := stick[0];
   Writeln(B);
   fire := strig[0];
-  end;  // while
+  end;
   Writeln('TRIGGER WAS PRESSED!');
-end;  // 4
+end;
 
 begin
   MAINProc;

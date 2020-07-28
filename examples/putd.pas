@@ -4,11 +4,10 @@ program putdPrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// - - - - - - - - - - - - - - - - - -
+// ----------------
 // PutD and PutDE demo
 // Print character codes to the screen
 
@@ -27,8 +26,9 @@ begin  // 2
 // PRESS ANY KEY TO EXIT
   CH := 255;
   repeat
-  until  CH<>255;
-end;  // 4
+ UNTIL CH<>255;
+  CH := 255;
+end;
 
 begin
   PUTD_TESTProc;

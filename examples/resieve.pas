@@ -4,6 +4,10 @@ program resievePrg;
 uses
   Crt;
 
+// Effectus example
+// ----------------
+// Benchmark test
+// calculating prime numbers
 var
   ch : byte absolute 764;
   RTCLOCK : byte absolute 20;
@@ -17,18 +21,18 @@ var
   K : word;
 begin  // 1
  WHILE FRAME=RTCLOCK do begin
-  end;  // while
+  end;
   FillChar(FLAGS, 8190, 1);
-  for  N:=2 TO SQRCOUNT do begin
-  if FLAGS[N]=1 then begin
+ FOR N:=2 TO SQRCOUNT do begin
+  if  FLAGS[N]=1  then begin
   K := N*2;
  WHILE K<=8191 do begin
   FLAGS[K] := 0;
   Inc(K, N);
-  end;  // for
+  end;
   end;  // if
-  end;  // while
-end;  // 4
+  end;
+end;
 
 procedure MAINProc;
 var
@@ -37,17 +41,17 @@ var
 begin  // 1
   RTCLOCK := 0;
   SIEVEProc;
-  Write('Effectus 0.4');
+  Write('Effectus 0.5');
   Write('', eol, ' ', RTCLOCK, ' JIFFIES');
-  for  N:=2 TO 8191 do begin
-  if FLAGS[N]=1 then begin
+ FOR N:=2 TO 8191 do begin
+  if  FLAGS[N]=1  then begin
   Inc(COUNT);
   end;  // if
-  end;  // for
+  end;
   Write('', eol, ' ', COUNT, ' PRIMES');
  WHILE ch=255 do begin
-  end;  // while
-end;  // 4
+  end;
+end;
 
 begin
   MAINProc;

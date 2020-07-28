@@ -1,748 +1,849 @@
-mads 2.1.0
-  3726 					opt l+
-    95
-    96 				.print 'RUNLIB: ',RUNLIB,'..',*
-    96 				RUNLIB: $204B..$2140
-    97
-    98 				; ------------------------------------------------------------
-    99
-   100 2140			START
-   101 2140 BA				tsx
-   102 2141 8E 06 23			stx MAIN.@halt+1
+mads 2.1.0 build 8 (23 Dec 19)
+   388 					opt l+
+   101
+   102 				.print 'ZPAGE: ',fxptr,'..',zpend-1
+   102 				ZPAGE: $0080..$00D7
    103
-   104 					.ifdef fmulinit
-   105 					fmulinit
-   106 					eif
+   104 				.print 'RTLIB: ',RTLIB,'..',*-1
+   104 				RTLIB: $204B..$217F
+   105
+   106 				; ------------------------------------------------------------
    107
-   108 = 000A			VLEN	= VARDATASIZE-VARINITSIZE
-   109 = 2325			VADR	= DATAORIGIN+VARINITSIZE
-   110
-   111 					ift VADR > $BFFF
-   112 					ert 'Invalid memory address range ',VADR
-   113 					eli (VLEN>0) && (VLEN<=256)
-   114 2144 A2 F6			ldx #256-VLEN
-   115 2146 A9 00			lda #0
-   116 2148 9D 2F 22 E8 D0 FA		sta:rne VADR+VLEN-256,x+
-   117 					eli VLEN>0
-   118 					@fill #VADR #VLEN #0
-   119 					eif
-   120
-   121 214E A2 0F			ldx #$0f
-   122 2150 BD 40 03 9D 09 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
-   123
-   124 2159 E8				inx		; X = 0 !!!
-   125 215A 86 8E			stx bp		; lo BP = 0
-   126
-   127 215C				UNITINITIALIZATION
-Macro: UNITINITIALIZATION [Source: arrmem.a65]
+   108 2180			START
+   109 2180 BA				tsx
+   110 2181 8E 62 23			stx MAIN.@halt+1
+   111
+   112 					.ifdef fmulinit
+   113 					fmulinit
+   114 					eif
+   115
+   116 = 010C			VLEN	= VARDATASIZE-VARINITSIZE
+   117 = 2383			VADR	= DATAORIGIN+VARINITSIZE
+   118
+   119 					ift VADR > $BFFF
+   120 					ert 'Invalid memory address range ',VADR
+   121 					eli (VLEN>0) && (VLEN<=256)
+   122 					ldx #256-VLEN
+   123 					lda #0
+   124 					sta:rne VADR+VLEN-256,x+
+   125 					eli VLEN>0
+   126 					@fill #VADR #VLEN #0
+   126 				 MWA #VADR @FILL.PTR1\ MWA #VLEN @FILL.PTR3\ MVA #0 @FILL.PTR2\ JSR @FILL
+   126 2184 A9 83 85 88 A9 23 +  MWA #VADR @FILL.PTR1
+   126 218C A9 0C 85 8C A9 01 +  MWA #VLEN @FILL.PTR3
+   126 2194 A9 00 85 84		 MVA #0 @FILL.PTR2
+   126 2198 20 6E 20		 JSR @FILL
+   127 					eif
    128
-   129 215C			.local	MAIN						; PROCEDURE
-   130
-   131 215C 4C 02 23			jmp l_0052
+   129 					.ifdef MAIN.@DEFINES.ROMOFF
+   130 					icl 'atari\romoff.asm'
+   131 					.endif
    132
-   133 				; ------------------------------------------------------------
+   133 219B A9 8F 85 82 A9 24 + 	mwa #PROGRAMSTACK psptr
    134
-   135 215F			.local	SYSTEM						; UNIT
-   136
-   137 215F			.local	PEEK						; FUNCTION | ASSEMBLER | REGISTER
-   138
-   139 				; ------------------------------------------------------------
+   135 21A3 A2 0F			ldx #$0f					; DOS II+/D ParamStr
+   136 21A5 BD 40 03 9D 65 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   137
+   138 21AE E8				inx						; X = 0
+   139 21AF 86 90			stx bp						; BP = 0
    140
-   141 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   142 				; as Pointer
-   143 215F B5 98 85 86			mva :STACKORIGIN,x A
-   144 2163 B5 A8 85 87			mva :STACKORIGIN+STACKWIDTH,x A+1
-   145 2167 CA				dex						; sub bx, 1
+   141 21B1 8E 08 D2			stx audctl					; reset POKEY
+   142 21B4 A9 03			lda #3
+   143 21B6 8D 0F D2			sta skctl
+   144
+   145 21B9 CA				dex						; X = 255
    146
-   147 				; ---------------------  ASM Block 004  ---------------------
+   147 21BA				UNITINITIALIZATION
+Macro: UNITINITIALIZATION [Source: arrmem.a65]
+Source: arrmem.a65
    148
-   149 2168 A0 00			ldy #0
-   150 216A B1 86 8D 2A 23		mva (edx),y Result
-   151
-   152 216F			@exit
-   153
-   154 				; ------------------------------------------------------------
-   155
-   156 				; Push BYTE / CHAR / SHORTINT / BOOLEAN
-   157 				; as Pointer
+   149 21BA			.local	MAIN						; PROCEDURE
+   150
+   151 21BA 4C 5E 23			jmp l_0052
+   152
+   153 				; ------------------------------------------------------------
+   154
+   155 21BD			.local	SYSTEM						; UNIT
+   156
+   157 21BD			.local	PEEK						; FUNCTION | ASSEMBLER | REGISTER
    158
-   159 216F E8				inx						; add bx, 1
-   160 2170 AD 2A 23 95 98		mva RESULT :STACKORIGIN,x
-   161
-   162 					.ifdef @new
-   163 					@FreeMem #@VarData #@VarDataSize
-   164 					eif
-   165
-   166 				; ------------------------------------------------------------
-   167
-   168 = 0086			A	= edx
-   169 = 232A			RESULT	= DATAORIGIN+$000B
-   170
-   171 = 232A			@VarData	= RESULT
-   172 = 0001			@VarDataSize	= 1
+   159 				; ------------------------------------------------------------
+   160
+   161 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   162 				; as Pointer
+   163 21BD B5 98 85 88			mva :STACKORIGIN,x A
+   164 21C1 B5 A8 85 89			mva :STACKORIGIN+STACKWIDTH,x A+1
+   165 21C5 CA				dex
+   166
+   167 				; ---------------------  ASM Block 001  ---------------------
+   168
+   169 21C6 A0 00			ldy #0
+   170 21C8 B1 88 8D 88 23		mva (edx),y Result
+   171
+   172 21CD			@exit
    173
-   174 2175 60				rts						; ret
-   175 				.endl
-   176
-   177 				; ------------------------------------------------------------
+   174 				; ------------------------------------------------------------
+   175
+   176 				; Push BYTE / CHAR / SHORTINT / BOOLEAN
+   177 				; as Pointer
    178
-   179 = 0648			M_PI_2	= $0648
-   180 = 0192			D_PI_2	= $0192
-   181 = 0004			D_PI_180	= $0004
-   182 = 0000			MGTIA	= $0000
-   183 = 0080			MVBXE	= $0080
-   184 = 0000			VBXE_XDLADR	= $0000
-   185 = 0100			VBXE_BCBADR	= $0100
-   186 = 1000			VBXE_MAPADR	= $1000
-   187 = 5000			VBXE_OVRADR	= $5000
-   188 = B000			VBXE_WINDOW	= $B000
-   189 = 0000			IDLI	= $0000
-   190 = 0001			IVBL	= $0001
-   191 = 00FE			CH_DELCHR	= $00FE
-   192 = 009B			CH_ENTER	= $009B
-   193 = 001B			CH_ESC	= $001B
-   194 = 001C			CH_CURS_UP	= $001C
-   195 = 001D			CH_CURS_DOWN	= $001D
-   196 = 001E			CH_CURS_LEFT	= $001E
-   197 = 001F			CH_CURS_RIGHT	= $001F
-   198 = 007F			CH_TAB	= $007F
-   199 = 009B			CH_EOL	= $009B
-   200 = 007D			CH_CLR	= $007D
-   201 = 00FD			CH_BELL	= $00FD
-   202 = 007E			CH_DEL	= $007E
-   203 = 009C			CH_DELLINE	= $009C
-   204 = 009D			CH_INSLINE	= $009D
-   205 = 0000			COLOR_BLACK	= $0000
-   206 = 000E			COLOR_WHITE	= $000E
-   207 = 0032			COLOR_RED	= $0032
-   208 = 0096			COLOR_CYAN	= $0096
-   209 = 0068			COLOR_VIOLET	= $0068
-   210 = 00C4			COLOR_GREEN	= $00C4
-   211 = 0074			COLOR_BLUE	= $0074
-   212 = 00EE			COLOR_YELLOW	= $00EE
-   213 = 0028			COLOR_ORANGE	= $0028
-   214 = 00E4			COLOR_BROWN	= $00E4
-   215 = 003C			COLOR_LIGHTRED	= $003C
-   216 = 0004			COLOR_GRAY1	= $0004
-   217 = 0006			COLOR_GRAY2	= $0006
-   218 = 000A			COLOR_GRAY3	= $000A
-   219 = 00CC			COLOR_LIGHTGREEN	= $00CC
-   220 = 007C			COLOR_LIGHTBLUE	= $007C
-   221 = 0004			FMOPENREAD	= $0004
-   222 = 0008			FMOPENWRITE	= $0008
-   223 = 0009			FMOPENAPPEND	= $0009
-   224 = 000C			FMOPENREADWRITE	= $000C
-   225 = 231F			SCREENWIDTH	= DATAORIGIN+$0000
-   226 = 2321			SCREENHEIGHT	= DATAORIGIN+$0002
-   227 = 2323			DATESEPARATOR	= DATAORIGIN+$0004
-   228 = D014			TVSYSTEM	= $D014
-   229 = 02C0			adr.PALETTE	= $02C0
-   230 2176			.var PALETTE	= adr.PALETTE .word
-   231 = D012			adr.HPALETTE	= $D012
-   232 2176			.var HPALETTE	= adr.HPALETTE .word
-   233 = 2324			FILEMODE	= DATAORIGIN+$0005
-   234 = 2325			SCREENMODE	= DATAORIGIN+$0006
-   235 = 2326			IORESULT	= DATAORIGIN+$0007
-   236 = 2327			EOLN	= DATAORIGIN+$0008
-   237 = 2328			RNDSEED	= DATAORIGIN+$0009
-   238
-   239 = 2176 C0 02		PALETTE
-   239 = 2178 12 D0		HPALETTE
-   239 				.endl							; UNIT SYSTEM
-   240
-   241 				; ------------------------------------------------------------
-   242
-   243 217A			.local	DOS						; UNIT
-   244
-   245 				; ------------------------------------------------------------
-   246
-   247 = D014			PALNTSC	= $D014
-   248
-   249 				.endl							; UNIT DOS
-   250
-   251 				; ------------------------------------------------------------
-   252
-   253 217A			.local	STRUTILS					; UNIT
-   254
-   255 				; ------------------------------------------------------------
-   256
-   257 				.endl							; UNIT STRUTILS
-   258
-   259 				; ------------------------------------------------------------
-   260
-   261 217A			.local	SYSUTILS					; UNIT
-   262
-   263 				; ------------------------------------------------------------
-   264
-   265 = 0001			FAREADONLY	= $0001
-   266 = 0002			FAHIDDEN	= $0002
-   267 = 0004			FASYSFILE	= $0004
-   268 = 0008			FAVOLUMEID	= $0008
-   269 = 0010			FADIRECTORY	= $0010
-   270 = 0020			FAARCHIVE	= $0020
-   271 = 003F			FAANYFILE	= $003F
-   272
-   273 				.endl							; UNIT SYSUTILS
-   274
-   275 				; ------------------------------------------------------------
-   276
-   277 217A			.local	ATARI						; UNIT
-   278
-   279 				; ------------------------------------------------------------
-   280
-   281 = 0012			RTCLOK	= $0012
-   282 = 004D			ATRACT	= $004D
-   283 = 0052			LMARGIN	= $0052
-   284 = 0053			RMARGIN	= $0053
-   285 = 0054			ROWCRS	= $0054
-   286 = 0055			COLCRS	= $0055
-   287 = 0057			DINDEX	= $0057
-   288 = 0058			SAVMSC	= $0058
-   289 = 006A			RAMTOP	= $006A
-   290 = 0200			VDSLST	= $0200
-   291 = 0230			SDLSTL	= $0230
-   292 = 0290			TXTROW	= $0290
-   293 = 0291			TXTCOL	= $0291
-   294 = 0293			TINDEX	= $0293
-   295 = 0294			TXTMSC	= $0294
-   296 = 022F			SDMCTL	= $022F
-   297 = 026F			GPRIOR	= $026F
-   298 = 02F0			CRSINH	= $02F0
-   299 = 02F3			CHACT	= $02F3
-   300 = 02F4			CHBAS	= $02F4
-   301 = 02FC			CH	= $02FC
-   302 = 02C0			PCOLR0	= $02C0
-   303 = 02C1			PCOLR1	= $02C1
-   304 = 02C2			PCOLR2	= $02C2
-   305 = 02C3			PCOLR3	= $02C3
-   306 = 02C4			COLOR0	= $02C4
-   307 = 02C5			COLOR1	= $02C5
-   308 = 02C6			COLOR2	= $02C6
-   309 = 02C7			COLOR3	= $02C7
-   310 = 02C8			COLOR4	= $02C8
-   311 = 02C8			COLBAKS	= $02C8
-   312 = D000			HPOSP0	= $D000
-   313 = D001			HPOSP1	= $D001
-   314 = D002			HPOSP2	= $D002
-   315 = D003			HPOSP3	= $D003
-   316 = D004			HPOSM0	= $D004
-   317 = D005			HPOSM1	= $D005
-   318 = D006			HPOSM2	= $D006
-   319 = D007			HPOSM3	= $D007
-   320 = D008			SIZEP0	= $D008
-   321 = D009			SIZEP1	= $D009
-   322 = D00A			SIZEP2	= $D00A
-   323 = D00B			SIZEP3	= $D00B
-   324 = D00C			SIZEM	= $D00C
-   325 = D00D			GRAFP0	= $D00D
-   326 = D00E			GRAFP1	= $D00E
-   327 = D00F			GRAFP2	= $D00F
-   328 = D010			GRAFP3	= $D010
-   329 = D011			GRAFM	= $D011
-   330 = D004			P0PF	= $D004
-   331 = D014			PAL	= $D014
-   332 = D012			COLPM0	= $D012
-   333 = D013			COLPM1	= $D013
-   334 = D014			COLPM2	= $D014
-   335 = D015			COLPM3	= $D015
-   336 = D016			COLPF0	= $D016
-   337 = D017			COLPF1	= $D017
-   338 = D018			COLPF2	= $D018
-   339 = D019			COLPF3	= $D019
-   340 = D01A			COLBK	= $D01A
-   341 = D01B			PRIOR	= $D01B
-   342 = D01D			GRACTL	= $D01D
-   343 = D01E			HITCLR	= $D01E
-   344 = D200			AUDF1	= $D200
-   345 = D201			AUDC1	= $D201
-   346 = D202			AUDF2	= $D202
-   347 = D203			AUDC2	= $D203
-   348 = D204			AUDF3	= $D204
-   349 = D205			AUDC3	= $D205
-   350 = D206			AUDF4	= $D206
-   351 = D207			AUDC4	= $D207
-   352 = D208			AUDCTL	= $D208
-   353 = D20F			SKSTAT	= $D20F
-   354 = D301			PORTB	= $D301
-   355 = D400			DMACTL	= $D400
-   356 = D401			CHACTL	= $D401
-   357 = D402			DLISTL	= $D402
-   358 = D404			HSCROL	= $D404
-   359 = D405			VSCROL	= $D405
-   360 = D407			PMBASE	= $D407
-   361 = D409			CHBASE	= $D409
-   362 = D40A			WSYNC	= $D40A
-   363 = D40B			VCOUNT	= $D40B
-   364 = D40C			PENH	= $D40C
-   365 = D40D			PENV	= $D40D
-   366 = D40E			NMIEN	= $D40E
+   179 21CD E8				inx
+   180 21CE AD 88 23 95 98		mva RESULT :STACKORIGIN,x
+   181
+   182 					.ifdef @new
+   183 					lda <@VarData
+   184 					sta :ztmp
+   185 					lda >@VarData
+   186 					ldy #@VarDataSize-1
+   187 					jmp @FreeMem
+   188 					eif
+   189
+   190 				; ------------------------------------------------------------
+   191
+   192 = 0088			A	= edx
+   193 = 2388			RESULT	= DATAORIGIN+$000B
+   194
+   195 = 2388			@VarData	= RESULT
+   196 = 0001			@VarDataSize	= 1
+   197
+   198 21D3 60				rts						; ret
+   199 				.endl
+   200
+   201 				; ------------------------------------------------------------
+   202
+   203 = 0101			__PORTB_BANKS	= $0101
+   204 = 0648			M_PI_2	= $0648
+   205 = 0192			D_PI_2	= $0192
+   206 = 0004			D_PI_180	= $04
+   207 = 0000			MGTIA	= $00
+   208 = 0080			MVBXE	= $80
+   209 = 0000			VBXE_XDLADR	= $00
+   210 = 0100			VBXE_BCBADR	= $0100
+   211 = 1000			VBXE_MAPADR	= $1000
+   212 = 5000			VBXE_OVRADR	= $5000
+   213 = B000			VBXE_WINDOW	= $B000
+   214 = 0000			IDLI	= $00
+   215 = 0001			IVBL	= $01
+   216 = 00FE			CH_DELCHR	= $FE
+   217 = 009B			CH_ENTER	= $9B
+   218 = 001B			CH_ESC	= $1B
+   219 = 001C			CH_CURS_UP	= $1C
+   220 = 001D			CH_CURS_DOWN	= $1D
+   221 = 001E			CH_CURS_LEFT	= $1E
+   222 = 001F			CH_CURS_RIGHT	= $1F
+   223 = 007F			CH_TAB	= $7F
+   224 = 009B			CH_EOL	= $9B
+   225 = 007D			CH_CLR	= $7D
+   226 = 00FD			CH_BELL	= $FD
+   227 = 007E			CH_DEL	= $7E
+   228 = 009C			CH_DELLINE	= $9C
+   229 = 009D			CH_INSLINE	= $9D
+   230 = 0000			COLOR_BLACK	= $00
+   231 = 000E			COLOR_WHITE	= $0E
+   232 = 0032			COLOR_RED	= $32
+   233 = 0096			COLOR_CYAN	= $96
+   234 = 0068			COLOR_VIOLET	= $68
+   235 = 00C4			COLOR_GREEN	= $C4
+   236 = 0074			COLOR_BLUE	= $74
+   237 = 00EE			COLOR_YELLOW	= $EE
+   238 = 0028			COLOR_ORANGE	= $28
+   239 = 00E4			COLOR_BROWN	= $E4
+   240 = 003C			COLOR_LIGHTRED	= $3C
+   241 = 0004			COLOR_GRAY1	= $04
+   242 = 0006			COLOR_GRAY2	= $06
+   243 = 000A			COLOR_GRAY3	= $0A
+   244 = 00CC			COLOR_LIGHTGREEN	= $CC
+   245 = 007C			COLOR_LIGHTBLUE	= $7C
+   246 = 0004			FMOPENREAD	= $04
+   247 = 0008			FMOPENWRITE	= $08
+   248 = 0009			FMOPENAPPEND	= $09
+   249 = 000C			FMOPENREADWRITE	= $0C
+   250 = 237D			SCREENWIDTH	= DATAORIGIN+$0000
+   251 = 237F			SCREENHEIGHT	= DATAORIGIN+$0002
+   252 = 2381			DATESEPARATOR	= DATAORIGIN+$0004
+   253 = D014			TVSYSTEM	= $D014
+   254 = 02C0			adr.PALETTE	= $02C0
+   255 21D4			.var PALETTE	= adr.PALETTE .word
+   256 = D012			adr.HPALETTE	= $D012
+   257 21D4			.var HPALETTE	= adr.HPALETTE .word
+   258 = 2382			FILEMODE	= DATAORIGIN+$0005
+   259 = 2383			GRAPHMODE	= DATAORIGIN+$0006
+   260 = 2384			IORESULT	= DATAORIGIN+$0007
+   261 = 2385			EOLN	= DATAORIGIN+$0008
+   262 = 2386			RNDSEED	= DATAORIGIN+$0009
+   263
+   264 = 21D4 C0 02		PALETTE
+   264 = 21D6 12 D0		HPALETTE
+   264 				.endl							; UNIT SYSTEM
+   265
+   266 				; ------------------------------------------------------------
+   267
+   268 21D8			.local	ATARI						; UNIT
+   269
+   270 				; ------------------------------------------------------------
+   271
+   272 = 0012			RTCLOK	= $12
+   273 = 004D			ATRACT	= $4D
+   274 = 0052			LMARGIN	= $52
+   275 = 0053			RMARGIN	= $53
+   276 = 0054			ROWCRS	= $54
+   277 = 0055			COLCRS	= $55
+   278 = 0057			DINDEX	= $57
+   279 = 0058			SAVMSC	= $58
+   280 = 0062			PALNTS	= $62
+   281 = 006A			RAMTOP	= $6A
+   282 = 0200			VDSLST	= $0200
+   283 = 0230			SDLSTL	= $0230
+   284 = 0290			TXTROW	= $0290
+   285 = 0291			TXTCOL	= $0291
+   286 = 0293			TINDEX	= $0293
+   287 = 0294			TXTMSC	= $0294
+   288 = 022F			SDMCTL	= $022F
+   289 = 026F			GPRIOR	= $026F
+   290 = 02F0			CRSINH	= $02F0
+   291 = 02F3			CHACT	= $02F3
+   292 = 02F4			CHBAS	= $02F4
+   293 = 02FC			CH	= $02FC
+   294 = 02C0			PCOLR0	= $02C0
+   295 = 02C1			PCOLR1	= $02C1
+   296 = 02C2			PCOLR2	= $02C2
+   297 = 02C3			PCOLR3	= $02C3
+   298 = 02C4			COLOR0	= $02C4
+   299 = 02C5			COLOR1	= $02C5
+   300 = 02C6			COLOR2	= $02C6
+   301 = 02C7			COLOR3	= $02C7
+   302 = 02C8			COLOR4	= $02C8
+   303 = 02C8			COLBAKS	= $02C8
+   304 = D000			HPOSP0	= $D000
+   305 = D001			HPOSP1	= $D001
+   306 = D002			HPOSP2	= $D002
+   307 = D003			HPOSP3	= $D003
+   308 = D004			HPOSM0	= $D004
+   309 = D005			HPOSM1	= $D005
+   310 = D006			HPOSM2	= $D006
+   311 = D007			HPOSM3	= $D007
+   312 = D008			SIZEP0	= $D008
+   313 = D009			SIZEP1	= $D009
+   314 = D00A			SIZEP2	= $D00A
+   315 = D00B			SIZEP3	= $D00B
+   316 = D00C			SIZEM	= $D00C
+   317 = D00D			GRAFP0	= $D00D
+   318 = D00E			GRAFP1	= $D00E
+   319 = D00F			GRAFP2	= $D00F
+   320 = D010			GRAFP3	= $D010
+   321 = D011			GRAFM	= $D011
+   322 = D004			P0PF	= $D004
+   323 = D014			PAL	= $D014
+   324 = D012			COLPM0	= $D012
+   325 = D013			COLPM1	= $D013
+   326 = D014			COLPM2	= $D014
+   327 = D015			COLPM3	= $D015
+   328 = D016			COLPF0	= $D016
+   329 = D017			COLPF1	= $D017
+   330 = D018			COLPF2	= $D018
+   331 = D019			COLPF3	= $D019
+   332 = D01A			COLBK	= $D01A
+   333 = D01B			PRIOR	= $D01B
+   334 = D01D			GRACTL	= $D01D
+   335 = D01E			HITCLR	= $D01E
+   336 = D200			AUDF1	= $D200
+   337 = D201			AUDC1	= $D201
+   338 = D202			AUDF2	= $D202
+   339 = D203			AUDC2	= $D203
+   340 = D204			AUDF3	= $D204
+   341 = D205			AUDC3	= $D205
+   342 = D206			AUDF4	= $D206
+   343 = D207			AUDC4	= $D207
+   344 = D208			AUDCTL	= $D208
+   345 = D20F			SKSTAT	= $D20F
+   346 = D301			PORTB	= $D301
+   347 = D400			DMACTL	= $D400
+   348 = D401			CHACTL	= $D401
+   349 = D402			DLISTL	= $D402
+   350 = D404			HSCROL	= $D404
+   351 = D405			VSCROL	= $D405
+   352 = D407			PMBASE	= $D407
+   353 = D409			CHBASE	= $D409
+   354 = D40A			WSYNC	= $D40A
+   355 = D40B			VCOUNT	= $D40B
+   356 = D40C			PENH	= $D40C
+   357 = D40D			PENV	= $D40D
+   358 = D40E			NMIEN	= $D40E
+   359
+   360 				.endl							; UNIT ATARI
+   361
+   362 				; ------------------------------------------------------------
+   363
+   364 21D8			.local	CRT						; UNIT
+   365
+   366 21D8			.local	READKEY						; FUNCTION | ASSEMBLER
    367
-   368 				.endl							; UNIT ATARI
+   368 				; ---------------------  ASM Block 049  ---------------------
    369
-   370 				; ------------------------------------------------------------
+   370 21D8 8A 48			txa:pha
    371
-   372 217A			.local	CRT						; UNIT
+   372 21DA 20 4B 20			@GetKey
    373
-   374 217A			.local	READKEY						; FUNCTION | ASSEMBLER
+   374 21DD 8D 8A 23			sta Result
    375
-   376 				; ---------------------  ASM Block 063  ---------------------
+   376 21E0 68 AA			pla:tax
    377
-   378 217A 8A 48			txa:pha
+   378 21E2			@exit
    379
-   380 217C 20 30 21			@GetKey
+   380 				; ------------------------------------------------------------
    381
-   382 217F 8D 2C 23			sta Result
-   383
-   384 2182 68 AA			pla:tax
-   385
-   386 2184			@exit
+   382 				; Push BYTE / CHAR / SHORTINT / BOOLEAN
+   383 				; as Pointer
+   384
+   385 21E2 E8				inx
+   386 21E3 AD 8A 23 95 98		mva RESULT :STACKORIGIN,x
    387
-   388 				; ------------------------------------------------------------
-   389
-   390 				; Push BYTE / CHAR / SHORTINT / BOOLEAN
-   391 				; as Pointer
-   392
-   393 2184 E8				inx						; add bx, 1
-   394 2185 AD 2C 23 95 98		mva RESULT :STACKORIGIN,x
+   388 					.ifdef @new
+   389 					lda <@VarData
+   390 					sta :ztmp
+   391 					lda >@VarData
+   392 					ldy #@VarDataSize-1
+   393 					jmp @FreeMem
+   394 					eif
    395
-   396 					.ifdef @new
-   397 					@FreeMem #@VarData #@VarDataSize
-   398 					eif
+   396 				; ------------------------------------------------------------
+   397
+   398 = 238A			RESULT	= DATAORIGIN+$000D
    399
-   400 				; ------------------------------------------------------------
-   401
-   402 = 232C			RESULT	= DATAORIGIN+$000D
-   403
-   404 = 232C			@VarData	= RESULT
-   405 = 0001			@VarDataSize	= 1
-   406
-   407 218A 60				rts						; ret
-   408 				.endl
-   409
-   410 				; ------------------------------------------------------------
-   411
-   412 = 232B			TEXTATTR	= DATAORIGIN+$000C
-   413 = D01F			CONSOL	= $D01F
-   414 = 0000			CN_START_SELECT_OPTION	= $0000
-   415 = 0001			CN_SELECT_OPTION	= $0001
-   416 = 0002			CN_START_OPTION	= $0002
-   417 = 0003			CN_OPTION	= $0003
-   418 = 0004			CN_START_SELECT	= $0004
-   419 = 0005			CN_SELECT	= $0005
-   420 = 0006			CN_START	= $0006
-   421 = 0007			CN_NONE	= $0007
-   422 = 0000			BW40	= $0000
-   423 = 0001			CO40	= $0001
-   424 = 0002			BW80	= $0002
-   425 = 0003			CO80	= $0003
-   426 = 0007			MONO	= $0007
-   427 = 0001			C40	= $0001
-   428 = 0003			C80	= $0003
-   429 = 0000			BLACK	= $0000
-   430 = 0001			BLUE	= $0001
-   431 = 0002			GREEN	= $0002
-   432 = 0003			CYAN	= $0003
-   433 = 0004			RED	= $0004
-   434 = 0005			MAGENTA	= $0005
-   435 = 0006			BROWN	= $0006
-   436 = 0007			LIGHTGRAY	= $0007
-   437 = 0008			DARKGRAY	= $0008
-   438 = 0009			LIGHTBLUE	= $0009
-   439 = 000A			LIGHTGREEN	= $000A
-   440 = 000B			LIGHTCYAN	= $000B
-   441 = 000C			LIGHTRED	= $000C
-   442 = 000D			LIGHTMAGENTA	= $000D
-   443 = 000E			YELLOW	= $000E
-   444 = 000F			WHITE	= $000F
-   445 = 0080			BLINK	= $0080
+   400 = 238A			@VarData	= RESULT
+   401 = 0001			@VarDataSize	= 1
+   402
+   403 21E8 60				rts						; ret
+   404 				.endl
+   405
+   406 				; ------------------------------------------------------------
+   407
+   408 = 2389			TEXTATTR	= DATAORIGIN+$000C
+   409 = D01F			CONSOL	= $D01F
+   410 = 0000			CN_START_SELECT_OPTION	= $00
+   411 = 0001			CN_SELECT_OPTION	= $01
+   412 = 0002			CN_START_OPTION	= $02
+   413 = 0003			CN_OPTION	= $03
+   414 = 0004			CN_START_SELECT	= $04
+   415 = 0005			CN_SELECT	= $05
+   416 = 0006			CN_START	= $06
+   417 = 0007			CN_NONE	= $07
+   418 = 0000			BW40	= $00
+   419 = 0001			CO40	= $01
+   420 = 0002			BW80	= $02
+   421 = 0003			CO80	= $03
+   422 = 0007			MONO	= $07
+   423 = 0001			C40	= $01
+   424 = 0003			C80	= $03
+   425 = 0000			BLACK	= $00
+   426 = 0001			BLUE	= $01
+   427 = 0002			GREEN	= $02
+   428 = 0003			CYAN	= $03
+   429 = 0004			RED	= $04
+   430 = 0005			MAGENTA	= $05
+   431 = 0006			BROWN	= $06
+   432 = 0007			LIGHTGRAY	= $07
+   433 = 0008			DARKGRAY	= $08
+   434 = 0009			LIGHTBLUE	= $09
+   435 = 000A			LIGHTGREEN	= $0A
+   436 = 000B			LIGHTCYAN	= $0B
+   437 = 000C			LIGHTRED	= $0C
+   438 = 000D			LIGHTMAGENTA	= $0D
+   439 = 000E			YELLOW	= $0E
+   440 = 000F			WHITE	= $0F
+   441 = 0080			BLINK	= $80
+   442
+   443 				.endl							; UNIT CRT
+   444
+   445 				; ------------------------------------------------------------
    446
-   447 				.endl							; UNIT CRT
+   447 21E9			.local	DOS						; UNIT
    448
-   449 218B			.local	MAINPROC					; PROCEDURE
+   449 				; ------------------------------------------------------------
    450
-   451 				; optimize FAIL (100, examples\arrmem.pas), line = 20
-   452 					@print #$7D
-   452 				 LDY# $7D\ JSR @PRINT
-   452 218B A0 7D		 LDY# $7D
-   452 218D 20 50 20		 JSR @PRINT
-   453
-   454 				; optimize OK (examples\arrmem.pas), line = 21
-   455
-   456 2190 A9 9A 8D C4 02		mva #$9A adr.COL+$00
-   457
-   458 				; optimize OK (examples\arrmem.pas), line = 22
-   459
-   460 2195 A9 28 8D C5 02		mva #$28 adr.COL+$01
-   461
-   462 				; optimize OK (examples\arrmem.pas), line = 23
-   463
-   464 219A A9 4E 8D C6 02		mva #$4E adr.COL+$02
-   465
-   466 				; optimize OK (examples\arrmem.pas), line = 24
-   467
-   468 219F A9 E4 8D C8 02		mva #$E4 adr.COL+$04
-   469
-   470 				; optimize OK (examples\arrmem.pas), line = 25
-   471
-   472 21A4 A9 0A 8D 60 6D		mva #$0A adr.ARRD+$00
-   473
-   474 				; optimize OK (examples\arrmem.pas), line = 26
-   475
-   476 21A9 A9 1E			lda #$1E
-   477 21AB 18 6D 60 6D			add adr.ARRD+$00
-   478 21AF 85 A2			sta :STACKORIGIN+10
-   479 21B1 A9 24			lda #$24
-   480 21B3 85 82			sta :eax
-   481 21B5 A9 00			lda #$00
-   482 21B7 85 83			sta :eax+1
-   483 21B9 A5 82			lda :eax
-   484 21BB 0A				asl @
-   485 21BC 18 65 82			add :eax
-   486 21BF 85 82			sta :eax
-   487 21C1 A5 A2			lda :STACKORIGIN+10
-   488 21C3 38 E5 82			sub :eax
-   489 21C6 8D 61 6D			sta adr.ARRD+$01
-   490
-   491 				; optimize OK (examples\arrmem.pas), line = 27
-   492
-   493 21C9 A9 3C 8D 62 6D		mva #$3C adr.ARRD+$02
-   494
-   495 				; optimize OK (examples\arrmem.pas), line = 28
-   496
-   497 21CE A9 14 8D 00 06		mva #$14 adr.ARRH+$00
-   498
-   499 				; optimize OK (examples\arrmem.pas), line = 29
-   500
-   501 21D3 A9 28 8D 01 06		mva #$28 adr.ARRH+$01
+   451 = D014			PALNTSC	= $D014
+   452
+   453 				.endl							; UNIT DOS
+   454
+   455 				; ------------------------------------------------------------
+   456
+   457 21E9			.local	STRUTILS					; UNIT
+   458
+   459 				; ------------------------------------------------------------
+   460
+   461 				.endl							; UNIT STRUTILS
+   462
+   463 				; ------------------------------------------------------------
+   464
+   465 21E9			.local	SYSUTILS					; UNIT
+   466
+   467 				; ------------------------------------------------------------
+   468
+   469 = 0001			FAREADONLY	= $01
+   470 = 0002			FAHIDDEN	= $02
+   471 = 0004			FASYSFILE	= $04
+   472 = 0008			FAVOLUMEID	= $08
+   473 = 0010			FADIRECTORY	= $10
+   474 = 0020			FAARCHIVE	= $20
+   475 = 003F			FAANYFILE	= $3F
+   476
+   477 				.endl							; UNIT SYSUTILS
+   478
+   479 				; ------------------------------------------------------------
+   480
+   481 21E9			.local	CIO						; UNIT
+   482
+   483 21E9			.local	GET						; FUNCTION | ASSEMBLER
+   484
+   485 				; ------------------------------------------------------------
+   486
+   487 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+   488 				; as Pointer
+   489 21E9 B5 98 8D 8B 23		mva :STACKORIGIN,x CHN
+   490 21EE CA				dex
+   491
+   492 				; ---------------------  ASM Block 080  ---------------------
+   493
+   494 21EF 8A 48			txa:pha
+   495
+   496 21F1 AD 8B 23			lda chn
+   497 21F4 0A 0A 0A 0A			:4 asl @
+   498 21F8 AA				tax
+   499
+   500 21F9 A9 07			lda #7		;get char command
+   501 21FB 9D 42 03			sta iccmd,x
    502
-   503 				; optimize OK (examples\arrmem.pas), line = 30
-   504
-   505 21D8 A9 96 8D 02 06		mva #$96 adr.ARRH+$02
+   503 21FE A9 00			lda #$00	;zero out the unused
+   504 2200 9D 48 03			sta icbufl,x	;store in accumulator
+   505 2203 9D 49 03			sta icbufh,x	;...after CIOV jump
    506
-   507 				; optimize FAIL (100, examples\arrmem.pas), line = 37
-   508 					@printSTRING #CODEORIGIN+$000D
-   508 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
-   508 21DD A0 20		 LDY> CODEORIGIN+$000D
-   508 21DF A9 0D		 LDA< CODEORIGIN+$000D
-   508 21E1 20 59 20		 JSR @PRINTSTRING
-   509 					@print #$9B
-   509 				 LDY# $9B\ JSR @PRINT
-   509 21E4 A0 9B		 LDY# $9B
-   509 21E6 20 50 20		 JSR @PRINT
-   510 					@printSTRING #CODEORIGIN+$000F
-   510 				 LDY> CODEORIGIN+$000F\ LDA< CODEORIGIN+$000F\ JSR @PRINTSTRING
-   510 21E9 A0 20		 LDY> CODEORIGIN+$000F
-   510 21EB A9 0F		 LDA< CODEORIGIN+$000F
-   510 21ED 20 59 20		 JSR @PRINTSTRING
-   511 					@print #$9B
-   511 				 LDY# $9B\ JSR @PRINT
-   511 21F0 A0 9B		 LDY# $9B
-   511 21F2 20 50 20		 JSR @PRINT
-   512 					@printSTRING #CODEORIGIN+$000C
-   512 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
-   512 21F5 A0 20		 LDY> CODEORIGIN+$000C
-   512 21F7 A9 0C		 LDA< CODEORIGIN+$000C
-   512 21F9 20 59 20		 JSR @PRINTSTRING
-   513 21FC E8				inx
-   514 21FD A0 00			ldy #$00
-   515 21FF B9 60 6D 95 98		mva adr.ARRD,y :STACKORIGIN,x
-   516 2204 20 99 20			jsr @printBYTE
-   517 2207 CA				dex
-   518 					@print #$2C
-   518 				 LDY# $2C\ JSR @PRINT
-   518 2208 A0 2C		 LDY# $2C
-   518 220A 20 50 20		 JSR @PRINT
-   519 220D E8				inx
-   520 220E A0 01			ldy #$01
-   521 2210 B9 60 6D 95 98		mva adr.ARRD,y :STACKORIGIN,x
-   522 2215 20 99 20			jsr @printBYTE
-   523 2218 CA				dex
-   524 					@print #$2C
-   524 				 LDY# $2C\ JSR @PRINT
-   524 2219 A0 2C		 LDY# $2C
-   524 221B 20 50 20		 JSR @PRINT
-   525 221E E8				inx
-   526 221F A0 02			ldy #$02
-   527 2221 B9 60 6D 95 98		mva adr.ARRD,y :STACKORIGIN,x
-   528 2226 20 99 20			jsr @printBYTE
-   529 2229 CA				dex
-   530 					@printSTRING #CODEORIGIN+$000C
-   530 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
-   530 222A A0 20		 LDY> CODEORIGIN+$000C
-   530 222C A9 0C		 LDA< CODEORIGIN+$000C
-   530 222E 20 59 20		 JSR @PRINTSTRING
-   531
-   532 				; optimize FAIL (100, examples\arrmem.pas), line = 38
-   533 					@printSTRING #CODEORIGIN+$000C
-   533 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
-   533 2231 A0 20		 LDY> CODEORIGIN+$000C
-   533 2233 A9 0C		 LDA< CODEORIGIN+$000C
-   533 2235 20 59 20		 JSR @PRINTSTRING
-   534 					@print #$9B
-   534 				 LDY# $9B\ JSR @PRINT
-   534 2238 A0 9B		 LDY# $9B
-   534 223A 20 50 20		 JSR @PRINT
-   535 					@printSTRING #CODEORIGIN+$000C
-   535 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
-   535 223D A0 20		 LDY> CODEORIGIN+$000C
-   535 223F A9 0C		 LDA< CODEORIGIN+$000C
-   535 2241 20 59 20		 JSR @PRINTSTRING
-   536 					@print #$9B
-   536 				 LDY# $9B\ JSR @PRINT
-   536 2244 A0 9B		 LDY# $9B
-   536 2246 20 50 20		 JSR @PRINT
-   537 					@printSTRING #CODEORIGIN+$0025
-   537 				 LDY> CODEORIGIN+$0025\ LDA< CODEORIGIN+$0025\ JSR @PRINTSTRING
-   537 2249 A0 20		 LDY> CODEORIGIN+$0025
-   537 224B A9 25		 LDA< CODEORIGIN+$0025
-   537 224D 20 59 20		 JSR @PRINTSTRING
-   538 					@print #$9B
-   538 				 LDY# $9B\ JSR @PRINT
-   538 2250 A0 9B		 LDY# $9B
-   538 2252 20 50 20		 JSR @PRINT
-   539 					@printSTRING #CODEORIGIN+$000C
-   539 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
-   539 2255 A0 20		 LDY> CODEORIGIN+$000C
-   539 2257 A9 0C		 LDA< CODEORIGIN+$000C
-   539 2259 20 59 20		 JSR @PRINTSTRING
+   507 2206				m@call	ciov
+Macro: M@CALL [Source: rtl6502.asm]
+    12 2206 20 56 E4				jsr CIOV
+Source: arrmem.a65
+   508
+   509 2209 8C 84 23			sty MAIN.SYSTEM.IOResult
+   510
+   511 220C 8D 8C 23			sta Result
+   512
+   513 220F 68 AA			pla:tax
+   514
+   515 2211			@exit
+   516
+   517 				; ------------------------------------------------------------
+   518
+   519 				; Push BYTE / CHAR / SHORTINT / BOOLEAN
+   520 				; as Pointer
+   521
+   522 2211 E8				inx
+   523 2212 AD 8C 23 95 98		mva RESULT :STACKORIGIN,x
+   524
+   525 					.ifdef @new
+   526 					lda <@VarData
+   527 					sta :ztmp
+   528 					lda >@VarData
+   529 					ldy #@VarDataSize-1
+   530 					jmp @FreeMem
+   531 					eif
+   532
+   533 				; ------------------------------------------------------------
+   534
+   535 = 238B			CHN	= DATAORIGIN+$000E
+   536 = 238C			RESULT	= DATAORIGIN+$000F
+   537
+   538 = 238B			@VarData	= CHN
+   539 = 0002			@VarDataSize	= 2
    540
-   541 				; optimize FAIL (100, examples\arrmem.pas), line = 39
-   542 225C E8				inx
-   543 225D A0 00			ldy #$00
-   544 225F B9 00 06 95 98		mva adr.ARRH,y :STACKORIGIN,x
-   545 2264 20 99 20			jsr @printBYTE
-   546 2267 CA				dex
+   541 2217 60				rts						; ret
+   542 				.endl
+   543
+   544 				; ------------------------------------------------------------
+   545
+   546 				.endl							; UNIT CIO
    547
-   548 				; optimize FAIL (100, examples\arrmem.pas), line = 40
-   549 					@print #$2C
-   549 				 LDY# $2C\ JSR @PRINT
-   549 2268 A0 2C		 LDY# $2C
-   549 226A 20 50 20		 JSR @PRINT
-   550
-   551 				; optimize FAIL (100, examples\arrmem.pas), line = 41
-   552 226D E8				inx
-   553 226E A0 01			ldy #$01
-   554 2270 B9 00 06 95 98		mva adr.ARRH,y :STACKORIGIN,x
-   555 2275 20 99 20			jsr @printBYTE
-   556 2278 CA				dex
-   557
-   558 				; optimize FAIL (100, examples\arrmem.pas), line = 42
-   559 					@print #$2C
-   559 				 LDY# $2C\ JSR @PRINT
-   559 2279 A0 2C		 LDY# $2C
-   559 227B 20 50 20		 JSR @PRINT
+   548 2218			.local	MAINPROC					; PROCEDURE
+   549
+   550 				; optimize FAIL (100, examples\arrmem.pas), line = 22
+   551 					@print #$7D
+   551 				 LDY# $7D\ JSR @PRINT
+   551 2218 A0 7D		 LDY# $7D
+   551 221A 20 BB 20		 JSR @PRINT
+   552
+   553 				; optimize OK (examples\arrmem.pas), line = 23
+   554
+   555 221D A9 9A 8D C4 02		mva #$9A adr.COL+$00
+   556
+   557 				; optimize OK (examples\arrmem.pas), line = 24
+   558
+   559 2222 A9 28 8D C5 02		mva #$28 adr.COL+$01
    560
-   561 				; optimize FAIL (100, examples\arrmem.pas), line = 43
-   562 227E E8				inx
-   563 227F A0 02			ldy #$02
-   564 2281 B9 00 06 95 98		mva adr.ARRH,y :STACKORIGIN,x
-   565 2286 20 99 20			jsr @printBYTE
-   566 2289 CA				dex
-   567 228A 20 4B 20			@printEOL
+   561 				; optimize OK (examples\arrmem.pas), line = 25
+   562
+   563 2227 A9 4E 8D C6 02		mva #$4E adr.COL+$02
+   564
+   565 				; optimize OK (examples\arrmem.pas), line = 26
+   566
+   567 222C A9 84 8D C7 02		mva #$84 adr.COL+$03
    568
-   569 				; optimize FAIL (100, examples\arrmem.pas), line = 44
-   570 					@printSTRING #CODEORIGIN+$000C
-   570 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
-   570 228D A0 20		 LDY> CODEORIGIN+$000C
-   570 228F A9 0C		 LDA< CODEORIGIN+$000C
-   570 2291 20 59 20		 JSR @PRINTSTRING
-   571 					@print #$9B
-   571 				 LDY# $9B\ JSR @PRINT
-   571 2294 A0 9B		 LDY# $9B
-   571 2296 20 50 20		 JSR @PRINT
-   572 					@printSTRING #CODEORIGIN+$003B
-   572 				 LDY> CODEORIGIN+$003B\ LDA< CODEORIGIN+$003B\ JSR @PRINTSTRING
-   572 2299 A0 20		 LDY> CODEORIGIN+$003B
-   572 229B A9 3B		 LDA< CODEORIGIN+$003B
-   572 229D 20 59 20		 JSR @PRINTSTRING
-   573 					@print #$9B
-   573 				 LDY# $9B\ JSR @PRINT
-   573 22A0 A0 9B		 LDY# $9B
-   573 22A2 20 50 20		 JSR @PRINT
-   574 					@printSTRING #CODEORIGIN+$000C
-   574 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
-   574 22A5 A0 20		 LDY> CODEORIGIN+$000C
-   574 22A7 A9 0C		 LDA< CODEORIGIN+$000C
-   574 22A9 20 59 20		 JSR @PRINTSTRING
-   575
-   576 				; optimize OK (examples\arrmem.pas), line = 45
-   577
-   578 22AC AD 60 6D			lda $6D60
-   579 22AF 8D 2E 23			sta MEM
-   580
-   581 				; optimize FAIL (100, examples\arrmem.pas), line = 46
-   582 22B2 E8				inx
-   583 22B3 AD 2E 23 95 98		mva MEM :STACKORIGIN,x
-   584 22B8 20 99 20			jsr @printBYTE
-   585 22BB CA				dex
-   586 22BC 20 4B 20			@printEOL
-   587
-   588 				; optimize OK (examples\arrmem.pas), line = 47
-   589
-   590 22BF AD 00 06			lda $0600
-   591 22C2 8D 2E 23			sta MEM
+   569 				; optimize OK (examples\arrmem.pas), line = 27
+   570
+   571 2231 A9 E4 8D C8 02		mva #$E4 adr.COL+$04
+   572
+   573 				; optimize OK (examples\arrmem.pas), line = 28
+   574
+   575 2236 A9 0A 8D 60 6D		mva #$0A adr.ARRD+$00
+   576
+   577 				; optimize OK (examples\arrmem.pas), line = 29
+   578
+   579 223B A9 14			lda #$14
+   580 223D 18 6D 60 6D			add adr.ARRD+$00
+   581 2241 8D 61 6D			sta adr.ARRD+$01
+   582
+   583 				; optimize OK (examples\arrmem.pas), line = 30
+   584
+   585 2244 A9 3C 8D 62 6D		mva #$3C adr.ARRD+$02
+   586
+   587 				; optimize OK (examples\arrmem.pas), line = 31
+   588
+   589 2249 A9 14 8D 00 06		mva #$14 adr.ARRH+$00
+   590
+   591 				; optimize OK (examples\arrmem.pas), line = 32
    592
-   593 				; optimize FAIL (100, examples\arrmem.pas), line = 48
-   594 22C5 E8				inx
-   595 22C6 AD 2E 23 95 98		mva MEM :STACKORIGIN,x
-   596 22CB 20 99 20			jsr @printBYTE
-   597 22CE CA				dex
-   598 22CF 20 4B 20			@printEOL
-   599
-   600 				; optimize OK (examples\arrmem.pas), line = 49
-   601
-   602 22D2 AD 61 6D			lda $6D61
-   603 22D5 8D 2E 23			sta MEM
-   604
-   605 				; optimize FAIL (100, examples\arrmem.pas), line = 50
-   606 22D8 E8				inx
-   607 22D9 AD 2E 23 95 98		mva MEM :STACKORIGIN,x
-   608 22DE 20 99 20			jsr @printBYTE
-   609 22E1 CA				dex
-   610 22E2 20 4B 20			@printEOL
-   611
-   612 				; optimize OK (examples\arrmem.pas), line = 51
-   613
-   614 22E5 AD 01 06			lda $0601
-   615 22E8 8D 2E 23			sta MEM
-   616
-   617 				; optimize FAIL (100, examples\arrmem.pas), line = 52
-   618 22EB E8				inx
-   619 22EC AD 2E 23 95 98		mva MEM :STACKORIGIN,x
-   620 22F1 20 99 20			jsr @printBYTE
-   621 22F4 CA				dex
-   622 22F5 20 4B 20			@printEOL
-   623
-   624 				; optimize FAIL ('CRT.READKEY', examples\arrmem.pas), line = 53
-   625 22F8 20 7A 21			jsr CRT.READKEY
-   626 22FB B5 98 8D 2D 23		mva :STACKORIGIN,x KEY
-   627 2300 CA				dex
-   628 2301			@exit
-   629 					.ifdef @new
-   630 					@FreeMem #@VarData #@VarDataSize
-   631 					eif
-   632 2301 60				rts						; ret
-   633 				.endl
-   634 2302			l_0052
-   635
-   636 				; optimize FAIL ('MAINPROC', examples\arrmem.pas), line = 57
-   637 2302 20 8B 21			jsr MAINPROC
-   638
-   639 				; ------------------------------------------------------------
-   640
-   641 = 232D			KEY	= DATAORIGIN+$000E
-   642 = 232E			MEM	= DATAORIGIN+$000F
-   643 = 6D60			adr.ARRD	= $6D60
-   644 2305			.var ARRD	= adr.ARRD .word
-   645 = 0600			adr.ARRH	= $0600
-   646 2305			.var ARRH	= adr.ARRH .word
-   647 = 02C4			adr.COL	= $02C4
-   648 2305			.var COL	= adr.COL .word
-   649 2305			@exit
-   650
-   651 2305 A2 00		@halt	ldx #0
-   652 2307 9A				txs
-   653
-   654 2308 60				rts
+   593 224E A9 28 8D 01 06		mva #$28 adr.ARRH+$01
+   594
+   595 				; optimize OK (examples\arrmem.pas), line = 33
+   596
+   597 2253 A9 50 8D 02 06		mva #$50 adr.ARRH+$02
+   598
+   599 				; optimize FAIL (100, examples\arrmem.pas), line = 40
+   600 					@printSTRING #CODEORIGIN+$000D
+   600 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
+   600 2258 A0 20		 LDY> CODEORIGIN+$000D
+   600 225A A9 0D		 LDA< CODEORIGIN+$000D
+   600 225C 20 C4 20		 JSR @PRINTSTRING
+   601 					@print #$9B
+   601 				 LDY# $9B\ JSR @PRINT
+   601 225F A0 9B		 LDY# $9B
+   601 2261 20 BB 20		 JSR @PRINT
+   602 					@printSTRING #CODEORIGIN+$000F
+   602 				 LDY> CODEORIGIN+$000F\ LDA< CODEORIGIN+$000F\ JSR @PRINTSTRING
+   602 2264 A0 20		 LDY> CODEORIGIN+$000F
+   602 2266 A9 0F		 LDA< CODEORIGIN+$000F
+   602 2268 20 C4 20		 JSR @PRINTSTRING
+   603 					@print #$9B
+   603 				 LDY# $9B\ JSR @PRINT
+   603 226B A0 9B		 LDY# $9B
+   603 226D 20 BB 20		 JSR @PRINT
+   604 					@printSTRING #CODEORIGIN+$000C
+   604 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
+   604 2270 A0 20		 LDY> CODEORIGIN+$000C
+   604 2272 A9 0C		 LDA< CODEORIGIN+$000C
+   604 2274 20 C4 20		 JSR @PRINTSTRING
+   605 2277 A0 00			ldy #$00
+   606 2279 B9 60 6D			lda adr.ARRD,y
+   607 227C 20 F5 20			jsr @printBYTE._a
+   608 					@print #$2C
+   608 				 LDY# $2C\ JSR @PRINT
+   608 227F A0 2C		 LDY# $2C
+   608 2281 20 BB 20		 JSR @PRINT
+   609 2284 A0 01			ldy #$01
+   610 2286 B9 60 6D			lda adr.ARRD,y
+   611 2289 20 F5 20			jsr @printBYTE._a
+   612 					@print #$2C
+   612 				 LDY# $2C\ JSR @PRINT
+   612 228C A0 2C		 LDY# $2C
+   612 228E 20 BB 20		 JSR @PRINT
+   613 2291 A0 02			ldy #$02
+   614 2293 B9 60 6D			lda adr.ARRD,y
+   615 2296 20 F5 20			jsr @printBYTE._a
+   616 					@printSTRING #CODEORIGIN+$000C
+   616 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
+   616 2299 A0 20		 LDY> CODEORIGIN+$000C
+   616 229B A9 0C		 LDA< CODEORIGIN+$000C
+   616 229D 20 C4 20		 JSR @PRINTSTRING
+   617
+   618 				; optimize FAIL (100, examples\arrmem.pas), line = 41
+   619 					@printSTRING #CODEORIGIN+$000C
+   619 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
+   619 22A0 A0 20		 LDY> CODEORIGIN+$000C
+   619 22A2 A9 0C		 LDA< CODEORIGIN+$000C
+   619 22A4 20 C4 20		 JSR @PRINTSTRING
+   620 					@print #$9B
+   620 				 LDY# $9B\ JSR @PRINT
+   620 22A7 A0 9B		 LDY# $9B
+   620 22A9 20 BB 20		 JSR @PRINT
+   621 					@printSTRING #CODEORIGIN+$000C
+   621 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
+   621 22AC A0 20		 LDY> CODEORIGIN+$000C
+   621 22AE A9 0C		 LDA< CODEORIGIN+$000C
+   621 22B0 20 C4 20		 JSR @PRINTSTRING
+   622 					@print #$9B
+   622 				 LDY# $9B\ JSR @PRINT
+   622 22B3 A0 9B		 LDY# $9B
+   622 22B5 20 BB 20		 JSR @PRINT
+   623 					@printSTRING #CODEORIGIN+$0025
+   623 				 LDY> CODEORIGIN+$0025\ LDA< CODEORIGIN+$0025\ JSR @PRINTSTRING
+   623 22B8 A0 20		 LDY> CODEORIGIN+$0025
+   623 22BA A9 25		 LDA< CODEORIGIN+$0025
+   623 22BC 20 C4 20		 JSR @PRINTSTRING
+   624 					@print #$9B
+   624 				 LDY# $9B\ JSR @PRINT
+   624 22BF A0 9B		 LDY# $9B
+   624 22C1 20 BB 20		 JSR @PRINT
+   625 					@printSTRING #CODEORIGIN+$000C
+   625 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
+   625 22C4 A0 20		 LDY> CODEORIGIN+$000C
+   625 22C6 A9 0C		 LDA< CODEORIGIN+$000C
+   625 22C8 20 C4 20		 JSR @PRINTSTRING
+   626
+   627 				; optimize FAIL (100, examples\arrmem.pas), line = 42
+   628 22CB A0 00			ldy #$00
+   629 22CD B9 00 06			lda adr.ARRH,y
+   630 22D0 20 F5 20			jsr @printBYTE._a
+   631
+   632 				; optimize FAIL (100, examples\arrmem.pas), line = 43
+   633 					@print #$2C
+   633 				 LDY# $2C\ JSR @PRINT
+   633 22D3 A0 2C		 LDY# $2C
+   633 22D5 20 BB 20		 JSR @PRINT
+   634
+   635 				; optimize FAIL (100, examples\arrmem.pas), line = 44
+   636 22D8 A0 01			ldy #$01
+   637 22DA B9 00 06			lda adr.ARRH,y
+   638 22DD 20 F5 20			jsr @printBYTE._a
+   639
+   640 				; optimize FAIL (100, examples\arrmem.pas), line = 45
+   641 					@print #$2C
+   641 				 LDY# $2C\ JSR @PRINT
+   641 22E0 A0 2C		 LDY# $2C
+   641 22E2 20 BB 20		 JSR @PRINT
+   642
+   643 				; optimize FAIL (100, examples\arrmem.pas), line = 46
+   644 22E5 A0 02			ldy #$02
+   645 22E7 B9 00 06			lda adr.ARRH,y
+   646 22EA 20 F5 20			jsr @printBYTE._a
+   647 22ED 20 B6 20			@printEOL
+   648
+   649 				; optimize FAIL (100, examples\arrmem.pas), line = 47
+   650 					@printSTRING #CODEORIGIN+$000C
+   650 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
+   650 22F0 A0 20		 LDY> CODEORIGIN+$000C
+   650 22F2 A9 0C		 LDA< CODEORIGIN+$000C
+   650 22F4 20 C4 20		 JSR @PRINTSTRING
+   651 					@print #$9B
+   651 				 LDY# $9B\ JSR @PRINT
+   651 22F7 A0 9B		 LDY# $9B
+   651 22F9 20 BB 20		 JSR @PRINT
+   652 					@printSTRING #CODEORIGIN+$003B
+   652 				 LDY> CODEORIGIN+$003B\ LDA< CODEORIGIN+$003B\ JSR @PRINTSTRING
+   652 22FC A0 20		 LDY> CODEORIGIN+$003B
+   652 22FE A9 3B		 LDA< CODEORIGIN+$003B
+   652 2300 20 C4 20		 JSR @PRINTSTRING
+   653 					@print #$9B
+   653 				 LDY# $9B\ JSR @PRINT
+   653 2303 A0 9B		 LDY# $9B
+   653 2305 20 BB 20		 JSR @PRINT
+   654 					@printSTRING #CODEORIGIN+$000C
+   654 				 LDY> CODEORIGIN+$000C\ LDA< CODEORIGIN+$000C\ JSR @PRINTSTRING
+   654 2308 A0 20		 LDY> CODEORIGIN+$000C
+   654 230A A9 0C		 LDA< CODEORIGIN+$000C
+   654 230C 20 C4 20		 JSR @PRINTSTRING
    655
-   656 				; ------------------------------------------------------------
+   656 				; optimize OK (examples\arrmem.pas), line = 48
    657
-   658 2309 00 00 00 00 00 00 + IOCB@COPY	:16 brk
-   659
-   660 				; ------------------------------------------------------------
-   661
-   662 2319			.local	@DEFINES
-   663 2319			ATARI
-   664 				.endl
+   658 230F AD 60 6D			lda $6D60
+   659 2312 8D 8E 24			sta MEM
+   660
+   661 				; optimize FAIL (100, examples\arrmem.pas), line = 49
+   662 2315 AD 8E 24			lda MEM
+   663 2318 20 F5 20			jsr @printBYTE._a
+   664 231B 20 B6 20			@printEOL
    665
-   666 = 2319 60 6D		ARRD
-   666 = 231B 00 06		ARRH
-   666 = 231D C4 02		COL
-   666 				.endl							; MAIN
+   666 				; optimize OK (examples\arrmem.pas), line = 50
    667
-   668 				; ------------------------------------------------------------
-   669 				; ------------------------------------------------------------
+   668 231E AD 00 06			lda $0600
+   669 2321 8D 8E 24			sta MEM
    670
-   671 				.macro	UNITINITIALIZATION
-   672 				
-   673 					.ifdef MAIN.SYSTEM.@UnitInit
-   674 					jsr MAIN.SYSTEM.@UnitInit
-   675 					eif
-   676 				
-   677 					.ifdef MAIN.DOS.@UnitInit
-   678 					jsr MAIN.DOS.@UnitInit
-   679 					eif
-   680 				
-   681 					.ifdef MAIN.STRUTILS.@UnitInit
-   682 					jsr MAIN.STRUTILS.@UnitInit
-   683 					eif
-   684 				
-   685 					.ifdef MAIN.SYSUTILS.@UnitInit
-   686 					jsr MAIN.SYSUTILS.@UnitInit
-   687 					eif
-   688 				
-   689 					.ifdef MAIN.ATARI.@UnitInit
-   690 					jsr MAIN.ATARI.@UnitInit
-   691 					eif
-   692 				
-   693 					.ifdef MAIN.CRT.@UnitInit
-   694 					jsr MAIN.CRT.@UnitInit
-   695 					eif
-   696 				.endm
-   697
-   698 				; ------------------------------------------------------------
-   699
-   700 					ift .SIZEOF(MAIN.SYSTEM) > 0
-   701 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-   701 				SYSTEM: $215F..$2179
-   702 					eif
-   703
-   704 					ift .SIZEOF(MAIN.DOS) > 0
-   705 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-   706 					eif
-   707
-   708 					ift .SIZEOF(MAIN.STRUTILS) > 0
-   709 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-   710 					eif
-   711
-   712 					ift .SIZEOF(MAIN.SYSUTILS) > 0
-   713 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-   714 					eif
-   715
-   716 					ift .SIZEOF(MAIN.ATARI) > 0
-   717 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
-   718 					eif
-   719
-   720 					ift .SIZEOF(MAIN.CRT) > 0
-   721 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-   721 				CRT: $217A..$218A
-   722 					eif
-   723
-   724 					.print 'CODE: ',CODEORIGIN,'..',*-1
-   724 				CODE: $2000..$231E
-   725
-   726 				; ------------------------------------------------------------
-   727
-   728 231F			DATAORIGIN
-   729 231F 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
-   730
-   731 = 0006			VARINITSIZE	= *-DATAORIGIN
-   732 = 0010			VARDATASIZE	= 16
-   733
-   734 = 232F			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
-   735
-   736 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-   736 				DATA: $231F..$232F
-   737
-   738 02E0-02E1> 40 21			run START
-   739
-   740 				; ------------------------------------------------------------
-   741
-   742 				.macro	STATICDATA
-   743 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $00 $00 $14  $61 $72 $72 $44 $20 $61 $72 $72
-   744 				.by  $61 $79 $20 $65 $6C $65 $6D $65  $6E $74 $73 $3A $00 $14 $61 $72  $72 $48 $20 $61 $72 $72 $61 $79
-   745 				.by  $20 $65 $6C $65 $6D $65 $6E $74  $73 $3A $00 $0E $50 $65 $65 $6B  $65 $64 $20 $76 $61 $6C $75 $65
-   746 				.by  $73 $3A $00
-   747 				.endm
+   671 				; optimize FAIL (100, examples\arrmem.pas), line = 51
+   672 2324 AD 8E 24			lda MEM
+   673 2327 20 F5 20			jsr @printBYTE._a
+   674 232A 20 B6 20			@printEOL
+   675
+   676 				; optimize OK (examples\arrmem.pas), line = 52
+   677
+   678 232D AD 61 6D			lda $6D61
+   679 2330 8D 8E 24			sta MEM
+   680
+   681 				; optimize FAIL (100, examples\arrmem.pas), line = 53
+   682 2333 AD 8E 24			lda MEM
+   683 2336 20 F5 20			jsr @printBYTE._a
+   684 2339 20 B6 20			@printEOL
+   685
+   686 				; optimize OK (examples\arrmem.pas), line = 54
+   687
+   688 233C AD 01 06			lda $0601
+   689 233F 8D 8E 24			sta MEM
+   690
+   691 				; optimize FAIL (100, examples\arrmem.pas), line = 55
+   692 2342 AD 8E 24			lda MEM
+   693 2345 20 F5 20			jsr @printBYTE._a
+   694 2348 20 B6 20			@printEOL
+   695
+   696 				; optimize FAIL ('CIO.GET', examples\arrmem.pas), line = 56
+   697 234B E8				inx
+   698 234C A9 07 95 98			mva #$07 :STACKORIGIN,x
+   699 2350 20 E9 21			jsr CIO.GET
+   700 2353 B5 98 8D 8D 24		mva :STACKORIGIN,x KEY
+   701 2358 CA				dex
+   702
+   703 2359 20 D8 21			jsr CRT.READKEY					; call Entry
+   704
+   705 235C CA				dex
+   706 235D			@exit
+   707 					.ifdef @new
+   708 					lda <@VarData
+   709 					sta :ztmp
+   710 					lda >@VarData
+   711 					ldy #@VarDataSize-1
+   712 					jmp @FreeMem
+   713 					eif
+   714 235D 60				rts						; ret
+   715 				.endl
+   716 235E			l_0052
+   717
+   718 				; optimize FAIL ('MAINPROC', examples\arrmem.pas), line = 61
+   719 235E 20 18 22			jsr MAINPROC
+   720
+   721 				; ------------------------------------------------------------
+   722
+   723 = 238D			adr.STRBUFFER	= DATAORIGIN+$0010
+   724 2361			.var STRBUFFER	= adr.STRBUFFER .word
+   725 = 248D			KEY	= DATAORIGIN+$0110
+   726 = 248E			MEM	= DATAORIGIN+$0111
+   727 = 6D60			adr.ARRD	= $6D60
+   728 2361			.var ARRD	= adr.ARRD .word
+   729 = 0600			adr.ARRH	= $0600
+   730 2361			.var ARRH	= adr.ARRH .word
+   731 = 02C4			adr.COL	= $02C4
+   732 2361			.var COL	= adr.COL .word
+   733 2361			@exit
+   734
+   735 2361 A2 00		@halt	ldx #0
+   736 2363 9A				txs
+   737 					.ifdef MAIN.@DEFINES.ROMOFF
+   738 					inc portb
+   739 					.endif
+   740
+   741 2364 60				rts
+   742
+   743 				; ------------------------------------------------------------
+   744
+   745 2365 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+   746
+   747 				; ------------------------------------------------------------
    748
-   749 					end
+   749 2375			.local	@DEFINES
+   750 2375			ATARI
+   751 				.endl
+   752
+   753 = 2375 8D 23		STRBUFFER
+   753 = 2377 60 6D		ARRD
+   753 = 2379 00 06		ARRH
+   753 = 237B C4 02		COL
+   753 				.endl							; MAIN
+   754
+   755 				; ------------------------------------------------------------
+   756 				; ------------------------------------------------------------
+   757
+   758 				.macro	UNITINITIALIZATION
+   759 				
+   760 					.ifdef MAIN.SYSTEM.@UnitInit
+   761 					jsr MAIN.SYSTEM.@UnitInit
+   762 					eif
+   763 				
+   764 					.ifdef MAIN.ATARI.@UnitInit
+   765 					jsr MAIN.ATARI.@UnitInit
+   766 					eif
+   767 				
+   768 					.ifdef MAIN.CRT.@UnitInit
+   769 					jsr MAIN.CRT.@UnitInit
+   770 					eif
+   771 				
+   772 					.ifdef MAIN.DOS.@UnitInit
+   773 					jsr MAIN.DOS.@UnitInit
+   774 					eif
+   775 				
+   776 					.ifdef MAIN.STRUTILS.@UnitInit
+   777 					jsr MAIN.STRUTILS.@UnitInit
+   778 					eif
+   779 				
+   780 					.ifdef MAIN.SYSUTILS.@UnitInit
+   781 					jsr MAIN.SYSUTILS.@UnitInit
+   782 					eif
+   783 				
+   784 					.ifdef MAIN.CIO.@UnitInit
+   785 					jsr MAIN.CIO.@UnitInit
+   786 					eif
+   787 				.endm
+   788
+   789 				; ------------------------------------------------------------
+   790
+   791 					ift .SIZEOF(MAIN.SYSTEM) > 0
+   792 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+   792 				SYSTEM: $21BD..$21D7
+   793 					eif
+   794
+   795 					ift .SIZEOF(MAIN.ATARI) > 0
+   796 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+   797 					eif
+   798
+   799 					ift .SIZEOF(MAIN.CRT) > 0
+   800 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+   800 				CRT: $21D8..$21E8
+   801 					eif
+   802
+   803 					ift .SIZEOF(MAIN.DOS) > 0
+   804 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+   805 					eif
+   806
+   807 					ift .SIZEOF(MAIN.STRUTILS) > 0
+   808 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
+   809 					eif
+   810
+   811 					ift .SIZEOF(MAIN.SYSUTILS) > 0
+   812 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
+   813 					eif
+   814
+   815 					ift .SIZEOF(MAIN.CIO) > 0
+   816 					.print 'CIO: ',MAIN.CIO,'..',MAIN.CIO+.SIZEOF(MAIN.CIO)-1
+   816 				CIO: $21E9..$2217
+   817 					eif
+   818
+   819 					.print 'CODE: ',CODEORIGIN,'..',*-1
+   819 				CODE: $2000..$237C
+   820
+   821 				; ------------------------------------------------------------
+   822
+   823 237D			DATAORIGIN
+   824 237D 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
+   825
+   826 = 0006			VARINITSIZE	= *-DATAORIGIN
+   827 = 0112			VARDATASIZE	= 274
+   828
+   829 = 248F			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+   830
+   831 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+   831 				DATA: $237D..$248F
+   832
+   833 02E0-02E1> 80 21			run START
+   834
+   835 				; ------------------------------------------------------------
+   836
+   837 				.macro	STATICDATA
+   838 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $00 $00 $14  $61 $72 $72 $44 $20 $61 $72 $72
+   839 				.by  $61 $79 $20 $65 $6C $65 $6D $65  $6E $74 $73 $3A $00 $14 $61 $72  $72 $48 $20 $61 $72 $72 $61 $79
+   840 				.by  $20 $65 $6C $65 $6D $65 $6E $74  $73 $3A $00 $0E $50 $65 $65 $6B  $65 $64 $20 $76 $61 $6C $75 $65
+   841 				.by  $73 $3A $00
+   842 				.endm
+   843
+   844 					end

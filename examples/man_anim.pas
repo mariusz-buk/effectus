@@ -4,10 +4,9 @@ program man_animPrg;
 uses
   Crt, Graph;
 
-// --------------------------------------
 // Effectus example
+// ----------------
 // Player animation demo
-// --------------------------------------
 // Colors for players
 // Player 0 data
 var
@@ -45,23 +44,23 @@ var
 
 procedure NEXTFRAMEProc;
 begin  // 1
-  if frame=1 then begin
+  if  frame=1  then begin
   Move(p0Frame1, pointer(PMGMEM+512+py0),  height);
   Move(p1Frame1, pointer(PMGMEM+640+py0),  height);
   end
-  else if frame=2 then begin
+  else if  frame=2  then begin
   Move(p0Frame2, pointer(PMGMEM+512+py0),  height);
   Move(p1Frame2, pointer(PMGMEM+640+py0),  height);
   end
-  else if frame=3 then begin
+  else if  frame=3  then begin
   Move(p0Frame3, pointer(PMGMEM+512+py0),  height);
   Move(p1Frame3, pointer(PMGMEM+640+py0),  height);
   end
-  else if frame=4 then begin
+  else if  frame=4  then begin
   Move(p0Frame4, pointer(PMGMEM+512+py0),  height);
   Move(p1Frame4, pointer(PMGMEM+640+py0),  height);
   end;  // if
-end;  // 4
+end;
 
 procedure PLAYGROUNDProc;
 var
@@ -70,12 +69,12 @@ begin  // 1
   Poke(708 + 0,  11*16 +  8);
   Poke(708 + 1,  0*16 +  6);
   Poke(708 + 2,  11*16 +  10);
-  for  i:=26 to 42 do begin
+ FOR i:=26 to 42 do begin
   SetColor(i);
   PutPixel(0, i);
   MoveTo(0, i);
   LineTo(159, i);
-  end;  // for
+  end;
   SetColor(1);
   PutPixel(0, 54);
   MoveTo(0, 54);
@@ -84,12 +83,12 @@ begin  // 1
   MoveTo(0, 64);
   LineTo(159, 64);
   SetColor(2);
-  for  i:=55 to 63 do begin
+ FOR i:=55 to 63 do begin
   PutPixel(0, i);
   MoveTo(0, i);
   LineTo(159, i);
-  end;  // for
-end;  // 4
+  end;
+end;
 
 procedure MAINProc;
 // Set environment
@@ -126,21 +125,21 @@ begin  // 6
   HPOSP[1] := PX1;
   Inc(px0, 2);
   Inc(px1, 2);
-  if px0>210 then begin
+  if  px0  >  210  then begin
   px0 := 40;
   px1 := 40;
   end;  // if
-  for  delay:=0 TO 1500 do begin
-  end;  // for
+ FOR delay:=0 TO 1500 do begin
+  end;
   Inc(frame);
-  if frame>4 then begin
+  if  frame  >  4  then begin
   frame := 1;
   end;  // if
-  end;  // while
+  end;
   CH := 255;
 // TURN OFF P/M GRAPHICS
   GRACTL := 0;
-end;  // 4
+end;
 
 begin
   MAINProc;

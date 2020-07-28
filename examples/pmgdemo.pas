@@ -4,11 +4,10 @@ program pmgdemoPrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Player/Missile graphics demo
 
 procedure MAINProc;
@@ -54,7 +53,7 @@ begin  // 1
   ReadKey;
 // TURN OFF P/M GRAPHICS
   GRACTL := 0;
-end;  // 4
+end;
 
 begin
   MAINProc;

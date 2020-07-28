@@ -1,283 +1,278 @@
-mads 2.1.0
-  3726 					opt l+
-    95
-    96 				.print 'RUNLIB: ',RUNLIB,'..',*
-    96 				RUNLIB: $2028..$2172
-    97
-    98 				; ------------------------------------------------------------
-    99
-   100 2172			START
-   101 2172 BA				tsx
-   102 2173 8E 3B 28			stx MAIN.@halt+1
+mads 2.1.0 build 8 (23 Dec 19)
+   388 					opt l+
+   101
+   102 				.print 'ZPAGE: ',fxptr,'..',zpend-1
+   102 				ZPAGE: $0080..$00D7
    103
-   104 					.ifdef fmulinit
-   105 					fmulinit
-   106 					eif
+   104 				.print 'RTLIB: ',RTLIB,'..',*-1
+   104 				RTLIB: $201B..$21AA
+   105
+   106 				; ------------------------------------------------------------
    107
-   108 = 0005			VLEN	= VARDATASIZE-VARINITSIZE
-   109 = 29A4			VADR	= DATAORIGIN+VARINITSIZE
-   110
-   111 					ift VADR > $BFFF
-   112 					ert 'Invalid memory address range ',VADR
-   113 					eli (VLEN>0) && (VLEN<=256)
-   114 2176 A2 FB			ldx #256-VLEN
-   115 2178 A9 00			lda #0
-   116 217A 9D A9 28 E8 D0 FA		sta:rne VADR+VLEN-256,x+
-   117 					eli VLEN>0
-   118 					@fill #VADR #VLEN #0
-   119 					eif
-   120
-   121 2180 A2 0F			ldx #$0f
-   122 2182 BD 40 03 9D 3E 28 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
-   123
-   124 218B E8				inx		; X = 0 !!!
-   125 218C 86 8E			stx bp		; lo BP = 0
-   126
-   127 218E				UNITINITIALIZATION
-Macro: UNITINITIALIZATION [Source: man_anim.a65]
+   108 21AB			START
+   109 21AB BA				tsx
+   110 21AC 8E 37 28			stx MAIN.@halt+1
+   111
+   112 					.ifdef fmulinit
+   113 					fmulinit
+   114 					eif
+   115
+   116 = 0005			VLEN	= VARDATASIZE-VARINITSIZE
+   117 = 29A0			VADR	= DATAORIGIN+VARINITSIZE
+   118
+   119 					ift VADR > $BFFF
+   120 					ert 'Invalid memory address range ',VADR
+   121 					eli (VLEN>0) && (VLEN<=256)
+   122 21AF A2 FB			ldx #256-VLEN
+   123 21B1 A9 00			lda #0
+   124 21B3 9D A5 28 E8 D0 FA		sta:rne VADR+VLEN-256,x+
+   125 					eli VLEN>0
+   126 					@fill #VADR #VLEN #0
+   127 					eif
    128
-   129 218E			.local	MAIN						; PROCEDURE
-   130
-   131 218E 4C 37 28			jmp l_002F
+   129 					.ifdef MAIN.@DEFINES.ROMOFF
+   130 					icl 'atari\romoff.asm'
+   131 					.endif
    132
-   133 				; ------------------------------------------------------------
+   133 21B9 A9 A5 85 82 A9 29 + 	mwa #PROGRAMSTACK psptr
    134
-   135 2191			.local	SYSTEM						; UNIT
-   136
-   137 2191			.local	POKE						; PROCEDURE | ASSEMBLER | REGISTER
-   138
-   139 				; ------------------------------------------------------------
+   135 21C1 A2 0F			ldx #$0f					; DOS II+/D ParamStr
+   136 21C3 BD 40 03 9D 3A 28 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   137
+   138 21CC E8				inx						; X = 0
+   139 21CD 86 90			stx bp						; BP = 0
    140
-   141 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-   142 				; as Pointer
-   143 2191 B5 98 85 8A			mva :STACKORIGIN,x VALUE
-   144 2195 CA				dex						; sub bx, 1
-   145
-   146 				; ------------------------------------------------------------
-   147
-   148 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   149 				; as Pointer
-   150 2196 B5 98 85 86			mva :STACKORIGIN,x A
-   151 219A B5 A8 85 87			mva :STACKORIGIN+STACKWIDTH,x A+1
-   152 219E CA				dex						; sub bx, 1
-   153
-   154 				; ---------------------  ASM Block 021  ---------------------
-   155
-   156 219F A0 00			ldy #0
-   157 21A1 A5 8A 91 86			mva value (edx),y
+   141 21CF 8E 08 D2			stx audctl					; reset POKEY
+   142 21D2 A9 03			lda #3
+   143 21D4 8D 0F D2			sta skctl
+   144
+   145 21D7 CA				dex						; X = 255
+   146
+   147 21D8				UNITINITIALIZATION
+Macro: UNITINITIALIZATION [Source: man_anim.a65]
+   148
+   149 21D8			.local	MAIN						; PROCEDURE
+   150
+   151 21D8 4C 33 28			jmp l_0022
+   152
+   153 				; ------------------------------------------------------------
+   154
+   155 21DB			.local	SYSTEM						; UNIT
+   156
+   157 21DB			.local	POKE						; PROCEDURE | ASSEMBLER | REGISTER
    158
-   159
-   160 				; ------------------------------------------------------------
-   161
-   162 = 0086			A	= edx
-   163 = 008A			VALUE	= ecx
-   164 21A5			@exit
-   165 					.ifdef @new
-   166 					@FreeMem #@VarData #@VarDataSize
-   167 					eif
-   168 21A5 60				rts						; ret
-   169 				.endl
-   170
-   171 21A6			.local	FILLCHAR_0050					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
-   172
-   173 				; ------------------------------------------------------------
-   174
-   175 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-   176 				; as Pointer
-   177 21A6 B5 98 85 82			mva :STACKORIGIN,x VALUE
-   178 21AA CA				dex						; sub bx, 1
+   159 				; ------------------------------------------------------------
+   160
+   161 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+   162 				; as Pointer
+   163 21DB B5 98 85 8C			mva :STACKORIGIN,x VALUE
+   164 21DF CA				dex
+   165
+   166 				; ------------------------------------------------------------
+   167
+   168 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   169 				; as Pointer
+   170 21E0 B5 98 85 88			mva :STACKORIGIN,x A
+   171 21E4 B5 A8 85 89			mva :STACKORIGIN+STACKWIDTH,x A+1
+   172 21E8 CA				dex
+   173
+   174 				; ---------------------  ASM Block 021  ---------------------
+   175
+   176 21E9 A0 00			ldy #0
+   177 21EB A5 8C 91 88			mva value (edx),y
+   178
    179
    180 				; ------------------------------------------------------------
    181
-   182 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   183 				; as Pointer
-   184 21AB B5 98 85 8A			mva :STACKORIGIN,x COUNT
-   185 21AF B5 A8 85 8B			mva :STACKORIGIN+STACKWIDTH,x COUNT+1
-   186 21B3 CA				dex						; sub bx, 1
-   187
-   188 				; ------------------------------------------------------------
-   189
-   190 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   191 				; as Pointer
-   192 21B4 B5 98 85 86			mva :STACKORIGIN,x A
-   193 21B8 B5 A8 85 87			mva :STACKORIGIN+STACKWIDTH,x A+1
-   194 21BC CA				dex						; sub bx, 1
-   195
-   196 				; ---------------------  ASM Block 024  ---------------------
-   197
-   198 21BD 20 2A 21			jsr @fill
-   199
-   200
-   201 				; ------------------------------------------------------------
-   202
-   203 = 0086			A	= edx
-   204 = 008A			COUNT	= ecx
-   205 = 0082			VALUE	= eax
-   206 21C0			@exit
-   207 					.ifdef @new
-   208 					@FreeMem #@VarData #@VarDataSize
-   209 					eif
-   210 21C0 60				rts						; ret
-   211 				.endl
-   212
-   213 21C1			.local	MOVE_005A					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
-   214
-   215 				; ------------------------------------------------------------
-   216
-   217 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   218 				; as Pointer
-   219 21C1 B5 98 85 82			mva :STACKORIGIN,x COUNT
-   220 21C5 B5 A8 85 83			mva :STACKORIGIN+STACKWIDTH,x COUNT+1
-   221 21C9 CA				dex						; sub bx, 1
-   222
-   223 				; ------------------------------------------------------------
+   182 = 0088			A	= edx
+   183 = 008C			VALUE	= ecx
+   184 21EF			@exit
+   185 					.ifdef @new
+   186 					lda <@VarData
+   187 					sta :ztmp
+   188 					lda >@VarData
+   189 					ldy #@VarDataSize-1
+   190 					jmp @FreeMem
+   191 					eif
+   192 21EF 60				rts						; ret
+   193 				.endl
+   194
+   195 21F0			.local	FILLCHAR_0064					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
+   196
+   197 				; ------------------------------------------------------------
+   198
+   199 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+   200 				; as Pointer
+   201 21F0 B5 98 85 84			mva :STACKORIGIN,x VALUE
+   202 21F4 CA				dex
+   203
+   204 				; ------------------------------------------------------------
+   205
+   206 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   207 				; as Pointer
+   208 21F5 B5 98 85 8C			mva :STACKORIGIN,x COUNT
+   209 21F9 B5 A8 85 8D			mva :STACKORIGIN+STACKWIDTH,x COUNT+1
+   210 21FD CA				dex
+   211
+   212 				; ------------------------------------------------------------
+   213
+   214 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   215 				; as Pointer
+   216 21FE B5 98 85 88			mva :STACKORIGIN,x A
+   217 2202 B5 A8 85 89			mva :STACKORIGIN+STACKWIDTH,x A+1
+   218 2206 CA				dex
+   219
+   220 				; ---------------------  ASM Block 024  ---------------------
+   221
+   222 2207 20 34 21			jsr @fill
+   223
    224
-   225 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   226 				; as Pointer
-   227 21CA B5 98 85 8A			mva :STACKORIGIN,x DEST
-   228 21CE B5 A8 85 8B			mva :STACKORIGIN+STACKWIDTH,x DEST+1
-   229 21D2 CA				dex						; sub bx, 1
-   230
-   231 				; ------------------------------------------------------------
-   232
-   233 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   234 				; as Pointer
-   235 21D3 B5 98 85 86			mva :STACKORIGIN,x SOURCE
-   236 21D7 B5 A8 85 87			mva :STACKORIGIN+STACKWIDTH,x SOURCE+1
-   237 21DB CA				dex						; sub bx, 1
-   238
-   239 				; ---------------------  ASM Block 031  ---------------------
+   225 				; ------------------------------------------------------------
+   226
+   227 = 0088			A	= edx
+   228 = 008C			COUNT	= ecx
+   229 = 0084			VALUE	= eax
+   230 220A			@exit
+   231 					.ifdef @new
+   232 					lda <@VarData
+   233 					sta :ztmp
+   234 					lda >@VarData
+   235 					ldy #@VarDataSize-1
+   236 					jmp @FreeMem
+   237 					eif
+   238 220A 60				rts						; ret
+   239 				.endl
    240
-   241 21DC 20 D5 20			jsr @move
+   241 220B			.local	MOVE_006E					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
    242
-   243
-   244 				; ------------------------------------------------------------
-   245
-   246 = 0086			SOURCE	= edx
-   247 = 008A			DEST	= ecx
-   248 = 0082			COUNT	= eax
-   249 21DF			@exit
-   250 					.ifdef @new
-   251 					@FreeMem #@VarData #@VarDataSize
-   252 					eif
-   253 21DF 60				rts						; ret
-   254 				.endl
-   255
-   256 				; ------------------------------------------------------------
-   257
-   258 = 0648			M_PI_2	= $0648
-   259 = 0192			D_PI_2	= $0192
-   260 = 0004			D_PI_180	= $0004
-   261 = 0000			MGTIA	= $0000
-   262 = 0080			MVBXE	= $0080
-   263 = 0000			VBXE_XDLADR	= $0000
-   264 = 0100			VBXE_BCBADR	= $0100
-   265 = 1000			VBXE_MAPADR	= $1000
-   266 = 5000			VBXE_OVRADR	= $5000
-   267 = B000			VBXE_WINDOW	= $B000
-   268 = 0000			IDLI	= $0000
-   269 = 0001			IVBL	= $0001
-   270 = 00FE			CH_DELCHR	= $00FE
-   271 = 009B			CH_ENTER	= $009B
-   272 = 001B			CH_ESC	= $001B
-   273 = 001C			CH_CURS_UP	= $001C
-   274 = 001D			CH_CURS_DOWN	= $001D
-   275 = 001E			CH_CURS_LEFT	= $001E
-   276 = 001F			CH_CURS_RIGHT	= $001F
-   277 = 007F			CH_TAB	= $007F
-   278 = 009B			CH_EOL	= $009B
-   279 = 007D			CH_CLR	= $007D
-   280 = 00FD			CH_BELL	= $00FD
-   281 = 007E			CH_DEL	= $007E
-   282 = 009C			CH_DELLINE	= $009C
-   283 = 009D			CH_INSLINE	= $009D
-   284 = 0000			COLOR_BLACK	= $0000
-   285 = 000E			COLOR_WHITE	= $000E
-   286 = 0032			COLOR_RED	= $0032
-   287 = 0096			COLOR_CYAN	= $0096
-   288 = 0068			COLOR_VIOLET	= $0068
-   289 = 00C4			COLOR_GREEN	= $00C4
-   290 = 0074			COLOR_BLUE	= $0074
-   291 = 00EE			COLOR_YELLOW	= $00EE
-   292 = 0028			COLOR_ORANGE	= $0028
-   293 = 00E4			COLOR_BROWN	= $00E4
-   294 = 003C			COLOR_LIGHTRED	= $003C
-   295 = 0004			COLOR_GRAY1	= $0004
-   296 = 0006			COLOR_GRAY2	= $0006
-   297 = 000A			COLOR_GRAY3	= $000A
-   298 = 00CC			COLOR_LIGHTGREEN	= $00CC
-   299 = 007C			COLOR_LIGHTBLUE	= $007C
-   300 = 0004			FMOPENREAD	= $0004
-   301 = 0008			FMOPENWRITE	= $0008
-   302 = 0009			FMOPENAPPEND	= $0009
-   303 = 000C			FMOPENREADWRITE	= $000C
-   304 = 286A			SCREENWIDTH	= DATAORIGIN+$0000
-   305 = 286C			SCREENHEIGHT	= DATAORIGIN+$0002
-   306 = 286E			DATESEPARATOR	= DATAORIGIN+$0004
-   307 = D014			TVSYSTEM	= $D014
-   308 = 02C0			adr.PALETTE	= $02C0
-   309 21E0			.var PALETTE	= adr.PALETTE .word
-   310 = D012			adr.HPALETTE	= $D012
-   311 21E0			.var HPALETTE	= adr.HPALETTE .word
-   312 = 286F			FILEMODE	= DATAORIGIN+$0005
-   313 = 2870			SCREENMODE	= DATAORIGIN+$0006
-   314 = 2871			IORESULT	= DATAORIGIN+$0007
-   315 = 2872			EOLN	= DATAORIGIN+$0008
-   316 = 2873			RNDSEED	= DATAORIGIN+$0009
-   317
-   318 = 21E0 C0 02		PALETTE
-   318 = 21E2 12 D0		HPALETTE
-   318 				.endl							; UNIT SYSTEM
-   319
-   320 				; ------------------------------------------------------------
-   321
-   322 21E4			.local	DOS						; UNIT
-   323
-   324 				; ------------------------------------------------------------
-   325
-   326 = D014			PALNTSC	= $D014
-   327
-   328 				.endl							; UNIT DOS
-   329
-   330 				; ------------------------------------------------------------
-   331
-   332 21E4			.local	STRUTILS					; UNIT
-   333
-   334 				; ------------------------------------------------------------
-   335
-   336 				.endl							; UNIT STRUTILS
-   337
-   338 				; ------------------------------------------------------------
-   339
-   340 21E4			.local	SYSUTILS					; UNIT
-   341
-   342 				; ------------------------------------------------------------
-   343
-   344 = 0001			FAREADONLY	= $0001
-   345 = 0002			FAHIDDEN	= $0002
-   346 = 0004			FASYSFILE	= $0004
-   347 = 0008			FAVOLUMEID	= $0008
-   348 = 0010			FADIRECTORY	= $0010
-   349 = 0020			FAARCHIVE	= $0020
-   350 = 003F			FAANYFILE	= $003F
-   351
-   352 				.endl							; UNIT SYSUTILS
-   353
-   354 				; ------------------------------------------------------------
-   355
-   356 21E4			.local	ATARI						; UNIT
-   357
-   358 				; ------------------------------------------------------------
-   359
-   360 = 0012			RTCLOK	= $0012
-   361 = 004D			ATRACT	= $004D
-   362 = 0052			LMARGIN	= $0052
-   363 = 0053			RMARGIN	= $0053
-   364 = 0054			ROWCRS	= $0054
-   365 = 0055			COLCRS	= $0055
-   366 = 0057			DINDEX	= $0057
-   367 = 0058			SAVMSC	= $0058
-   368 = 006A			RAMTOP	= $006A
+   243 				; ------------------------------------------------------------
+   244
+   245 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   246 				; as Pointer
+   247 220B B5 98 85 84			mva :STACKORIGIN,x COUNT
+   248 220F B5 A8 85 85			mva :STACKORIGIN+STACKWIDTH,x COUNT+1
+   249 2213 CA				dex
+   250
+   251 				; ------------------------------------------------------------
+   252
+   253 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   254 				; as Pointer
+   255 2214 B5 98 85 8C			mva :STACKORIGIN,x DEST
+   256 2218 B5 A8 85 8D			mva :STACKORIGIN+STACKWIDTH,x DEST+1
+   257 221C CA				dex
+   258
+   259 				; ------------------------------------------------------------
+   260
+   261 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   262 				; as Pointer
+   263 221D B5 98 85 88			mva :STACKORIGIN,x SOURCE
+   264 2221 B5 A8 85 89			mva :STACKORIGIN+STACKWIDTH,x SOURCE+1
+   265 2225 CA				dex
+   266
+   267 				; ---------------------  ASM Block 031  ---------------------
+   268
+   269 2226 20 DF 20			jsr @move
+   270
+   271
+   272 				; ------------------------------------------------------------
+   273
+   274 = 0088			SOURCE	= edx
+   275 = 008C			DEST	= ecx
+   276 = 0084			COUNT	= eax
+   277 2229			@exit
+   278 					.ifdef @new
+   279 					lda <@VarData
+   280 					sta :ztmp
+   281 					lda >@VarData
+   282 					ldy #@VarDataSize-1
+   283 					jmp @FreeMem
+   284 					eif
+   285 2229 60				rts						; ret
+   286 				.endl
+   287
+   288 				; ------------------------------------------------------------
+   289
+   290 = 0101			__PORTB_BANKS	= $0101
+   291 = 0648			M_PI_2	= $0648
+   292 = 0192			D_PI_2	= $0192
+   293 = 0004			D_PI_180	= $04
+   294 = 0000			MGTIA	= $00
+   295 = 0080			MVBXE	= $80
+   296 = 0000			VBXE_XDLADR	= $00
+   297 = 0100			VBXE_BCBADR	= $0100
+   298 = 1000			VBXE_MAPADR	= $1000
+   299 = 5000			VBXE_OVRADR	= $5000
+   300 = B000			VBXE_WINDOW	= $B000
+   301 = 0000			IDLI	= $00
+   302 = 0001			IVBL	= $01
+   303 = 00FE			CH_DELCHR	= $FE
+   304 = 009B			CH_ENTER	= $9B
+   305 = 001B			CH_ESC	= $1B
+   306 = 001C			CH_CURS_UP	= $1C
+   307 = 001D			CH_CURS_DOWN	= $1D
+   308 = 001E			CH_CURS_LEFT	= $1E
+   309 = 001F			CH_CURS_RIGHT	= $1F
+   310 = 007F			CH_TAB	= $7F
+   311 = 009B			CH_EOL	= $9B
+   312 = 007D			CH_CLR	= $7D
+   313 = 00FD			CH_BELL	= $FD
+   314 = 007E			CH_DEL	= $7E
+   315 = 009C			CH_DELLINE	= $9C
+   316 = 009D			CH_INSLINE	= $9D
+   317 = 0000			COLOR_BLACK	= $00
+   318 = 000E			COLOR_WHITE	= $0E
+   319 = 0032			COLOR_RED	= $32
+   320 = 0096			COLOR_CYAN	= $96
+   321 = 0068			COLOR_VIOLET	= $68
+   322 = 00C4			COLOR_GREEN	= $C4
+   323 = 0074			COLOR_BLUE	= $74
+   324 = 00EE			COLOR_YELLOW	= $EE
+   325 = 0028			COLOR_ORANGE	= $28
+   326 = 00E4			COLOR_BROWN	= $E4
+   327 = 003C			COLOR_LIGHTRED	= $3C
+   328 = 0004			COLOR_GRAY1	= $04
+   329 = 0006			COLOR_GRAY2	= $06
+   330 = 000A			COLOR_GRAY3	= $0A
+   331 = 00CC			COLOR_LIGHTGREEN	= $CC
+   332 = 007C			COLOR_LIGHTBLUE	= $7C
+   333 = 0004			FMOPENREAD	= $04
+   334 = 0008			FMOPENWRITE	= $08
+   335 = 0009			FMOPENAPPEND	= $09
+   336 = 000C			FMOPENREADWRITE	= $0C
+   337 = 2866			SCREENWIDTH	= DATAORIGIN+$0000
+   338 = 2868			SCREENHEIGHT	= DATAORIGIN+$0002
+   339 = 286A			DATESEPARATOR	= DATAORIGIN+$0004
+   340 = D014			TVSYSTEM	= $D014
+   341 = 02C0			adr.PALETTE	= $02C0
+   342 222A			.var PALETTE	= adr.PALETTE .word
+   343 = D012			adr.HPALETTE	= $D012
+   344 222A			.var HPALETTE	= adr.HPALETTE .word
+   345 = 286B			FILEMODE	= DATAORIGIN+$0005
+   346 = 286C			GRAPHMODE	= DATAORIGIN+$0006
+   347 = 286D			IORESULT	= DATAORIGIN+$0007
+   348 = 286E			EOLN	= DATAORIGIN+$0008
+   349 = 286F			RNDSEED	= DATAORIGIN+$0009
+   350
+   351 = 222A C0 02		PALETTE
+   351 = 222C 12 D0		HPALETTE
+   351 				.endl							; UNIT SYSTEM
+   352
+   353 				; ------------------------------------------------------------
+   354
+   355 222E			.local	ATARI						; UNIT
+   356
+   357 				; ------------------------------------------------------------
+   358
+   359 = 0012			RTCLOK	= $12
+   360 = 004D			ATRACT	= $4D
+   361 = 0052			LMARGIN	= $52
+   362 = 0053			RMARGIN	= $53
+   363 = 0054			ROWCRS	= $54
+   364 = 0055			COLCRS	= $55
+   365 = 0057			DINDEX	= $57
+   366 = 0058			SAVMSC	= $58
+   367 = 0062			PALNTS	= $62
+   368 = 006A			RAMTOP	= $6A
    369 = 0200			VDSLST	= $0200
    370 = 0230			SDLSTL	= $0230
    371 = 0290			TXTROW	= $0290
@@ -360,50 +355,50 @@ Macro: UNITINITIALIZATION [Source: man_anim.a65]
    448
    449 				; ------------------------------------------------------------
    450
-   451 21E4			.local	CRT						; UNIT
+   451 222E			.local	CRT						; UNIT
    452
    453 				; ------------------------------------------------------------
    454
-   455 = 2875			TEXTATTR	= DATAORIGIN+$000B
+   455 = 2871			TEXTATTR	= DATAORIGIN+$000B
    456 = D01F			CONSOL	= $D01F
-   457 = 0000			CN_START_SELECT_OPTION	= $0000
-   458 = 0001			CN_SELECT_OPTION	= $0001
-   459 = 0002			CN_START_OPTION	= $0002
-   460 = 0003			CN_OPTION	= $0003
-   461 = 0004			CN_START_SELECT	= $0004
-   462 = 0005			CN_SELECT	= $0005
-   463 = 0006			CN_START	= $0006
-   464 = 0007			CN_NONE	= $0007
-   465 = 0000			BW40	= $0000
-   466 = 0001			CO40	= $0001
-   467 = 0002			BW80	= $0002
-   468 = 0003			CO80	= $0003
-   469 = 0007			MONO	= $0007
-   470 = 0001			C40	= $0001
-   471 = 0003			C80	= $0003
-   472 = 0000			BLACK	= $0000
-   473 = 0001			BLUE	= $0001
-   474 = 0002			GREEN	= $0002
-   475 = 0003			CYAN	= $0003
-   476 = 0004			RED	= $0004
-   477 = 0005			MAGENTA	= $0005
-   478 = 0006			BROWN	= $0006
-   479 = 0007			LIGHTGRAY	= $0007
-   480 = 0008			DARKGRAY	= $0008
-   481 = 0009			LIGHTBLUE	= $0009
-   482 = 000A			LIGHTGREEN	= $000A
-   483 = 000B			LIGHTCYAN	= $000B
-   484 = 000C			LIGHTRED	= $000C
-   485 = 000D			LIGHTMAGENTA	= $000D
-   486 = 000E			YELLOW	= $000E
-   487 = 000F			WHITE	= $000F
-   488 = 0080			BLINK	= $0080
+   457 = 0000			CN_START_SELECT_OPTION	= $00
+   458 = 0001			CN_SELECT_OPTION	= $01
+   459 = 0002			CN_START_OPTION	= $02
+   460 = 0003			CN_OPTION	= $03
+   461 = 0004			CN_START_SELECT	= $04
+   462 = 0005			CN_SELECT	= $05
+   463 = 0006			CN_START	= $06
+   464 = 0007			CN_NONE	= $07
+   465 = 0000			BW40	= $00
+   466 = 0001			CO40	= $01
+   467 = 0002			BW80	= $02
+   468 = 0003			CO80	= $03
+   469 = 0007			MONO	= $07
+   470 = 0001			C40	= $01
+   471 = 0003			C80	= $03
+   472 = 0000			BLACK	= $00
+   473 = 0001			BLUE	= $01
+   474 = 0002			GREEN	= $02
+   475 = 0003			CYAN	= $03
+   476 = 0004			RED	= $04
+   477 = 0005			MAGENTA	= $05
+   478 = 0006			BROWN	= $06
+   479 = 0007			LIGHTGRAY	= $07
+   480 = 0008			DARKGRAY	= $08
+   481 = 0009			LIGHTBLUE	= $09
+   482 = 000A			LIGHTGREEN	= $0A
+   483 = 000B			LIGHTCYAN	= $0B
+   484 = 000C			LIGHTRED	= $0C
+   485 = 000D			LIGHTMAGENTA	= $0D
+   486 = 000E			YELLOW	= $0E
+   487 = 000F			WHITE	= $0F
+   488 = 0080			BLINK	= $80
    489
    490 				.endl							; UNIT CRT
    491
    492 				; ------------------------------------------------------------
    493
-   494 21E4			.local	TYPES						; UNIT
+   494 222E			.local	TYPES						; UNIT
    495
    496 				; ------------------------------------------------------------
    497
@@ -411,1310 +406,1283 @@ Macro: UNITINITIALIZATION [Source: man_anim.a65]
    499
    500 				; ------------------------------------------------------------
    501
-   502 21E4			.local	GRAPH						; UNIT
+   502 222E			.local	GRAPH						; UNIT
    503
-   504 21E4			.local	INITGRAPH_009A					; PROCEDURE | OVERLOAD
+   504 222E			.local	INITGRAPH_009E					; PROCEDURE | OVERLOAD
    505
    506 				; ------------------------------------------------------------
    507
    508 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
    509 				; as Pointer
-   510 21E4 B5 98 8D 93 28		mva :STACKORIGIN,x MODE
-   511 21E9 CA				dex						; sub bx, 1
+   510 222E B5 98 8D 8F 28		mva :STACKORIGIN,x MODE
+   511 2233 CA				dex
    512
-   513 				; optimize OK (GRAPH), line = 73
+   513 				; ---------------------  ASM Block 060  ---------------------
    514
-   515 21EA A9 00 8D 7E 28		mva #$00 GRAPHRESULT
-   516
-   517 				; optimize OK (GRAPH), line = 75
-   518
-   519 21EF AD 93 28 8D 70 28		mva MODE SYSTEM.SCREENMODE
-   520
-   521 				; ---------------------  ASM Block 074  ---------------------
+   515
+   516 2234 8A 48			txa:pha
+   517
+   518 2236 AD 8F 28			lda mode
+   519 2239 8D 6C 28			sta MAIN.SYSTEM.GraphMode
+   520 223C 29 0F			and #$0f
+   521 223E A8				tay
    522
-   523
-   524 21F5 8A 48			txa:pha
-   525
-   526 21F7 A9 2C 8D 97 20		mva #$2c @putchar.vbxe
-   527
-   528 21FC AD 93 28			lda mode
-   529 21FF 29 0F			and #$0f
-   530 2201 A8				tay
-   531
-   532 2202 A2 60			ldx #$60	; 6*16
-   533 2204 AD 93 28			lda mode	; %00010000 with text window
-   534 2207 29 10			and #$10
-   535 2209 49 10			eor #$10
-   536 220B 09 02			ora #2		; read
+   523 223F A2 60			ldx #$60		; 6*16
+   524 2241 AD 8F 28			lda mode		; %00010000 with text window
+   525 2244 29 10			and #$10
+   526 2246 49 10			eor #$10
+   527 2248 09 02			ora #2			; read
+   528
+   529 					.nowarn @GRAPHICS
+   529 224A 20 4C 20		 JSR @GRAPHICS
+   530
+   531 224D 8C 7A 28			sty GraphResult
+   532
+   533
+   534 					.ifdef MAIN.@DEFINES.ROMOFF
+   535 					inc portb
+   536 					.endif
    537
-   538 					.nowarn @graphics
-   538 220D 20 68 20		 JSR @GRAPHICS
-   539 					
-   540 					
-   541 = EE6D			tlshc	equ $ee6d
-   542
-   543 2210 A6 57			ldx dindex
-   544 2212 BC 6D EE			ldy tlshc,x
-   545 2215 A9 05			lda #5
-   546 2217 0A			shift	asl @
-   547 2218 88				dey
-   548 2219 D0 FC			bne shift
-   549
-   550 221B 8D 92 28			sta SCANLINE_WIDTH
-   551 					
-   552
-   553 				; Fox/TQA
+   538 = EE6D			tlshc	equ $ee6d
+   539
+   540 2250 A6 57			ldx dindex
+   541 2252 BC 6D EE			ldy tlshc,x
+   542 2255 A9 05			lda #5
+   543 2257 0A			shift	asl @
+   544 2258 88				dey
+   545 2259 D0 FC			bne shift
+   546
+   547 225B 8D 8E 28			sta SCANLINE_WIDTH
+   548
+   549 				; Fox/TQA
+   550
+   551 = 0057			dindex	equ $57
+   552 = EE7D			tmccn	equ $ee7d
+   553 = EE8D			tmrcn	equ $ee8d
    554
-   555 = 0057			dindex	equ $57
-   556 = EE7D			tmccn	equ $ee7d
-   557 = EE8D			tmrcn	equ $ee8d
-   558
-   559 221E A6 57			ldx dindex
-   560 2220 BD 7D EE			lda tmccn,x
-   561 2223 BC 8D EE			ldy tmrcn,x
-   562 2226 A2 00			ldx #0
-   563 2228 C9 40			cmp #<320
-   564 222A D0 01 E8			sne:inx
-   565 				    
-   566 				; X:A = horizontal resolution
-   567 				; Y = vertical resolution
-   568
-   569 222D 8D 6A 28			sta MAIN.SYSTEM.ScreenWidth
-   570 2230 8E 6B 28			stx MAIN.SYSTEM.ScreenWidth+1
-   571 					
-   572 2233 38 E9 01			sub #1
-   573 2236 8D 78 28			sta WIN_RIGHT
-   574 2239 8A				txa
-   575 223A E9 00			sbc #0
-   576 223C 8D 79 28			sta WIN_RIGHT+1
-   577 					
-   578 223F 8C 6C 28			sty MAIN.SYSTEM.ScreenHeight
-   579 2242 A9 00			lda #0
-   580 2244 8D 6D 28			sta MAIN.SYSTEM.ScreenHeight+1
-   581 					
-   582 2247 8D 76 28			sta WIN_LEFT
-   583 224A 8D 77 28			sta WIN_LEFT+1
-   584 224D 8D 7A 28			sta WIN_TOP
-   585 2250 8D 7B 28			sta WIN_TOP+1
-   586
-   587 2253 8D 7D 28			sta WIN_BOTTOM+1	
-   588 2256 88				dey
-   589 2257 8C 7C 28			sty WIN_BOTTOM
-   590
-   591 225A 68 AA			pla:tax
-   592
-   593
-   594 				; ------------------------------------------------------------
-   595
-   596 = 2893			MODE	= DATAORIGIN+$0029
-   597
-   598 = 2893			@VarData	= MODE
-   599 = 0001			@VarDataSize	= 1
+   555 225E A6 57			ldx dindex
+   556 2260 BD 7D EE			lda tmccn,x
+   557 2263 BC 8D EE			ldy tmrcn,x
+   558 2266 A2 00			ldx #0
+   559 2268 C9 40			cmp #<320
+   560 226A D0 01 E8			sne:inx
+   561
+   562 				; X:A = horizontal resolution
+   563 				; Y = vertical resolution
+   564
+   565 226D 20 86 20			@SCREENSIZE
+   566
+   567 					.ifdef MAIN.@DEFINES.ROMOFF
+   568 					dec portb
+   569 					.endif
+   570
+   571 2270 68 AA			pla:tax
+   572
+   573
+   574 				; optimize OK (GRAPH), line = 132
+   575
+   576 2272 A5 58 8D 8C 28		mva ATARI.SAVMSC VIDEORAM
+   577 2277 A5 59 8D 8D 28		mva ATARI.SAVMSC+1 VIDEORAM+1
+   578
+   579 				; ------------------------------------------------------------
+   580
+   581 = 288F			MODE	= DATAORIGIN+$0029
+   582
+   583 = 288F			@VarData	= MODE
+   584 = 0001			@VarDataSize	= 1
+   585
+   586 227C			@exit
+   587 					.ifdef @new
+   588 					lda <@VarData
+   589 					sta :ztmp
+   590 					lda >@VarData
+   591 					ldy #@VarDataSize-1
+   592 					jmp @FreeMem
+   593 					eif
+   594 227C 60				rts						; ret
+   595 				.endl
+   596
+   597 227D			.local	SETCOLOR					; PROCEDURE | ASSEMBLER
+   598
+   599 				; ------------------------------------------------------------
    600
-   601 225C			@exit
-   602 					.ifdef @new
-   603 					@FreeMem #@VarData #@VarDataSize
-   604 					eif
-   605 225C 60				rts						; ret
-   606 				.endl
+   601 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+   602 				; as Pointer
+   603 227D B5 98 8D 90 28		mva :STACKORIGIN,x COLOR
+   604 2282 CA				dex
+   605
+   606 				; ---------------------  ASM Block 062  ---------------------
    607
-   608 225D			.local	SETCOLOR					; PROCEDURE | ASSEMBLER
-   609
-   610 				; ------------------------------------------------------------
+   608 2283 AD 90 28 8D 44 20		mva color @COMMAND.colscr
+   609 2289 8D 7B 28			sta GetColor
+   610
    611
-   612 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-   613 				; as Pointer
-   614 225D B5 98 8D 94 28		mva :STACKORIGIN,x COLOR
-   615 2262 CA				dex						; sub bx, 1
-   616
-   617 				; ---------------------  ASM Block 076  ---------------------
+   612 				; ------------------------------------------------------------
+   613
+   614 = 2890			COLOR	= DATAORIGIN+$002A
+   615
+   616 = 2890			@VarData	= COLOR
+   617 = 0001			@VarDataSize	= 1
    618
-   619 2263 AD 94 28 8D 61 20		mva color @COMMAND.colscr
-   620 2269 8D 7F 28			sta GetColor
-   621
-   622
-   623 				; ------------------------------------------------------------
-   624
-   625 = 2894			COLOR	= DATAORIGIN+$002A
-   626
-   627 = 2894			@VarData	= COLOR
-   628 = 0001			@VarDataSize	= 1
+   619 228C			@exit
+   620 					.ifdef @new
+   621 					lda <@VarData
+   622 					sta :ztmp
+   623 					lda >@VarData
+   624 					ldy #@VarDataSize-1
+   625 					jmp @FreeMem
+   626 					eif
+   627 228C 60				rts						; ret
+   628 				.endl
    629
-   630 226C			@exit
-   631 					.ifdef @new
-   632 					@FreeMem #@VarData #@VarDataSize
-   633 					eif
-   634 226C 60				rts						; ret
-   635 				.endl
-   636
-   637 226D			.local	PUTPIXEL_00AF					; PROCEDURE | ASSEMBLER | OVERLOAD
-   638
-   639 				; ------------------------------------------------------------
-   640
-   641 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   642 				; as Pointer
-   643 226D B5 98 8D 97 28		mva :STACKORIGIN,x Y
-   644 2272 B5 A8 8D 98 28		mva :STACKORIGIN+STACKWIDTH,x Y+1
-   645 2277 CA				dex						; sub bx, 1
-   646
-   647 				; ------------------------------------------------------------
-   648
-   649 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   650 				; as Pointer
-   651 2278 B5 98 8D 95 28		mva :STACKORIGIN,x X
-   652 227D B5 A8 8D 96 28		mva :STACKORIGIN+STACKWIDTH,x X+1
-   653 2282 CA				dex						; sub bx, 1
-   654
-   655 				; ---------------------  ASM Block 077  ---------------------
-   656
-   657 2283 8A 48			txa:pha
-   658 				{
-   659 2285 AD 98 28			lda y+1
-   660 2288 30 33			bmi stop
-   661 228A CD 6D 28			cmp MAIN.SYSTEM.ScreenHeight+1
-   662 228D D0 06			bne sk0
-   663 228F AD 97 28			lda y
-   664 2292 CD 6C 28			cmp MAIN.SYSTEM.ScreenHeight
-   665 2295			sk0
-   666 2295 B0 26			bcs stop
-   667
-   668 2297 AD 96 28			lda x+1
-   669 229A 30 21			bmi stop
-   670 229C CD 6B 28			cmp MAIN.SYSTEM.ScreenWidth+1
-   671 229F D0 06			bne sk1
-   672 22A1 AD 95 28			lda x
-   673 22A4 CD 6A 28			cmp MAIN.SYSTEM.ScreenWidth
-   674 22A7			sk1
-   675 22A7 B0 14			bcs stop
-   676
-   677 22A9 AD 95 28 85 55 AD + 	mwa x colcrs
-   678 22B3 AD 97 28 85 54		mva y rowcrs
-   679
-   680 22B8 A9 09			lda #@IDput
-   681
-   682 22BA 20 5B 20			jsr @COMMAND
+   630 228D			.local	PUTPIXEL_00AE					; PROCEDURE | ASSEMBLER | OVERLOAD
+   631
+   632 				; ------------------------------------------------------------
+   633
+   634 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   635 				; as Pointer
+   636 228D B5 98 8D 93 28		mva :STACKORIGIN,x Y
+   637 2292 B5 A8 8D 94 28		mva :STACKORIGIN+STACKWIDTH,x Y+1
+   638 2297 CA				dex
+   639
+   640 				; ------------------------------------------------------------
+   641
+   642 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   643 				; as Pointer
+   644 2298 B5 98 8D 91 28		mva :STACKORIGIN,x X
+   645 229D B5 A8 8D 92 28		mva :STACKORIGIN+STACKWIDTH,x X+1
+   646 22A2 CA				dex
+   647
+   648 				; ---------------------  ASM Block 063  ---------------------
+   649
+   650 22A3 8A 48			txa:pha
+   651 				{
+   652 22A5 AD 94 28			lda y+1
+   653 22A8 30 37			bmi stop
+   654 22AA CD 69 28			cmp MAIN.SYSTEM.ScreenHeight+1
+   655 22AD D0 06			bne sk0
+   656 22AF AD 93 28			lda y
+   657 22B2 CD 68 28			cmp MAIN.SYSTEM.ScreenHeight
+   658 22B5			sk0
+   659 22B5 B0 2A			bcs stop
+   660
+   661 22B7 AD 92 28			lda x+1
+   662 22BA 30 25			bmi stop
+   663 22BC CD 67 28			cmp MAIN.SYSTEM.ScreenWidth+1
+   664 22BF D0 06			bne sk1
+   665 22C1 AD 91 28			lda x
+   666 22C4 CD 66 28			cmp MAIN.SYSTEM.ScreenWidth
+   667 22C7			sk1
+   668 22C7 B0 18			bcs stop
+   669
+   670 22C9 AD 91 28 85 55 AD + 	mwa x colcrs
+   671 22D3 AD 93 28 85 54		mva y rowcrs
+   672
+   673 				;	lda #@IDput		; slower
+   674 				;	jsr @COMMAND
+   675
+   676 22D8 AE 2F 20			ldx @COMMAND.scrchn	; faster
+   677 22DB AD 44 20			lda @COMMAND.colscr
+   678
+   679 22DE				m@call	@putchar.main
+Macro: M@CALL [Source: rtl6502.asm]
+    12 22DE 20 23 20				jsr @PUTCHAR.MAIN
+   680
+   681 22E1 68 AA		stop	pla:tax
+   682
    683
-   684 22BD 68 AA		stop	pla:tax
+   684 				; ------------------------------------------------------------
    685
-   686
-   687 				; ------------------------------------------------------------
+   686 = 2891			X	= DATAORIGIN+$002B
+   687 = 2893			Y	= DATAORIGIN+$002D
    688
-   689 = 2895			X	= DATAORIGIN+$002B
-   690 = 2897			Y	= DATAORIGIN+$002D
+   689 = 2891			@VarData	= X
+   690 = 0004			@VarDataSize	= 4
    691
-   692 = 2895			@VarData	= X
-   693 = 0004			@VarDataSize	= 4
-   694
-   695 22BF			@exit
-   696 					.ifdef @new
-   697 					@FreeMem #@VarData #@VarDataSize
-   698 					eif
-   699 22BF 60				rts						; ret
-   700 				.endl
-   701
-   702 22C0			.local	MOVETO						; PROCEDURE | ASSEMBLER
-   703
-   704 				; ------------------------------------------------------------
-   705
-   706 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   707 				; as Pointer
-   708 22C0 B5 98 8D 9B 28		mva :STACKORIGIN,x Y
-   709 22C5 B5 A8 8D 9C 28		mva :STACKORIGIN+STACKWIDTH,x Y+1
-   710 22CA CA				dex						; sub bx, 1
-   711
-   712 				; ------------------------------------------------------------
-   713
-   714 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   715 				; as Pointer
-   716 22CB B5 98 8D 99 28		mva :STACKORIGIN,x X
-   717 22D0 B5 A8 8D 9A 28		mva :STACKORIGIN+STACKWIDTH,x X+1
-   718 22D5 CA				dex						; sub bx, 1
-   719
-   720 				; ---------------------  ASM Block 080  ---------------------
-   721
-   722 22D6 AD 9C 28			lda y+1
-   723 22D9 10 08			bpl _0
-   724
-   725 22DB A9 00			lda #0
-   726 22DD 8D 9B 28			sta y
-   727 22E0 8D 9C 28			sta y+1
-   728 22E3			_0
-   729 22E3 AD 9A 28			lda x+1
-   730 22E6 10 08			bpl _1
-   731
-   732 22E8 A9 00			lda #0
-   733 22EA 8D 99 28			sta x
-   734 22ED 8D 9A 28			sta x+1
-   735 22F0			_1
-   736 22F0 AD 9C 28 CD 6D 28 + 	cpw y main.system.ScreenHeight
-   737 22FE 90 11			bcc _2
-   738
-   739 2300 38 AD 6C 28 E9 01 + 	sbw main.system.ScreenHeight #1 y
-   740 2311			_2
-   741 2311 AD 9A 28 CD 6B 28 + 	cpw x main.system.ScreenWidth
-   742 231F 90 11			bcc _3
-   743
-   744 2321 38 AD 6A 28 E9 01 + 	sbw main.system.ScreenWidth #1 x
-   745 2332			_3
-   746 2332 AD 99 28 8D 8C 28 + 	mwa x CurrentX
-   747 233E AD 9B 28 8D 8E 28 + 	mwa y CurrentY
-   748
+   692 22E3			@exit
+   693 					.ifdef @new
+   694 					lda <@VarData
+   695 					sta :ztmp
+   696 					lda >@VarData
+   697 					ldy #@VarDataSize-1
+   698 					jmp @FreeMem
+   699 					eif
+   700 22E3 60				rts						; ret
+   701 				.endl
+   702
+   703 22E4			.local	MOVETO						; PROCEDURE | ASSEMBLER
+   704
+   705 				; ------------------------------------------------------------
+   706
+   707 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   708 				; as Pointer
+   709 22E4 B5 98 8D 97 28		mva :STACKORIGIN,x Y
+   710 22E9 B5 A8 8D 98 28		mva :STACKORIGIN+STACKWIDTH,x Y+1
+   711 22EE CA				dex
+   712
+   713 				; ------------------------------------------------------------
+   714
+   715 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   716 				; as Pointer
+   717 22EF B5 98 8D 95 28		mva :STACKORIGIN,x X
+   718 22F4 B5 A8 8D 96 28		mva :STACKORIGIN+STACKWIDTH,x X+1
+   719 22F9 CA				dex
+   720
+   721 				; ---------------------  ASM Block 066  ---------------------
+   722
+   723 22FA AD 98 28			lda y+1
+   724 22FD 10 08			bpl _0
+   725
+   726 22FF A9 00			lda #0
+   727 2301 8D 97 28			sta y
+   728 2304 8D 98 28			sta y+1
+   729 2307			_0
+   730 2307 AD 96 28			lda x+1
+   731 230A 10 08			bpl _1
+   732
+   733 230C A9 00			lda #0
+   734 230E 8D 95 28			sta x
+   735 2311 8D 96 28			sta x+1
+   736 2314			_1
+   737 2314 AD 98 28 CD 69 28 + 	cpw y main.system.ScreenHeight
+   738 2322 90 11			bcc _2
+   739
+   740 2324 38 AD 68 28 E9 01 + 	sbw main.system.ScreenHeight #1 y
+   741 2335			_2
+   742 2335 AD 96 28 CD 67 28 + 	cpw x main.system.ScreenWidth
+   743 2343 90 11			bcc _3
+   744
+   745 2345 38 AD 66 28 E9 01 + 	sbw main.system.ScreenWidth #1 x
+   746 2356			_3
+   747 2356 AD 95 28 8D 88 28 + 	mwa x CurrentX
+   748 2362 AD 97 28 8D 8A 28 + 	mwa y CurrentY
    749
-   750 				; ------------------------------------------------------------
-   751
-   752 = 2899			X	= DATAORIGIN+$002F
-   753 = 289B			Y	= DATAORIGIN+$0031
-   754
-   755 = 2899			@VarData	= X
-   756 = 0004			@VarDataSize	= 4
-   757
-   758 234A			@exit
-   759 					.ifdef @new
-   760 					@FreeMem #@VarData #@VarDataSize
-   761 					eif
-   762 234A 60				rts						; ret
-   763 				.endl
-   764
-   765 234B			.local	LINETO						; PROCEDURE | ASSEMBLER
-   766
-   767 				; ------------------------------------------------------------
-   768
-   769 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   770 				; as Pointer
-   771 234B B5 98 8D 9F 28		mva :STACKORIGIN,x Y
-   772 2350 B5 A8 8D A0 28		mva :STACKORIGIN+STACKWIDTH,x Y+1
-   773 2355 CA				dex						; sub bx, 1
-   774
-   775 				; ------------------------------------------------------------
-   776
-   777 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-   778 				; as Pointer
-   779 2356 B5 98 8D 9D 28		mva :STACKORIGIN,x X
-   780 235B B5 A8 8D 9E 28		mva :STACKORIGIN+STACKWIDTH,x X+1
-   781 2360 CA				dex						; sub bx, 1
-   782
-   783 				; ---------------------  ASM Block 081  ---------------------
-   784
-   785 2361 AD A0 28			lda y+1
-   786 2364 10 08			bpl _0
+   750
+   751 				; ------------------------------------------------------------
+   752
+   753 = 2895			X	= DATAORIGIN+$002F
+   754 = 2897			Y	= DATAORIGIN+$0031
+   755
+   756 = 2895			@VarData	= X
+   757 = 0004			@VarDataSize	= 4
+   758
+   759 236E			@exit
+   760 					.ifdef @new
+   761 					lda <@VarData
+   762 					sta :ztmp
+   763 					lda >@VarData
+   764 					ldy #@VarDataSize-1
+   765 					jmp @FreeMem
+   766 					eif
+   767 236E 60				rts						; ret
+   768 				.endl
+   769
+   770 236F			.local	LINETO						; PROCEDURE | ASSEMBLER
+   771
+   772 				; ------------------------------------------------------------
+   773
+   774 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   775 				; as Pointer
+   776 236F B5 98 8D 9B 28		mva :STACKORIGIN,x Y
+   777 2374 B5 A8 8D 9C 28		mva :STACKORIGIN+STACKWIDTH,x Y+1
+   778 2379 CA				dex
+   779
+   780 				; ------------------------------------------------------------
+   781
+   782 				; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+   783 				; as Pointer
+   784 237A B5 98 8D 99 28		mva :STACKORIGIN,x X
+   785 237F B5 A8 8D 9A 28		mva :STACKORIGIN+STACKWIDTH,x X+1
+   786 2384 CA				dex
    787
-   788 2366 A9 00			lda #0
-   789 2368 8D 9F 28			sta y
-   790 236B 8D A0 28			sta y+1
-   791 236E			_0
-   792 236E AD 9E 28			lda x+1
-   793 2371 10 08			bpl _1
-   794
-   795 2373 A9 00			lda #0
-   796 2375 8D 9D 28			sta x
-   797 2378 8D 9E 28			sta x+1
-   798 237B			_1
-   799 237B AD A0 28 CD 6D 28 + 	cpw y main.system.ScreenHeight
-   800 2389 90 11			bcc _2
-   801
-   802 238B 38 AD 6C 28 E9 01 + 	sbw main.system.ScreenHeight #1 y
-   803 239C			_2
-   804 239C AD 9E 28 CD 6B 28 + 	cpw x main.system.ScreenWidth
-   805 23AA 90 11			bcc _3
+   788 				; ---------------------  ASM Block 067  ---------------------
+   789
+   790 2385 AD 9C 28			lda y+1
+   791 2388 10 08			bpl _0
+   792
+   793 238A A9 00			lda #0
+   794 238C 8D 9B 28			sta y
+   795 238F 8D 9C 28			sta y+1
+   796 2392			_0
+   797 2392 AD 9A 28			lda x+1
+   798 2395 10 08			bpl _1
+   799
+   800 2397 A9 00			lda #0
+   801 2399 8D 99 28			sta x
+   802 239C 8D 9A 28			sta x+1
+   803 239F			_1
+   804 239F AD 9C 28 CD 69 28 + 	cpw y main.system.ScreenHeight
+   805 23AD 90 11			bcc _2
    806
-   807 23AC 38 AD 6A 28 E9 01 + 	sbw main.system.ScreenWidth #1 x
-   808 23BD			_3
-   809 23BD 8A 48			txa:pha
-   810
-   811 23BF AD 8C 28 85 55 AD + 	mwa CurrentX colcrs
-   812 23C9 AD 8E 28 85 54		mva CurrentY rowcrs
-   813
-   814 23CE A9 09			lda #@IDput
+   807 23AF 38 AD 68 28 E9 01 + 	sbw main.system.ScreenHeight #1 y
+   808 23C0			_2
+   809 23C0 AD 9A 28 CD 67 28 + 	cpw x main.system.ScreenWidth
+   810 23CE 90 11			bcc _3
+   811
+   812 23D0 38 AD 66 28 E9 01 + 	sbw main.system.ScreenWidth #1 x
+   813 23E1			_3
+   814 23E1 8A 48			txa:pha
    815
-   816 23D0 20 5B 20			jsr @COMMAND
-   817
-   818 23D3 AD 9D 28			lda x
-   819 23D6 85 55			sta colcrs
-   820 23D8 8D 8C 28			sta CurrentX
-   821 23DB AD 9E 28			lda x+1
-   822 23DE 85 56			sta colcrs+1
-   823 23E0 8D 8D 28			sta CurrentX+1
+   816 23E3 AD 88 28 85 55 AD + 	mwa CurrentX colcrs
+   817 23ED AD 8A 28 85 54		mva CurrentY rowcrs
+   818
+   819 				;	lda #@IDput		; slower
+   820 				;	jsr @COMMAND
+   821
+   822 23F2 AE 2F 20			ldx @COMMAND.scrchn	; faster
+   823 23F5 AD 44 20			lda @COMMAND.colscr
    824
-   825 23E3 AD 9F 28 85 54		mva y rowcrs
-   826 23E8 8D 8E 28			sta CurrentY
-   827 23EB AD A0 28			lda y+1
-   828 23EE 8D 8F 28			sta CurrentY+1
-   829
-   830 23F1 A9 11			lda #@IDdraw
-   831
-   832 23F3 20 5B 20			jsr @COMMAND
+   825 23F8				m@call	@putchar.main
+Macro: M@CALL [Source: rtl6502.asm]
+    12 23F8 20 23 20				jsr @PUTCHAR.MAIN
+   826
+   827 23FB AD 99 28			lda x
+   828 23FE 85 55			sta colcrs
+   829 2400 8D 88 28			sta CurrentX
+   830 2403 AD 9A 28			lda x+1
+   831 2406 85 56			sta colcrs+1
+   832 2408 8D 89 28			sta CurrentX+1
    833
-   834 23F6 68 AA			pla:tax
-   835
-   836
-   837 				; ------------------------------------------------------------
+   834 240B AD 9B 28 85 54		mva y rowcrs
+   835 2410 8D 8A 28			sta CurrentY
+   836 2413 AD 9C 28			lda y+1
+   837 2416 8D 8B 28			sta CurrentY+1
    838
-   839 = 289D			X	= DATAORIGIN+$0033
-   840 = 289F			Y	= DATAORIGIN+$0035
-   841
-   842 = 289D			@VarData	= X
-   843 = 0004			@VarDataSize	= 4
+   839 2419 A9 11			lda #@IDdraw
+   840
+   841 241B 20 2E 20			jsr @COMMAND
+   842
+   843 241E 68 AA			pla:tax
    844
-   845 23F8			@exit
-   846 					.ifdef @new
-   847 					@FreeMem #@VarData #@VarDataSize
-   848 					eif
-   849 23F8 60				rts						; ret
-   850 				.endl
-   851
-   852 				; ------------------------------------------------------------
+   845
+   846 				; ------------------------------------------------------------
+   847
+   848 = 2899			X	= DATAORIGIN+$0033
+   849 = 289B			Y	= DATAORIGIN+$0035
+   850
+   851 = 2899			@VarData	= X
+   852 = 0004			@VarDataSize	= 4
    853
-   854 = FFFFFF80		CURRENTDRIVER	= $FFFFFF80
-   855 = 0000			DETECT	= $0000
-   856 = 0001			CGA	= $0001
-   857 = 0002			MCGA	= $0002
-   858 = 0003			EGA	= $0003
-   859 = 0004			EGA64	= $0004
-   860 = 0005			EGAMONO	= $0005
-   861 = 0006			LOWRES	= $0006
-   862 = 0007			HERCMONO	= $0007
-   863 = 0009			VGA	= $0009
-   864 = 000A			VESA	= $000A
-   865 = 000B			D1BIT	= $000B
-   866 = 000C			D2BIT	= $000C
-   867 = 000D			D4BIT	= $000D
-   868 = 000E			D6BIT	= $000E
-   869 = 000F			D8BIT	= $000F
-   870 = 0010			D12BIT	= $0010
-   871 = 0018			M640X400	= $0018
-   872 = 0018			M640X480	= $0018
-   873 = 0000			GROK	= $0000
-   874 = FFFFFFFF		GRNOINITGRAPH	= $FFFFFFFF
-   875 = FFFFFFFE		GRNOTDETECTED	= $FFFFFFFE
-   876 = FFFFFFFD		GRFILENOTFOUND	= $FFFFFFFD
-   877 = FFFFFFFC		GRINVALIDDRIVER	= $FFFFFFFC
-   878 = FFFFFFFB		GRNOLOADMEM	= $FFFFFFFB
-   879 = FFFFFFFA		GRNOSCANMEM	= $FFFFFFFA
-   880 = FFFFFFF9		GRNOFLOODMEM	= $FFFFFFF9
-   881 = FFFFFFF8		GRFONTNOTFOUND	= $FFFFFFF8
-   882 = FFFFFFF7		GRNOFONTMEM	= $FFFFFFF7
-   883 = FFFFFFF6		GRINVALIDMODE	= $FFFFFFF6
-   884 = FFFFFFF5		GRERROR	= $FFFFFFF5
-   885 = FFFFFFF4		GRIOERROR	= $FFFFFFF4
-   886 = FFFFFFF3		GRINVALIDFONT	= $FFFFFFF3
-   887 = FFFFFFF2		GRINVALIDFONTNUM	= $FFFFFFF2
-   888 = FFFFFFEE		GRINVALIDVERSION	= $FFFFFFEE
-   889 = 0000			CGAC0	= $0000
-   890 = 0001			CGAC1	= $0001
-   891 = 0002			CGAC2	= $0002
-   892 = 0003			CGAC3	= $0003
-   893 = 0004			CGAHI	= $0004
-   894 = 0000			MCGAC0	= $0000
-   895 = 0001			MCGAC1	= $0001
-   896 = 0002			MCGAC2	= $0002
-   897 = 0003			MCGAC3	= $0003
-   898 = 0004			MCGAMED	= $0004
-   899 = 0005			MCGAHI	= $0005
-   900 = 0000			EGALO	= $0000
-   901 = 0001			EGAHI	= $0001
-   902 = 0000			EGA64LO	= $0000
-   903 = 0001			EGA64HI	= $0001
-   904 = 0003			EGAMONOHI	= $0003
-   905 = 000A			VGALO	= $000A
-   906 = 001F			VGAMED	= $001F
-   907 = 0018			VGAHI	= $0018
-   908 = 2876			WIN_LEFT	= DATAORIGIN+$000C
-   909 = 2878			WIN_RIGHT	= DATAORIGIN+$000E
-   910 = 287A			WIN_TOP	= DATAORIGIN+$0010
-   911 = 287C			WIN_BOTTOM	= DATAORIGIN+$0012
-   912 = 287E			GRAPHRESULT	= DATAORIGIN+$0014
-   913 = 287F			GETCOLOR	= DATAORIGIN+$0015
-   914 = 2880			adr.LASTARCCOORDS	= DATAORIGIN+$0016
-   915 23F9			.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-   916 = 2880			LASTARCCOORDS.X	= DATAORIGIN+$0016
-   917 = 2882			LASTARCCOORDS.Y	= DATAORIGIN+$0018
-   918 = 2884			LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
-   919 = 2886			LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
-   920 = 2888			LASTARCCOORDS.XEND	= DATAORIGIN+$001E
-   921 = 288A			LASTARCCOORDS.YEND	= DATAORIGIN+$0020
-   922 = 288C			CURRENTX	= DATAORIGIN+$0022
-   923 = 288E			CURRENTY	= DATAORIGIN+$0024
-   924 = 2890			VIDEORAM	= DATAORIGIN+$0026
-   925 = 2892			SCANLINE_WIDTH	= DATAORIGIN+$0028
-   926
-   927 = 23F9 80 28		LASTARCCOORDS
-   927 				.endl							; UNIT GRAPH
-   928
-   929 23FB			.local	NEXTFRAMEPROC					; PROCEDURE
-   930
-   931 				; optimize OK (examples\man_anim.pas), line = 47
-   932
-   933 23FB AD A3 29			lda FRAME
-   934 23FE C9 01			cmp #$01
-   935 2400 D0 5F			jne l_010F
-   936
-   937 				; optimize OK (examples\man_anim.pas), line = 48
-   938
-   939 2402 AD 9A 29			lda PMGMEM+1
-   940 2405 18 69 02			add #$02
-   941 2408 85 8B			sta :ecx+1
-   942 240A AD 99 29			lda PMGMEM
-   943 240D 18 6D A1 29			add PY0
-   944 2411 85 8A			sta :ecx
-   945 2413 90 02			scc
-   946 2415 E6 8B			inc :ecx+1
-   947 2417 AD 52 28			lda P0FRAME1
-   948 241A 85 86			sta :edx
-   949 241C AD 53 28			lda P0FRAME1+1
-   950 241F 85 87			sta :edx+1
-   951 2421 AD A2 29			lda HEIGHT
-   952 2424 85 82			sta :eax
-   953 2426 A9 00			lda #$00
-   954 2428 85 83			sta :eax+1
-   955 242A 20 D5 20			jsr @move
-   956
-   957 				; optimize OK (examples\man_anim.pas), line = 49
-   958
-   959 242D AD 99 29			lda PMGMEM
-   960 2430 18 69 80			add #$80
-   961 2433 85 A2			sta :STACKORIGIN+10
-   962 2435 AD 9A 29			lda PMGMEM+1
-   963 2438 69 02			adc #$02
-   964 243A 85 8B			sta :ecx+1
-   965 243C A5 A2			lda :STACKORIGIN+10
-   966 243E 18 6D A1 29			add PY0
-   967 2442 85 8A			sta :ecx
-   968 2444 90 02			scc
-   969 2446 E6 8B			inc :ecx+1
-   970 2448 AD 5A 28			lda P1FRAME1
-   971 244B 85 86			sta :edx
-   972 244D AD 5B 28			lda P1FRAME1+1
-   973 2450 85 87			sta :edx+1
-   974 2452 AD A2 29			lda HEIGHT
-   975 2455 85 82			sta :eax
-   976 2457 A9 00			lda #$00
-   977 2459 85 83			sta :eax+1
-   978 245B 20 D5 20			jsr @move
-   979
-   980 245E 4C 90 25			jmp l_013D
-   981 2461			l_010F
-   982
-   983 				; optimize OK (examples\man_anim.pas), line = 51
-   984
-   985 2461 AD A3 29			lda FRAME
-   986 2464 C9 02			cmp #$02
-   987 2466 D0 5F			jne l_014F
-   988
-   989 				; optimize OK (examples\man_anim.pas), line = 52
-   990
-   991 2468 AD 9A 29			lda PMGMEM+1
-   992 246B 18 69 02			add #$02
-   993 246E 85 8B			sta :ecx+1
-   994 2470 AD 99 29			lda PMGMEM
-   995 2473 18 6D A1 29			add PY0
-   996 2477 85 8A			sta :ecx
-   997 2479 90 02			scc
-   998 247B E6 8B			inc :ecx+1
-   999 247D AD 54 28			lda P0FRAME2
-  1000 2480 85 86			sta :edx
-  1001 2482 AD 55 28			lda P0FRAME2+1
-  1002 2485 85 87			sta :edx+1
-  1003 2487 AD A2 29			lda HEIGHT
-  1004 248A 85 82			sta :eax
-  1005 248C A9 00			lda #$00
-  1006 248E 85 83			sta :eax+1
-  1007 2490 20 D5 20			jsr @move
-  1008
-  1009 				; optimize OK (examples\man_anim.pas), line = 53
-  1010
-  1011 2493 AD 99 29			lda PMGMEM
-  1012 2496 18 69 80			add #$80
-  1013 2499 85 A2			sta :STACKORIGIN+10
-  1014 249B AD 9A 29			lda PMGMEM+1
-  1015 249E 69 02			adc #$02
-  1016 24A0 85 8B			sta :ecx+1
-  1017 24A2 A5 A2			lda :STACKORIGIN+10
-  1018 24A4 18 6D A1 29			add PY0
-  1019 24A8 85 8A			sta :ecx
-  1020 24AA 90 02			scc
-  1021 24AC E6 8B			inc :ecx+1
-  1022 24AE AD 5C 28			lda P1FRAME2
-  1023 24B1 85 86			sta :edx
-  1024 24B3 AD 5D 28			lda P1FRAME2+1
-  1025 24B6 85 87			sta :edx+1
-  1026 24B8 AD A2 29			lda HEIGHT
-  1027 24BB 85 82			sta :eax
-  1028 24BD A9 00			lda #$00
-  1029 24BF 85 83			sta :eax+1
-  1030 24C1 20 D5 20			jsr @move
-  1031
-  1032 24C4 4C 90 25			jmp l_017D
-  1033 24C7			l_014F
-  1034
-  1035 				; optimize OK (examples\man_anim.pas), line = 55
-  1036
-  1037 24C7 AD A3 29			lda FRAME
-  1038 24CA C9 03			cmp #$03
-  1039 24CC D0 5F			jne l_018F
-  1040
-  1041 				; optimize OK (examples\man_anim.pas), line = 56
-  1042
-  1043 24CE AD 9A 29			lda PMGMEM+1
-  1044 24D1 18 69 02			add #$02
-  1045 24D4 85 8B			sta :ecx+1
-  1046 24D6 AD 99 29			lda PMGMEM
-  1047 24D9 18 6D A1 29			add PY0
-  1048 24DD 85 8A			sta :ecx
-  1049 24DF 90 02			scc
-  1050 24E1 E6 8B			inc :ecx+1
-  1051 24E3 AD 56 28			lda P0FRAME3
-  1052 24E6 85 86			sta :edx
-  1053 24E8 AD 57 28			lda P0FRAME3+1
-  1054 24EB 85 87			sta :edx+1
-  1055 24ED AD A2 29			lda HEIGHT
-  1056 24F0 85 82			sta :eax
-  1057 24F2 A9 00			lda #$00
-  1058 24F4 85 83			sta :eax+1
-  1059 24F6 20 D5 20			jsr @move
-  1060
-  1061 				; optimize OK (examples\man_anim.pas), line = 57
-  1062
-  1063 24F9 AD 99 29			lda PMGMEM
-  1064 24FC 18 69 80			add #$80
-  1065 24FF 85 A2			sta :STACKORIGIN+10
-  1066 2501 AD 9A 29			lda PMGMEM+1
-  1067 2504 69 02			adc #$02
-  1068 2506 85 8B			sta :ecx+1
-  1069 2508 A5 A2			lda :STACKORIGIN+10
-  1070 250A 18 6D A1 29			add PY0
-  1071 250E 85 8A			sta :ecx
-  1072 2510 90 02			scc
-  1073 2512 E6 8B			inc :ecx+1
-  1074 2514 AD 5E 28			lda P1FRAME3
-  1075 2517 85 86			sta :edx
-  1076 2519 AD 5F 28			lda P1FRAME3+1
-  1077 251C 85 87			sta :edx+1
-  1078 251E AD A2 29			lda HEIGHT
-  1079 2521 85 82			sta :eax
-  1080 2523 A9 00			lda #$00
-  1081 2525 85 83			sta :eax+1
-  1082 2527 20 D5 20			jsr @move
-  1083
-  1084 252A 4C 90 25			jmp l_01BD
-  1085 252D			l_018F
-  1086
-  1087 				; optimize OK (examples\man_anim.pas), line = 59
-  1088
-  1089 252D AD A3 29			lda FRAME
-  1090 2530 C9 04			cmp #$04
-  1091 2532 D0 5C			jne l_01CF
+   854 2420			@exit
+   855 					.ifdef @new
+   856 					lda <@VarData
+   857 					sta :ztmp
+   858 					lda >@VarData
+   859 					ldy #@VarDataSize-1
+   860 					jmp @FreeMem
+   861 					eif
+   862 2420 60				rts						; ret
+   863 				.endl
+   864
+   865 				; ------------------------------------------------------------
+   866
+   867 = 0080			CURRENTDRIVER	= $80
+   868 = 0000			DETECT	= $00
+   869 = 0001			CGA	= $01
+   870 = 0002			MCGA	= $02
+   871 = 0003			EGA	= $03
+   872 = 0004			EGA64	= $04
+   873 = 0005			EGAMONO	= $05
+   874 = 0006			LOWRES	= $06
+   875 = 0007			HERCMONO	= $07
+   876 = 0009			VGA	= $09
+   877 = 000A			VESA	= $0A
+   878 = 000B			D1BIT	= $0B
+   879 = 000C			D2BIT	= $0C
+   880 = 000D			D4BIT	= $0D
+   881 = 000E			D6BIT	= $0E
+   882 = 000F			D8BIT	= $0F
+   883 = 0010			D12BIT	= $10
+   884 = 0018			M640X400	= $18
+   885 = 0018			M640X480	= $18
+   886 = 0001			GROK	= $01
+   887 = 00FF			GRNOINITGRAPH	= $FF
+   888 = 00FE			GRNOTDETECTED	= $FE
+   889 = 00FD			GRFILENOTFOUND	= $FD
+   890 = 00FC			GRINVALIDDRIVER	= $FC
+   891 = 00FB			GRNOLOADMEM	= $FB
+   892 = 00FA			GRNOSCANMEM	= $FA
+   893 = 00F9			GRNOFLOODMEM	= $F9
+   894 = 00F8			GRFONTNOTFOUND	= $F8
+   895 = 00F7			GRNOFONTMEM	= $F7
+   896 = 00F6			GRINVALIDMODE	= $F6
+   897 = 00F5			GRERROR	= $F5
+   898 = 00F4			GRIOERROR	= $F4
+   899 = 00F3			GRINVALIDFONT	= $F3
+   900 = 00F2			GRINVALIDFONTNUM	= $F2
+   901 = 00EE			GRINVALIDVERSION	= $EE
+   902 = 0000			CGAC0	= $00
+   903 = 0001			CGAC1	= $01
+   904 = 0002			CGAC2	= $02
+   905 = 0003			CGAC3	= $03
+   906 = 0004			CGAHI	= $04
+   907 = 0000			MCGAC0	= $00
+   908 = 0001			MCGAC1	= $01
+   909 = 0002			MCGAC2	= $02
+   910 = 0003			MCGAC3	= $03
+   911 = 0004			MCGAMED	= $04
+   912 = 0005			MCGAHI	= $05
+   913 = 0000			EGALO	= $00
+   914 = 0001			EGAHI	= $01
+   915 = 0000			EGA64LO	= $00
+   916 = 0001			EGA64HI	= $01
+   917 = 0003			EGAMONOHI	= $03
+   918 = 000A			VGALO	= $0A
+   919 = 001F			VGAMED	= $1F
+   920 = 0018			VGAHI	= $18
+   921 = 2872			WIN_LEFT	= DATAORIGIN+$000C
+   922 = 2874			WIN_RIGHT	= DATAORIGIN+$000E
+   923 = 2876			WIN_TOP	= DATAORIGIN+$0010
+   924 = 2878			WIN_BOTTOM	= DATAORIGIN+$0012
+   925 = 287A			GRAPHRESULT	= DATAORIGIN+$0014
+   926 = 287B			GETCOLOR	= DATAORIGIN+$0015
+   927 = 287C			adr.LASTARCCOORDS	= DATAORIGIN+$0016
+   928 2421			.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
+   929 = 287C			LASTARCCOORDS.X	= DATAORIGIN+$0016
+   930 = 287E			LASTARCCOORDS.Y	= DATAORIGIN+$0018
+   931 = 2880			LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
+   932 = 2882			LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
+   933 = 2884			LASTARCCOORDS.XEND	= DATAORIGIN+$001E
+   934 = 2886			LASTARCCOORDS.YEND	= DATAORIGIN+$0020
+   935 = 2888			CURRENTX	= DATAORIGIN+$0022
+   936 = 288A			CURRENTY	= DATAORIGIN+$0024
+   937 = 288C			VIDEORAM	= DATAORIGIN+$0026
+   938 = 288E			SCANLINE_WIDTH	= DATAORIGIN+$0028
+   939
+   940 = 2421 7C 28		LASTARCCOORDS
+   940 				.endl							; UNIT GRAPH
+   941
+   942 2423			.local	NEXTFRAMEPROC					; PROCEDURE
+   943
+   944 				; optimize OK (examples\man_anim.pas), line = 47
+   945
+   946 2423 AD 9F 29			lda FRAME
+   947 2426 C9 01			cmp #$01
+   948 2428 D0 5A			jne l_0120
+   949
+   950 				; optimize OK (examples\man_anim.pas), line = 48
+   951
+   952 242A AD 95 29			lda PMGMEM
+   953 242D 18 6D 9D 29			add PY0
+   954 2431 85 8C			sta :ecx
+   955 2433 AD 96 29			lda PMGMEM+1
+   956 2436 69 02			adc #$02
+   957 2438 85 8D			sta :ecx+1
+   958 243A AD 4E 28			lda P0FRAME1
+   959 243D 85 88			sta :edx
+   960 243F AD 4F 28			lda P0FRAME1+1
+   961 2442 85 89			sta :edx+1
+   962 2444 AD 9E 29			lda HEIGHT
+   963 2447 85 84			sta :eax
+   964 2449 A9 00			lda #$00
+   965 244B 85 85			sta :eax+1
+   966 244D 20 DF 20			jsr @move
+   967
+   968 				; optimize OK (examples\man_anim.pas), line = 49
+   969
+   970 2450 AD 95 29			lda PMGMEM
+   971 2453 18 69 80			add #$80
+   972 2456 85 A2			sta :STACKORIGIN+10
+   973 2458 AD 96 29			lda PMGMEM+1
+   974 245B 69 02			adc #$02
+   975 245D 85 8D			sta :ecx+1
+   976 245F A5 A2			lda :STACKORIGIN+10
+   977 2461 18 6D 9D 29			add PY0
+   978 2465 85 8C			sta :ecx
+   979 2467 90 02			scc
+   980 2469 E6 8D			inc :ecx+1
+   981 246B AD 56 28			lda P1FRAME1
+   982 246E 85 88			sta :edx
+   983 2470 AD 57 28			lda P1FRAME1+1
+   984 2473 85 89			sta :edx+1
+   985 2475 AD 9E 29			lda HEIGHT
+   986 2478 85 84			sta :eax
+   987 247A A9 00			lda #$00
+   988 247C 85 85			sta :eax+1
+   989 247E 20 DF 20			jsr @move
+   990 2481 4C A4 25			jmp l_014E
+   991 2484			l_0120
+   992
+   993 				; optimize OK (examples\man_anim.pas), line = 51
+   994
+   995 2484 AD 9F 29			lda FRAME
+   996 2487 C9 02			cmp #$02
+   997 2489 D0 5A			jne l_0160
+   998
+   999 				; optimize OK (examples\man_anim.pas), line = 52
+  1000
+  1001 248B AD 95 29			lda PMGMEM
+  1002 248E 18 6D 9D 29			add PY0
+  1003 2492 85 8C			sta :ecx
+  1004 2494 AD 96 29			lda PMGMEM+1
+  1005 2497 69 02			adc #$02
+  1006 2499 85 8D			sta :ecx+1
+  1007 249B AD 50 28			lda P0FRAME2
+  1008 249E 85 88			sta :edx
+  1009 24A0 AD 51 28			lda P0FRAME2+1
+  1010 24A3 85 89			sta :edx+1
+  1011 24A5 AD 9E 29			lda HEIGHT
+  1012 24A8 85 84			sta :eax
+  1013 24AA A9 00			lda #$00
+  1014 24AC 85 85			sta :eax+1
+  1015 24AE 20 DF 20			jsr @move
+  1016
+  1017 				; optimize OK (examples\man_anim.pas), line = 53
+  1018
+  1019 24B1 AD 95 29			lda PMGMEM
+  1020 24B4 18 69 80			add #$80
+  1021 24B7 85 A2			sta :STACKORIGIN+10
+  1022 24B9 AD 96 29			lda PMGMEM+1
+  1023 24BC 69 02			adc #$02
+  1024 24BE 85 8D			sta :ecx+1
+  1025 24C0 A5 A2			lda :STACKORIGIN+10
+  1026 24C2 18 6D 9D 29			add PY0
+  1027 24C6 85 8C			sta :ecx
+  1028 24C8 90 02			scc
+  1029 24CA E6 8D			inc :ecx+1
+  1030 24CC AD 58 28			lda P1FRAME2
+  1031 24CF 85 88			sta :edx
+  1032 24D1 AD 59 28			lda P1FRAME2+1
+  1033 24D4 85 89			sta :edx+1
+  1034 24D6 AD 9E 29			lda HEIGHT
+  1035 24D9 85 84			sta :eax
+  1036 24DB A9 00			lda #$00
+  1037 24DD 85 85			sta :eax+1
+  1038 24DF 20 DF 20			jsr @move
+  1039 24E2 4C A4 25			jmp l_018E
+  1040 24E5			l_0160
+  1041
+  1042 				; optimize OK (examples\man_anim.pas), line = 55
+  1043
+  1044 24E5 AD 9F 29			lda FRAME
+  1045 24E8 C9 03			cmp #$03
+  1046 24EA D0 5A			jne l_01A0
+  1047
+  1048 				; optimize OK (examples\man_anim.pas), line = 56
+  1049
+  1050 24EC AD 95 29			lda PMGMEM
+  1051 24EF 18 6D 9D 29			add PY0
+  1052 24F3 85 8C			sta :ecx
+  1053 24F5 AD 96 29			lda PMGMEM+1
+  1054 24F8 69 02			adc #$02
+  1055 24FA 85 8D			sta :ecx+1
+  1056 24FC AD 52 28			lda P0FRAME3
+  1057 24FF 85 88			sta :edx
+  1058 2501 AD 53 28			lda P0FRAME3+1
+  1059 2504 85 89			sta :edx+1
+  1060 2506 AD 9E 29			lda HEIGHT
+  1061 2509 85 84			sta :eax
+  1062 250B A9 00			lda #$00
+  1063 250D 85 85			sta :eax+1
+  1064 250F 20 DF 20			jsr @move
+  1065
+  1066 				; optimize OK (examples\man_anim.pas), line = 57
+  1067
+  1068 2512 AD 95 29			lda PMGMEM
+  1069 2515 18 69 80			add #$80
+  1070 2518 85 A2			sta :STACKORIGIN+10
+  1071 251A AD 96 29			lda PMGMEM+1
+  1072 251D 69 02			adc #$02
+  1073 251F 85 8D			sta :ecx+1
+  1074 2521 A5 A2			lda :STACKORIGIN+10
+  1075 2523 18 6D 9D 29			add PY0
+  1076 2527 85 8C			sta :ecx
+  1077 2529 90 02			scc
+  1078 252B E6 8D			inc :ecx+1
+  1079 252D AD 5A 28			lda P1FRAME3
+  1080 2530 85 88			sta :edx
+  1081 2532 AD 5B 28			lda P1FRAME3+1
+  1082 2535 85 89			sta :edx+1
+  1083 2537 AD 9E 29			lda HEIGHT
+  1084 253A 85 84			sta :eax
+  1085 253C A9 00			lda #$00
+  1086 253E 85 85			sta :eax+1
+  1087 2540 20 DF 20			jsr @move
+  1088 2543 4C A4 25			jmp l_01CE
+  1089 2546			l_01A0
+  1090
+  1091 				; optimize OK (examples\man_anim.pas), line = 59
   1092
-  1093 				; optimize OK (examples\man_anim.pas), line = 60
-  1094
-  1095 2534 AD 9A 29			lda PMGMEM+1
-  1096 2537 18 69 02			add #$02
-  1097 253A 85 8B			sta :ecx+1
-  1098 253C AD 99 29			lda PMGMEM
-  1099 253F 18 6D A1 29			add PY0
-  1100 2543 85 8A			sta :ecx
-  1101 2545 90 02			scc
-  1102 2547 E6 8B			inc :ecx+1
-  1103 2549 AD 58 28			lda P0FRAME4
-  1104 254C 85 86			sta :edx
-  1105 254E AD 59 28			lda P0FRAME4+1
-  1106 2551 85 87			sta :edx+1
-  1107 2553 AD A2 29			lda HEIGHT
-  1108 2556 85 82			sta :eax
-  1109 2558 A9 00			lda #$00
-  1110 255A 85 83			sta :eax+1
-  1111 255C 20 D5 20			jsr @move
-  1112
-  1113 				; optimize OK (examples\man_anim.pas), line = 61
+  1093 2546 AD 9F 29			lda FRAME
+  1094 2549 C9 04			cmp #$04
+  1095 254B D0 57			jne l_01E0
+  1096
+  1097 				; optimize OK (examples\man_anim.pas), line = 60
+  1098
+  1099 254D AD 95 29			lda PMGMEM
+  1100 2550 18 6D 9D 29			add PY0
+  1101 2554 85 8C			sta :ecx
+  1102 2556 AD 96 29			lda PMGMEM+1
+  1103 2559 69 02			adc #$02
+  1104 255B 85 8D			sta :ecx+1
+  1105 255D AD 54 28			lda P0FRAME4
+  1106 2560 85 88			sta :edx
+  1107 2562 AD 55 28			lda P0FRAME4+1
+  1108 2565 85 89			sta :edx+1
+  1109 2567 AD 9E 29			lda HEIGHT
+  1110 256A 85 84			sta :eax
+  1111 256C A9 00			lda #$00
+  1112 256E 85 85			sta :eax+1
+  1113 2570 20 DF 20			jsr @move
   1114
-  1115 255F AD 99 29			lda PMGMEM
-  1116 2562 18 69 80			add #$80
-  1117 2565 85 A2			sta :STACKORIGIN+10
-  1118 2567 AD 9A 29			lda PMGMEM+1
-  1119 256A 69 02			adc #$02
-  1120 256C 85 8B			sta :ecx+1
-  1121 256E A5 A2			lda :STACKORIGIN+10
-  1122 2570 18 6D A1 29			add PY0
-  1123 2574 85 8A			sta :ecx
-  1124 2576 90 02			scc
-  1125 2578 E6 8B			inc :ecx+1
-  1126 257A AD 60 28			lda P1FRAME4
-  1127 257D 85 86			sta :edx
-  1128 257F AD 61 28			lda P1FRAME4+1
-  1129 2582 85 87			sta :edx+1
-  1130 2584 AD A2 29			lda HEIGHT
-  1131 2587 85 82			sta :eax
-  1132 2589 A9 00			lda #$00
-  1133 258B 85 83			sta :eax+1
-  1134 258D 20 D5 20			jsr @move
-  1135 2590			l_01CF
-  1136 2590			l_01BD
-  1137 2590			l_017D
-  1138 2590			l_013D
-  1139 2590			@exit
-  1140 					.ifdef @new
-  1141 					@FreeMem #@VarData #@VarDataSize
-  1142 					eif
-  1143 2590 60				rts						; ret
-  1144 				.endl
-  1145
-  1146 2591			.local	PLAYGROUNDPROC					; PROCEDURE
-  1147
-  1148 				; optimize OK (examples\man_anim.pas), line = 69
-  1149
-  1150 2591 A9 B8			lda #$B8
-  1151 2593 8D C4 02			sta $02C4
-  1152
-  1153 				; optimize OK (examples\man_anim.pas), line = 70
-  1154
-  1155 2596 A9 06			lda #$06
-  1156 2598 8D C5 02			sta $02C5
-  1157
-  1158 				; optimize OK (examples\man_anim.pas), line = 71
-  1159
-  1160 259B A9 BA			lda #$BA
-  1161 259D 8D C6 02			sta $02C6
-  1162 				; --- For
+  1115 				; optimize OK (examples\man_anim.pas), line = 61
+  1116
+  1117 2573 AD 95 29			lda PMGMEM
+  1118 2576 18 69 80			add #$80
+  1119 2579 85 A2			sta :STACKORIGIN+10
+  1120 257B AD 96 29			lda PMGMEM+1
+  1121 257E 69 02			adc #$02
+  1122 2580 85 8D			sta :ecx+1
+  1123 2582 A5 A2			lda :STACKORIGIN+10
+  1124 2584 18 6D 9D 29			add PY0
+  1125 2588 85 8C			sta :ecx
+  1126 258A 90 02			scc
+  1127 258C E6 8D			inc :ecx+1
+  1128 258E AD 5C 28			lda P1FRAME4
+  1129 2591 85 88			sta :edx
+  1130 2593 AD 5D 28			lda P1FRAME4+1
+  1131 2596 85 89			sta :edx+1
+  1132 2598 AD 9E 29			lda HEIGHT
+  1133 259B 85 84			sta :eax
+  1134 259D A9 00			lda #$00
+  1135 259F 85 85			sta :eax+1
+  1136 25A1 20 DF 20			jsr @move
+  1137 25A4			l_01E0
+  1138 25A4			l_01CE
+  1139 25A4			l_018E
+  1140 25A4			l_014E
+  1141 25A4			@exit
+  1142 					.ifdef @new
+  1143 					lda <@VarData
+  1144 					sta :ztmp
+  1145 					lda >@VarData
+  1146 					ldy #@VarDataSize-1
+  1147 					jmp @FreeMem
+  1148 					eif
+  1149 25A4 60				rts						; ret
+  1150 				.endl
+  1151
+  1152 25A5			.local	PLAYGROUNDPROC					; PROCEDURE
+  1153
+  1154 				; optimize OK (examples\man_anim.pas), line = 69
+  1155
+  1156 25A5 A9 B8			lda #$B8
+  1157 25A7 8D C4 02			sta $02C4
+  1158
+  1159 				; optimize OK (examples\man_anim.pas), line = 70
+  1160
+  1161 25AA A9 06			lda #$06
+  1162 25AC 8D C5 02			sta $02C5
   1163
-  1164 				; optimize OK (examples\man_anim.pas), line = 72
+  1164 				; optimize OK (examples\man_anim.pas), line = 71
   1165
-  1166 25A0 A9 1A 8D A8 29		mva #$1A I
-  1167
-  1168 				; optimize OK (examples\man_anim.pas), line = 72
+  1166 25AF A9 BA			lda #$BA
+  1167 25B1 8D C6 02			sta $02C6
+  1168 				; --- For
   1169
-  1170 				; --- To
-  1171 25A5			l_020C
-  1172
-  1173 				; --- ForToDoCondition
-  1174
-  1175 				; optimize OK (examples\man_anim.pas), line = 72
-  1176
-  1177 25A5 AD A8 29			lda I
-  1178 25A8 C9 2A			cmp #$2A
-  1179 25AA 90 02			scc
-  1180 25AC D0 4C			jne l_021A
-  1181
-  1182 				; optimize FAIL ('GRAPH.SETCOLOR', examples\man_anim.pas), line = 73
-  1183 25AE E8				inx
-  1184 25AF AD A8 29 95 98		mva I :STACKORIGIN,x
-  1185 25B4 20 5D 22			jsr GRAPH.SETCOLOR
-  1186
-  1187 				; optimize FAIL ('GRAPH.PUTPIXEL_00AF', examples\man_anim.pas), line = 74
-  1188 25B7 E8				inx
-  1189 25B8 A9 00 95 98			mva #$00 :STACKORIGIN,x
-  1190 25BC 95 A8			sta :STACKORIGIN+STACKWIDTH,x
-  1191 25BE E8				inx
-  1192 25BF AD A8 29 95 98		mva I :STACKORIGIN,x
-  1193 25C4 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1194 25C8 20 6D 22			jsr GRAPH.PUTPIXEL_00AF
-  1195
-  1196 				; optimize FAIL ('GRAPH.MOVETO', examples\man_anim.pas), line = 75
-  1197 25CB E8				inx
-  1198 25CC A9 00 95 98			mva #$00 :STACKORIGIN,x
-  1199 25D0 95 A8			sta :STACKORIGIN+STACKWIDTH,x
-  1200 25D2 E8				inx
-  1201 25D3 AD A8 29 95 98		mva I :STACKORIGIN,x
-  1202 25D8 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1203 25DC 20 C0 22			jsr GRAPH.MOVETO
-  1204
-  1205 				; optimize FAIL ('GRAPH.LINETO', examples\man_anim.pas), line = 76
-  1206 25DF E8				inx
-  1207 25E0 A9 9F 95 98			mva #$9F :STACKORIGIN,x
-  1208 25E4 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1209 25E8 E8				inx
-  1210 25E9 AD A8 29 95 98		mva I :STACKORIGIN,x
-  1211 25EE A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1212 25F2 20 4B 23			jsr GRAPH.LINETO
-  1213
-  1214 				; --- ForToDoEpilog
-  1215 25F5 EE A8 29			inc I						; inc ptr byte [CounterAddress]
+  1170 				; optimize OK (examples\man_anim.pas), line = 72
+  1171
+  1172 25B4 A9 1A 8D A4 29		mva #$1A I
+  1173
+  1174 				; optimize OK (examples\man_anim.pas), line = 72
+  1175
+  1176 25B9			l_021D
+  1177 				; --- ForToDoCondition
+  1178
+  1179 				; optimize OK (examples\man_anim.pas), line = 72
+  1180
+  1181 25B9 AD A4 29			lda I
+  1182 25BC C9 2B			cmp #$2B
+  1183 25BE B0 4C			jcs l_022B
+  1184
+  1185 				; optimize FAIL ('GRAPH.SETCOLOR', examples\man_anim.pas), line = 73
+  1186 25C0 E8				inx
+  1187 25C1 AD A4 29 95 98		mva I :STACKORIGIN,x
+  1188 25C6 20 7D 22			jsr GRAPH.SETCOLOR
+  1189
+  1190 				; optimize FAIL ('GRAPH.PUTPIXEL_00AE', examples\man_anim.pas), line = 74
+  1191 25C9 E8				inx
+  1192 25CA A9 00 95 98			mva #$00 :STACKORIGIN,x
+  1193 25CE 95 A8			sta :STACKORIGIN+STACKWIDTH,x
+  1194 25D0 E8				inx
+  1195 25D1 AD A4 29 95 98		mva I :STACKORIGIN,x
+  1196 25D6 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1197 25DA 20 8D 22			jsr GRAPH.PUTPIXEL_00AE
+  1198
+  1199 				; optimize FAIL ('GRAPH.MOVETO', examples\man_anim.pas), line = 75
+  1200 25DD E8				inx
+  1201 25DE A9 00 95 98			mva #$00 :STACKORIGIN,x
+  1202 25E2 95 A8			sta :STACKORIGIN+STACKWIDTH,x
+  1203 25E4 E8				inx
+  1204 25E5 AD A4 29 95 98		mva I :STACKORIGIN,x
+  1205 25EA A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1206 25EE 20 E4 22			jsr GRAPH.MOVETO
+  1207
+  1208 				; optimize FAIL ('GRAPH.LINETO', examples\man_anim.pas), line = 76
+  1209 25F1 E8				inx
+  1210 25F2 A9 9F 95 98			mva #$9F :STACKORIGIN,x
+  1211 25F6 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1212 25FA E8				inx
+  1213 25FB AD A4 29 95 98		mva I :STACKORIGIN,x
+  1214 2600 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1215 2604 20 6F 23			jsr GRAPH.LINETO
   1216
-  1217 25F8 D0 AB			jne l_020C
-  1218
-  1219 25FA			l_021A
-  1220
-  1221 				; optimize FAIL ('GRAPH.SETCOLOR', examples\man_anim.pas), line = 78
-  1222 25FA E8				inx
-  1223 25FB A9 01 95 98			mva #$01 :STACKORIGIN,x
-  1224 25FF 20 5D 22			jsr GRAPH.SETCOLOR
-  1225
-  1226 				; optimize FAIL ('GRAPH.PUTPIXEL_00AF', examples\man_anim.pas), line = 79
-  1227 2602 E8				inx
-  1228 2603 A9 00 95 98			mva #$00 :STACKORIGIN,x
-  1229 2607 95 A8			sta :STACKORIGIN+STACKWIDTH,x
-  1230 2609 E8				inx
-  1231 260A A9 36 95 98			mva #$36 :STACKORIGIN,x
-  1232 260E A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1233 2612 20 6D 22			jsr GRAPH.PUTPIXEL_00AF
-  1234
-  1235 				; optimize FAIL ('GRAPH.MOVETO', examples\man_anim.pas), line = 80
-  1236 2615 E8				inx
-  1237 2616 A9 00 95 98			mva #$00 :STACKORIGIN,x
-  1238 261A 95 A8			sta :STACKORIGIN+STACKWIDTH,x
-  1239 261C E8				inx
-  1240 261D A9 36 95 98			mva #$36 :STACKORIGIN,x
-  1241 2621 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1242 2625 20 C0 22			jsr GRAPH.MOVETO
-  1243
-  1244 				; optimize FAIL ('GRAPH.LINETO', examples\man_anim.pas), line = 81
-  1245 2628 E8				inx
-  1246 2629 A9 9F 95 98			mva #$9F :STACKORIGIN,x
-  1247 262D A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1248 2631 E8				inx
-  1249 2632 A9 36 95 98			mva #$36 :STACKORIGIN,x
-  1250 2636 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1251 263A 20 4B 23			jsr GRAPH.LINETO
-  1252
-  1253 				; optimize FAIL ('GRAPH.PUTPIXEL_00AF', examples\man_anim.pas), line = 82
-  1254 263D E8				inx
-  1255 263E A9 00 95 98			mva #$00 :STACKORIGIN,x
-  1256 2642 95 A8			sta :STACKORIGIN+STACKWIDTH,x
-  1257 2644 E8				inx
-  1258 2645 A9 40 95 98			mva #$40 :STACKORIGIN,x
-  1259 2649 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1260 264D 20 6D 22			jsr GRAPH.PUTPIXEL_00AF
-  1261
-  1262 				; optimize FAIL ('GRAPH.MOVETO', examples\man_anim.pas), line = 83
-  1263 2650 E8				inx
-  1264 2651 A9 00 95 98			mva #$00 :STACKORIGIN,x
-  1265 2655 95 A8			sta :STACKORIGIN+STACKWIDTH,x
-  1266 2657 E8				inx
-  1267 2658 A9 40 95 98			mva #$40 :STACKORIGIN,x
-  1268 265C A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1269 2660 20 C0 22			jsr GRAPH.MOVETO
-  1270
-  1271 				; optimize FAIL ('GRAPH.LINETO', examples\man_anim.pas), line = 84
-  1272 2663 E8				inx
-  1273 2664 A9 9F 95 98			mva #$9F :STACKORIGIN,x
-  1274 2668 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1275 266C E8				inx
-  1276 266D A9 40 95 98			mva #$40 :STACKORIGIN,x
-  1277 2671 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1278 2675 20 4B 23			jsr GRAPH.LINETO
-  1279
-  1280 				; optimize FAIL ('GRAPH.SETCOLOR', examples\man_anim.pas), line = 85
-  1281 2678 E8				inx
-  1282 2679 A9 02 95 98			mva #$02 :STACKORIGIN,x
-  1283 267D 20 5D 22			jsr GRAPH.SETCOLOR
-  1284 				; --- For
-  1285
-  1286 				; optimize OK (examples\man_anim.pas), line = 86
-  1287
-  1288 2680 A9 37 8D A8 29		mva #$37 I
-  1289
-  1290 				; optimize OK (examples\man_anim.pas), line = 86
-  1291
-  1292 				; --- To
-  1293 2685			l_0251
-  1294
-  1295 				; --- ForToDoCondition
-  1296
-  1297 				; optimize OK (examples\man_anim.pas), line = 86
-  1298
-  1299 2685 AD A8 29			lda I
-  1300 2688 C9 3F			cmp #$3F
-  1301 268A 90 02			scc
-  1302 268C D0 43			jne l_025F
-  1303
-  1304 				; optimize FAIL ('GRAPH.PUTPIXEL_00AF', examples\man_anim.pas), line = 87
-  1305 268E E8				inx
-  1306 268F A9 00 95 98			mva #$00 :STACKORIGIN,x
-  1307 2693 95 A8			sta :STACKORIGIN+STACKWIDTH,x
-  1308 2695 E8				inx
-  1309 2696 AD A8 29 95 98		mva I :STACKORIGIN,x
-  1310 269B A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1311 269F 20 6D 22			jsr GRAPH.PUTPIXEL_00AF
-  1312
-  1313 				; optimize FAIL ('GRAPH.MOVETO', examples\man_anim.pas), line = 88
-  1314 26A2 E8				inx
-  1315 26A3 A9 00 95 98			mva #$00 :STACKORIGIN,x
-  1316 26A7 95 A8			sta :STACKORIGIN+STACKWIDTH,x
-  1317 26A9 E8				inx
-  1318 26AA AD A8 29 95 98		mva I :STACKORIGIN,x
-  1319 26AF A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1320 26B3 20 C0 22			jsr GRAPH.MOVETO
-  1321
-  1322 				; optimize FAIL ('GRAPH.LINETO', examples\man_anim.pas), line = 89
-  1323 26B6 E8				inx
-  1324 26B7 A9 9F 95 98			mva #$9F :STACKORIGIN,x
-  1325 26BB A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1326 26BF E8				inx
-  1327 26C0 AD A8 29 95 98		mva I :STACKORIGIN,x
-  1328 26C5 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
-  1329 26C9 20 4B 23			jsr GRAPH.LINETO
-  1330
-  1331 				; --- ForToDoEpilog
-  1332 26CC EE A8 29			inc I						; inc ptr byte [CounterAddress]
+  1217 				; --- ForToDoEpilog
+  1218 2607 EE A4 29			inc I						; inc ptr byte [CounterAddress]
+  1219 260A D0 AD			jne l_021D
+  1220 260C			l_022B
+  1221
+  1222 				; optimize FAIL ('GRAPH.SETCOLOR', examples\man_anim.pas), line = 78
+  1223 260C E8				inx
+  1224 260D A9 01 95 98			mva #$01 :STACKORIGIN,x
+  1225 2611 20 7D 22			jsr GRAPH.SETCOLOR
+  1226
+  1227 				; optimize FAIL ('GRAPH.PUTPIXEL_00AE', examples\man_anim.pas), line = 79
+  1228 2614 E8				inx
+  1229 2615 A9 00 95 98			mva #$00 :STACKORIGIN,x
+  1230 2619 95 A8			sta :STACKORIGIN+STACKWIDTH,x
+  1231 261B E8				inx
+  1232 261C A9 36 95 98			mva #$36 :STACKORIGIN,x
+  1233 2620 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1234 2624 20 8D 22			jsr GRAPH.PUTPIXEL_00AE
+  1235
+  1236 				; optimize FAIL ('GRAPH.MOVETO', examples\man_anim.pas), line = 80
+  1237 2627 E8				inx
+  1238 2628 A9 00 95 98			mva #$00 :STACKORIGIN,x
+  1239 262C 95 A8			sta :STACKORIGIN+STACKWIDTH,x
+  1240 262E E8				inx
+  1241 262F A9 36 95 98			mva #$36 :STACKORIGIN,x
+  1242 2633 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1243 2637 20 E4 22			jsr GRAPH.MOVETO
+  1244
+  1245 				; optimize FAIL ('GRAPH.LINETO', examples\man_anim.pas), line = 81
+  1246 263A E8				inx
+  1247 263B A9 9F 95 98			mva #$9F :STACKORIGIN,x
+  1248 263F A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1249 2643 E8				inx
+  1250 2644 A9 36 95 98			mva #$36 :STACKORIGIN,x
+  1251 2648 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1252 264C 20 6F 23			jsr GRAPH.LINETO
+  1253
+  1254 				; optimize FAIL ('GRAPH.PUTPIXEL_00AE', examples\man_anim.pas), line = 82
+  1255 264F E8				inx
+  1256 2650 A9 00 95 98			mva #$00 :STACKORIGIN,x
+  1257 2654 95 A8			sta :STACKORIGIN+STACKWIDTH,x
+  1258 2656 E8				inx
+  1259 2657 A9 40 95 98			mva #$40 :STACKORIGIN,x
+  1260 265B A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1261 265F 20 8D 22			jsr GRAPH.PUTPIXEL_00AE
+  1262
+  1263 				; optimize FAIL ('GRAPH.MOVETO', examples\man_anim.pas), line = 83
+  1264 2662 E8				inx
+  1265 2663 A9 00 95 98			mva #$00 :STACKORIGIN,x
+  1266 2667 95 A8			sta :STACKORIGIN+STACKWIDTH,x
+  1267 2669 E8				inx
+  1268 266A A9 40 95 98			mva #$40 :STACKORIGIN,x
+  1269 266E A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1270 2672 20 E4 22			jsr GRAPH.MOVETO
+  1271
+  1272 				; optimize FAIL ('GRAPH.LINETO', examples\man_anim.pas), line = 84
+  1273 2675 E8				inx
+  1274 2676 A9 9F 95 98			mva #$9F :STACKORIGIN,x
+  1275 267A A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1276 267E E8				inx
+  1277 267F A9 40 95 98			mva #$40 :STACKORIGIN,x
+  1278 2683 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1279 2687 20 6F 23			jsr GRAPH.LINETO
+  1280
+  1281 				; optimize FAIL ('GRAPH.SETCOLOR', examples\man_anim.pas), line = 85
+  1282 268A E8				inx
+  1283 268B A9 02 95 98			mva #$02 :STACKORIGIN,x
+  1284 268F 20 7D 22			jsr GRAPH.SETCOLOR
+  1285 				; --- For
+  1286
+  1287 				; optimize OK (examples\man_anim.pas), line = 86
+  1288
+  1289 2692 A9 37 8D A4 29		mva #$37 I
+  1290
+  1291 				; optimize OK (examples\man_anim.pas), line = 86
+  1292
+  1293 2697			l_0262
+  1294 				; --- ForToDoCondition
+  1295
+  1296 				; optimize OK (examples\man_anim.pas), line = 86
+  1297
+  1298 2697 AD A4 29			lda I
+  1299 269A C9 40			cmp #$40
+  1300 269C B0 43			jcs l_0270
+  1301
+  1302 				; optimize FAIL ('GRAPH.PUTPIXEL_00AE', examples\man_anim.pas), line = 87
+  1303 269E E8				inx
+  1304 269F A9 00 95 98			mva #$00 :STACKORIGIN,x
+  1305 26A3 95 A8			sta :STACKORIGIN+STACKWIDTH,x
+  1306 26A5 E8				inx
+  1307 26A6 AD A4 29 95 98		mva I :STACKORIGIN,x
+  1308 26AB A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1309 26AF 20 8D 22			jsr GRAPH.PUTPIXEL_00AE
+  1310
+  1311 				; optimize FAIL ('GRAPH.MOVETO', examples\man_anim.pas), line = 88
+  1312 26B2 E8				inx
+  1313 26B3 A9 00 95 98			mva #$00 :STACKORIGIN,x
+  1314 26B7 95 A8			sta :STACKORIGIN+STACKWIDTH,x
+  1315 26B9 E8				inx
+  1316 26BA AD A4 29 95 98		mva I :STACKORIGIN,x
+  1317 26BF A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1318 26C3 20 E4 22			jsr GRAPH.MOVETO
+  1319
+  1320 				; optimize FAIL ('GRAPH.LINETO', examples\man_anim.pas), line = 89
+  1321 26C6 E8				inx
+  1322 26C7 A9 9F 95 98			mva #$9F :STACKORIGIN,x
+  1323 26CB A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1324 26CF E8				inx
+  1325 26D0 AD A4 29 95 98		mva I :STACKORIGIN,x
+  1326 26D5 A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
+  1327 26D9 20 6F 23			jsr GRAPH.LINETO
+  1328
+  1329 				; --- ForToDoEpilog
+  1330 26DC EE A4 29			inc I						; inc ptr byte [CounterAddress]
+  1331 26DF D0 B6			jne l_0262
+  1332 26E1			l_0270
   1333
-  1334 26CF D0 B4			jne l_0251
+  1334 				; ------------------------------------------------------------
   1335
-  1336 26D1			l_025F
-  1337
-  1338 				; ------------------------------------------------------------
+  1336 = 29A4			I	= DATAORIGIN+$013E
+  1337 = 002A			@FORTMP_021A	= $2A
+  1338 = 003F			@FORTMP_025F	= $3F
   1339
-  1340 = 29A8			I	= DATAORIGIN+$013E
-  1341 = 002A			@FORTMP_0209	= $002A
-  1342 = 003F			@FORTMP_024E	= $003F
-  1343
-  1344 = 29A8			@VarData	= I
-  1345 = 0001			@VarDataSize	= 1
-  1346
-  1347 26D1			@exit
-  1348 					.ifdef @new
-  1349 					@FreeMem #@VarData #@VarDataSize
+  1340 = 29A4			@VarData	= I
+  1341 = 0001			@VarDataSize	= 1
+  1342
+  1343 26E1			@exit
+  1344 					.ifdef @new
+  1345 					lda <@VarData
+  1346 					sta :ztmp
+  1347 					lda >@VarData
+  1348 					ldy #@VarDataSize-1
+  1349 					jmp @FreeMem
   1350 					eif
-  1351 26D1 60				rts						; ret
+  1351 26E1 60				rts						; ret
   1352 				.endl
   1353
-  1354 26D2			.local	MAINPROC					; PROCEDURE
+  1354 26E2			.local	MAINPROC					; PROCEDURE
   1355
-  1356 				; optimize FAIL ('GRAPH.INITGRAPH_009A', examples\man_anim.pas), line = 96
-  1357 26D2 E8				inx
-  1358 26D3 A9 07 95 98			mva #$07 :STACKORIGIN,x
-  1359 26D7 20 E4 21			jsr GRAPH.INITGRAPH_009A
+  1356 				; optimize FAIL ('GRAPH.INITGRAPH_009E', examples\man_anim.pas), line = 96
+  1357 26E2 E8				inx
+  1358 26E3 A9 07 95 98			mva #$07 :STACKORIGIN,x
+  1359 26E7 20 2E 22			jsr GRAPH.INITGRAPH_009E
   1360
   1361 				; optimize OK (examples\man_anim.pas), line = 97
   1362
-  1363 26DA A9 00			lda #$00
-  1364 26DC 8D C6 02			sta $02C6
+  1363 26EA A9 00			lda #$00
+  1364 26EC 8D C6 02			sta $02C6
   1365
   1366 				; optimize OK (examples\man_anim.pas), line = 98
   1367
-  1368 26DF A9 00			lda #$00
-  1369 26E1 8D C8 02			sta $02C8
-  1370
-  1371 				; optimize OK (examples\man_anim.pas), line = 99
-  1372
-  1373 26E4 A9 01			lda #$01
-  1374 26E6 8D F0 02			sta $02F0
-  1375
-  1376 				; optimize FAIL ('PLAYGROUNDPROC', examples\man_anim.pas), line = 100
-  1377 26E9 20 91 25			jsr PLAYGROUNDPROC
-  1378
-  1379 				; optimize OK (examples\man_anim.pas), line = 102
-  1380
-  1381 26EC A9 00 8D 1D D0		mva #$00 GRACTL
-  1382
-  1383 				; optimize OK (examples\man_anim.pas), line = 103
-  1384
-  1385 26F1 A5 6A			lda RAMTOP
-  1386 26F3 38 E9 18			sub #$18
-  1387 26F6 8D 99 29			sta PMGMEM
-  1388 26F9 A9 00			lda #$00
-  1389 26FB E9 00			sbc #$00
-  1390 26FD 8D 9A 29			sta PMGMEM+1
-  1391
-  1392 				; optimize OK (examples\man_anim.pas), line = 104
-  1393
-  1394 2700 AD 99 29 8D 07 D4		mva PMGMEM PMBASE
-  1395
-  1396 				; optimize OK (examples\man_anim.pas), line = 105
-  1397
-  1398 2706 A9 00			lda #$00
-  1399 2708 85 82			sta :eax
-  1400 270A AD 99 29			lda PMGMEM
-  1401 270D 85 83			sta :eax+1
-  1402 270F A5 82			lda :eax
-  1403 2711 8D 99 29			sta PMGMEM
-  1404 2714 A5 83			lda :eax+1
-  1405 2716 8D 9A 29			sta PMGMEM+1
-  1406
-  1407 				; optimize OK (examples\man_anim.pas), line = 107
-  1408
-  1409 2719 A9 2E 8D 2F 02		mva #$2E SDMCTL
-  1410
-  1411 				; optimize OK (examples\man_anim.pas), line = 109
-  1412
-  1413 271E AD 99 29			lda PMGMEM
-  1414 2721 18 69 80			add #$80
-  1415 2724 85 86			sta :edx
-  1416 2726 AD 9A 29			lda PMGMEM+1
-  1417 2729 69 01			adc #$01
-  1418 272B 85 87			sta :edx+1
-  1419 272D A9 7F			lda #$7F
-  1420 272F 85 8A			sta :ecx
-  1421 2731 A9 02			lda #$02
-  1422 2733 85 8B			sta :ecx+1
-  1423 2735 A9 00			lda #$00
-  1424 2737 85 82			sta :eax
-  1425 2739 20 2A 21			jsr @fill
-  1426
-  1427 				; optimize OK (examples\man_anim.pas), line = 111
-  1428
-  1429 273C A9 21 8D 6F 02		mva #$21 PRIOR
-  1430
-  1431 				; optimize OK (examples\man_anim.pas), line = 113
-  1432
-  1433 2741 A0 FE			ldy #256-$02
-  1434 2743 A9 00			lda #$00
-  1435 2745 99 0A CF C8 D0 FA		sta:rne $D008+$02-256,y+
-  1436
-  1437 				; optimize OK (examples\man_anim.pas), line = 115
-  1438
-  1439 274B A9 03 8D 1D D0		mva #$03 GRACTL
-  1440
-  1441 				; optimize FAIL (100, examples\man_anim.pas), line = 116
-  1442 					@printSTRING #CODEORIGIN+$000D
-  1442 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
-  1442 2750 A0 20		 LDY> CODEORIGIN+$000D
-  1442 2752 A9 0D		 LDA< CODEORIGIN+$000D
-  1442 2754 20 28 20		 JSR @PRINTSTRING
-  1443
-  1444 				; optimize OK (examples\man_anim.pas), line = 117
-  1445
-  1446 2757 A0 00			ldy #$00
-  1447 2759 AD 9F 29 99 00 D0		mva PX0 adr.HPOSP,y
-  1448
-  1449 				; optimize OK (examples\man_anim.pas), line = 118
-  1450
-  1451 275F A0 01			ldy #$01
-  1452 2761 AD A0 29 99 00 D0		mva PX1 adr.HPOSP,y
-  1453
-  1454 				; optimize OK (examples\man_anim.pas), line = 119
-  1455
-  1456 2767 A9 FF 8D FC 02		mva #$FF CH
-  1457
-  1458 				; optimize OK (examples\man_anim.pas), line = 120
-  1459
-  1460 276C 8D FC 02			sta CH
-  1461
-  1462 				; --- WhileProlog
-  1463 276F			l_02D2
-  1464
-  1465 				; optimize OK (examples\man_anim.pas), line = 121
-  1466
-  1467 276F AD FC 02			lda CH
-  1468 2772 C9 FF			cmp #$FF
-  1469 2774 F0 03 4C 2C 28		jne l_02E1
+  1368 26EF 8D C8 02			sta $02C8
+  1369
+  1370 				; optimize OK (examples\man_anim.pas), line = 99
+  1371
+  1372 26F2 A9 01			lda #$01
+  1373 26F4 8D F0 02			sta $02F0
+  1374
+  1375 				; optimize FAIL ('PLAYGROUNDPROC', examples\man_anim.pas), line = 100
+  1376 26F7 20 A5 25			jsr PLAYGROUNDPROC
+  1377
+  1378 				; optimize OK (examples\man_anim.pas), line = 102
+  1379
+  1380 26FA A9 00 8D 1D D0		mva #$00 GRACTL
+  1381
+  1382 				; optimize OK (examples\man_anim.pas), line = 103
+  1383
+  1384 26FF A5 6A			lda RAMTOP
+  1385 2701 38 E9 18			sub #$18
+  1386 2704 8D 95 29			sta PMGMEM
+  1387 2707 A9 00			lda #$00
+  1388 2709 E9 00			sbc #$00
+  1389 270B 8D 96 29			sta PMGMEM+1
+  1390
+  1391 				; optimize OK (examples\man_anim.pas), line = 104
+  1392
+  1393 270E AD 95 29 8D 07 D4		mva PMGMEM PMBASE
+  1394
+  1395 				; optimize OK (examples\man_anim.pas), line = 105
+  1396
+  1397 2714 A9 00			lda #$00
+  1398 2716 85 84			sta :eax
+  1399 2718 AD 95 29			lda PMGMEM
+  1400 271B 85 85			sta :eax+1
+  1401 271D A5 84			lda :eax
+  1402 271F 8D 95 29			sta PMGMEM
+  1403 2722 A5 85			lda :eax+1
+  1404 2724 8D 96 29			sta PMGMEM+1
+  1405
+  1406 				; optimize OK (examples\man_anim.pas), line = 107
+  1407
+  1408 2727 A9 2E 8D 2F 02		mva #$2E SDMCTL
+  1409
+  1410 				; optimize OK (examples\man_anim.pas), line = 109
+  1411
+  1412 272C AD 95 29			lda PMGMEM
+  1413 272F 18 69 80			add #$80
+  1414 2732 85 88			sta :edx
+  1415 2734 AD 96 29			lda PMGMEM+1
+  1416 2737 69 01			adc #$01
+  1417 2739 85 89			sta :edx+1
+  1418 273B A9 7F			lda #$7F
+  1419 273D 85 8C			sta :ecx
+  1420 273F A9 02			lda #$02
+  1421 2741 85 8D			sta :ecx+1
+  1422 2743 A9 00			lda #$00
+  1423 2745 85 84			sta :eax
+  1424 2747 20 34 21			jsr @fill
+  1425
+  1426 				; optimize OK (examples\man_anim.pas), line = 111
+  1427
+  1428 274A A9 21 8D 6F 02		mva #$21 PRIOR
+  1429
+  1430 				; optimize OK (examples\man_anim.pas), line = 113
+  1431
+  1432 274F A0 FE			ldy #256-$02
+  1433 2751 A9 00			lda #$00
+  1434 2753 99 0A CF C8 D0 FA		sta:rne $D008+$02-256,y+
+  1435
+  1436 				; optimize OK (examples\man_anim.pas), line = 115
+  1437
+  1438 2759 A9 03 8D 1D D0		mva #$03 GRACTL
+  1439
+  1440 				; optimize FAIL (100, examples\man_anim.pas), line = 116
+  1441 					@printSTRING #CODEORIGIN+$0000
+  1441 				 LDY> CODEORIGIN+$0000\ LDA< CODEORIGIN+$0000\ JSR @PRINTSTRING
+  1441 275E A0 20		 LDY> CODEORIGIN+$0000
+  1441 2760 A9 00		 LDA< CODEORIGIN+$0000
+  1441 2762 20 7C 21		 JSR @PRINTSTRING
+  1442
+  1443 				; optimize OK (examples\man_anim.pas), line = 117
+  1444
+  1445 2765 A0 00			ldy #$00
+  1446 2767 AD 9B 29 99 00 D0		mva PX0 adr.HPOSP,y
+  1447
+  1448 				; optimize OK (examples\man_anim.pas), line = 118
+  1449
+  1450 276D C8				iny
+  1451 276E AD 9C 29 99 00 D0		mva PX1 adr.HPOSP,y
+  1452
+  1453 				; optimize OK (examples\man_anim.pas), line = 119
+  1454
+  1455 2774 A9 FF 8D FC 02		mva #$FF CH
+  1456
+  1457 				; --- WhileProlog
+  1458 2779 4C 1E 28			jmp l_02E0
+  1459 277C			l_02E1
+  1460
+  1461 				; optimize FAIL ('NEXTFRAMEPROC', examples\man_anim.pas), line = 121
+  1462 277C 20 23 24			jsr NEXTFRAMEPROC
+  1463
+  1464 				; optimize OK (examples\man_anim.pas), line = 122
+  1465
+  1466 277F AD 9D 28			lda adr.P0COLOR+$00
+  1467 2782 8D C0 02			sta adr.PCOLR+$00
+  1468
+  1469 				; optimize OK (examples\man_anim.pas), line = 123
   1470
-  1471 				; optimize FAIL ('NEXTFRAMEPROC', examples\man_anim.pas), line = 122
-  1472 2779 20 FB 23			jsr NEXTFRAMEPROC
+  1471 2785 AD A1 28			lda adr.P1COLOR+$00
+  1472 2788 8D C1 02			sta adr.PCOLR+$01
   1473
-  1474 				; optimize OK (examples\man_anim.pas), line = 123
+  1474 				; optimize OK (examples\man_anim.pas), line = 124
   1475
-  1476 277C AD A1 28			lda adr.P0COLOR+$00
-  1477 277F 8D C0 02			sta adr.PCOLR+$00
+  1476 278B A0 00			ldy #$00
+  1477 278D AD 9B 29 99 00 D0		mva PX0 adr.HPOSP,y
   1478
-  1479 				; optimize OK (examples\man_anim.pas), line = 124
+  1479 				; optimize OK (examples\man_anim.pas), line = 125
   1480
-  1481 2782 AD A5 28			lda adr.P1COLOR+$00
-  1482 2785 8D C1 02			sta adr.PCOLR+$01
+  1481 2793 C8				iny
+  1482 2794 AD 9C 29 99 00 D0		mva PX1 adr.HPOSP,y
   1483
-  1484 				; optimize OK (examples\man_anim.pas), line = 125
+  1484 				; optimize OK (examples\man_anim.pas), line = 126
   1485
-  1486 2788 A0 00			ldy #$00
-  1487 278A AD 9F 29 99 00 D0		mva PX0 adr.HPOSP,y
-  1488
-  1489 				; optimize OK (examples\man_anim.pas), line = 126
-  1490
-  1491 2790 A0 01			ldy #$01
-  1492 2792 AD A0 29 99 00 D0		mva PX1 adr.HPOSP,y
-  1493
-  1494 				; optimize OK (examples\man_anim.pas), line = 127
+  1486 279A AD 9B 29			lda PX0
+  1487 279D 18 69 02			add #$02
+  1488 27A0 8D 9B 29			sta PX0
+  1489
+  1490 				; optimize OK (examples\man_anim.pas), line = 127
+  1491
+  1492 27A3 AD 9C 29			lda PX1
+  1493 27A6 18 69 02			add #$02
+  1494 27A9 8D 9C 29			sta PX1
   1495
-  1496 2798 AD 9F 29			lda PX0
-  1497 279B 18 69 02			add #$02
-  1498 279E 8D 9F 29			sta PX0
-  1499
-  1500 				; optimize OK (examples\man_anim.pas), line = 128
+  1496 				; optimize OK (examples\man_anim.pas), line = 128
+  1497
+  1498 27AC AD 9B 29			lda PX0
+  1499 27AF C9 D3			cmp #$D3
+  1500 27B1 90 08			jcc l_0314
   1501
-  1502 27A1 AD A0 29			lda PX1
-  1503 27A4 18 69 02			add #$02
-  1504 27A7 8D A0 29			sta PX1
+  1502 				; optimize OK (examples\man_anim.pas), line = 129
+  1503
+  1504 27B3 A9 28 8D 9B 29		mva #$28 PX0
   1505
-  1506 				; optimize OK (examples\man_anim.pas), line = 129
+  1506 				; optimize OK (examples\man_anim.pas), line = 130
   1507
-  1508 27AA AD 9F 29			lda PX0
-  1509 27AD C9 D2			cmp #$D2
-  1510 27AF F0 02			seq
-  1511 27B1 B0 03			bcs @+
-  1512 27B3 4C BE 27			jmp l_0314
-  1513 27B6			@
-  1514
-  1515 				; optimize OK (examples\man_anim.pas), line = 130
-  1516
-  1517 27B6 A9 28 8D 9F 29		mva #$28 PX0
+  1508 27B8 8D 9C 29			sta PX1
+  1509 27BB			l_0314
+  1510 				; --- For
+  1511
+  1512 				; optimize OK (examples\man_anim.pas), line = 132
+  1513
+  1514 27BB A9 00 8D A0 29		mva #$00 DELAY
+  1515 27C0 8D A1 29			sta DELAY+1
+  1516 27C3 8D A2 29			sta DELAY+2
+  1517 27C6 8D A3 29			sta DELAY+3
   1518
-  1519 				; optimize OK (examples\man_anim.pas), line = 131
+  1519 				; optimize OK (examples\man_anim.pas), line = 132
   1520
-  1521 27BB 8D A0 29			sta PX1
-  1522 27BE			l_0314
-  1523 				; --- For
-  1524
-  1525 				; optimize OK (examples\man_anim.pas), line = 133
-  1526
-  1527 27BE A9 00 8D A4 29		mva #$00 DELAY
-  1528 27C3 8D A5 29			sta DELAY+1
-  1529 27C6 8D A6 29			sta DELAY+2
-  1530 27C9 8D A7 29			sta DELAY+3
-  1531
-  1532 				; optimize OK (examples\man_anim.pas), line = 133
-  1533
-  1534 				; --- To
-  1535 27CC			l_0328
-  1536
-  1537 				; --- ForToDoCondition
-  1538
-  1539 				; optimize OK (examples\man_anim.pas), line = 133
-  1540
-  1541 27CC				.LOCAL
-  1542 27CC AD A7 29			lda DELAY+3
-  1543 27CF B8 38			clv:sec
-  1544 27D1 E9 00			sbc #$00
-  1545 27D3 D0 21			bne L4
-  1546 27D5 AD A6 29			lda DELAY+2
-  1547 27D8 C9 00			cmp #$00
-  1548 27DA D0 0C			bne L1
-  1549 27DC AD A5 29			lda DELAY+1
-  1550 27DF C9 05			cmp #$05
-  1551 27E1 D0 05			bne L1
-  1552 27E3 AD A4 29			lda DELAY
-  1553 27E6 C9 DC			cmp #$DC
-  1554 27E8 F0 12		L1	beq L5
-  1555 27EA B0 05			bcs L3
-  1556 27EC A9 FF			lda #$FF
-  1557 27EE 4C FC 27			jmp L5
-  1558 27F1 A9 01		L3	lda #$01
-  1559 27F3 4C FC 27			jmp L5
-  1560 27F6 50 04		L4	bvc L5
-  1561 27F8 49 FF			eor #$FF
-  1562 27FA 09 01			ora #$01
-  1563 27FC			L5
-  1564 					.ENDL
-  1565 27FC 30 02			smi
-  1566 27FE D0 15			jne l_0332
+  1521 27C9			l_0328
+  1522 				; --- ForToDoCondition
+  1523
+  1524 				; optimize OK (examples\man_anim.pas), line = 132
+  1525
+  1526 27C9				.LOCAL
+  1527 27C9 AD A3 29			lda DELAY+3
+  1528 27CC 38 E9 00			sub #$00
+  1529 27CF D0 1F			bne L4
+  1530 27D1 AD A2 29			lda DELAY+2
+  1531 27D4 C9 00			cmp #$00
+  1532 27D6 D0 0C			bne L1
+  1533 27D8 AD A1 29			lda DELAY+1
+  1534 27DB C9 05			cmp #$05
+  1535 27DD D0 05			bne L1
+  1536 27DF AD A0 29			lda DELAY
+  1537 27E2 C9 DC			cmp #$DC
+  1538 27E4 F0 10		L1	beq L5
+  1539 27E6 B0 04			bcs L3
+  1540 27E8 A9 FF			lda #$FF
+  1541 27EA D0 0A			bne L5
+  1542 27EC A9 01		L3	lda #$01
+  1543 27EE D0 06			bne L5
+  1544 27F0 50 04		L4	bvc L5
+  1545 27F2 49 FF			eor #$FF
+  1546 27F4 09 01			ora #$01
+  1547 27F6			L5
+  1548 					.ENDL
+  1549 27F6 30 02			smi
+  1550 27F8 D0 15			jne l_0332
+  1551
+  1552 				; --- ForToDoEpilog
+  1553 27FA EE A0 29 D0 0D EE + 	ind DELAY					; inc ptr dword [CounterAddress]
+  1554 280C 4C C9 27			jmp l_0328
+  1555 280F			l_0332
+  1556
+  1557 				; optimize FAIL (0, examples\man_anim.pas), line = 134
+  1558 280F EE 9F 29			inc FRAME
+  1559
+  1560 				; optimize OK (examples\man_anim.pas), line = 135
+  1561
+  1562 2812 AD 9F 29			lda FRAME
+  1563 2815 C9 05			cmp #$05
+  1564 2817 90 05			jcc l_034E
+  1565
+  1566 				; optimize OK (examples\man_anim.pas), line = 136
   1567
-  1568 				; --- ForToDoEpilog
-  1569 2800 EE A4 29 D0 0D EE + 	ind DELAY					; inc ptr dword [CounterAddress]
-  1570 2812 4C CC 27			jmp l_0328
-  1571 2815			l_0332
-  1572
-  1573 				; optimize FAIL (0, examples\man_anim.pas), line = 135
-  1574 2815 EE A3 29			inc FRAME
-  1575
-  1576 				; optimize OK (examples\man_anim.pas), line = 136
+  1568 2819 A9 01 8D 9F 29		mva #$01 FRAME
+  1569 281E			l_034E
+  1570 281E			l_02E0
+  1571
+  1572 				; optimize OK (examples\man_anim.pas), line = 120
+  1573
+  1574 281E AD FC 02			lda CH
+  1575 2821 C9 FF			cmp #$FF
+  1576 2823 D0 03 4C 7C 27		jeq l_02E1
   1577
-  1578 2818 AD A3 29			lda FRAME
-  1579 281B C9 04			cmp #$04
-  1580 281D F0 02			seq
-  1581 281F B0 03			bcs @+
-  1582 2821 4C 29 28			jmp l_034E
-  1583 2824			@
-  1584
-  1585 				; optimize OK (examples\man_anim.pas), line = 137
-  1586
-  1587 2824 A9 01 8D A3 29		mva #$01 FRAME
-  1588 2829			l_034E
-  1589 2829 4C 6F 27			jmp l_02D2
-  1590 282C			l_02E1
-  1591
-  1592 				; optimize OK (examples\man_anim.pas), line = 140
-  1593
-  1594 282C A9 FF 8D FC 02		mva #$FF CH
-  1595
-  1596 				; optimize OK (examples\man_anim.pas), line = 142
-  1597
-  1598 2831 A9 00 8D 1D D0		mva #$00 GRACTL
-  1599
-  1600 				; ------------------------------------------------------------
-  1601
-  1602 = 05DC			@FORTMP_0325	= $05DC
-  1603 2836			@exit
-  1604 					.ifdef @new
-  1605 					@FreeMem #@VarData #@VarDataSize
-  1606 					eif
-  1607 2836 60				rts						; ret
-  1608 				.endl
-  1609 2837			l_002F
-  1610
-  1611 				; optimize FAIL ('MAINPROC', examples\man_anim.pas), line = 146
-  1612 2837 20 D2 26			jsr MAINPROC
-  1613
-  1614 				; ------------------------------------------------------------
-  1615
-  1616 = 28A1			adr.P0COLOR	= DATAORIGIN+$0037
-  1617 283A			.var P0COLOR	= adr.P0COLOR .word
-  1618 = 28A5			adr.P1COLOR	= DATAORIGIN+$003B
-  1619 283A			.var P1COLOR	= adr.P1COLOR .word
-  1620 = 28A9			adr.P0FRAME1	= DATAORIGIN+$003F
-  1621 283A			.var P0FRAME1	= adr.P0FRAME1 .word
-  1622 = 28C7			adr.P0FRAME2	= DATAORIGIN+$005D
-  1623 283A			.var P0FRAME2	= adr.P0FRAME2 .word
-  1624 = 28E5			adr.P0FRAME3	= DATAORIGIN+$007B
-  1625 283A			.var P0FRAME3	= adr.P0FRAME3 .word
-  1626 = 2903			adr.P0FRAME4	= DATAORIGIN+$0099
-  1627 283A			.var P0FRAME4	= adr.P0FRAME4 .word
-  1628 = 2921			adr.P1FRAME1	= DATAORIGIN+$00B7
-  1629 283A			.var P1FRAME1	= adr.P1FRAME1 .word
-  1630 = 293F			adr.P1FRAME2	= DATAORIGIN+$00D5
-  1631 283A			.var P1FRAME2	= adr.P1FRAME2 .word
-  1632 = 295D			adr.P1FRAME3	= DATAORIGIN+$00F3
-  1633 283A			.var P1FRAME3	= adr.P1FRAME3 .word
-  1634 = 297B			adr.P1FRAME4	= DATAORIGIN+$0111
-  1635 283A			.var P1FRAME4	= adr.P1FRAME4 .word
-  1636 = D407			PMBASE	= $D407
-  1637 = 022F			SDMCTL	= $022F
-  1638 = D01D			GRACTL	= $D01D
-  1639 = 006A			RAMTOP	= $006A
-  1640 = 026F			PRIOR	= $026F
-  1641 = 02FC			CH	= $02FC
-  1642 = 2999			PMGMEM	= DATAORIGIN+$012F
-  1643 = 02C0			adr.PCOLR	= $02C0
-  1644 283A			.var PCOLR	= adr.PCOLR .word
-  1645 = D000			adr.HPOSP	= $D000
-  1646 283A			.var HPOSP	= adr.HPOSP .word
-  1647 = D008			adr.SIZEP	= $D008
-  1648 283A			.var SIZEP	= adr.SIZEP .word
-  1649 = 299B			adr.PCOLR33	= DATAORIGIN+$0131
-  1650 283A			.var PCOLR33	= adr.PCOLR33 .word
-  1651 = 299F			PX0	= DATAORIGIN+$0135
-  1652 = 29A0			PX1	= DATAORIGIN+$0136
-  1653 = 29A1			PY0	= DATAORIGIN+$0137
-  1654 = 29A2			HEIGHT	= DATAORIGIN+$0138
-  1655 = 29A3			FRAME	= DATAORIGIN+$0139
-  1656 = 29A4			DELAY	= DATAORIGIN+$013A
-  1657 283A			@exit
+  1578 				; optimize OK (examples\man_anim.pas), line = 139
+  1579
+  1580 2828 A9 FF 8D FC 02		mva #$FF CH
+  1581
+  1582 				; optimize OK (examples\man_anim.pas), line = 141
+  1583
+  1584 282D A9 00 8D 1D D0		mva #$00 GRACTL
+  1585
+  1586 				; ------------------------------------------------------------
+  1587
+  1588 = 05DC			@FORTMP_0325	= $05DC
+  1589 2832			@exit
+  1590 					.ifdef @new
+  1591 					lda <@VarData
+  1592 					sta :ztmp
+  1593 					lda >@VarData
+  1594 					ldy #@VarDataSize-1
+  1595 					jmp @FreeMem
+  1596 					eif
+  1597 2832 60				rts						; ret
+  1598 				.endl
+  1599 2833			l_0022
+  1600
+  1601 				; optimize FAIL ('MAINPROC', examples\man_anim.pas), line = 145
+  1602 2833 20 E2 26			jsr MAINPROC
+  1603
+  1604 				; ------------------------------------------------------------
+  1605
+  1606 = 289D			adr.P0COLOR	= DATAORIGIN+$0037
+  1607 2836			.var P0COLOR	= adr.P0COLOR .word
+  1608 = 28A1			adr.P1COLOR	= DATAORIGIN+$003B
+  1609 2836			.var P1COLOR	= adr.P1COLOR .word
+  1610 = 28A5			adr.P0FRAME1	= DATAORIGIN+$003F
+  1611 2836			.var P0FRAME1	= adr.P0FRAME1 .word
+  1612 = 28C3			adr.P0FRAME2	= DATAORIGIN+$005D
+  1613 2836			.var P0FRAME2	= adr.P0FRAME2 .word
+  1614 = 28E1			adr.P0FRAME3	= DATAORIGIN+$007B
+  1615 2836			.var P0FRAME3	= adr.P0FRAME3 .word
+  1616 = 28FF			adr.P0FRAME4	= DATAORIGIN+$0099
+  1617 2836			.var P0FRAME4	= adr.P0FRAME4 .word
+  1618 = 291D			adr.P1FRAME1	= DATAORIGIN+$00B7
+  1619 2836			.var P1FRAME1	= adr.P1FRAME1 .word
+  1620 = 293B			adr.P1FRAME2	= DATAORIGIN+$00D5
+  1621 2836			.var P1FRAME2	= adr.P1FRAME2 .word
+  1622 = 2959			adr.P1FRAME3	= DATAORIGIN+$00F3
+  1623 2836			.var P1FRAME3	= adr.P1FRAME3 .word
+  1624 = 2977			adr.P1FRAME4	= DATAORIGIN+$0111
+  1625 2836			.var P1FRAME4	= adr.P1FRAME4 .word
+  1626 = D407			PMBASE	= $D407
+  1627 = 022F			SDMCTL	= $022F
+  1628 = D01D			GRACTL	= $D01D
+  1629 = 006A			RAMTOP	= $6A
+  1630 = 026F			PRIOR	= $026F
+  1631 = 02FC			CH	= $02FC
+  1632 = 2995			PMGMEM	= DATAORIGIN+$012F
+  1633 = 02C0			adr.PCOLR	= $02C0
+  1634 2836			.var PCOLR	= adr.PCOLR .word
+  1635 = D000			adr.HPOSP	= $D000
+  1636 2836			.var HPOSP	= adr.HPOSP .word
+  1637 = D008			adr.SIZEP	= $D008
+  1638 2836			.var SIZEP	= adr.SIZEP .word
+  1639 = 2997			adr.PCOLR33	= DATAORIGIN+$0131
+  1640 2836			.var PCOLR33	= adr.PCOLR33 .word
+  1641 = 299B			PX0	= DATAORIGIN+$0135
+  1642 = 299C			PX1	= DATAORIGIN+$0136
+  1643 = 299D			PY0	= DATAORIGIN+$0137
+  1644 = 299E			HEIGHT	= DATAORIGIN+$0138
+  1645 = 299F			FRAME	= DATAORIGIN+$0139
+  1646 = 29A0			DELAY	= DATAORIGIN+$013A
+  1647 2836			@exit
+  1648
+  1649 2836 A2 00		@halt	ldx #0
+  1650 2838 9A				txs
+  1651 					.ifdef MAIN.@DEFINES.ROMOFF
+  1652 					inc portb
+  1653 					.endif
+  1654
+  1655 2839 60				rts
+  1656
+  1657 				; ------------------------------------------------------------
   1658
-  1659 283A A2 00		@halt	ldx #0
-  1660 283C 9A				txs
-  1661
-  1662 283D 60				rts
-  1663
-  1664 				; ------------------------------------------------------------
-  1665
-  1666 283E 00 00 00 00 00 00 + IOCB@COPY	:16 brk
-  1667
-  1668 				; ------------------------------------------------------------
-  1669
-  1670 284E			.local	@DEFINES
-  1671 284E			ATARI
-  1672 				.endl
-  1673
-  1674 = 284E A1 28		P0COLOR
-  1674 = 2850 A5 28		P1COLOR
-  1674 = 2852 A9 28		P0FRAME1
-  1674 = 2854 C7 28		P0FRAME2
-  1674 = 2856 E5 28		P0FRAME3
-  1674 = 2858 03 29		P0FRAME4
-  1674 = 285A 21 29		P1FRAME1
-  1674 = 285C 3F 29		P1FRAME2
-  1674 = 285E 5D 29		P1FRAME3
-  1674 = 2860 7B 29		P1FRAME4
-  1674 = 2862 C0 02		PCOLR
-  1674 = 2864 00 D0		HPOSP
-  1674 = 2866 08 D0		SIZEP
-  1674 = 2868 9B 29		PCOLR33
-  1674 				.endl							; MAIN
-  1675
-  1676 				; ------------------------------------------------------------
-  1677 				; ------------------------------------------------------------
-  1678
-  1679 				.macro	UNITINITIALIZATION
-  1680 				
-  1681 					.ifdef MAIN.SYSTEM.@UnitInit
-  1682 					jsr MAIN.SYSTEM.@UnitInit
-  1683 					eif
-  1684 				
-  1685 					.ifdef MAIN.DOS.@UnitInit
-  1686 					jsr MAIN.DOS.@UnitInit
-  1687 					eif
-  1688 				
-  1689 					.ifdef MAIN.STRUTILS.@UnitInit
-  1690 					jsr MAIN.STRUTILS.@UnitInit
-  1691 					eif
-  1692 				
-  1693 					.ifdef MAIN.SYSUTILS.@UnitInit
-  1694 					jsr MAIN.SYSUTILS.@UnitInit
-  1695 					eif
-  1696 				
-  1697 					.ifdef MAIN.ATARI.@UnitInit
-  1698 					jsr MAIN.ATARI.@UnitInit
+  1659 283A 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+  1660
+  1661 				; ------------------------------------------------------------
+  1662
+  1663 284A			.local	@DEFINES
+  1664 284A			ATARI
+  1665 				.endl
+  1666
+  1667 = 284A 9D 28		P0COLOR
+  1667 = 284C A1 28		P1COLOR
+  1667 = 284E A5 28		P0FRAME1
+  1667 = 2850 C3 28		P0FRAME2
+  1667 = 2852 E1 28		P0FRAME3
+  1667 = 2854 FF 28		P0FRAME4
+  1667 = 2856 1D 29		P1FRAME1
+  1667 = 2858 3B 29		P1FRAME2
+  1667 = 285A 59 29		P1FRAME3
+  1667 = 285C 77 29		P1FRAME4
+  1667 = 285E C0 02		PCOLR
+  1667 = 2860 00 D0		HPOSP
+  1667 = 2862 08 D0		SIZEP
+  1667 = 2864 97 29		PCOLR33
+  1667 				.endl							; MAIN
+  1668
+  1669 				; ------------------------------------------------------------
+  1670 				; ------------------------------------------------------------
+  1671
+  1672 				.macro	UNITINITIALIZATION
+  1673 				
+  1674 					.ifdef MAIN.SYSTEM.@UnitInit
+  1675 					jsr MAIN.SYSTEM.@UnitInit
+  1676 					eif
+  1677 				
+  1678 					.ifdef MAIN.ATARI.@UnitInit
+  1679 					jsr MAIN.ATARI.@UnitInit
+  1680 					eif
+  1681 				
+  1682 					.ifdef MAIN.CRT.@UnitInit
+  1683 					jsr MAIN.CRT.@UnitInit
+  1684 					eif
+  1685 				
+  1686 					.ifdef MAIN.TYPES.@UnitInit
+  1687 					jsr MAIN.TYPES.@UnitInit
+  1688 					eif
+  1689 				
+  1690 					.ifdef MAIN.GRAPH.@UnitInit
+  1691 					jsr MAIN.GRAPH.@UnitInit
+  1692 					eif
+  1693 				.endm
+  1694
+  1695 				; ------------------------------------------------------------
+  1696
+  1697 					ift .SIZEOF(MAIN.SYSTEM) > 0
+  1698 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+  1698 				SYSTEM: $21DB..$222D
   1699 					eif
-  1700 				
-  1701 					.ifdef MAIN.CRT.@UnitInit
-  1702 					jsr MAIN.CRT.@UnitInit
+  1700
+  1701 					ift .SIZEOF(MAIN.ATARI) > 0
+  1702 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
   1703 					eif
-  1704 				
-  1705 					.ifdef MAIN.TYPES.@UnitInit
-  1706 					jsr MAIN.TYPES.@UnitInit
+  1704
+  1705 					ift .SIZEOF(MAIN.CRT) > 0
+  1706 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
   1707 					eif
-  1708 				
-  1709 					.ifdef MAIN.GRAPH.@UnitInit
-  1710 					jsr MAIN.GRAPH.@UnitInit
+  1708
+  1709 					ift .SIZEOF(MAIN.TYPES) > 0
+  1710 					.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
   1711 					eif
-  1712 				.endm
-  1713
-  1714 				; ------------------------------------------------------------
-  1715
-  1716 					ift .SIZEOF(MAIN.SYSTEM) > 0
-  1717 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-  1717 				SYSTEM: $2191..$21E3
-  1718 					eif
-  1719
-  1720 					ift .SIZEOF(MAIN.DOS) > 0
-  1721 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-  1722 					eif
-  1723
-  1724 					ift .SIZEOF(MAIN.STRUTILS) > 0
-  1725 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-  1726 					eif
-  1727
-  1728 					ift .SIZEOF(MAIN.SYSUTILS) > 0
-  1729 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-  1730 					eif
-  1731
-  1732 					ift .SIZEOF(MAIN.ATARI) > 0
-  1733 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
-  1734 					eif
-  1735
-  1736 					ift .SIZEOF(MAIN.CRT) > 0
-  1737 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-  1738 					eif
+  1712
+  1713 					ift .SIZEOF(MAIN.GRAPH) > 0
+  1714 					.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
+  1714 				GRAPH: $222E..$2422
+  1715 					eif
+  1716
+  1717 					.print 'CODE: ',CODEORIGIN,'..',*-1
+  1717 				CODE: $2000..$2865
+  1718
+  1719 				; ------------------------------------------------------------
+  1720
+  1721 2866			DATAORIGIN
+  1722 2866 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17 $00 $00 $00 $00 $00
+  1723 287E 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+  1724 2896 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $1A  $1A $1A $1A $24 $24 $24 $24 $00  $00 $0C $08 $1C $1C $1C $18 $18
+  1725 28AE 10 19 3D 7F 7F 5E + .by  $10 $19 $3D $7F $7F $5E $DC $DC  $9C $9C $A0 $BC $1C $2C $34 $74  $60 $60 $00 $00 $00 $00 $00 $0C
+  1726 28C6 08 1C 1C 1C 18 18 + .by  $08 $1C $1C $1C $18 $18 $10 $18  $38 $3C $7C $5E $5E $5E $7E $7C  $20 $3C $3C $3C $34 $34 $30 $30
+  1727 28DE 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $0C $08  $1C $1C $1C $18 $18 $10 $38 $3C  $3C $5C $5C $5E $66 $7C $7C $20
+  1728 28F6 3C 3A 36 36 06 06 + .by  $3C $3A $36 $36 $06 $06 $06 $00  $00 $00 $00 $0C $08 $1C $1C $1C  $18 $18 $10 $18 $38 $3C $7C $5E
+  1729 290E 5E 5E 7E 7C 20 3C + .by  $5E $5E $7E $7C $20 $3C $3C $3C  $34 $34 $30 $30 $00 $00 $00 $1C  $1C $3C $3C $3C $3C $3C $38 $18
+  1730 2926 08 01 01 00 00 20 + .by  $08 $01 $01 $00 $00 $20 $20 $20  $20 $20 $9C $80 $21 $13 $0B $03  $03 $80 $C0 $E0 $60 $1C $1C $3C
+  1731 293E 3C 3C 3C 3C 38 18 + .by  $3C $3C $3C $3C $38 $18 $08 $00  $00 $00 $00 $20 $20 $22 $22 $60  $3C $00 $00 $00 $08 $08 $0E $0E
+  1732 2956 3E 38 18 00 1C 1C + .by  $3E $38 $18 $00 $1C $1C $3C $3C  $3C $3C $3C $38 $18 $08 $00 $00  $00 $20 $20 $26 $1E $00 $00 $1C
+  1733 296E 00 04 C8 C0 F0 80 + .by  $00 $04 $C8 $C0 $F0 $80 $80 $07  $07 $1C $1C $3C $3C $3C $3C $3C  $38 $18 $08 $00 $00 $00 $00 $20
+  1734 2986 20 22 22 60 3C 00 + .by  $20 $22 $22 $60 $3C $00 $00 $00  $08 $08 $0E $0E $3E $38 $18 $00  $00 $00 $00 $00 $00 $28 $28 $2E
+  1735 299E 1E 01		.by  $1E $01
+  1736
+  1737 = 013A			VARINITSIZE	= *-DATAORIGIN
+  1738 = 013F			VARDATASIZE	= 319
   1739
-  1740 					ift .SIZEOF(MAIN.TYPES) > 0
-  1741 					.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
-  1742 					eif
+  1740 = 29A5			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+  1741
+  1742 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+  1742 				DATA: $2866..$29A5
   1743
-  1744 					ift .SIZEOF(MAIN.GRAPH) > 0
-  1745 					.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
-  1745 				GRAPH: $21E4..$23FA
-  1746 					eif
+  1744 02E0-02E1> AB 21			run START
+  1745
+  1746 				; ------------------------------------------------------------
   1747
-  1748 					.print 'CODE: ',CODEORIGIN,'..',*-1
-  1748 				CODE: $2000..$2869
-  1749
-  1750 				; ------------------------------------------------------------
-  1751
-  1752 286A			DATAORIGIN
-  1753 286A 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17 $00 $00 $00 $00 $00
-  1754 2882 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-  1755 289A 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $1A  $1A $1A $1A $24 $24 $24 $24 $00  $00 $0C $08 $1C $1C $1C $18 $18
-  1756 28B2 10 19 3D 7F 7F 5E + .by  $10 $19 $3D $7F $7F $5E $DC $DC  $9C $9C $A0 $BC $1C $2C $34 $74  $60 $60 $00 $00 $00 $00 $00 $0C
-  1757 28CA 08 1C 1C 1C 18 18 + .by  $08 $1C $1C $1C $18 $18 $10 $18  $38 $3C $7C $5E $5E $5E $7E $7C  $20 $3C $3C $3C $34 $34 $30 $30
-  1758 28E2 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $0C $08  $1C $1C $1C $18 $18 $10 $38 $3C  $3C $5C $5C $5E $66 $7C $7C $20
-  1759 28FA 3C 3A 36 36 06 06 + .by  $3C $3A $36 $36 $06 $06 $06 $00  $00 $00 $00 $0C $08 $1C $1C $1C  $18 $18 $10 $18 $38 $3C $7C $5E
-  1760 2912 5E 5E 7E 7C 20 3C + .by  $5E $5E $7E $7C $20 $3C $3C $3C  $34 $34 $30 $30 $00 $00 $00 $1C  $1C $3C $3C $3C $3C $3C $38 $18
-  1761 292A 08 01 01 00 00 20 + .by  $08 $01 $01 $00 $00 $20 $20 $20  $20 $20 $9C $80 $21 $13 $0B $03  $03 $80 $C0 $E0 $60 $1C $1C $3C
-  1762 2942 3C 3C 3C 3C 38 18 + .by  $3C $3C $3C $3C $38 $18 $08 $00  $00 $00 $00 $20 $20 $22 $22 $60  $3C $00 $00 $00 $08 $08 $0E $0E
-  1763 295A 3E 38 18 00 1C 1C + .by  $3E $38 $18 $00 $1C $1C $3C $3C  $3C $3C $3C $38 $18 $08 $00 $00  $00 $20 $20 $26 $1E $00 $00 $1C
-  1764 2972 00 04 C8 C0 F0 80 + .by  $00 $04 $C8 $C0 $F0 $80 $80 $07  $07 $1C $1C $3C $3C $3C $3C $3C  $38 $18 $08 $00 $00 $00 $00 $20
-  1765 298A 20 22 22 60 3C 00 + .by  $20 $22 $22 $60 $3C $00 $00 $00  $08 $08 $0E $0E $3E $38 $18 $00  $00 $00 $00 $00 $00 $28 $28 $2E
-  1766 29A2 1E 01		.by  $1E $01
-  1767
-  1768 = 013A			VARINITSIZE	= *-DATAORIGIN
-  1769 = 013F			VARDATASIZE	= 319
-  1770
-  1771 = 29A9			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
-  1772
-  1773 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-  1773 				DATA: $286A..$29A9
-  1774
-  1775 02E0-02E1> 72 21			run START
-  1776
-  1777 				; ------------------------------------------------------------
-  1778
-  1779 				.macro	STATICDATA
-  1780 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $19 $4D $61  $6E $20 $72 $75 $6E $6E $69 $6E
-  1781 				.by  $67 $20 $6F $6E $20 $74 $68 $65  $20 $73 $74 $72 $65 $65 $74 $00
-  1782 				.endm
-  1783
-  1784 					end
+  1748 				.macro	STATICDATA
+  1749 				.by  $19 $4D $61 $6E $20 $72 $75 $6E  $6E $69 $6E $67 $20 $6F $6E $20  $74 $68 $65 $20 $73 $74 $72 $65
+  1750 				.by  $65 $74 $00
+  1751 				.endm
+  1752
+  1753 					end
