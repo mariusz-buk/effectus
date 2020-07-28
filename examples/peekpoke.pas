@@ -5,6 +5,7 @@ uses
   Crt, Graph;
 
 // Effectus example
+// ----------------
 // PEEK and POKE demo
 var
   n : byte;
@@ -15,9 +16,9 @@ var
 procedure WAITFORKEYProc;
 begin  // 1
  WHILE CH=255 do begin
-  end;  // while
+  end;
   CH := 255;
-end;  // 4
+end;
 
 procedure MAINProc;
 begin  // 6
@@ -61,7 +62,7 @@ begin  // 6
   n := 184;
   Poke(COL, n);
   WAITFORKEYProc;
-end;  // 4
+end;
 
 begin
   MAINProc;

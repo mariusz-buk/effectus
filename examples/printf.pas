@@ -4,11 +4,10 @@ program printfPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // PrintF demo
 var
   x : byte;
@@ -38,7 +37,7 @@ begin  // 1
   Write('', eol, 'Number one: ', Chr(49), '');
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

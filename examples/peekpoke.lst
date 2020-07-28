@@ -489,13 +489,13 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    581 				; --- WhileProlog
    582 22AE			l_0206
    583
-   584 				; optimize OK (examples\peekpoke.pas), line = 17
+   584 				; optimize OK (examples\peekpoke.pas), line = 18
    585
    586 22AE AD FC 02			lda CH
    587 22B1 C9 FF			cmp #$FF
    588 22B3 F0 F9			jeq l_0206
    589
-   590 				; optimize OK (examples\peekpoke.pas), line = 19
+   590 				; optimize OK (examples\peekpoke.pas), line = 20
    591
    592 22B5 A9 FF 8D FC 02		mva #$FF CH
    593 22BA			@exit
@@ -511,13 +511,13 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    603
    604 22BB			.local	MAINPROC					; PROCEDURE
    605
-   606 				; optimize FAIL (100, examples\peekpoke.pas), line = 24
+   606 				; optimize FAIL (100, examples\peekpoke.pas), line = 25
    607 					@print #$7D
    607 				 LDY# $7D\ JSR @PRINT
    607 22BB A0 7D		 LDY# $7D
    607 22BD 20 54 21		 JSR @PRINT
    608
-   609 				; optimize FAIL (100, examples\peekpoke.pas), line = 25
+   609 				; optimize FAIL (100, examples\peekpoke.pas), line = 26
    610 					@printSTRING #CODEORIGIN+$0000
    610 				 LDY> CODEORIGIN+$0000\ LDA< CODEORIGIN+$0000\ JSR @PRINTSTRING
    610 22C0 A0 20		 LDY> CODEORIGIN+$0000
@@ -525,7 +525,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    610 22C4 20 5D 21		 JSR @PRINTSTRING
    611 22C7 20 4F 21			@printEOL
    612
-   613 				; optimize FAIL (100, examples\peekpoke.pas), line = 26
+   613 				; optimize FAIL (100, examples\peekpoke.pas), line = 27
    614 					@printSTRING #CODEORIGIN+$0013
    614 				 LDY> CODEORIGIN+$0013\ LDA< CODEORIGIN+$0013\ JSR @PRINTSTRING
    614 22CA A0 20		 LDY> CODEORIGIN+$0013
@@ -533,7 +533,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    614 22CE 20 5D 21		 JSR @PRINTSTRING
    615 22D1 20 4F 21			@printEOL
    616
-   617 				; optimize FAIL (100, examples\peekpoke.pas), line = 27
+   617 				; optimize FAIL (100, examples\peekpoke.pas), line = 28
    618 					@printSTRING #CODEORIGIN+$0027
    618 				 LDY> CODEORIGIN+$0027\ LDA< CODEORIGIN+$0027\ JSR @PRINTSTRING
    618 22D4 A0 20		 LDY> CODEORIGIN+$0027
@@ -541,7 +541,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    618 22D8 20 5D 21		 JSR @PRINTSTRING
    619 22DB 20 4F 21			@printEOL
    620
-   621 				; optimize OK (examples\peekpoke.pas), line = 28
+   621 				; optimize OK (examples\peekpoke.pas), line = 29
    622
    623 22DE A9 00			lda #$00
    624 22E0 85 91			sta :bp+1
@@ -549,7 +549,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    626 22E5 B1 90			lda (:bp),y
    627 22E7 8D 67 24			sta N
    628
-   629 				; optimize FAIL (100, examples\peekpoke.pas), line = 29
+   629 				; optimize FAIL (100, examples\peekpoke.pas), line = 30
    630 					@printSTRING #CODEORIGIN+$0029
    630 				 LDY> CODEORIGIN+$0029\ LDA< CODEORIGIN+$0029\ JSR @PRINTSTRING
    630 22EA A0 20		 LDY> CODEORIGIN+$0029
@@ -557,7 +557,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    630 22EE 20 5D 21		 JSR @PRINTSTRING
    631 22F1 20 4F 21			@printEOL
    632
-   633 				; optimize FAIL (100, examples\peekpoke.pas), line = 30
+   633 				; optimize FAIL (100, examples\peekpoke.pas), line = 31
    634 					@printSTRING #CODEORIGIN+$0026
    634 				 LDY> CODEORIGIN+$0026\ LDA< CODEORIGIN+$0026\ JSR @PRINTSTRING
    634 22F4 A0 20		 LDY> CODEORIGIN+$0026
@@ -565,12 +565,12 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    634 22F8 20 5D 21		 JSR @PRINTSTRING
    635 22FB 20 4F 21			@printEOL
    636
-   637 				; optimize FAIL (100, examples\peekpoke.pas), line = 31
+   637 				; optimize FAIL (100, examples\peekpoke.pas), line = 32
    638 22FE AD 67 24			lda N
    639 2301 20 8E 21			jsr @printBYTE._a
    640 2304 20 4F 21			@printEOL
    641
-   642 				; optimize FAIL (100, examples\peekpoke.pas), line = 32
+   642 				; optimize FAIL (100, examples\peekpoke.pas), line = 33
    643 					@printSTRING #CODEORIGIN+$0026
    643 				 LDY> CODEORIGIN+$0026\ LDA< CODEORIGIN+$0026\ JSR @PRINTSTRING
    643 2307 A0 20		 LDY> CODEORIGIN+$0026
@@ -578,12 +578,12 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    643 230B 20 5D 21		 JSR @PRINTSTRING
    644 230E 20 4F 21			@printEOL
    645
-   646 				; optimize OK (examples\peekpoke.pas), line = 33
+   646 				; optimize OK (examples\peekpoke.pas), line = 34
    647
    648 2311 AD C6 02			lda $02C6
    649 2314 8D 67 24			sta N
    650
-   651 				; optimize FAIL (100, examples\peekpoke.pas), line = 34
+   651 				; optimize FAIL (100, examples\peekpoke.pas), line = 35
    652 					@printSTRING #CODEORIGIN+$004F
    652 				 LDY> CODEORIGIN+$004F\ LDA< CODEORIGIN+$004F\ JSR @PRINTSTRING
    652 2317 A0 20		 LDY> CODEORIGIN+$004F
@@ -591,7 +591,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    652 231B 20 5D 21		 JSR @PRINTSTRING
    653 231E 20 4F 21			@printEOL
    654
-   655 				; optimize FAIL (100, examples\peekpoke.pas), line = 35
+   655 				; optimize FAIL (100, examples\peekpoke.pas), line = 36
    656 					@printSTRING #CODEORIGIN+$0026
    656 				 LDY> CODEORIGIN+$0026\ LDA< CODEORIGIN+$0026\ JSR @PRINTSTRING
    656 2321 A0 20		 LDY> CODEORIGIN+$0026
@@ -599,12 +599,12 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    656 2325 20 5D 21		 JSR @PRINTSTRING
    657 2328 20 4F 21			@printEOL
    658
-   659 				; optimize FAIL (100, examples\peekpoke.pas), line = 36
+   659 				; optimize FAIL (100, examples\peekpoke.pas), line = 37
    660 232B AD 67 24			lda N
    661 232E 20 8E 21			jsr @printBYTE._a
    662 2331 20 4F 21			@printEOL
    663
-   664 				; optimize FAIL (100, examples\peekpoke.pas), line = 37
+   664 				; optimize FAIL (100, examples\peekpoke.pas), line = 38
    665 					@printSTRING #CODEORIGIN+$0026
    665 				 LDY> CODEORIGIN+$0026\ LDA< CODEORIGIN+$0026\ JSR @PRINTSTRING
    665 2334 A0 20		 LDY> CODEORIGIN+$0026
@@ -612,12 +612,12 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    665 2338 20 5D 21		 JSR @PRINTSTRING
    666 233B 20 4F 21			@printEOL
    667
-   668 				; optimize OK (examples\peekpoke.pas), line = 38
+   668 				; optimize OK (examples\peekpoke.pas), line = 39
    669
    670 233E AD 2F 02			lda $022F
    671 2341 8D 67 24			sta N
    672
-   673 				; optimize FAIL (100, examples\peekpoke.pas), line = 39
+   673 				; optimize FAIL (100, examples\peekpoke.pas), line = 40
    674 					@printSTRING #CODEORIGIN+$0075
    674 				 LDY> CODEORIGIN+$0075\ LDA< CODEORIGIN+$0075\ JSR @PRINTSTRING
    674 2344 A0 20		 LDY> CODEORIGIN+$0075
@@ -625,7 +625,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    674 2348 20 5D 21		 JSR @PRINTSTRING
    675 234B 20 4F 21			@printEOL
    676
-   677 				; optimize FAIL (100, examples\peekpoke.pas), line = 40
+   677 				; optimize FAIL (100, examples\peekpoke.pas), line = 41
    678 					@printSTRING #CODEORIGIN+$0026
    678 				 LDY> CODEORIGIN+$0026\ LDA< CODEORIGIN+$0026\ JSR @PRINTSTRING
    678 234E A0 20		 LDY> CODEORIGIN+$0026
@@ -633,12 +633,12 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    678 2352 20 5D 21		 JSR @PRINTSTRING
    679 2355 20 4F 21			@printEOL
    680
-   681 				; optimize FAIL (100, examples\peekpoke.pas), line = 41
+   681 				; optimize FAIL (100, examples\peekpoke.pas), line = 42
    682 2358 AD 67 24			lda N
    683 235B 20 8E 21			jsr @printBYTE._a
    684 235E 20 4F 21			@printEOL
    685
-   686 				; optimize FAIL (100, examples\peekpoke.pas), line = 42
+   686 				; optimize FAIL (100, examples\peekpoke.pas), line = 43
    687 					@printSTRING #CODEORIGIN+$0026
    687 				 LDY> CODEORIGIN+$0026\ LDA< CODEORIGIN+$0026\ JSR @PRINTSTRING
    687 2361 A0 20		 LDY> CODEORIGIN+$0026
@@ -646,14 +646,14 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    687 2365 20 5D 21		 JSR @PRINTSTRING
    688 2368 20 4F 21			@printEOL
    689
-   690 				; optimize OK (examples\peekpoke.pas), line = 43
+   690 				; optimize OK (examples\peekpoke.pas), line = 44
    691
    692 236B AD 30 02			lda $0230
    693 236E 8D 68 24			sta MEM
    694 2371 AD 31 02			lda $0230+1
    695 2374 8D 69 24			sta MEM+1
    696
-   697 				; optimize FAIL (100, examples\peekpoke.pas), line = 44
+   697 				; optimize FAIL (100, examples\peekpoke.pas), line = 45
    698 					@printSTRING #CODEORIGIN+$009B
    698 				 LDY> CODEORIGIN+$009B\ LDA< CODEORIGIN+$009B\ JSR @PRINTSTRING
    698 2377 A0 20		 LDY> CODEORIGIN+$009B
@@ -661,7 +661,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    698 237B 20 5D 21		 JSR @PRINTSTRING
    699 237E 20 4F 21			@printEOL
    700
-   701 				; optimize FAIL (100, examples\peekpoke.pas), line = 45
+   701 				; optimize FAIL (100, examples\peekpoke.pas), line = 46
    702 					@printSTRING #CODEORIGIN+$00C0
    702 				 LDY> CODEORIGIN+$00C0\ LDA< CODEORIGIN+$00C0\ JSR @PRINTSTRING
    702 2381 A0 20		 LDY> CODEORIGIN+$00C0
@@ -669,7 +669,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    702 2385 20 5D 21		 JSR @PRINTSTRING
    703 2388 20 4F 21			@printEOL
    704
-   705 				; optimize FAIL (100, examples\peekpoke.pas), line = 46
+   705 				; optimize FAIL (100, examples\peekpoke.pas), line = 47
    706 					@printSTRING #CODEORIGIN+$0026
    706 				 LDY> CODEORIGIN+$0026\ LDA< CODEORIGIN+$0026\ JSR @PRINTSTRING
    706 238B A0 20		 LDY> CODEORIGIN+$0026
@@ -677,13 +677,13 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    706 238F 20 5D 21		 JSR @PRINTSTRING
    707 2392 20 4F 21			@printEOL
    708
-   709 				; optimize FAIL (100, examples\peekpoke.pas), line = 47
+   709 				; optimize FAIL (100, examples\peekpoke.pas), line = 48
    710 2395 AD 68 24			lda MEM
    711 2398 AC 69 24			ldy MEM+1
    712 239B 20 9F 21			jsr @printWORD._ay
    713 239E 20 4F 21			@printEOL
    714
-   715 				; optimize FAIL (100, examples\peekpoke.pas), line = 48
+   715 				; optimize FAIL (100, examples\peekpoke.pas), line = 49
    716 					@printSTRING #CODEORIGIN+$0026
    716 				 LDY> CODEORIGIN+$0026\ LDA< CODEORIGIN+$0026\ JSR @PRINTSTRING
    716 23A1 A0 20		 LDY> CODEORIGIN+$0026
@@ -717,7 +717,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    722 23C7 A9 26		 LDA< CODEORIGIN+$0026
    722 23C9 20 5D 21		 JSR @PRINTSTRING
    723
-   724 				; optimize FAIL (100, examples\peekpoke.pas), line = 49
+   724 				; optimize FAIL (100, examples\peekpoke.pas), line = 50
    725 					@printSTRING #CODEORIGIN+$00DE
    725 				 LDY> CODEORIGIN+$00DE\ LDA< CODEORIGIN+$00DE\ JSR @PRINTSTRING
    725 23CC A0 20		 LDY> CODEORIGIN+$00DE
@@ -725,14 +725,14 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    725 23D0 20 5D 21		 JSR @PRINTSTRING
    726 23D3 20 4F 21			@printEOL
    727
-   728 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 50
+   728 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 51
    729 23D6 20 AE 22			jsr WAITFORKEYPROC
    730
-   731 				; optimize OK (examples\peekpoke.pas), line = 51
+   731 				; optimize OK (examples\peekpoke.pas), line = 52
    732
    733 23D9 A9 00 8D C6 02		mva #$00 COL
    734
-   735 				; optimize FAIL (100, examples\peekpoke.pas), line = 52
+   735 				; optimize FAIL (100, examples\peekpoke.pas), line = 53
    736 					@printSTRING #CODEORIGIN+$00FE
    736 				 LDY> CODEORIGIN+$00FE\ LDA< CODEORIGIN+$00FE\ JSR @PRINTSTRING
    736 23DE A0 20		 LDY> CODEORIGIN+$00FE
@@ -740,15 +740,15 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    736 23E2 20 5D 21		 JSR @PRINTSTRING
    737 23E5 20 4F 21			@printEOL
    738
-   739 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 53
+   739 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 54
    740 23E8 20 AE 22			jsr WAITFORKEYPROC
    741
-   742 				; optimize OK (examples\peekpoke.pas), line = 54
+   742 				; optimize OK (examples\peekpoke.pas), line = 55
    743
    744 23EB A9 D4			lda #$D4
    745 23ED 8D C6 02			sta $02C6
    746
-   747 				; optimize FAIL (100, examples\peekpoke.pas), line = 55
+   747 				; optimize FAIL (100, examples\peekpoke.pas), line = 56
    748 					@printSTRING #CODEORIGIN+$0124
    748 				 LDY> CODEORIGIN+$0124\ LDA< CODEORIGIN+$0124\ JSR @PRINTSTRING
    748 23F0 A0 21		 LDY> CODEORIGIN+$0124
@@ -756,18 +756,18 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    748 23F4 20 5D 21		 JSR @PRINTSTRING
    749 23F7 20 4F 21			@printEOL
    750
-   751 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 56
+   751 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 57
    752 23FA 20 AE 22			jsr WAITFORKEYPROC
    753
-   754 				; optimize OK (examples\peekpoke.pas), line = 57
+   754 				; optimize OK (examples\peekpoke.pas), line = 58
    755
    756 23FD A9 41 8D 67 24		mva #$41 N
    757
-   758 				; optimize OK (examples\peekpoke.pas), line = 58
+   758 				; optimize OK (examples\peekpoke.pas), line = 59
    759
    760 2402 8D C6 02			sta $02C6
    761
-   762 				; optimize FAIL (100, examples\peekpoke.pas), line = 59
+   762 				; optimize FAIL (100, examples\peekpoke.pas), line = 60
    763 					@printSTRING #CODEORIGIN+$0130
    763 				 LDY> CODEORIGIN+$0130\ LDA< CODEORIGIN+$0130\ JSR @PRINTSTRING
    763 2405 A0 21		 LDY> CODEORIGIN+$0130
@@ -775,20 +775,20 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    763 2409 20 5D 21		 JSR @PRINTSTRING
    764 240C 20 4F 21			@printEOL
    765
-   766 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 60
+   766 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 61
    767 240F 20 AE 22			jsr WAITFORKEYPROC
    768
-   769 				; optimize OK (examples\peekpoke.pas), line = 61
+   769 				; optimize OK (examples\peekpoke.pas), line = 62
    770
    771 2412 A9 B8 8D 67 24		mva #$B8 N
    772
-   773 				; optimize OK (examples\peekpoke.pas), line = 62
+   773 				; optimize OK (examples\peekpoke.pas), line = 63
    774
    775 2417 AC C6 02			ldy COL
    776 241A AD 67 24			lda N
    777 241D 99 00 00			sta $0000,y
    778
-   779 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 63
+   779 				; optimize FAIL ('WAITFORKEYPROC', examples\peekpoke.pas), line = 64
    780 2420 20 AE 22			jsr WAITFORKEYPROC
    781 2423			@exit
    782 					.ifdef @new
@@ -802,7 +802,7 @@ Macro: UNITINITIALIZATION [Source: peekpoke.a65]
    790 				.endl
    791 2424			l_0143
    792
-   793 				; optimize FAIL ('MAINPROC', examples\peekpoke.pas), line = 67
+   793 				; optimize FAIL ('MAINPROC', examples\peekpoke.pas), line = 68
    794 2424 20 BB 22			jsr MAINPROC
    795
    796 				; ------------------------------------------------------------

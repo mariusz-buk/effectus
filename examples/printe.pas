@@ -4,11 +4,10 @@ program printePrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// - - - - - - - - - - - - - - - - - -
+// ----------------
 // PrintE demo
 
 procedure MAINProc;
@@ -22,7 +21,7 @@ begin  // 2
   Writeln('ANOTHER NEW LINE');
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

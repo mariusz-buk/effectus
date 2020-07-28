@@ -4,11 +4,10 @@ program pointerPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using pointer
 var
   key : byte;
@@ -34,7 +33,7 @@ begin  // 1
   Writeln(i);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;
