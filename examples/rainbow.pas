@@ -5,7 +5,7 @@ uses
   Crt, Graph;
 
 // Effectus example
-// - - - - - - - - - - - - - - - - - -
+// ----------------
 // Rainbow graphics demo
 // **********************************************************************
 // *                                                                    *
@@ -30,8 +30,8 @@ begin  // 2
   repeat
   wsync := u;
   getcolor := vcount+rtclok;
-  until  ch<>$FF;
-end;  // 4
+ UNTIL ch<>$FF;
+end;
 
 begin
   RAINBOWProc;

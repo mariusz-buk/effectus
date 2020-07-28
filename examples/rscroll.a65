@@ -154,6 +154,65 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	SYSTEM						; UNIT
 
+.local	RANDOM_0007					; FUNCTION | ASSEMBLER | OVERLOAD
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x RANGE
+	dex
+
+; ---------------------  ASM Block 006  ---------------------
+
+
+;BYTE FUNC Rand(BYTE range)
+; returns random number between 0 and
+; range-1.  If range=0, then a random
+; number between 0 and 255 is returned
+
+	ldy	$d20a		; RANDOM
+
+	lda	range
+	beq	stop
+
+	sta	ecx
+	sty	eax
+
+	jsr	imulCL
+	tay
+
+stop	sty	Result
+
+@exit
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx
+	mva RESULT :STACKORIGIN,x
+
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+
+; ------------------------------------------------------------
+
+RANGE	= DATAORIGIN+$000B
+RESULT	= DATAORIGIN+$000C
+
+@VarData	= RANGE
+@VarDataSize	= 2
+
+	rts						; ret
+.endl
+
 ; ------------------------------------------------------------
 
 __PORTB_BANKS	= $0101
@@ -321,7 +380,7 @@ NMIEN	= $D40E
 
 ; ------------------------------------------------------------
 
-TEXTATTR	= DATAORIGIN+$000B
+TEXTATTR	= DATAORIGIN+$000D
 CONSOL	= $D01F
 CN_START_SELECT_OPTION	= $00
 CN_SELECT_OPTION	= $01
@@ -358,128 +417,105 @@ BLINK	= $80
 
 .endl							; UNIT CRT
 
-; ------------------------------------------------------------
+.local	MAINPROC					; PROCEDURE
 
-.local	TYPES						; UNIT
+; optimize OK (examples\rscroll.pas), line = 21
 
-; ------------------------------------------------------------
+	mva #$01 DIR
 
-.endl							; UNIT TYPES
+; optimize OK (examples\rscroll.pas), line = 22
 
-; ------------------------------------------------------------
-
-.local	GRAPH						; UNIT
-
-; ------------------------------------------------------------
-
-CURRENTDRIVER	= $80
-DETECT	= $00
-CGA	= $01
-MCGA	= $02
-EGA	= $03
-EGA64	= $04
-EGAMONO	= $05
-LOWRES	= $06
-HERCMONO	= $07
-VGA	= $09
-VESA	= $0A
-D1BIT	= $0B
-D2BIT	= $0C
-D4BIT	= $0D
-D6BIT	= $0E
-D8BIT	= $0F
-D12BIT	= $10
-M640X400	= $18
-M640X480	= $18
-GROK	= $01
-GRNOINITGRAPH	= $FF
-GRNOTDETECTED	= $FE
-GRFILENOTFOUND	= $FD
-GRINVALIDDRIVER	= $FC
-GRNOLOADMEM	= $FB
-GRNOSCANMEM	= $FA
-GRNOFLOODMEM	= $F9
-GRFONTNOTFOUND	= $F8
-GRNOFONTMEM	= $F7
-GRINVALIDMODE	= $F6
-GRERROR	= $F5
-GRIOERROR	= $F4
-GRINVALIDFONT	= $F3
-GRINVALIDFONTNUM	= $F2
-GRINVALIDVERSION	= $EE
-CGAC0	= $00
-CGAC1	= $01
-CGAC2	= $02
-CGAC3	= $03
-CGAHI	= $04
-MCGAC0	= $00
-MCGAC1	= $01
-MCGAC2	= $02
-MCGAC3	= $03
-MCGAMED	= $04
-MCGAHI	= $05
-EGALO	= $00
-EGAHI	= $01
-EGA64LO	= $00
-EGA64HI	= $01
-EGAMONOHI	= $03
-VGALO	= $0A
-VGAMED	= $1F
-VGAHI	= $18
-WIN_LEFT	= DATAORIGIN+$000C
-WIN_RIGHT	= DATAORIGIN+$000E
-WIN_TOP	= DATAORIGIN+$0010
-WIN_BOTTOM	= DATAORIGIN+$0012
-GRAPHRESULT	= DATAORIGIN+$0014
-GETCOLOR	= DATAORIGIN+$0015
-adr.LASTARCCOORDS	= DATAORIGIN+$0016
-.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-LASTARCCOORDS.X	= DATAORIGIN+$0016
-LASTARCCOORDS.Y	= DATAORIGIN+$0018
-LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
-LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
-LASTARCCOORDS.XEND	= DATAORIGIN+$001E
-LASTARCCOORDS.YEND	= DATAORIGIN+$0020
-CURRENTX	= DATAORIGIN+$0022
-CURRENTY	= DATAORIGIN+$0024
-VIDEORAM	= DATAORIGIN+$0026
-SCANLINE_WIDTH	= DATAORIGIN+$0028
-
-.endl							; UNIT GRAPH
-
-.local	RAINBOWPROC					; PROCEDURE
-
-; optimize OK (examples\rainbow.pas), line = 29
-
-	mva #$FF CH
+	mva SCRLOC SCREEN
+	mva SCRLOC+1 SCREEN+1
 
 ; --- RepeatUntilProlog
-l_00B8
+l_006A
+; --- For
 
-; optimize OK (examples\rainbow.pas), line = 31
+; optimize OK (examples\rscroll.pas), line = 24
 
-	mva U WSYNC
+	mva #$00 I
+	sta I+1
 
-; optimize OK (examples\rainbow.pas), line = 32
+; optimize OK (examples\rscroll.pas), line = 24
 
-	lda VCOUNT
-	add RTCLOK
-	sta GETCOLOR
+l_0073
+; --- ForToDoCondition
 
-; optimize OK (examples\rainbow.pas), line = 33
+; optimize OK (examples\rscroll.pas), line = 24
+
+	lda I+1
+	cmp #$03
+	bne @+
+	lda I
+	cmp #$C0
+@
+	jcs l_007F
+
+; optimize OK (examples\rscroll.pas), line = 25
 
 	lda CH
-	cmp #$FF
-	jeq l_00B8
+	add I
+	sta :STACKORIGIN+10
+	lda SCREEN
+	add I
+	tay
+	lda SCREEN+1
+	adc I+1
+	sta :bp+1
+	lda :STACKORIGIN+10
+	sta (:bp),y
+
+; --- ForToDoEpilog
+	inc I
+	jne l_0073
+	inc I+1
+	jne l_0073
+l_007F
+
+; optimize FAIL ('SYSTEM.RANDOM_0007', examples\rscroll.pas), line = 27
+	inx
+	mva #$0A :STACKORIGIN,x
+	jsr SYSTEM.RANDOM_0007
+	dex
+	lda :STACKORIGIN+1,x
+	jne l_00A2
+@
+
+; optimize FAIL ('SYSTEM.RANDOM_0007', examples\rscroll.pas), line = 28
+	inx
+	mva #$08 :STACKORIGIN,x
+	jsr SYSTEM.RANDOM_0007
+	ldy :STACKORIGIN,x
+	mva adr.NEW_DIR,y :STACKORIGIN,x
+	mva :STACKORIGIN,x DIR
+	dex
+l_00A2
+
+; optimize OK (examples\rscroll.pas), line = 30
+
+	lda CH
+	add DIR
+	sta CH
+
+; optimize OK (examples\rscroll.pas), line = 31
+
+	jmp l_006A
 
 ; ------------------------------------------------------------
 
-VCOUNT	= $D40B
-WSYNC	= $D40A
-RTCLOK	= $14
-GETCOLOR	= $D018
-U	= $07
-CH	= $02FC
+I	= DATAORIGIN+$000E
+SCRLOC	= $58
+SCREEN	= DATAORIGIN+$0010
+adr.NEW_DIR	= DATAORIGIN+$0012
+.var NEW_DIR	= adr.NEW_DIR .word
+CH	= DATAORIGIN+$001A
+DIR	= DATAORIGIN+$001B
+@FORTMP_0070	= $03BF
+
+@VarData	= I
+@VarDataSize	= 14
+
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -492,8 +528,8 @@ CH	= $02FC
 .endl
 l_0007
 
-; optimize FAIL ('RAINBOWPROC', examples\rainbow.pas), line = 37
-	jsr RAINBOWPROC
+; optimize FAIL ('MAINPROC', examples\rscroll.pas), line = 35
+	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
@@ -535,14 +571,6 @@ ATARI
 	.ifdef MAIN.CRT.@UnitInit
 	jsr MAIN.CRT.@UnitInit
 	eif
-
-	.ifdef MAIN.TYPES.@UnitInit
-	jsr MAIN.TYPES.@UnitInit
-	eif
-
-	.ifdef MAIN.GRAPH.@UnitInit
-	jsr MAIN.GRAPH.@UnitInit
-	eif
 .endm
 
 ; ------------------------------------------------------------
@@ -559,23 +587,16 @@ ATARI
 	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
 	eif
 
-	ift .SIZEOF(MAIN.TYPES) > 0
-	.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
-	eif
-
-	ift .SIZEOF(MAIN.GRAPH) > 0
-	.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
-	eif
-
 	.print 'CODE: ',CODEORIGIN,'..',*-1
 
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $D7 $D8 $D9 $FF $01 $27
+.by  $28 $29
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 41
+VARDATASIZE	= 28
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 

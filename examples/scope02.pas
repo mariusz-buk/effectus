@@ -4,11 +4,10 @@ program scope02Prg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // PROCedure and variable scope
 var
   key : byte;
@@ -17,7 +16,7 @@ var
 procedure TEST01Proc;
 begin  // 1
   Writeln('Hello there 01');
-end;  // 4
+end;
 
 procedure Test02Proc(n : byte);
 var
@@ -28,7 +27,7 @@ begin  // 1
   Writeln('ello there 03');
   ii := -1230;
   Writeln(ii);
-end;  // 4
+end;
 
 procedure Test03Proc(n : byte; cc : word);
 begin  // 6
@@ -39,7 +38,7 @@ begin  // 6
   cc := 50000;
   Writeln(n);
   Writeln(cc);
-end;  // 4
+end;
 
 procedure MAINProc;
 var
@@ -59,7 +58,7 @@ begin  // 1
   TEST03Proc(7, 2355);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

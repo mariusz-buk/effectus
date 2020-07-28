@@ -148,11 +148,108 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_00A9
+	jmp l_0052
 
 ; ------------------------------------------------------------
 
 .local	SYSTEM						; UNIT
+
+.local	RANDOM_0052					; FUNCTION | ASSEMBLER | OVERLOAD
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x RANGE
+	dex
+
+; ---------------------  ASM Block 006  ---------------------
+
+
+;BYTE FUNC Rand(BYTE range)
+; returns random number between 0 and
+; range-1.  If range=0, then a random
+; number between 0 and 255 is returned
+
+	ldy	$d20a		; RANDOM
+
+	lda	range
+	beq	stop
+
+	sta	ecx
+	sty	eax
+
+	jsr	imulCL
+	tay
+
+stop	sty	Result
+
+@exit
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx
+	mva RESULT :STACKORIGIN,x
+
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+
+; ------------------------------------------------------------
+
+RANGE	= DATAORIGIN+$000B
+RESULT	= DATAORIGIN+$000C
+
+@VarData	= RANGE
+@VarDataSize	= 2
+
+	rts						; ret
+.endl
+
+.local	POKE						; PROCEDURE | ASSEMBLER | REGISTER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x VALUE
+	dex
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x A
+	mva :STACKORIGIN+STACKWIDTH,x A+1
+	dex
+
+; ---------------------  ASM Block 021  ---------------------
+
+	ldy #0
+	mva value (edx),y
+
+
+; ------------------------------------------------------------
+
+A	= edx
+VALUE	= ecx
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
 
 ; ------------------------------------------------------------
 
@@ -351,7 +448,7 @@ NMIEN	= $D40E
 
 ; ------------------------------------------------------------
 
-RESULT	= DATAORIGIN+$000C
+RESULT	= DATAORIGIN+$000E
 
 @VarData	= RESULT
 @VarDataSize	= 1
@@ -359,9 +456,190 @@ RESULT	= DATAORIGIN+$000C
 	rts						; ret
 .endl
 
+.local	DELAY						; PROCEDURE | ASSEMBLER
+
 ; ------------------------------------------------------------
 
-TEXTATTR	= DATAORIGIN+$000B
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x COUNT
+	mva :STACKORIGIN+STACKWIDTH,x COUNT+1
+	dex
+
+; ---------------------  ASM Block 052  ---------------------
+
+	txa:pha
+
+	ldx #0
+	ldy #0
+
+loop	cpy count
+	bne @+
+	cpx count+1
+	beq stop
+
+@	:8 lda:cmp:req vcount
+
+	iny
+	sne
+	inx
+
+	bne loop
+
+stop	pla:tax
+
+
+; ------------------------------------------------------------
+
+COUNT	= DATAORIGIN+$000F
+
+@VarData	= COUNT
+@VarDataSize	= 2
+
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
+
+.local	KEYPRESSED					; FUNCTION | ASSEMBLER
+
+; ---------------------  ASM Block 053  ---------------------
+
+	ldy #$00	; false
+	lda kbcodes
+	cmp #$ff
+	beq skp
+	iny		; true
+
+;	sty kbcodes
+
+skp	sty Result
+
+@exit
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx
+	mva RESULT :STACKORIGIN,x
+
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+
+; ------------------------------------------------------------
+
+RESULT	= DATAORIGIN+$0011
+
+@VarData	= RESULT
+@VarDataSize	= 1
+
+	rts						; ret
+.endl
+
+.local	SOUND						; PROCEDURE | ASSEMBLER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x VOL
+	dex
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x DIST
+	dex
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x FREQ
+	dex
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x CHAN
+	dex
+
+; ---------------------  ASM Block 058  ---------------------
+
+	lda Chan
+	and #7
+
+	ldy #$10
+	cmp #4
+	scs
+	ldy #$00
+	sty npokey
+
+	and #3
+
+	asl @
+	add #0
+npokey	equ *-1
+	tay
+
+	lda #$00
+	sta audctl
+	lda #$03
+	sta skctl
+
+	lda Freq
+	sta audf1,y
+
+	lda Vol
+	and #$0F
+	sta _t
+
+	lda Dist	; -> bit 7-6-5
+	:4 asl @
+	ora #0
+_t	equ *-1
+	sta audc1,y
+
+
+; ------------------------------------------------------------
+
+CHAN	= DATAORIGIN+$0012
+FREQ	= DATAORIGIN+$0013
+DIST	= DATAORIGIN+$0014
+VOL	= DATAORIGIN+$0015
+
+@VarData	= CHAN
+@VarDataSize	= 4
+
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
+
+; ------------------------------------------------------------
+
+TEXTATTR	= DATAORIGIN+$000D
 CONSOL	= $D01F
 CN_START_SELECT_OPTION	= $00
 CN_SELECT_OPTION	= $01
@@ -488,8 +766,8 @@ FAANYFILE	= $3F
 
 ; ------------------------------------------------------------
 
-CHN	= DATAORIGIN+$000D
-RESULT	= DATAORIGIN+$000E
+CHN	= DATAORIGIN+$0016
+RESULT	= DATAORIGIN+$0017
 
 @VarData	= CHN
 @VarDataSize	= 2
@@ -501,221 +779,43 @@ RESULT	= DATAORIGIN+$000E
 
 .endl							; UNIT CIO
 
-.local	MAINPROC					; PROCEDURE
+.local	SAYYOPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\recs.pas), line = 25
-	@print #$7D
+; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 19
+	inx
+	mva #$FF :STACKORIGIN,x
+	jsr SYSTEM.RANDOM_0052
+	mva :STACKORIGIN,x RND01
+	dex
 
-; optimize FAIL (100, examples\recs.pas), line = 26
+; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 20
+	inx
+	mva #$FF :STACKORIGIN,x
+	jsr SYSTEM.RANDOM_0052
+	mva :STACKORIGIN,x RND02
+	dex
+
+; optimize FAIL (100, examples\sayyo.pas), line = 21
 	@printSTRING #CODEORIGIN+$000D
-	@printEOL
 
-; optimize FAIL (100, examples\recs.pas), line = 27
-	@printSTRING #CODEORIGIN+$0020
-	@printEOL
+; optimize OK (examples\sayyo.pas), line = 22
 
-; optimize FAIL (100, examples\recs.pas), line = 28
-	@printSTRING #CODEORIGIN+$003C
-	@printEOL
+	lda RND01
+	sta $02C6
 
-; optimize OK (examples\recs.pas), line = 29
+; optimize OK (examples\sayyo.pas), line = 23
 
-	mva DATA ENTRY
-	mva DATA+1 ENTRY+1
+	lda RND02
+	sta $02C8
 
-; optimize OK (examples\recs.pas), line = 30
+; ------------------------------------------------------------
 
-; optimize OK (examples\recs.pas), line = 32
+RND01	= DATAORIGIN+$0118
+RND02	= DATAORIGIN+$0119
 
-	mwy ENTRY :bp2
-	ldy #$00
-	lda #$0A
-	sta (:bp2),y
+@VarData	= RND01
+@VarDataSize	= 2
 
-; optimize OK (examples\recs.pas), line = 33
-
-	iny
-	lda #$E8
-	sta (:bp2),y
-	iny
-	lda #$03
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 34
-
-	iny
-	lda #$10
-	sta (:bp2),y
-	iny
-	lda #$27
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 35
-
-	mva DATA+1 ENTRY+1
-	mva DATA ENTRY
-
-; optimize OK (examples\recs.pas), line = 36
-
-	add #$19
-	sta ENTRY
-	scc
-	inc ENTRY+1
-
-; optimize OK (examples\recs.pas), line = 37
-
-	mwy ENTRY :bp2
-	ldy #$00
-	lda #$14
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 38
-
-	iny
-	lda #$D0
-	sta (:bp2),y
-	iny
-	lda #$07
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 39
-
-	iny
-	lda #$20
-	sta (:bp2),y
-	iny
-	lda #$4E
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 40
-
-	mva DATA+1 ENTRY+1
-	mva DATA ENTRY
-
-; optimize OK (examples\recs.pas), line = 41
-
-	add #$32
-	sta ENTRY
-	scc
-	inc ENTRY+1
-
-; optimize OK (examples\recs.pas), line = 42
-
-	mwy ENTRY :bp2
-	ldy #$00
-	lda #$1E
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 43
-
-	iny
-	lda #$B8
-	sta (:bp2),y
-	iny
-	lda #$0B
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 44
-
-	iny
-	lda #$30
-	sta (:bp2),y
-	iny
-	lda #$75
-	sta (:bp2),y
-
-; optimize FAIL (100, examples\recs.pas), line = 45
-	@printSTRING #CODEORIGIN+$003E
-	@printEOL
-
-; optimize FAIL (100, examples\recs.pas), line = 46
-	@printSTRING #CODEORIGIN+$003B
-	@printEOL
-
-; optimize OK (examples\recs.pas), line = 47
-
-	mva DATA ENTRY
-	mva DATA+1 ENTRY+1
-
-; optimize OK (examples\recs.pas), line = 48
-
-; optimize FAIL (100, examples\recs.pas), line = 49
-	@printSTRING #CODEORIGIN+$0064
-
-; optimize FAIL (100, examples\recs.pas), line = 50
-	mwy ENTRY :bp2
-	ldy #ENTRY.NUM1-DATAORIGIN
-	lda (:bp2),y
-	jsr @printBYTE._a
-	@printEOL
-
-; optimize OK (examples\recs.pas), line = 51
-
-	mva DATA+1 ENTRY+1
-	mva DATA ENTRY
-
-; optimize OK (examples\recs.pas), line = 52
-
-	add #$19
-	sta ENTRY
-	scc
-	inc ENTRY+1
-
-; optimize FAIL (100, examples\recs.pas), line = 53
-	@printSTRING #CODEORIGIN+$0071
-
-; optimize FAIL (100, examples\recs.pas), line = 54
-	inx
-	mwy ENTRY :bp2
-	ldy #ENTRY.NUM2-DATAORIGIN
-	mva (:bp2),y :STACKORIGIN,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH,x
-	jsr @printWORD
-	dex
-	@printEOL
-
-; optimize OK (examples\recs.pas), line = 55
-
-	mva DATA+1 ENTRY+1
-	mva DATA ENTRY
-
-; optimize OK (examples\recs.pas), line = 56
-
-	add #$32
-	sta ENTRY
-	scc
-	inc ENTRY+1
-
-; optimize FAIL (100, examples\recs.pas), line = 57
-	@printSTRING #CODEORIGIN+$007E
-
-; optimize FAIL (100, examples\recs.pas), line = 58
-	inx
-	mwy ENTRY :bp2
-	ldy #ENTRY.NUM3-DATAORIGIN
-	mva (:bp2),y :STACKORIGIN,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH,x
-	jsr @printWORD
-	dex
-	@printEOL
-
-; optimize FAIL (100, examples\recs.pas), line = 59
-	@printSTRING #CODEORIGIN+$003B
-	@print #$9B
-	@printSTRING #CODEORIGIN+$008B
-
-; optimize FAIL ('CIO.GET', examples\recs.pas), line = 60
-	inx
-	mva #$07 :STACKORIGIN,x
-	jsr CIO.GET
-	mva :STACKORIGIN,x KEY
-	dex
-
-	jsr CRT.READKEY					; call Entry
-
-	dex
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -726,22 +826,178 @@ RESULT	= DATAORIGIN+$000E
 	eif
 	rts						; ret
 .endl
-l_00A9
 
-; optimize FAIL ('MAINPROC', examples\recs.pas), line = 65
+.local	MAINPROC					; PROCEDURE
+
+; optimize FAIL (100, examples\sayyo.pas), line = 31
+	@printSTRING #CODEORIGIN+$0013
+	@printEOL
+
+; ---------------------  ASM Block 085  ---------------------
+
+
+  lda #0
+  sta 710
+  lda #42
+  sta 712
+  
+
+; --- RepeatUntilProlog
+l_011E
+
+; optimize FAIL ('CRT.KEYPRESSED', examples\sayyo.pas), line = 38
+	jsr CRT.KEYPRESSED
+	dex
+	lda :STACKORIGIN+1,x
+	jeq l_011E
+; --- For
+
+; optimize OK (examples\sayyo.pas), line = 39
+
+	mva #$00 I
+
+; optimize OK (examples\sayyo.pas), line = 39
+
+l_012C
+; --- ForToDoCondition
+
+; optimize OK (examples\sayyo.pas), line = 39
+
+	lda I
+	cmp #$0F
+	jcs l_013A
+
+; optimize FAIL ('SAYYOPROC', examples\sayyo.pas), line = 40
+	jsr SAYYOPROC
+
+; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 41
+	inx
+	mva #$03 :STACKORIGIN,x
+	jsr SYSTEM.RANDOM_0052
+	inx
+	mva #$64 :STACKORIGIN,x
+	inx
+	mva #$0A :STACKORIGIN,x
+	jsr SYSTEM.RANDOM_0052
+	lda :STACKORIGIN,x
+	add #$08
+	sta :STACKORIGIN,x
+	inx
+	mva #$08 :STACKORIGIN,x
+	jsr CRT.SOUND
+
+; optimize FAIL ('CRT.DELAY', examples\sayyo.pas), line = 42
+	inx
+	mva #$78 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr CRT.DELAY
+
+; --- ForToDoEpilog
+	inc I						; inc ptr byte [CounterAddress]
+	jne l_012C
+l_013A
+
+; optimize OK (examples\sayyo.pas), line = 44
+
+	lda #$50
+	sta $02C6
+
+; optimize OK (examples\sayyo.pas), line = 44
+
+	lda #$86
+	sta $02C8
+
+; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 45
+	inx
+	mva #$00 :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	inx
+	mva #$00 :STACKORIGIN,x
+	jsr CRT.SOUND
+
+; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 45
+	inx
+	mva #$01 :STACKORIGIN,x
+	inx
+	mva #$00 :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	jsr CRT.SOUND
+
+; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 46
+	inx
+	mva #$02 :STACKORIGIN,x
+	inx
+	mva #$00 :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	jsr CRT.SOUND
+
+; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 46
+	inx
+	mva #$03 :STACKORIGIN,x
+	inx
+	mva #$00 :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	jsr CRT.SOUND
+
+; optimize FAIL (100, examples\sayyo.pas), line = 47
+	@printSTRING #CODEORIGIN+$0031
+	@printEOL
+
+	jsr CRT.READKEY					; call Entry
+
+	dex
+
+; optimize FAIL ('CIO.GET', examples\sayyo.pas), line = 50
+	inx
+	mva #$07 :STACKORIGIN,x
+	jsr CIO.GET
+	mva :STACKORIGIN,x CH
+	dex
+
+	jsr CRT.READKEY					; call Entry
+
+	dex
+
+; ------------------------------------------------------------
+
+CH	= DATAORIGIN+$011A
+I	= DATAORIGIN+$011B
+@FORTMP_0129	= $0E
+
+@VarData	= CH
+@VarDataSize	= 2
+
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
+l_0052
+
+; optimize FAIL ('MAINPROC', examples\sayyo.pas), line = 55
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-adr.STRBUFFER	= DATAORIGIN+$000F
+adr.STRBUFFER	= DATAORIGIN+$0018
 .var STRBUFFER	= adr.STRBUFFER .word
-adr.DATA	= DATAORIGIN+$010F
-.var DATA	= adr.DATA .word
-ENTRY	= DATAORIGIN+$011F
-ENTRY.NUM1	= DATAORIGIN+$0000
-ENTRY.NUM2	= DATAORIGIN+$0001
-ENTRY.NUM3	= DATAORIGIN+$0003
-KEY	= DATAORIGIN+$0121
 @exit
 
 @halt	ldx #0
@@ -836,7 +1092,7 @@ DATAORIGIN
 .by  $28 $00 $18 $00 $2D $0C
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 290
+VARDATASIZE	= 284
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -847,13 +1103,10 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
-.by  $78 $61 $6D $70 $6C $65 $3A $00  $1A $52 $65 $63 $6F $72 $64 $20  $41 $52 $52 $41 $59 $20 $64 $65
-.by  $6D $6F $6E $73 $74 $72 $61 $74  $69 $6F $6E $00 $00 $00 $24 $53  $6F $6D $65 $20 $64 $61 $74 $61
-.by  $20 $72 $65 $74 $72 $69 $65 $76  $65 $64 $20 $66 $72 $6F $6D $20  $74 $68 $65 $20 $72 $65 $63 $6F
-.by  $72 $64 $73 $00 $0B $65 $6E $74  $72 $79 $2E $6E $75 $6D $31 $3D  $00 $0B $65 $6E $74 $72 $79 $2E
-.by  $6E $75 $6D $32 $3D $00 $0B $65  $6E $74 $72 $79 $2E $6E $75 $6D  $33 $3D $00 $15 $2D $2D $2D $2D
-.by  $2D $2D $2D $2D $2D $2D $2D $2D  $2D $2D $2D $2D $2D $2D $2D $2D  $2D $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $04 $59 $4F  $21 $20 $00 $1C $50 $72 $65 $73
+.by  $73 $20 $61 $6E $79 $20 $6B $65  $79 $20 $66 $6F $72 $20 $67 $72  $65 $65 $74 $69 $6E $67 $73 $21
+.by  $00 $18 $9B $9B $50 $72 $65 $73  $73 $20 $61 $6E $79 $20 $6B $65  $79 $20 $74 $6F $20 $65 $78 $69
+.by  $74 $21 $00
 .endm
 
 	end

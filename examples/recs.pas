@@ -4,10 +4,10 @@ program recsPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
-// Effectus example:
+// Effectus example
+// ----------------
 // Record ARRAY demonstration
 type
   rec = record
@@ -30,18 +30,18 @@ begin  // 1
   Inc(ENTRY, 0);
 // ENTRY=DATA+(0*5)
   ENTRY^.NUM1 := 10;
-  ENTRY^.NUM2 := 100;
-  ENTRY^.NUM3 := 1000;
+  ENTRY^.NUM2 := 1000;
+  ENTRY^.NUM3 := 10000;
   ENTRY := pointer(word(@DATA));
   Inc(ENTRY, (1*5));
   ENTRY^.NUM1 := 20;
-  ENTRY^.NUM2 := 200;
-  ENTRY^.NUM3 := 2000;
+  ENTRY^.NUM2 := 2000;
+  ENTRY^.NUM3 := 20000;
   ENTRY := pointer(word(@DATA));
   Inc(ENTRY, (2*5));
   ENTRY^.NUM1 := 30;
-  ENTRY^.NUM2 := 300;
-  ENTRY^.NUM3 := 3000;
+  ENTRY^.NUM2 := 3000;
+  ENTRY^.NUM3 := 30000;
   Writeln('Some data retrieved from the records');
   Writeln('');
   ENTRY := pointer(word(@DATA));
@@ -59,7 +59,7 @@ begin  // 1
   Write('', eol, '---------------------');
   KEY := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

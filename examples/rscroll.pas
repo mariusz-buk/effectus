@@ -4,10 +4,9 @@ program rscrollPrg;
 uses
   Crt;
 
-// ------------------------------------
 // Effectus example
-// Scroll
-// ------------------------------------
+// ----------------
+// Scrolling demo
 
 procedure MAINProc;
 var
@@ -22,15 +21,15 @@ begin  // 1
   dir := 1;
   screen := pointer(SCRLOC);
   repeat
-  for  i:=0 TO 959 do begin
+ FOR i:=0 TO 959 do begin
   screen[i] := ch+i;
-  end;  // for
+  end;
   if  Random(10) = 0  then begin
   dir := new_dir[Random(8)];
   end;  // if
   ch := ch+dir;
-  until 0 = 1;
-end;  // 4
+  until false;
+end;
 
 begin
   MAINProc;

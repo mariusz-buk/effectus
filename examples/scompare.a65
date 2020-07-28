@@ -148,7 +148,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_00A9
+	jmp l_00B7
 
 ; ------------------------------------------------------------
 
@@ -503,210 +503,125 @@ RESULT	= DATAORIGIN+$000E
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\recs.pas), line = 25
-	@print #$7D
-
-; optimize FAIL (100, examples\recs.pas), line = 26
-	@printSTRING #CODEORIGIN+$000D
+; optimize FAIL (100, examples\scompare.pas), line = 25
+	@printSTRING #CODEORIGIN+$001B
 	@printEOL
 
-; optimize FAIL (100, examples\recs.pas), line = 27
-	@printSTRING #CODEORIGIN+$0020
+; optimize FAIL (100, examples\scompare.pas), line = 26
+	@printSTRING #CODEORIGIN+$001D
+
+; optimize FAIL (100, examples\scompare.pas), line = 27
+	@printSTRING STR1
 	@printEOL
 
-; optimize FAIL (100, examples\recs.pas), line = 28
-	@printSTRING #CODEORIGIN+$003C
+; optimize FAIL (100, examples\scompare.pas), line = 28
+	@printSTRING #CODEORIGIN+$0024
+
+; optimize FAIL (100, examples\scompare.pas), line = 29
+	@printSTRING STR2
 	@printEOL
 
-; optimize OK (examples\recs.pas), line = 29
+; optimize FAIL (100, examples\scompare.pas), line = 30
+	@printSTRING #CODEORIGIN+$002B
 
-	mva DATA ENTRY
-	mva DATA+1 ENTRY+1
-
-; optimize OK (examples\recs.pas), line = 30
-
-; optimize OK (examples\recs.pas), line = 32
-
-	mwy ENTRY :bp2
-	ldy #$00
-	lda #$0A
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 33
-
-	iny
-	lda #$E8
-	sta (:bp2),y
-	iny
-	lda #$03
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 34
-
-	iny
-	lda #$10
-	sta (:bp2),y
-	iny
-	lda #$27
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 35
-
-	mva DATA+1 ENTRY+1
-	mva DATA ENTRY
-
-; optimize OK (examples\recs.pas), line = 36
-
-	add #$19
-	sta ENTRY
-	scc
-	inc ENTRY+1
-
-; optimize OK (examples\recs.pas), line = 37
-
-	mwy ENTRY :bp2
-	ldy #$00
-	lda #$14
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 38
-
-	iny
-	lda #$D0
-	sta (:bp2),y
-	iny
-	lda #$07
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 39
-
-	iny
-	lda #$20
-	sta (:bp2),y
-	iny
-	lda #$4E
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 40
-
-	mva DATA+1 ENTRY+1
-	mva DATA ENTRY
-
-; optimize OK (examples\recs.pas), line = 41
-
-	add #$32
-	sta ENTRY
-	scc
-	inc ENTRY+1
-
-; optimize OK (examples\recs.pas), line = 42
-
-	mwy ENTRY :bp2
-	ldy #$00
-	lda #$1E
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 43
-
-	iny
-	lda #$B8
-	sta (:bp2),y
-	iny
-	lda #$0B
-	sta (:bp2),y
-
-; optimize OK (examples\recs.pas), line = 44
-
-	iny
-	lda #$30
-	sta (:bp2),y
-	iny
-	lda #$75
-	sta (:bp2),y
-
-; optimize FAIL (100, examples\recs.pas), line = 45
-	@printSTRING #CODEORIGIN+$003E
+; optimize FAIL (100, examples\scompare.pas), line = 31
+	@printSTRING STR3
 	@printEOL
 
-; optimize FAIL (100, examples\recs.pas), line = 46
-	@printSTRING #CODEORIGIN+$003B
+; optimize OK (examples\scompare.pas), line = 32
+
+	lda #$FF
+	sta VALUE
+	sta VALUE+1
+	sta VALUE+2
+	sta VALUE+3
+
+; optimize FAIL (100, examples\scompare.pas), line = 33
+	@printSTRING #CODEORIGIN+$0032
 	@printEOL
 
-; optimize OK (examples\recs.pas), line = 47
-
-	mva DATA ENTRY
-	mva DATA+1 ENTRY+1
-
-; optimize OK (examples\recs.pas), line = 48
-
-; optimize FAIL (100, examples\recs.pas), line = 49
-	@printSTRING #CODEORIGIN+$0064
-
-; optimize FAIL (100, examples\recs.pas), line = 50
-	mwy ENTRY :bp2
-	ldy #ENTRY.NUM1-DATAORIGIN
-	lda (:bp2),y
-	jsr @printBYTE._a
-	@printEOL
-
-; optimize OK (examples\recs.pas), line = 51
-
-	mva DATA+1 ENTRY+1
-	mva DATA ENTRY
-
-; optimize OK (examples\recs.pas), line = 52
-
-	add #$19
-	sta ENTRY
-	scc
-	inc ENTRY+1
-
-; optimize FAIL (100, examples\recs.pas), line = 53
-	@printSTRING #CODEORIGIN+$0071
-
-; optimize FAIL (100, examples\recs.pas), line = 54
+; optimize FAIL (100, examples\scompare.pas), line = 34
 	inx
-	mwy ENTRY :bp2
-	ldy #ENTRY.NUM2-DATAORIGIN
-	mva (:bp2),y :STACKORIGIN,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH,x
-	jsr @printWORD
+	mva VALUE :STACKORIGIN,x
+	mva VALUE+1 :STACKORIGIN+STACKWIDTH,x
+	mva VALUE+2 :STACKORIGIN+STACKWIDTH*2,x
+	mva VALUE+3 :STACKORIGIN+STACKWIDTH*3,x
+	jsr @printINT
 	dex
 	@printEOL
 
-; optimize OK (examples\recs.pas), line = 55
-
-	mva DATA+1 ENTRY+1
-	mva DATA ENTRY
-
-; optimize OK (examples\recs.pas), line = 56
-
-	add #$32
-	sta ENTRY
-	scc
-	inc ENTRY+1
-
-; optimize FAIL (100, examples\recs.pas), line = 57
-	@printSTRING #CODEORIGIN+$007E
-
-; optimize FAIL (100, examples\recs.pas), line = 58
-	inx
-	mwy ENTRY :bp2
-	ldy #ENTRY.NUM3-DATAORIGIN
-	mva (:bp2),y :STACKORIGIN,x
-	iny
-	mva (:bp2),y :STACKORIGIN+STACKWIDTH,x
-	jsr @printWORD
-	dex
+; optimize FAIL (100, examples\scompare.pas), line = 35
+	@printSTRING #CODEORIGIN+$001A
 	@printEOL
 
-; optimize FAIL (100, examples\recs.pas), line = 59
-	@printSTRING #CODEORIGIN+$003B
-	@print #$9B
+; optimize OK (examples\scompare.pas), line = 36
+
+	lda VALUE+3
+	jpl l_017F
+
+; optimize FAIL (100, examples\scompare.pas), line = 37
+	@printSTRING #CODEORIGIN+$0057
+	@printEOL
+	jmp l_018C
+l_017F
+
+; optimize OK (examples\scompare.pas), line = 39
+
+	lda VALUE+3
+	ora VALUE+2
+	ora VALUE+1
+	ora VALUE
+	jne l_019C
+
+; optimize FAIL (100, examples\scompare.pas), line = 40
+	@printSTRING #CODEORIGIN+$0072
+	@printEOL
+	jmp l_01A9
+l_019C
+
+; optimize FAIL (100, examples\scompare.pas), line = 43
 	@printSTRING #CODEORIGIN+$008B
+	@printEOL
+l_01A9
+l_018C
 
-; optimize FAIL ('CIO.GET', examples\recs.pas), line = 60
+; optimize FAIL (100, examples\scompare.pas), line = 45
+	@printSTRING #CODEORIGIN+$001A
+	@print #$9B
+	@printSTRING #CODEORIGIN+$00A6
+	@print #$9B
+	@printSTRING #CODEORIGIN+$001A
+	@print #$9B
+	@printSTRING #CODEORIGIN+$001A
+
+; optimize OK (examples\scompare.pas), line = 46
+
+	lda #$FF
+	jeq l_01D4
+
+; optimize FAIL (100, examples\scompare.pas), line = 47
+	@printSTRING #CODEORIGIN+$0057
+	@printEOL
+	jmp l_01E1
+l_01D4
+
+; optimize OK (examples\scompare.pas), line = 49
+
+	jmp l_01EB
+
+; optimize FAIL (100, examples\scompare.pas), line = 50
+	@printSTRING #CODEORIGIN+$0072
+	@printEOL
+	jmp l_01F8
+l_01EB
+
+; optimize FAIL (100, examples\scompare.pas), line = 53
+	@printSTRING #CODEORIGIN+$008B
+	@printEOL
+l_01F8
+l_01E1
+
+; optimize FAIL ('CIO.GET', examples\scompare.pas), line = 55
 	inx
 	mva #$07 :STACKORIGIN,x
 	jsr CIO.GET
@@ -716,6 +631,21 @@ RESULT	= DATAORIGIN+$000E
 	jsr CRT.READKEY					; call Entry
 
 	dex
+
+; ------------------------------------------------------------
+
+VALUE	= DATAORIGIN+$010F
+KEY	= DATAORIGIN+$0113
+adr.STR1	= DATAORIGIN+$0114
+.var STR1	= adr.STR1 .word
+adr.STR2	= DATAORIGIN+$0214
+.var STR2	= adr.STR2 .word
+adr.STR3	= DATAORIGIN+$0314
+.var STR3	= adr.STR3 .word
+
+@VarData	= VALUE
+@VarDataSize	= 773
+
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -726,22 +656,15 @@ RESULT	= DATAORIGIN+$000E
 	eif
 	rts						; ret
 .endl
-l_00A9
+l_00B7
 
-; optimize FAIL ('MAINPROC', examples\recs.pas), line = 65
+; optimize FAIL ('MAINPROC', examples\scompare.pas), line = 60
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
 adr.STRBUFFER	= DATAORIGIN+$000F
 .var STRBUFFER	= adr.STRBUFFER .word
-adr.DATA	= DATAORIGIN+$010F
-.var DATA	= adr.DATA .word
-ENTRY	= DATAORIGIN+$011F
-ENTRY.NUM1	= DATAORIGIN+$0000
-ENTRY.NUM2	= DATAORIGIN+$0001
-ENTRY.NUM3	= DATAORIGIN+$0003
-KEY	= DATAORIGIN+$0121
 @exit
 
 @halt	ldx #0
@@ -833,10 +756,43 @@ ATARI
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $05 $41 $54 $41  $52 $49 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $05 $48 $45 $4C  $4C $4F $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $05 $41 $54 $41
+.by  $52 $49
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 290
+VARDATASIZE	= 1044
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -847,13 +803,14 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
-.by  $78 $61 $6D $70 $6C $65 $3A $00  $1A $52 $65 $63 $6F $72 $64 $20  $41 $52 $52 $41 $59 $20 $64 $65
-.by  $6D $6F $6E $73 $74 $72 $61 $74  $69 $6F $6E $00 $00 $00 $24 $53  $6F $6D $65 $20 $64 $61 $74 $61
-.by  $20 $72 $65 $74 $72 $69 $65 $76  $65 $64 $20 $66 $72 $6F $6D $20  $74 $68 $65 $20 $72 $65 $63 $6F
-.by  $72 $64 $73 $00 $0B $65 $6E $74  $72 $79 $2E $6E $75 $6D $31 $3D  $00 $0B $65 $6E $74 $72 $79 $2E
-.by  $6E $75 $6D $32 $3D $00 $0B $65  $6E $74 $72 $79 $2E $6E $75 $6D  $33 $3D $00 $15 $2D $2D $2D $2D
-.by  $2D $2D $2D $2D $2D $2D $2D $2D  $2D $2D $2D $2D $2D $2D $2D $2D  $2D $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $05 $41 $54  $41 $52 $49 $00 $05 $48 $45 $4C
+.by  $4C $4F $00 $00 $00 $05 $73 $74  $72 $31 $3D $00 $05 $73 $74 $72  $32 $3D $00 $05 $73 $74 $72 $33
+.by  $3D $00 $23 $56 $61 $6C $75 $65  $20 $6F $66 $20 $63 $6F $6D $70  $61 $72 $69 $73 $6F $6E $20 $62
+.by  $79 $20 $53 $43 $6F $6D $70 $61  $72 $65 $20 $69 $73 $3A $00 $19  $73 $74 $72 $32 $20 $69 $73 $20
+.by  $67 $72 $65 $61 $74 $65 $72 $20  $74 $68 $61 $6E $20 $73 $74 $72  $31 $00 $17 $73 $74 $72 $31 $20
+.by  $61 $6E $64 $20 $73 $74 $72 $32  $20 $61 $72 $65 $20 $65 $71 $75  $61 $6C $00 $19 $73 $74 $72 $31
+.by  $20 $69 $73 $20 $67 $72 $65 $61  $74 $65 $72 $20 $74 $68 $61 $6E  $20 $73 $74 $72 $32 $00 $08 $41
+.by  $67 $61 $69 $6E $2E $2E $2E $00
 .endm
 
 	end
