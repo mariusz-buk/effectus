@@ -13,6 +13,7 @@ effectus examples\chrdef.eff
 effectus examples\define.eff
 effectus examples\diskget.eff
 effectus examples\dlidemo.eff
+effectus examples\drunkman.eff
 effectus examples\fill.eff
 effectus examples\fillscr.eff
 effectus examples\fs.eff
@@ -30,6 +31,7 @@ effectus examples\locate_gr7.eff
 effectus examples\loop_effects.eff
 effectus examples\loop_exit.eff
 effectus examples\man_anim.eff
+effectus examples\nescroll.eff
 effectus examples\peekpoke.eff
 effectus examples\pmgdemo.eff
 effectus examples\pointer.eff
@@ -44,6 +46,7 @@ effectus examples\rand.eff
 effectus examples\recs.eff
 effectus examples\resieve.eff
 effectus examples\rscroll.eff
+effectus examples\sayyo.eff
 effectus examples\scompare.eff
 effectus examples\scope01.eff
 effectus examples\scope02.eff
@@ -54,7 +57,9 @@ effectus examples\stick.eff
 effectus examples\strconst.eff
 effectus examples\strman.eff
 effectus examples\strval.eff
+effectus examples\sunnyday.eff
 effectus examples\type.eff
 effectus examples\triangle.eff
 effectus examples\valbci.eff
+effectus examples\vscroll.eff
 effectus examples\writenum.eff
