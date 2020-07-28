@@ -148,11 +148,49 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_0090
+	jmp l_0007
 
 ; ------------------------------------------------------------
 
 .local	SYSTEM						; UNIT
+
+.local	POKE						; PROCEDURE | ASSEMBLER | REGISTER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x VALUE
+	dex
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x A
+	mva :STACKORIGIN+STACKWIDTH,x A+1
+	dex
+
+; ---------------------  ASM Block 021  ---------------------
+
+	ldy #0
+	mva value (edx),y
+
+
+; ------------------------------------------------------------
+
+A	= edx
+VALUE	= ecx
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
 
 ; ------------------------------------------------------------
 
@@ -319,46 +357,6 @@ NMIEN	= $D40E
 
 .local	CRT						; UNIT
 
-.local	READKEY						; FUNCTION | ASSEMBLER
-
-; ---------------------  ASM Block 049  ---------------------
-
-	txa:pha
-
-	@GetKey
-
-	sta Result
-
-	pla:tax
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-RESULT	= DATAORIGIN+$000C
-
-@VarData	= RESULT
-@VarDataSize	= 1
-
-	rts						; ret
-.endl
-
 ; ------------------------------------------------------------
 
 TEXTATTR	= DATAORIGIN+$000B
@@ -398,86 +396,30 @@ BLINK	= $80
 
 .endl							; UNIT CRT
 
-; ------------------------------------------------------------
-
-.local	DOS						; UNIT
-
-; ------------------------------------------------------------
-
-PALNTSC	= $D014
-
-.endl							; UNIT DOS
-
-; ------------------------------------------------------------
-
-.local	STRUTILS					; UNIT
-
-; ------------------------------------------------------------
-
-.endl							; UNIT STRUTILS
-
-; ------------------------------------------------------------
-
-.local	SYSUTILS					; UNIT
-
-; ------------------------------------------------------------
-
-FAREADONLY	= $01
-FAHIDDEN	= $02
-FASYSFILE	= $04
-FAVOLUMEID	= $08
-FADIRECTORY	= $10
-FAARCHIVE	= $20
-FAANYFILE	= $3F
-
-.endl							; UNIT SYSUTILS
-
-; ------------------------------------------------------------
-
-.local	CIO						; UNIT
-
-.local	GET						; FUNCTION | ASSEMBLER
+.local	WAITPROC					; PROCEDURE | ASSEMBLER
 
 ; ------------------------------------------------------------
 
 ; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
 ; as Pointer
-	mva :STACKORIGIN,x CHN
+	mva :STACKORIGIN,x F
 	dex
 
-; ---------------------  ASM Block 080  ---------------------
+; ---------------------  ASM Block 060  ---------------------
 
-	txa:pha
 
-	lda chn
-	:4 asl @
-	tax
-
-	lda #7		;get char command
-	sta iccmd,x
-
-	lda #$00	;zero out the unused
-	sta icbufl,x	;store in accumulator
-	sta icbufh,x	;...after CIOV jump
-
-	m@call	ciov
-
-	sty MAIN.SYSTEM.IOResult
-
-	sta Result
-
-	pla:tax
-
-@exit
+  lda F
+    .by $18 $65 $14 $C5 $14 $D0 $FC $60 
+  
 
 ; ------------------------------------------------------------
 
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
+F	= DATAORIGIN+$001D
 
-	inx
-	mva RESULT :STACKORIGIN,x
+@VarData	= F
+@VarDataSize	= 1
 
+@exit
 	.ifdef @new
 	lda <@VarData
 	sta :ztmp
@@ -485,90 +427,161 @@ FAANYFILE	= $3F
 	ldy #@VarDataSize-1
 	jmp @FreeMem
 	eif
-
-; ------------------------------------------------------------
-
-CHN	= DATAORIGIN+$000D
-RESULT	= DATAORIGIN+$000E
-
-@VarData	= CHN
-@VarDataSize	= 2
-
 	rts						; ret
 .endl
-
-; ------------------------------------------------------------
-
-.endl							; UNIT CIO
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\input.pas), line = 20
-	@print #$7D
+; optimize OK (examples\nescroll.pas), line = 31
 
-; optimize FAIL (100, examples\input.pas), line = 21
-	@printSTRING #CODEORIGIN+$000D
-	@printEOL
+	mva DL SDLSTL
+	mva DL+1 SDLSTL+1
 
-; optimize FAIL (100, examples\input.pas), line = 22
-	@printSTRING #CODEORIGIN+$0020
-	@printEOL
+; optimize OK (examples\nescroll.pas), line = 32
 
-; optimize FAIL (100, examples\input.pas), line = 23
-	@printSTRING #CODEORIGIN+$003C
-	@printEOL
+	mva #$0F HSCROLI
 
-; optimize FAIL (100, examples\input.pas), line = 24
-	@printSTRING #CODEORIGIN+$0054
-	@printEOL
+; --- RepeatUntilProlog
+l_006E
 
-; optimize FAIL (100, examples\input.pas), line = 25
-	@printSTRING #CODEORIGIN+$0056
-	@printEOL
-	@getline
-	@move #@buf #adr.NAME #14
+; optimize OK (examples\nescroll.pas), line = 34
 
-; optimize FAIL (100, examples\input.pas), line = 27
-	@printSTRING #CODEORIGIN+$0053
-	@printEOL
+	lda HSCROLI
+	cmp #$0B
+	jne l_0080
 
-; optimize FAIL (100, examples\input.pas), line = 28
-	@printSTRING #CODEORIGIN+$0068
-	@printEOL
-	@getline
-	@move #@buf #adr.SURNAME #22
+; optimize OK (examples\nescroll.pas), line = 35
 
-; optimize FAIL (100, examples\input.pas), line = 30
-	@printSTRING #CODEORIGIN+$0053
-	@printEOL
+	lda RANDOM
+	and #$0F
+	add #$21
+	sta A
 
-; optimize FAIL (100, examples\input.pas), line = 31
-	@printSTRING #CODEORIGIN+$007D
+; optimize OK (examples\nescroll.pas), line = 36
 
-; optimize FAIL (100, examples\input.pas), line = 32
-	@printSTRING NAME
+	lda RANDOM
+	and #$0F
+	add #$21
+	sta B
 
-; optimize FAIL (100, examples\input.pas), line = 33
-	@print #$20
+; optimize OK (examples\nescroll.pas), line = 37
 
-; optimize FAIL (100, examples\input.pas), line = 34
-	@printSTRING SURNAME
-	@printEOL
+	lda RANDOM
+	and #$0F
+	add #$21
+	sta C
 
-; optimize FAIL (100, examples\input.pas), line = 35
-	@printSTRING #CODEORIGIN+$0053
-	@printEOL
+; optimize OK (examples\nescroll.pas), line = 38
 
-; optimize FAIL ('CIO.GET', examples\input.pas), line = 36
+	lda SCREENI+1
+	sta :bp+1
+	ldy SCREENI
+	lda A
+	sta (:bp),y
+
+; optimize OK (examples\nescroll.pas), line = 39
+
+	mwy SCREENI :bp2
+	ldy #$60
+	lda B
+	sta (:bp2),y
+
+; optimize OK (examples\nescroll.pas), line = 40
+
+	ldy #$C0
+	lda C
+	sta (:bp2),y
+
+; optimize OK (examples\nescroll.pas), line = 41
+
+	ldy #$30
+	lda A
+	sta (:bp2),y
+
+; optimize OK (examples\nescroll.pas), line = 42
+
+	ldy #$90
+	lda B
+	sta (:bp2),y
+
+; optimize OK (examples\nescroll.pas), line = 43
+
+	ldy #$F0
+	lda C
+	sta (:bp2),y
+
+; optimize OK (examples\nescroll.pas), line = 44
+
+	inc adr.DL+$04
+
+; optimize OK (examples\nescroll.pas), line = 45
+
+	inc adr.DL+$07
+
+; optimize OK (examples\nescroll.pas), line = 46
+
+	inc adr.DL+$0A
+
+; optimize FAIL (0, examples\nescroll.pas), line = 47
+	inc SCREENI
+	sne
+	inc SCREENI+1
+
+; optimize OK (examples\nescroll.pas), line = 48
+
+	lda adr.DL+$04
+	cmp #$30
+	jne l_0108
+
+; optimize OK (examples\nescroll.pas), line = 49
+
+	mva #$00 adr.DL+$04
+
+; optimize OK (examples\nescroll.pas), line = 50
+
+	mva #$60 adr.DL+$07
+
+; optimize OK (examples\nescroll.pas), line = 51
+
+	mva #$C0 adr.DL+$0A
+
+; optimize OK (examples\nescroll.pas), line = 52
+
+	mva #$00 SCREENI
+	mva #$40 SCREENI+1
+l_0108
+
+; optimize OK (examples\nescroll.pas), line = 54
+
+	mva #$0F HSCROLI
+l_0080
+
+; optimize OK (examples\nescroll.pas), line = 56
+
+	mva HSCROLI HSCROL
+
+; optimize FAIL (0, examples\nescroll.pas), line = 57
+	dec HSCROLI
+
+; optimize FAIL ('WAITPROC', examples\nescroll.pas), line = 58
 	inx
-	mva #$07 :STACKORIGIN,x
-	jsr CIO.GET
-	mva :STACKORIGIN,x KEY
-	dex
+	mva #$01 :STACKORIGIN,x
+	jsr WAITPROC
 
-	jsr CRT.READKEY					; call Entry
+; optimize OK (examples\nescroll.pas), line = 59
 
-	dex
+	jmp l_006E
+
+; ------------------------------------------------------------
+
+HSCROLI	= $CA
+A	= DATAORIGIN+$001E
+B	= DATAORIGIN+$001F
+C	= DATAORIGIN+$0020
+
+@VarData	= A
+@VarDataSize	= 3
+
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -579,20 +592,19 @@ RESULT	= DATAORIGIN+$000E
 	eif
 	rts						; ret
 .endl
-l_0090
+l_0007
 
-; optimize FAIL ('MAINPROC', examples\input.pas), line = 41
+; optimize FAIL ('MAINPROC', examples\nescroll.pas), line = 63
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-adr.STRBUFFER	= DATAORIGIN+$000F
-.var STRBUFFER	= adr.STRBUFFER .word
-KEY	= DATAORIGIN+$010F
-adr.NAME	= DATAORIGIN+$0110
-.var NAME	= adr.NAME .word
-adr.SURNAME	= DATAORIGIN+$011E
-.var SURNAME	= adr.SURNAME .word
+adr.DL	= DATAORIGIN+$000C
+.var DL	= adr.DL .word
+HSCROL	= $D404
+RANDOM	= $D20A
+SDLSTL	= $0230
+SCREENI	= DATAORIGIN+$001B
 @exit
 
 @halt	ldx #0
@@ -631,22 +643,6 @@ ATARI
 	.ifdef MAIN.CRT.@UnitInit
 	jsr MAIN.CRT.@UnitInit
 	eif
-
-	.ifdef MAIN.DOS.@UnitInit
-	jsr MAIN.DOS.@UnitInit
-	eif
-
-	.ifdef MAIN.STRUTILS.@UnitInit
-	jsr MAIN.STRUTILS.@UnitInit
-	eif
-
-	.ifdef MAIN.SYSUTILS.@UnitInit
-	jsr MAIN.SYSUTILS.@UnitInit
-	eif
-
-	.ifdef MAIN.CIO.@UnitInit
-	jsr MAIN.CIO.@UnitInit
-	eif
 .endm
 
 ; ------------------------------------------------------------
@@ -663,31 +659,16 @@ ATARI
 	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
 	eif
 
-	ift .SIZEOF(MAIN.DOS) > 0
-	.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-	eif
-
-	ift .SIZEOF(MAIN.STRUTILS) > 0
-	.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-	eif
-
-	ift .SIZEOF(MAIN.SYSUTILS) > 0
-	.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-	eif
-
-	ift .SIZEOF(MAIN.CIO) > 0
-	.print 'CIO: ',MAIN.CIO,'..',MAIN.CIO+.SIZEOF(MAIN.CIO)-1
-	eif
-
 	.print 'CODE: ',CODEORIGIN,'..',*-1
 
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $70 $70 $70 $52  $00 $40 $52 $60 $40 $52 $C0 $40
+.by  $41 $00 $20 $00 $40
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 308
+VARDATASIZE	= 33
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -698,12 +679,6 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
-.by  $78 $61 $6D $70 $6C $65 $3A $00  $1A $53 $74 $72 $69 $6E $67 $20  $69 $6E $70 $75 $74 $20 $64 $65
-.by  $6D $6F $6E $73 $74 $72 $61 $74  $69 $6F $6E $00 $16 $75 $73 $69  $6E $67 $20 $49 $6E $70 $75 $74
-.by  $53 $20 $70 $72 $6F $63 $65 $64  $75 $72 $65 $00 $00 $00 $10 $57  $68 $61 $74 $73 $20 $79 $6F $75
-.by  $72 $20 $6E $61 $6D $65 $3F $00  $13 $57 $68 $61 $74 $73 $20 $79  $6F $75 $72 $20 $73 $75 $72 $6E
-.by  $61 $6D $65 $3F $00 $0A $54 $68  $61 $6E $6B $20 $79 $6F $75 $2C  $00
 .endm
 
 	end

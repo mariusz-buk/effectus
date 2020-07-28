@@ -1,5 +1,5 @@
 ; Effectus example
-;-------------------------------------
+; ----------------
 ; Using EXIT command in loop statements
 
 PROC Main()

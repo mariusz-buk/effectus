@@ -4,11 +4,10 @@ program inputPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // String input demo
 // (using InputS procedure)
 var
@@ -36,7 +35,7 @@ begin  // 1
   Writeln('');
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

@@ -148,108 +148,11 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_0014
+	jmp l_0048
 
 ; ------------------------------------------------------------
 
 .local	SYSTEM						; UNIT
-
-.local	RANDOM_0014					; FUNCTION | ASSEMBLER | OVERLOAD
-
-; ------------------------------------------------------------
-
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x RANGE
-	dex
-
-; ---------------------  ASM Block 006  ---------------------
-
-
-;BYTE FUNC Rand(BYTE range)
-; returns random number between 0 and
-; range-1.  If range=0, then a random
-; number between 0 and 255 is returned
-
-	ldy	$d20a		; RANDOM
-
-	lda	range
-	beq	stop
-
-	sta	ecx
-	sty	eax
-
-	jsr	imulCL
-	tay
-
-stop	sty	Result
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-RANGE	= DATAORIGIN+$000B
-RESULT	= DATAORIGIN+$000C
-
-@VarData	= RANGE
-@VarDataSize	= 2
-
-	rts						; ret
-.endl
-
-.local	POKE						; PROCEDURE | ASSEMBLER | REGISTER
-
-; ------------------------------------------------------------
-
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x VALUE
-	dex
-
-; ------------------------------------------------------------
-
-; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-; as Pointer
-	mva :STACKORIGIN,x A
-	mva :STACKORIGIN+STACKWIDTH,x A+1
-	dex
-
-; ---------------------  ASM Block 021  ---------------------
-
-	ldy #0
-	mva value (edx),y
-
-
-; ------------------------------------------------------------
-
-A	= edx
-VALUE	= ecx
-@exit
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-	rts						; ret
-.endl
 
 ; ------------------------------------------------------------
 
@@ -416,6 +319,46 @@ NMIEN	= $D40E
 
 .local	CRT						; UNIT
 
+.local	READKEY						; FUNCTION | ASSEMBLER
+
+; ---------------------  ASM Block 049  ---------------------
+
+	txa:pha
+
+	@GetKey
+
+	sta Result
+
+	pla:tax
+
+@exit
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx
+	mva RESULT :STACKORIGIN,x
+
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+
+; ------------------------------------------------------------
+
+RESULT	= DATAORIGIN+$000C
+
+@VarData	= RESULT
+@VarDataSize	= 1
+
+	rts						; ret
+.endl
+
 .local	GOTOXY						; PROCEDURE | ASSEMBLER
 
 ; ------------------------------------------------------------
@@ -452,8 +395,8 @@ NMIEN	= $D40E
 
 ; ------------------------------------------------------------
 
-X	= DATAORIGIN+$000E
-Y	= DATAORIGIN+$000F
+X	= DATAORIGIN+$000D
+Y	= DATAORIGIN+$000E
 
 @VarData	= X
 @VarDataSize	= 2
@@ -471,7 +414,7 @@ Y	= DATAORIGIN+$000F
 
 ; ------------------------------------------------------------
 
-TEXTATTR	= DATAORIGIN+$000D
+TEXTATTR	= DATAORIGIN+$000B
 CONSOL	= $D01F
 CN_START_SELECT_OPTION	= $00
 CN_SELECT_OPTION	= $01
@@ -530,62 +473,6 @@ PALNTSC	= $D014
 
 .local	SYSUTILS					; UNIT
 
-.local	INTTOSTR_0086					; FUNCTION | ASSEMBLER | OVERLOAD
-
-; ------------------------------------------------------------
-
-; Generate Assignment for CARDINAL / INTEGER / REAL / SINGLE
-; as Pointer
-	mva :STACKORIGIN,x A
-	mva :STACKORIGIN+STACKWIDTH,x A+1
-	mva :STACKORIGIN+STACKWIDTH*2,x A+2
-	mva :STACKORIGIN+STACKWIDTH*3,x A+3
-	dex
-
-; ---------------------  ASM Block 072  ---------------------
-
-	txa:pha
-
-	inx
-
-	@ValueToStr #@printCARD
-
-	ldx #$20
-	mva:rpl @buf,x adr.Result,x-
-
-	pla:tax
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push WORD / SMALLINT / SHORTREAL / POINTER
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-	mva RESULT+1 :STACKORIGIN+STACKWIDTH,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-A	= DATAORIGIN+$0010
-adr.RESULT	= DATAORIGIN+$0014
-.var RESULT	= adr.RESULT .word
-
-@VarData	= A
-@VarDataSize	= 37
-
-	rts						; ret
-.endl
-
 ; ------------------------------------------------------------
 
 FAREADONLY	= $01
@@ -610,7 +497,7 @@ FAANYFILE	= $3F
 
 .local	GRAPH						; UNIT
 
-.local	INITGRAPH_00BD					; PROCEDURE | OVERLOAD
+.local	INITGRAPH_00E1					; PROCEDURE | OVERLOAD
 
 ; ------------------------------------------------------------
 
@@ -687,7 +574,7 @@ tmrcn	equ $ee8d
 
 ; ------------------------------------------------------------
 
-MODE	= DATAORIGIN+$0052
+MODE	= DATAORIGIN+$002C
 
 @VarData	= MODE
 @VarDataSize	= 1
@@ -700,6 +587,90 @@ MODE	= DATAORIGIN+$0052
 	ldy #@VarDataSize-1
 	jmp @FreeMem
 	eif
+	rts						; ret
+.endl
+
+.local	GETPIXEL					; FUNCTION | ASSEMBLER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x Y
+	mva :STACKORIGIN+STACKWIDTH,x Y+1
+	dex
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x X
+	mva :STACKORIGIN+STACKWIDTH,x X+1
+	dex
+
+; ---------------------  ASM Block 083  ---------------------
+
+	txa:pha
+
+	ldy #0
+
+	lda y+1
+	bmi stop
+	cmp MAIN.SYSTEM.ScreenHeight+1
+	bne sk0
+	lda y
+	cmp MAIN.SYSTEM.ScreenHeight
+sk0
+	bcs stop
+
+	lda x+1
+	bmi stop
+	cmp MAIN.SYSTEM.ScreenWidth+1
+	bne sk1
+	lda x
+	cmp MAIN.SYSTEM.ScreenWidth
+sk1
+	bcs stop
+
+	mwa x colcrs
+	mva y rowcrs
+
+	lda #@IDget
+
+	jsr @COMMAND
+	tay
+
+stop	sty Result
+
+	pla:tax
+
+@exit
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx
+	mva RESULT :STACKORIGIN,x
+
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+
+; ------------------------------------------------------------
+
+X	= DATAORIGIN+$002D
+Y	= DATAORIGIN+$002F
+RESULT	= DATAORIGIN+$0031
+
+@VarData	= X
+@VarDataSize	= 5
+
 	rts						; ret
 .endl
 
@@ -759,24 +730,24 @@ EGAMONOHI	= $03
 VGALO	= $0A
 VGAMED	= $1F
 VGAHI	= $18
-WIN_LEFT	= DATAORIGIN+$0035
-WIN_RIGHT	= DATAORIGIN+$0037
-WIN_TOP	= DATAORIGIN+$0039
-WIN_BOTTOM	= DATAORIGIN+$003B
-GRAPHRESULT	= DATAORIGIN+$003D
-GETCOLOR	= DATAORIGIN+$003E
-adr.LASTARCCOORDS	= DATAORIGIN+$003F
+WIN_LEFT	= DATAORIGIN+$000F
+WIN_RIGHT	= DATAORIGIN+$0011
+WIN_TOP	= DATAORIGIN+$0013
+WIN_BOTTOM	= DATAORIGIN+$0015
+GRAPHRESULT	= DATAORIGIN+$0017
+GETCOLOR	= DATAORIGIN+$0018
+adr.LASTARCCOORDS	= DATAORIGIN+$0019
 .var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-LASTARCCOORDS.X	= DATAORIGIN+$003F
-LASTARCCOORDS.Y	= DATAORIGIN+$0041
-LASTARCCOORDS.XSTART	= DATAORIGIN+$0043
-LASTARCCOORDS.YSTART	= DATAORIGIN+$0045
-LASTARCCOORDS.XEND	= DATAORIGIN+$0047
-LASTARCCOORDS.YEND	= DATAORIGIN+$0049
-CURRENTX	= DATAORIGIN+$004B
-CURRENTY	= DATAORIGIN+$004D
-VIDEORAM	= DATAORIGIN+$004F
-SCANLINE_WIDTH	= DATAORIGIN+$0051
+LASTARCCOORDS.X	= DATAORIGIN+$0019
+LASTARCCOORDS.Y	= DATAORIGIN+$001B
+LASTARCCOORDS.XSTART	= DATAORIGIN+$001D
+LASTARCCOORDS.YSTART	= DATAORIGIN+$001F
+LASTARCCOORDS.XEND	= DATAORIGIN+$0021
+LASTARCCOORDS.YEND	= DATAORIGIN+$0023
+CURRENTX	= DATAORIGIN+$0025
+CURRENTY	= DATAORIGIN+$0027
+VIDEORAM	= DATAORIGIN+$0029
+SCANLINE_WIDTH	= DATAORIGIN+$002B
 
 .endl							; UNIT GRAPH
 
@@ -784,23 +755,7 @@ SCANLINE_WIDTH	= DATAORIGIN+$0051
 
 .local	CIO						; UNIT
 
-.local	BPUT						; PROCEDURE | ASSEMBLER | REGISTER
-
-; ------------------------------------------------------------
-
-; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-; as Pointer
-	mva :STACKORIGIN,x CNT
-	mva :STACKORIGIN+STACKWIDTH,x CNT+1
-	dex
-
-; ------------------------------------------------------------
-
-; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-; as Pointer
-	mva :STACKORIGIN,x BUF
-	mva :STACKORIGIN+STACKWIDTH,x BUF+1
-	dex
+.local	GET						; FUNCTION | ASSEMBLER
 
 ; ------------------------------------------------------------
 
@@ -809,7 +764,7 @@ SCANLINE_WIDTH	= DATAORIGIN+$0051
 	mva :STACKORIGIN,x CHN
 	dex
 
-; ---------------------  ASM Block 098  ---------------------
+; ---------------------  ASM Block 095  ---------------------
 
 	txa:pha
 
@@ -817,32 +772,31 @@ SCANLINE_WIDTH	= DATAORIGIN+$0051
 	:4 asl @
 	tax
 
-	lda #11		;put char/s command
+	lda #7		;get char command
 	sta iccmd,x
 
-	lda buf
-	sta icbufa,x
-	lda buf+1
-	sta icbufa+1,x
-
-	lda cnt
-	sta icbufl,x
-	lda cnt+1
-	sta icbufh,x
+	lda #$00	;zero out the unused
+	sta icbufl,x	;store in accumulator
+	sta icbufh,x	;...after CIOV jump
 
 	m@call	ciov
 
 	sty MAIN.SYSTEM.IOResult
 
+	sta Result
+
 	pla:tax
 
+@exit
 
 ; ------------------------------------------------------------
 
-CHN	= edx
-BUF	= ecx
-CNT	= eax
-@exit
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx
+	mva RESULT :STACKORIGIN,x
+
 	.ifdef @new
 	lda <@VarData
 	sta :ztmp
@@ -850,6 +804,15 @@ CNT	= eax
 	ldy #@VarDataSize-1
 	jmp @FreeMem
 	eif
+
+; ------------------------------------------------------------
+
+CHN	= DATAORIGIN+$0032
+RESULT	= DATAORIGIN+$0033
+
+@VarData	= CHN
+@VarDataSize	= 2
+
 	rts						; ret
 .endl
 
@@ -859,67 +822,95 @@ CNT	= eax
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL ('GRAPH.INITGRAPH_00BD', examples\loop_effects.pas), line = 19
+; optimize FAIL ('GRAPH.INITGRAPH_00E1', examples\locate_gr0.pas), line = 18
 	inx
-	mva #$02 :STACKORIGIN,x
-	jsr GRAPH.INITGRAPH_00BD
+	mva #$00 :STACKORIGIN,x
+	jsr GRAPH.INITGRAPH_00E1
 
-; --- RepeatUntilProlog
-l_0121
-
-; optimize FAIL ('CRT.GOTOXY', examples\loop_effects.pas), line = 21
+; optimize FAIL ('CRT.GOTOXY', examples\locate_gr0.pas), line = 19
 	inx
-	mva #$08 :STACKORIGIN,x
+	mva #$04 :STACKORIGIN,x
+	inx
+	sta :STACKORIGIN,x
+	jsr CRT.GOTOXY
+
+; optimize FAIL (100, examples\locate_gr0.pas), line = 20
+	@printSTRING #CODEORIGIN+$000D
+
+; optimize FAIL ('CRT.GOTOXY', examples\locate_gr0.pas), line = 21
+	inx
+	mva #$04 :STACKORIGIN,x
 	inx
 	mva #$06 :STACKORIGIN,x
 	jsr CRT.GOTOXY
 
-; optimize FAIL ('SYSTEM.RANDOM_0014', examples\loop_effects.pas), line = 22
+; optimize FAIL (100, examples\locate_gr0.pas), line = 22
+	@printSTRING #CODEORIGIN+$001C
+
+; optimize FAIL (100, examples\locate_gr0.pas), line = 23
+	@printSTRING #CODEORIGIN+$0023
+	@print #$9B
+	@printSTRING #CODEORIGIN+$0022
+	@print #$9B
+	@printSTRING #CODEORIGIN+$0025
+
+; optimize FAIL ('CIO.GET', examples\locate_gr0.pas), line = 24
 	inx
-	mva #$FF :STACKORIGIN,x
-	jsr SYSTEM.RANDOM_0014
-	mva :STACKORIGIN,x I
+	mva #$07 :STACKORIGIN,x
+	jsr CIO.GET
+	mva :STACKORIGIN,x KEY
 	dex
 
-; optimize FAIL ('SYSUTILS.INTTOSTR_0086', examples\loop_effects.pas), line = 23
-	inx
-	mva I :STACKORIGIN,x
-	jsr @expandToCARD.BYTE
-	jsr SYSUTILS.INTTOSTR_0086
-	@moveSTRING STRBUFFER
+	jsr CRT.READKEY					; call Entry
+
 	dex
 
-; optimize FAIL ('CIO.BPUT', examples\loop_effects.pas), line = 24
+; optimize FAIL ('GRAPH.GETPIXEL', examples\locate_gr0.pas), line = 26
+	inx
+	mva #$0B :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	inx
+	mva #$03 :STACKORIGIN,x
+	mva #$00 :STACKORIGIN+STACKWIDTH,x
+	jsr GRAPH.GETPIXEL
+	mva :STACKORIGIN,x LOC
+	dex
+
+; optimize FAIL (100, examples\locate_gr0.pas), line = 27
+	lda LOC
+	jsr @printBYTE._a
+
+; optimize FAIL ('CRT.GOTOXY', examples\locate_gr0.pas), line = 28
 	inx
 	mva #$06 :STACKORIGIN,x
 	inx
-	lda <adr.STRBUFFER
-	add #$01
 	sta :STACKORIGIN,x
-	lda >adr.STRBUFFER
-	adc #$00
-	sta :STACKORIGIN+STACKWIDTH,x
+	jsr CRT.GOTOXY
+
+; optimize FAIL (100, examples\locate_gr0.pas), line = 29
 	inx
-	lda adr.STRBUFFER
-	sta :STACKORIGIN,x
-	mva #$00 :STACKORIGIN+STACKWIDTH,x
-	jsr CIO.BPUT
+	mva LOC :STACKORIGIN,x
+	@printCHAR
+	dex
 
-; optimize OK (examples\loop_effects.pas), line = 25
+; optimize FAIL ('CIO.GET', examples\locate_gr0.pas), line = 30
+	inx
+	mva #$07 :STACKORIGIN,x
+	jsr CIO.GET
+	mva :STACKORIGIN,x KEY
+	dex
 
-	lda I
-	sta $02C6
+	jsr CRT.READKEY					; call Entry
 
-; optimize OK (examples\loop_effects.pas), line = 26
-
-	jmp l_0121
+	dex
 
 ; ------------------------------------------------------------
 
-I	= DATAORIGIN+$0153
+KEY	= DATAORIGIN+$0134
+LOC	= DATAORIGIN+$0135
 
-@VarData	= I
-@VarDataSize	= 1
+@VarData	= KEY
+@VarDataSize	= 2
 
 @exit
 	.ifdef @new
@@ -931,14 +922,14 @@ I	= DATAORIGIN+$0153
 	eif
 	rts						; ret
 .endl
-l_0014
+l_0048
 
-; optimize FAIL ('MAINPROC', examples\loop_effects.pas), line = 30
+; optimize FAIL ('MAINPROC', examples\locate_gr0.pas), line = 35
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-adr.STRBUFFER	= DATAORIGIN+$0053
+adr.STRBUFFER	= DATAORIGIN+$0034
 .var STRBUFFER	= adr.STRBUFFER .word
 @exit
 
@@ -1047,12 +1038,10 @@ ATARI
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
-.by  $00 $00 $00 $00 $00 $00 $00 $27  $00 $00 $00 $17
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $27 $00 $00 $00 $17
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 340
+VARDATASIZE	= 310
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -1063,7 +1052,9 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $0D $48 $45  $4C $4C $4F $2C $41 $54 $41 $52
+.by  $49 $41 $4E $00 $05 $41 $54 $20  $52 $49 $00 $00 $00 $1A $50 $52  $45 $53 $53 $20 $41 $4E $59 $20
+.by  $4B $45 $59 $20 $54 $4F $20 $43  $4F $4E $54 $49 $4E $55 $45 $21  $00
 .endm
 
 	end
