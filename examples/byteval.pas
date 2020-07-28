@@ -5,7 +5,6 @@ uses
   Crt;
 
 // Effectus example
-// -------------------------------------
 // Variable manipulation demo
 
 procedure MAINProc;
@@ -24,9 +23,9 @@ begin  // 2
   Writeln(N3);
   N1 := 255;
  WHILE N1=255 do begin
-  end;  // while
+  end;
   N1 := 255;
-end;  // 4
+end;
 
 begin
   MAINProc;

@@ -1,5 +1,4 @@
 ; Effectus example
-;-------------------------------------
 ; Variable manipulation demo
 
 PROC MAIN()

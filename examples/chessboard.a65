@@ -148,7 +148,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_004F
+	jmp l_0016
 
 ; ------------------------------------------------------------
 
@@ -319,46 +319,6 @@ NMIEN	= $D40E
 
 .local	CRT						; UNIT
 
-.local	READKEY						; FUNCTION | ASSEMBLER
-
-; ---------------------  ASM Block 049  ---------------------
-
-	txa:pha
-
-	@GetKey
-
-	sta Result
-
-	pla:tax
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-RESULT	= DATAORIGIN+$000C
-
-@VarData	= RESULT
-@VarDataSize	= 1
-
-	rts						; ret
-.endl
-
 ; ------------------------------------------------------------
 
 TEXTATTR	= DATAORIGIN+$000B
@@ -400,157 +360,96 @@ BLINK	= $80
 
 ; ------------------------------------------------------------
 
-.local	DOS						; UNIT
+.local	TYPES						; UNIT
 
 ; ------------------------------------------------------------
 
-PALNTSC	= $D014
-
-.endl							; UNIT DOS
+.endl							; UNIT TYPES
 
 ; ------------------------------------------------------------
 
-.local	STRUTILS					; UNIT
+.local	GRAPH						; UNIT
 
-; ------------------------------------------------------------
-
-.endl							; UNIT STRUTILS
-
-; ------------------------------------------------------------
-
-.local	SYSUTILS					; UNIT
-
-; ------------------------------------------------------------
-
-FAREADONLY	= $01
-FAHIDDEN	= $02
-FASYSFILE	= $04
-FAVOLUMEID	= $08
-FADIRECTORY	= $10
-FAARCHIVE	= $20
-FAANYFILE	= $3F
-
-.endl							; UNIT SYSUTILS
-
-; ------------------------------------------------------------
-
-.local	CIO						; UNIT
-
-.local	OPN						; PROCEDURE | ASSEMBLER
-
-; ------------------------------------------------------------
-
-; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
-; as Pointer
-	mva :STACKORIGIN,x DEVICE
-	mva :STACKORIGIN+STACKWIDTH,x DEVICE+1
-	dex
+.local	INITGRAPH_0077					; PROCEDURE | OVERLOAD
 
 ; ------------------------------------------------------------
 
 ; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
 ; as Pointer
-	mva :STACKORIGIN,x AX2
+	mva :STACKORIGIN,x MODE
 	dex
 
-; ------------------------------------------------------------
+; ---------------------  ASM Block 060  ---------------------
 
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x AX1
-	dex
-
-; ------------------------------------------------------------
-
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x CHN
-	dex
-
-; ---------------------  ASM Block 078  ---------------------
 
 	txa:pha
 
-	lda chn
-	:4 asl @
-	tax
+	lda mode
+	sta MAIN.SYSTEM.GraphMode
+	and #$0f
+	tay
 
-	lda #$03		;komenda: OPEN
-	sta iccmd,x
+	ldx #$60		; 6*16
+	lda mode		; %00010000 with text window
+	and #$10
+	eor #$10
+	ora #2			; read
 
-	inw device		;omin bajt z dlugoscia STRING-a
+	.nowarn @GRAPHICS
 
-	lda device		;adres nazwy pliku
-	sta icbufa,x
-	lda device+1
-	sta icbufa+1,x
+	sty GraphResult
 
-	lda ax1			;kod dostepu: $04 odczyt, $08 zapis, $09 dopisywanie, $0c odczyt/zapis, $0d odczyt/dopisywanie
-	sta icax1,x
 
-	lda ax2			;dodatkowy parametr, $00 jest zawsze dobre
-	sta icax2,x
+	.ifdef MAIN.@DEFINES.ROMOFF
+	inc portb
+	.endif
 
-	m@call	ciov
+tlshc	equ $ee6d
 
-	sty MAIN.SYSTEM.IOResult
+	ldx dindex
+	ldy tlshc,x
+	lda #5
+shift	asl @
+	dey
+	bne shift
+
+	sta SCANLINE_WIDTH
+
+; Fox/TQA
+
+dindex	equ $57
+tmccn	equ $ee7d
+tmrcn	equ $ee8d
+
+	ldx dindex
+	lda tmccn,x
+	ldy tmrcn,x
+	ldx #0
+	cmp #<320
+	sne:inx
+
+; X:A = horizontal resolution
+; Y = vertical resolution
+
+	@SCREENSIZE
+
+	.ifdef MAIN.@DEFINES.ROMOFF
+	dec portb
+	.endif
 
 	pla:tax
 
 
-; ------------------------------------------------------------
+; optimize OK (GRAPH), line = 132
 
-CHN	= DATAORIGIN+$000D
-AX1	= DATAORIGIN+$000E
-AX2	= DATAORIGIN+$000F
-DEVICE	= DATAORIGIN+$0010
-
-@VarData	= CHN
-@VarDataSize	= 5
-
-@exit
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-	rts						; ret
-.endl
-
-.local	CLS						; PROCEDURE | ASSEMBLER
+	mva ATARI.SAVMSC VIDEORAM
+	mva ATARI.SAVMSC+1 VIDEORAM+1
 
 ; ------------------------------------------------------------
 
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x CHN
-	dex
+MODE	= DATAORIGIN+$0029
 
-; ---------------------  ASM Block 079  ---------------------
-
-	txa:pha
-
-	lda chn
-	:4 asl @
-	tax
-
-	lda #$0c		;komenda: CLOSE
-	sta iccmd,x
-
-	m@call	ciov
-
-	sty MAIN.SYSTEM.IOResult
-
-	pla:tax
-
-
-; ------------------------------------------------------------
-
-CHN	= DATAORIGIN+$0012
-
-@VarData	= CHN
+@VarData	= MODE
 @VarDataSize	= 1
 
 @exit
@@ -564,48 +463,225 @@ CHN	= DATAORIGIN+$0012
 	rts						; ret
 .endl
 
-.local	GET						; FUNCTION | ASSEMBLER
+; ------------------------------------------------------------
+
+CURRENTDRIVER	= $80
+DETECT	= $00
+CGA	= $01
+MCGA	= $02
+EGA	= $03
+EGA64	= $04
+EGAMONO	= $05
+LOWRES	= $06
+HERCMONO	= $07
+VGA	= $09
+VESA	= $0A
+D1BIT	= $0B
+D2BIT	= $0C
+D4BIT	= $0D
+D6BIT	= $0E
+D8BIT	= $0F
+D12BIT	= $10
+M640X400	= $18
+M640X480	= $18
+GROK	= $01
+GRNOINITGRAPH	= $FF
+GRNOTDETECTED	= $FE
+GRFILENOTFOUND	= $FD
+GRINVALIDDRIVER	= $FC
+GRNOLOADMEM	= $FB
+GRNOSCANMEM	= $FA
+GRNOFLOODMEM	= $F9
+GRFONTNOTFOUND	= $F8
+GRNOFONTMEM	= $F7
+GRINVALIDMODE	= $F6
+GRERROR	= $F5
+GRIOERROR	= $F4
+GRINVALIDFONT	= $F3
+GRINVALIDFONTNUM	= $F2
+GRINVALIDVERSION	= $EE
+CGAC0	= $00
+CGAC1	= $01
+CGAC2	= $02
+CGAC3	= $03
+CGAHI	= $04
+MCGAC0	= $00
+MCGAC1	= $01
+MCGAC2	= $02
+MCGAC3	= $03
+MCGAMED	= $04
+MCGAHI	= $05
+EGALO	= $00
+EGAHI	= $01
+EGA64LO	= $00
+EGA64HI	= $01
+EGAMONOHI	= $03
+VGALO	= $0A
+VGAMED	= $1F
+VGAHI	= $18
+WIN_LEFT	= DATAORIGIN+$000C
+WIN_RIGHT	= DATAORIGIN+$000E
+WIN_TOP	= DATAORIGIN+$0010
+WIN_BOTTOM	= DATAORIGIN+$0012
+GRAPHRESULT	= DATAORIGIN+$0014
+GETCOLOR	= DATAORIGIN+$0015
+adr.LASTARCCOORDS	= DATAORIGIN+$0016
+.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
+LASTARCCOORDS.X	= DATAORIGIN+$0016
+LASTARCCOORDS.Y	= DATAORIGIN+$0018
+LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
+LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
+LASTARCCOORDS.XEND	= DATAORIGIN+$001E
+LASTARCCOORDS.YEND	= DATAORIGIN+$0020
+CURRENTX	= DATAORIGIN+$0022
+CURRENTY	= DATAORIGIN+$0024
+VIDEORAM	= DATAORIGIN+$0026
+SCANLINE_WIDTH	= DATAORIGIN+$0028
+
+.endl							; UNIT GRAPH
+
+.local	DRAWBOARDPROC					; PROCEDURE
+
+; optimize OK (examples\chessboard.pas), line = 27
+
+	mva SAVMSC SCREEN
+	mva SAVMSC+1 SCREEN+1
+; --- For
+
+; optimize OK (examples\chessboard.pas), line = 28
+
+	mva #$01 I3B
+
+; optimize OK (examples\chessboard.pas), line = 28
+
+l_00DC
+; --- ForToDoCondition
+
+; optimize OK (examples\chessboard.pas), line = 28
+
+	lda I3B
+	cmp #$09
+	jcs l_00EA
+; --- For
+
+; optimize OK (examples\chessboard.pas), line = 29
+
+	mva #$01 I2B
+
+; optimize OK (examples\chessboard.pas), line = 29
+
+l_00F3
+; --- ForToDoCondition
+
+; optimize OK (examples\chessboard.pas), line = 29
+
+	lda I2B
+	cmp #$19
+	jcs l_0101
+; --- For
+
+; optimize OK (examples\chessboard.pas), line = 30
+
+	mva #$01 I1B
+
+; optimize OK (examples\chessboard.pas), line = 30
+
+l_010A
+; --- ForToDoCondition
+
+; optimize OK (examples\chessboard.pas), line = 30
+
+	lda I1B
+	cmp #$05
+	jcs l_0118
+
+; optimize OK (examples\chessboard.pas), line = 31
+
+	mwy SCREEN :bp2
+	ldy #$00
+	lda #$FF
+	sta (:bp2),y
+
+; optimize OK (examples\chessboard.pas), line = 32
+
+	iny
+	sta (:bp2),y
+
+; optimize OK (examples\chessboard.pas), line = 33
+
+	iny
+	sta (:bp2),y
+
+; optimize OK (examples\chessboard.pas), line = 34
+
+	lda SCREEN
+	add #$06
+	sta SCREEN
+	scc
+	inc SCREEN+1
+
+; --- ForToDoEpilog
+	inc I1B						; inc ptr byte [CounterAddress]
+	jne l_010A
+l_0118
+
+; optimize OK (examples\chessboard.pas), line = 36
+
+	lda SCREEN
+	add #$10
+	sta SCREEN
+	scc
+	inc SCREEN+1
+
+; --- ForToDoEpilog
+	inc I2B						; inc ptr byte [CounterAddress]
+	jne l_00F3
+l_0101
+
+; optimize OK (examples\chessboard.pas), line = 38
+
+	lda I3B
+	and #$01
+	jne l_0149
+
+; optimize OK (examples\chessboard.pas), line = 39
+
+	lda SCREEN
+	sub #$03
+	sta SCREEN
+	scs
+	dec SCREEN+1
+	jmp l_0154
+l_0149
+
+; optimize OK (examples\chessboard.pas), line = 42
+
+	lda SCREEN
+	add #$03
+	sta SCREEN
+	scc
+	inc SCREEN+1
+l_0154
+
+; --- ForToDoEpilog
+	inc I3B						; inc ptr byte [CounterAddress]
+	jne l_00DC
+l_00EA
 
 ; ------------------------------------------------------------
 
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x CHN
-	dex
+I1B	= DATAORIGIN+$002B
+I2B	= DATAORIGIN+$002C
+I3B	= DATAORIGIN+$002D
+SCREEN	= DATAORIGIN+$002E
+@FORTMP_00D9	= $08
+@FORTMP_00F0	= $18
+@FORTMP_0107	= $04
 
-; ---------------------  ASM Block 080  ---------------------
-
-	txa:pha
-
-	lda chn
-	:4 asl @
-	tax
-
-	lda #7		;get char command
-	sta iccmd,x
-
-	lda #$00	;zero out the unused
-	sta icbufl,x	;store in accumulator
-	sta icbufh,x	;...after CIOV jump
-
-	m@call	ciov
-
-	sty MAIN.SYSTEM.IOResult
-
-	sta Result
-
-	pla:tax
+@VarData	= I1B
+@VarDataSize	= 5
 
 @exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-
 	.ifdef @new
 	lda <@VarData
 	sta :ztmp
@@ -613,113 +689,82 @@ CHN	= DATAORIGIN+$0012
 	ldy #@VarDataSize-1
 	jmp @FreeMem
 	eif
-
-; ------------------------------------------------------------
-
-CHN	= DATAORIGIN+$0013
-RESULT	= DATAORIGIN+$0014
-
-@VarData	= CHN
-@VarDataSize	= 2
-
 	rts						; ret
 .endl
-
-; ------------------------------------------------------------
-
-.endl							; UNIT CIO
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\diskget.pas), line = 21
-	@print #$7D
-
-; optimize FAIL (100, examples\diskget.pas), line = 22
-	@printSTRING #CODEORIGIN+$000D
-	@print #$9B
-	@printSTRING #CODEORIGIN+$0023
-	@print #$9B
-	@printSTRING #CODEORIGIN+$0022
-
-; optimize FAIL ('CIO.CLS', examples\diskget.pas), line = 23
+; optimize FAIL ('GRAPH.INITGRAPH_0077', examples\chessboard.pas), line = 51
 	inx
-	mva #$01 :STACKORIGIN,x
-	jsr CIO.CLS
+	mva #$18 :STACKORIGIN,x
+	jsr GRAPH.INITGRAPH_0077
 
-; optimize FAIL ('CIO.OPN', examples\diskget.pas), line = 24
-	inx
-	mva #$01 :STACKORIGIN,x
-	inx
-	mva #$04 :STACKORIGIN,x
+; optimize OK (examples\chessboard.pas), line = 52
+
+	mva #$01 COL1
+
+; optimize OK (examples\chessboard.pas), line = 53
+
+	mva #$0B COL2
+
+; optimize OK (examples\chessboard.pas), line = 54
+
+	mva #$0C COLB
+
+; optimize OK (examples\chessboard.pas), line = 55
+
+	mva #$00 RTCLOCK
+
+; --- WhileProlog
+	jmp l_0172
+l_0173
+
+; optimize FAIL ('DRAWBOARDPROC', examples\chessboard.pas), line = 57
+	jsr DRAWBOARDPROC
+
+; optimize FAIL (0, examples\chessboard.pas), line = 58
+	inc I
+l_0172
+
+; optimize OK (examples\chessboard.pas), line = 56
+
+	lda RTCLOCK
+	cmp #$96
+	jcc l_0173
+
+; optimize OK (examples\chessboard.pas), line = 60
+
+	mva RTCLOCK STOP
+
+; optimize FAIL ('GRAPH.INITGRAPH_0077', examples\chessboard.pas), line = 61
 	inx
 	mva #$00 :STACKORIGIN,x
-	inx
-	mva #$25 :STACKORIGIN,x
-	mva #$20 :STACKORIGIN+STACKWIDTH,x
-	jsr CIO.OPN
-; --- For
+	jsr GRAPH.INITGRAPH_0077
 
-; optimize OK (examples\diskget.pas), line = 25
-
-	mva #$01 I
-
-; optimize OK (examples\diskget.pas), line = 25
-
-l_0115
-; --- ForToDoCondition
-
-; optimize OK (examples\diskget.pas), line = 25
-
+; optimize FAIL (100, examples\chessboard.pas), line = 62
+	@printSTRING #CODEORIGIN+$0000
+	@print #$9B
+	@print #$20
 	lda I
-	cmp #$10
-	jcs l_0123
+	jsr @printBYTE._a
+	@printSTRING #CODEORIGIN+$0002
 
-; optimize FAIL ('CIO.GET', examples\diskget.pas), line = 26
-	inx
-	mva #$01 :STACKORIGIN,x
-	jsr CIO.GET
-	mva :STACKORIGIN,x N
-	dex
+; --- WhileProlog
+l_01A3
 
-; optimize FAIL (100, examples\diskget.pas), line = 27
-	inx
-	mva N :STACKORIGIN,x
-	@printCHAR
-	dex
+; optimize OK (examples\chessboard.pas), line = 63
 
-; --- ForToDoEpilog
-	inc I						; inc ptr byte [CounterAddress]
-	jne l_0115
-l_0123
-
-; optimize FAIL ('CIO.CLS', examples\diskget.pas), line = 29
-	inx
-	mva #$01 :STACKORIGIN,x
-	jsr CIO.CLS
-
-; optimize FAIL (100, examples\diskget.pas), line = 30
-	@printSTRING #CODEORIGIN+$0022
-	@print #$9B
-	@printSTRING #CODEORIGIN+$0035
-	@print #$9B
-	@printSTRING #CODEORIGIN+$0022
-	@print #$9B
-	@printSTRING #CODEORIGIN+$0022
-
-; optimize FAIL ('CIO.GET', examples\diskget.pas), line = 39
-	inx
-	mva #$07 :STACKORIGIN,x
-	jsr CIO.GET
-	mva :STACKORIGIN,x KEY
-	dex
-
-	jsr CRT.READKEY					; call Entry
-
-	dex
+	lda CH
+	cmp #$FF
+	jeq l_01A3
 
 ; ------------------------------------------------------------
 
-@FORTMP_0112	= $0F
+I	= DATAORIGIN+$0030
+
+@VarData	= I
+@VarDataSize	= 1
+
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -730,18 +775,20 @@ l_0123
 	eif
 	rts						; ret
 .endl
-l_004F
+l_0016
 
-; optimize FAIL ('MAINPROC', examples\diskget.pas), line = 44
+; optimize FAIL ('MAINPROC', examples\chessboard.pas), line = 68
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-adr.STRBUFFER	= DATAORIGIN+$0015
-.var STRBUFFER	= adr.STRBUFFER .word
-N	= DATAORIGIN+$0115
-I	= DATAORIGIN+$0116
-KEY	= DATAORIGIN+$0117
+CH	= $02FC
+RTCLOCK	= $14
+SAVMSC	= $58
+COL1	= $02C5
+COL2	= $02C6
+COLB	= $02C8
+STOP	= DATAORIGIN+$002A
 @exit
 
 @halt	ldx #0
@@ -781,20 +828,12 @@ ATARI
 	jsr MAIN.CRT.@UnitInit
 	eif
 
-	.ifdef MAIN.DOS.@UnitInit
-	jsr MAIN.DOS.@UnitInit
+	.ifdef MAIN.TYPES.@UnitInit
+	jsr MAIN.TYPES.@UnitInit
 	eif
 
-	.ifdef MAIN.STRUTILS.@UnitInit
-	jsr MAIN.STRUTILS.@UnitInit
-	eif
-
-	.ifdef MAIN.SYSUTILS.@UnitInit
-	jsr MAIN.SYSUTILS.@UnitInit
-	eif
-
-	.ifdef MAIN.CIO.@UnitInit
-	jsr MAIN.CIO.@UnitInit
+	.ifdef MAIN.GRAPH.@UnitInit
+	jsr MAIN.GRAPH.@UnitInit
 	eif
 .endm
 
@@ -812,20 +851,12 @@ ATARI
 	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
 	eif
 
-	ift .SIZEOF(MAIN.DOS) > 0
-	.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+	ift .SIZEOF(MAIN.TYPES) > 0
+	.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
 	eif
 
-	ift .SIZEOF(MAIN.STRUTILS) > 0
-	.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-	eif
-
-	ift .SIZEOF(MAIN.SYSUTILS) > 0
-	.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-	eif
-
-	ift .SIZEOF(MAIN.CIO) > 0
-	.print 'CIO: ',MAIN.CIO,'..',MAIN.CIO+.SIZEOF(MAIN.CIO)-1
+	ift .SIZEOF(MAIN.GRAPH) > 0
+	.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
 	eif
 
 	.print 'CODE: ',CODEORIGIN,'..',*-1
@@ -833,10 +864,10 @@ ATARI
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 280
+VARDATASIZE	= 49
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -847,9 +878,7 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $14 $47 $65  $74 $44 $20 $61 $6E $64 $20 $45
-.by  $4F $46 $20 $65 $78 $61 $6D $70  $6C $65 $00 $00 $00 $0E $48 $31  $3A $54 $45 $53 $54 $4E $55 $4D
-.by  $2E $54 $58 $54 $00 $11 $41 $6C  $6C $20 $6E $75 $6D $62 $65 $72  $73 $20 $72 $65 $61 $64 $21 $00
+.by  $00 $00 $0B $20 $69 $74 $65 $72  $61 $74 $69 $6F $6E $73 $00
 .endm
 
 	end

@@ -1,658 +1,606 @@
-mads 2.1.0
-  3726 					opt l+
-    95
-    96 				.print 'RUNLIB: ',RUNLIB,'..',*
-    96 				RUNLIB: $200D..$2060
-    97
-    98 				; ------------------------------------------------------------
-    99
-   100 2060			START
-   101 2060 BA				tsx
-   102 2061 8E 2D 21			stx MAIN.@halt+1
+mads 2.1.0 build 8 (23 Dec 19)
+   388 					opt l+
+   101
+   102 				.print 'ZPAGE: ',fxptr,'..',zpend-1
+   102 				ZPAGE: $0080..$00D7
    103
-   104 					.ifdef fmulinit
-   105 					fmulinit
-   106 					eif
+   104 				.print 'RTLIB: ',RTLIB,'..',*-1
+   104 				RTLIB: $2000..$2098
+   105
+   106 				; ------------------------------------------------------------
    107
-   108 = 0000			VLEN	= VARDATASIZE-VARINITSIZE
-   109 = 218F			VADR	= DATAORIGIN+VARINITSIZE
-   110
-   111 					ift VADR > $BFFF
-   112 					ert 'Invalid memory address range ',VADR
-   113 					eli (VLEN>0) && (VLEN<=256)
-   114 					ldx #256-VLEN
-   115 					lda #0
-   116 					sta:rne VADR+VLEN-256,x+
-   117 					eli VLEN>0
-   118 					@fill #VADR #VLEN #0
-   119 					eif
-   120
-   121 2064 A2 0F			ldx #$0f
-   122 2066 BD 40 03 9D 30 21 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
-   123
-   124 206F E8				inx		; X = 0 !!!
-   125 2070 86 8E			stx bp		; lo BP = 0
-   126
-   127 2072				UNITINITIALIZATION
-Macro: UNITINITIALIZATION [Source: dlidemo.a65]
+   108 2099			START
+   109 2099 BA				tsx
+   110 209A 8E 45 21			stx MAIN.@halt+1
+   111
+   112 					.ifdef fmulinit
+   113 					fmulinit
+   114 					eif
+   115
+   116 = 0000			VLEN	= VARDATASIZE-VARINITSIZE
+   117 = 21A7			VADR	= DATAORIGIN+VARINITSIZE
+   118
+   119 					ift VADR > $BFFF
+   120 					ert 'Invalid memory address range ',VADR
+   121 					eli (VLEN>0) && (VLEN<=256)
+   122 					ldx #256-VLEN
+   123 					lda #0
+   124 					sta:rne VADR+VLEN-256,x+
+   125 					eli VLEN>0
+   126 					@fill #VADR #VLEN #0
+   127 					eif
    128
-   129 2072			.local	MAIN						; PROCEDURE
-   130
-   131 2072 4C 29 21			jmp l_0014
+   129 					.ifdef MAIN.@DEFINES.ROMOFF
+   130 					icl 'atari\romoff.asm'
+   131 					.endif
    132
-   133 				; ------------------------------------------------------------
+   133 209D A9 A7 85 82 A9 21 + 	mwa #PROGRAMSTACK psptr
    134
-   135 2075			.local	SYSTEM						; UNIT
-   136
-   137 				; ------------------------------------------------------------
-   138
-   139 = 0648			M_PI_2	= $0648
-   140 = 0192			D_PI_2	= $0192
-   141 = 0004			D_PI_180	= $0004
-   142 = 0000			MGTIA	= $0000
-   143 = 0080			MVBXE	= $0080
-   144 = 0000			VBXE_XDLADR	= $0000
-   145 = 0100			VBXE_BCBADR	= $0100
-   146 = 1000			VBXE_MAPADR	= $1000
-   147 = 5000			VBXE_OVRADR	= $5000
-   148 = B000			VBXE_WINDOW	= $B000
-   149 = 0000			IDLI	= $0000
-   150 = 0001			IVBL	= $0001
-   151 = 00FE			CH_DELCHR	= $00FE
-   152 = 009B			CH_ENTER	= $009B
-   153 = 001B			CH_ESC	= $001B
-   154 = 001C			CH_CURS_UP	= $001C
-   155 = 001D			CH_CURS_DOWN	= $001D
-   156 = 001E			CH_CURS_LEFT	= $001E
-   157 = 001F			CH_CURS_RIGHT	= $001F
-   158 = 007F			CH_TAB	= $007F
-   159 = 009B			CH_EOL	= $009B
-   160 = 007D			CH_CLR	= $007D
-   161 = 00FD			CH_BELL	= $00FD
-   162 = 007E			CH_DEL	= $007E
-   163 = 009C			CH_DELLINE	= $009C
-   164 = 009D			CH_INSLINE	= $009D
-   165 = 0000			COLOR_BLACK	= $0000
-   166 = 000E			COLOR_WHITE	= $000E
-   167 = 0032			COLOR_RED	= $0032
-   168 = 0096			COLOR_CYAN	= $0096
-   169 = 0068			COLOR_VIOLET	= $0068
-   170 = 00C4			COLOR_GREEN	= $00C4
-   171 = 0074			COLOR_BLUE	= $0074
-   172 = 00EE			COLOR_YELLOW	= $00EE
-   173 = 0028			COLOR_ORANGE	= $0028
-   174 = 00E4			COLOR_BROWN	= $00E4
-   175 = 003C			COLOR_LIGHTRED	= $003C
-   176 = 0004			COLOR_GRAY1	= $0004
-   177 = 0006			COLOR_GRAY2	= $0006
-   178 = 000A			COLOR_GRAY3	= $000A
-   179 = 00CC			COLOR_LIGHTGREEN	= $00CC
-   180 = 007C			COLOR_LIGHTBLUE	= $007C
-   181 = 0004			FMOPENREAD	= $0004
-   182 = 0008			FMOPENWRITE	= $0008
-   183 = 0009			FMOPENAPPEND	= $0009
-   184 = 000C			FMOPENREADWRITE	= $000C
-   185 = 2144			SCREENWIDTH	= DATAORIGIN+$0000
-   186 = 2146			SCREENHEIGHT	= DATAORIGIN+$0002
-   187 = 2148			DATESEPARATOR	= DATAORIGIN+$0004
-   188 = D014			TVSYSTEM	= $D014
-   189 = 02C0			adr.PALETTE	= $02C0
-   190 2075			.var PALETTE	= adr.PALETTE .word
-   191 = D012			adr.HPALETTE	= $D012
-   192 2075			.var HPALETTE	= adr.HPALETTE .word
-   193 = 2149			FILEMODE	= DATAORIGIN+$0005
-   194 = 214A			SCREENMODE	= DATAORIGIN+$0006
-   195 = 214B			IORESULT	= DATAORIGIN+$0007
-   196 = 214C			EOLN	= DATAORIGIN+$0008
-   197 = 214D			RNDSEED	= DATAORIGIN+$0009
-   198
-   199 = 2075 C0 02		PALETTE
-   199 = 2077 12 D0		HPALETTE
-   199 				.endl							; UNIT SYSTEM
-   200
-   201 				; ------------------------------------------------------------
-   202
-   203 2079			.local	DOS						; UNIT
-   204
-   205 				; ------------------------------------------------------------
-   206
-   207 = D014			PALNTSC	= $D014
-   208
-   209 				.endl							; UNIT DOS
-   210
-   211 				; ------------------------------------------------------------
-   212
-   213 2079			.local	STRUTILS					; UNIT
-   214
-   215 				; ------------------------------------------------------------
-   216
-   217 				.endl							; UNIT STRUTILS
-   218
-   219 				; ------------------------------------------------------------
-   220
-   221 2079			.local	SYSUTILS					; UNIT
-   222
-   223 				; ------------------------------------------------------------
-   224
-   225 = 0001			FAREADONLY	= $0001
-   226 = 0002			FAHIDDEN	= $0002
-   227 = 0004			FASYSFILE	= $0004
-   228 = 0008			FAVOLUMEID	= $0008
-   229 = 0010			FADIRECTORY	= $0010
-   230 = 0020			FAARCHIVE	= $0020
-   231 = 003F			FAANYFILE	= $003F
-   232
-   233 				.endl							; UNIT SYSUTILS
-   234
-   235 				; ------------------------------------------------------------
-   236
-   237 2079			.local	ATARI						; UNIT
-   238
-   239 				; ------------------------------------------------------------
-   240
-   241 = 0012			RTCLOK	= $0012
-   242 = 004D			ATRACT	= $004D
-   243 = 0052			LMARGIN	= $0052
-   244 = 0053			RMARGIN	= $0053
-   245 = 0054			ROWCRS	= $0054
-   246 = 0055			COLCRS	= $0055
-   247 = 0057			DINDEX	= $0057
-   248 = 0058			SAVMSC	= $0058
-   249 = 006A			RAMTOP	= $006A
-   250 = 0200			VDSLST	= $0200
-   251 = 0230			SDLSTL	= $0230
-   252 = 0290			TXTROW	= $0290
-   253 = 0291			TXTCOL	= $0291
-   254 = 0293			TINDEX	= $0293
-   255 = 0294			TXTMSC	= $0294
-   256 = 022F			SDMCTL	= $022F
-   257 = 026F			GPRIOR	= $026F
-   258 = 02F0			CRSINH	= $02F0
-   259 = 02F3			CHACT	= $02F3
-   260 = 02F4			CHBAS	= $02F4
-   261 = 02FC			CH	= $02FC
-   262 = 02C0			PCOLR0	= $02C0
-   263 = 02C1			PCOLR1	= $02C1
-   264 = 02C2			PCOLR2	= $02C2
-   265 = 02C3			PCOLR3	= $02C3
-   266 = 02C4			COLOR0	= $02C4
-   267 = 02C5			COLOR1	= $02C5
-   268 = 02C6			COLOR2	= $02C6
-   269 = 02C7			COLOR3	= $02C7
-   270 = 02C8			COLOR4	= $02C8
-   271 = 02C8			COLBAKS	= $02C8
-   272 = D000			HPOSP0	= $D000
-   273 = D001			HPOSP1	= $D001
-   274 = D002			HPOSP2	= $D002
-   275 = D003			HPOSP3	= $D003
-   276 = D004			HPOSM0	= $D004
-   277 = D005			HPOSM1	= $D005
-   278 = D006			HPOSM2	= $D006
-   279 = D007			HPOSM3	= $D007
-   280 = D008			SIZEP0	= $D008
-   281 = D009			SIZEP1	= $D009
-   282 = D00A			SIZEP2	= $D00A
-   283 = D00B			SIZEP3	= $D00B
-   284 = D00C			SIZEM	= $D00C
-   285 = D00D			GRAFP0	= $D00D
-   286 = D00E			GRAFP1	= $D00E
-   287 = D00F			GRAFP2	= $D00F
-   288 = D010			GRAFP3	= $D010
-   289 = D011			GRAFM	= $D011
-   290 = D004			P0PF	= $D004
-   291 = D014			PAL	= $D014
-   292 = D012			COLPM0	= $D012
-   293 = D013			COLPM1	= $D013
-   294 = D014			COLPM2	= $D014
-   295 = D015			COLPM3	= $D015
-   296 = D016			COLPF0	= $D016
-   297 = D017			COLPF1	= $D017
-   298 = D018			COLPF2	= $D018
-   299 = D019			COLPF3	= $D019
-   300 = D01A			COLBK	= $D01A
-   301 = D01B			PRIOR	= $D01B
-   302 = D01D			GRACTL	= $D01D
-   303 = D01E			HITCLR	= $D01E
-   304 = D200			AUDF1	= $D200
-   305 = D201			AUDC1	= $D201
-   306 = D202			AUDF2	= $D202
-   307 = D203			AUDC2	= $D203
-   308 = D204			AUDF3	= $D204
-   309 = D205			AUDC3	= $D205
-   310 = D206			AUDF4	= $D206
-   311 = D207			AUDC4	= $D207
-   312 = D208			AUDCTL	= $D208
-   313 = D20F			SKSTAT	= $D20F
-   314 = D301			PORTB	= $D301
-   315 = D400			DMACTL	= $D400
-   316 = D401			CHACTL	= $D401
-   317 = D402			DLISTL	= $D402
-   318 = D404			HSCROL	= $D404
-   319 = D405			VSCROL	= $D405
-   320 = D407			PMBASE	= $D407
-   321 = D409			CHBASE	= $D409
-   322 = D40A			WSYNC	= $D40A
-   323 = D40B			VCOUNT	= $D40B
-   324 = D40C			PENH	= $D40C
-   325 = D40D			PENV	= $D40D
-   326 = D40E			NMIEN	= $D40E
-   327
-   328 				.endl							; UNIT ATARI
-   329
-   330 				; ------------------------------------------------------------
-   331
-   332 2079			.local	CRT						; UNIT
-   333
-   334 				; ------------------------------------------------------------
-   335
-   336 = 214F			TEXTATTR	= DATAORIGIN+$000B
-   337 = D01F			CONSOL	= $D01F
-   338 = 0000			CN_START_SELECT_OPTION	= $0000
-   339 = 0001			CN_SELECT_OPTION	= $0001
-   340 = 0002			CN_START_OPTION	= $0002
-   341 = 0003			CN_OPTION	= $0003
-   342 = 0004			CN_START_SELECT	= $0004
-   343 = 0005			CN_SELECT	= $0005
-   344 = 0006			CN_START	= $0006
-   345 = 0007			CN_NONE	= $0007
-   346 = 0000			BW40	= $0000
-   347 = 0001			CO40	= $0001
-   348 = 0002			BW80	= $0002
-   349 = 0003			CO80	= $0003
-   350 = 0007			MONO	= $0007
-   351 = 0001			C40	= $0001
-   352 = 0003			C80	= $0003
-   353 = 0000			BLACK	= $0000
-   354 = 0001			BLUE	= $0001
-   355 = 0002			GREEN	= $0002
-   356 = 0003			CYAN	= $0003
-   357 = 0004			RED	= $0004
-   358 = 0005			MAGENTA	= $0005
-   359 = 0006			BROWN	= $0006
-   360 = 0007			LIGHTGRAY	= $0007
-   361 = 0008			DARKGRAY	= $0008
-   362 = 0009			LIGHTBLUE	= $0009
-   363 = 000A			LIGHTGREEN	= $000A
-   364 = 000B			LIGHTCYAN	= $000B
-   365 = 000C			LIGHTRED	= $000C
-   366 = 000D			LIGHTMAGENTA	= $000D
-   367 = 000E			YELLOW	= $000E
-   368 = 000F			WHITE	= $000F
-   369 = 0080			BLINK	= $0080
+   135 20A5 A2 0F			ldx #$0f					; DOS II+/D ParamStr
+   136 20A7 BD 40 03 9D 48 21 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
+   137
+   138 20B0 E8				inx						; X = 0
+   139 20B1 86 90			stx bp						; BP = 0
+   140
+   141 20B3 8E 08 D2			stx audctl					; reset POKEY
+   142 20B6 A9 03			lda #3
+   143 20B8 8D 0F D2			sta skctl
+   144
+   145 20BB CA				dex						; X = 255
+   146
+   147 20BC				UNITINITIALIZATION
+Macro: UNITINITIALIZATION [Source: dlidemo.a65]
+   148
+   149 20BC			.local	MAIN						; PROCEDURE
+   150
+   151 20BC 4C 41 21			jmp l_0007
+   152
+   153 				; ------------------------------------------------------------
+   154
+   155 20BF			.local	SYSTEM						; UNIT
+   156
+   157 				; ------------------------------------------------------------
+   158
+   159 = 0101			__PORTB_BANKS	= $0101
+   160 = 0648			M_PI_2	= $0648
+   161 = 0192			D_PI_2	= $0192
+   162 = 0004			D_PI_180	= $04
+   163 = 0000			MGTIA	= $00
+   164 = 0080			MVBXE	= $80
+   165 = 0000			VBXE_XDLADR	= $00
+   166 = 0100			VBXE_BCBADR	= $0100
+   167 = 1000			VBXE_MAPADR	= $1000
+   168 = 5000			VBXE_OVRADR	= $5000
+   169 = B000			VBXE_WINDOW	= $B000
+   170 = 0000			IDLI	= $00
+   171 = 0001			IVBL	= $01
+   172 = 00FE			CH_DELCHR	= $FE
+   173 = 009B			CH_ENTER	= $9B
+   174 = 001B			CH_ESC	= $1B
+   175 = 001C			CH_CURS_UP	= $1C
+   176 = 001D			CH_CURS_DOWN	= $1D
+   177 = 001E			CH_CURS_LEFT	= $1E
+   178 = 001F			CH_CURS_RIGHT	= $1F
+   179 = 007F			CH_TAB	= $7F
+   180 = 009B			CH_EOL	= $9B
+   181 = 007D			CH_CLR	= $7D
+   182 = 00FD			CH_BELL	= $FD
+   183 = 007E			CH_DEL	= $7E
+   184 = 009C			CH_DELLINE	= $9C
+   185 = 009D			CH_INSLINE	= $9D
+   186 = 0000			COLOR_BLACK	= $00
+   187 = 000E			COLOR_WHITE	= $0E
+   188 = 0032			COLOR_RED	= $32
+   189 = 0096			COLOR_CYAN	= $96
+   190 = 0068			COLOR_VIOLET	= $68
+   191 = 00C4			COLOR_GREEN	= $C4
+   192 = 0074			COLOR_BLUE	= $74
+   193 = 00EE			COLOR_YELLOW	= $EE
+   194 = 0028			COLOR_ORANGE	= $28
+   195 = 00E4			COLOR_BROWN	= $E4
+   196 = 003C			COLOR_LIGHTRED	= $3C
+   197 = 0004			COLOR_GRAY1	= $04
+   198 = 0006			COLOR_GRAY2	= $06
+   199 = 000A			COLOR_GRAY3	= $0A
+   200 = 00CC			COLOR_LIGHTGREEN	= $CC
+   201 = 007C			COLOR_LIGHTBLUE	= $7C
+   202 = 0004			FMOPENREAD	= $04
+   203 = 0008			FMOPENWRITE	= $08
+   204 = 0009			FMOPENAPPEND	= $09
+   205 = 000C			FMOPENREADWRITE	= $0C
+   206 = 215C			SCREENWIDTH	= DATAORIGIN+$0000
+   207 = 215E			SCREENHEIGHT	= DATAORIGIN+$0002
+   208 = 2160			DATESEPARATOR	= DATAORIGIN+$0004
+   209 = D014			TVSYSTEM	= $D014
+   210 = 02C0			adr.PALETTE	= $02C0
+   211 20BF			.var PALETTE	= adr.PALETTE .word
+   212 = D012			adr.HPALETTE	= $D012
+   213 20BF			.var HPALETTE	= adr.HPALETTE .word
+   214 = 2161			FILEMODE	= DATAORIGIN+$0005
+   215 = 2162			GRAPHMODE	= DATAORIGIN+$0006
+   216 = 2163			IORESULT	= DATAORIGIN+$0007
+   217 = 2164			EOLN	= DATAORIGIN+$0008
+   218 = 2165			RNDSEED	= DATAORIGIN+$0009
+   219
+   220 = 20BF C0 02		PALETTE
+   220 = 20C1 12 D0		HPALETTE
+   220 				.endl							; UNIT SYSTEM
+   221
+   222 				; ------------------------------------------------------------
+   223
+   224 20C3			.local	ATARI						; UNIT
+   225
+   226 				; ------------------------------------------------------------
+   227
+   228 = 0012			RTCLOK	= $12
+   229 = 004D			ATRACT	= $4D
+   230 = 0052			LMARGIN	= $52
+   231 = 0053			RMARGIN	= $53
+   232 = 0054			ROWCRS	= $54
+   233 = 0055			COLCRS	= $55
+   234 = 0057			DINDEX	= $57
+   235 = 0058			SAVMSC	= $58
+   236 = 0062			PALNTS	= $62
+   237 = 006A			RAMTOP	= $6A
+   238 = 0200			VDSLST	= $0200
+   239 = 0230			SDLSTL	= $0230
+   240 = 0290			TXTROW	= $0290
+   241 = 0291			TXTCOL	= $0291
+   242 = 0293			TINDEX	= $0293
+   243 = 0294			TXTMSC	= $0294
+   244 = 022F			SDMCTL	= $022F
+   245 = 026F			GPRIOR	= $026F
+   246 = 02F0			CRSINH	= $02F0
+   247 = 02F3			CHACT	= $02F3
+   248 = 02F4			CHBAS	= $02F4
+   249 = 02FC			CH	= $02FC
+   250 = 02C0			PCOLR0	= $02C0
+   251 = 02C1			PCOLR1	= $02C1
+   252 = 02C2			PCOLR2	= $02C2
+   253 = 02C3			PCOLR3	= $02C3
+   254 = 02C4			COLOR0	= $02C4
+   255 = 02C5			COLOR1	= $02C5
+   256 = 02C6			COLOR2	= $02C6
+   257 = 02C7			COLOR3	= $02C7
+   258 = 02C8			COLOR4	= $02C8
+   259 = 02C8			COLBAKS	= $02C8
+   260 = D000			HPOSP0	= $D000
+   261 = D001			HPOSP1	= $D001
+   262 = D002			HPOSP2	= $D002
+   263 = D003			HPOSP3	= $D003
+   264 = D004			HPOSM0	= $D004
+   265 = D005			HPOSM1	= $D005
+   266 = D006			HPOSM2	= $D006
+   267 = D007			HPOSM3	= $D007
+   268 = D008			SIZEP0	= $D008
+   269 = D009			SIZEP1	= $D009
+   270 = D00A			SIZEP2	= $D00A
+   271 = D00B			SIZEP3	= $D00B
+   272 = D00C			SIZEM	= $D00C
+   273 = D00D			GRAFP0	= $D00D
+   274 = D00E			GRAFP1	= $D00E
+   275 = D00F			GRAFP2	= $D00F
+   276 = D010			GRAFP3	= $D010
+   277 = D011			GRAFM	= $D011
+   278 = D004			P0PF	= $D004
+   279 = D014			PAL	= $D014
+   280 = D012			COLPM0	= $D012
+   281 = D013			COLPM1	= $D013
+   282 = D014			COLPM2	= $D014
+   283 = D015			COLPM3	= $D015
+   284 = D016			COLPF0	= $D016
+   285 = D017			COLPF1	= $D017
+   286 = D018			COLPF2	= $D018
+   287 = D019			COLPF3	= $D019
+   288 = D01A			COLBK	= $D01A
+   289 = D01B			PRIOR	= $D01B
+   290 = D01D			GRACTL	= $D01D
+   291 = D01E			HITCLR	= $D01E
+   292 = D200			AUDF1	= $D200
+   293 = D201			AUDC1	= $D201
+   294 = D202			AUDF2	= $D202
+   295 = D203			AUDC2	= $D203
+   296 = D204			AUDF3	= $D204
+   297 = D205			AUDC3	= $D205
+   298 = D206			AUDF4	= $D206
+   299 = D207			AUDC4	= $D207
+   300 = D208			AUDCTL	= $D208
+   301 = D20F			SKSTAT	= $D20F
+   302 = D301			PORTB	= $D301
+   303 = D400			DMACTL	= $D400
+   304 = D401			CHACTL	= $D401
+   305 = D402			DLISTL	= $D402
+   306 = D404			HSCROL	= $D404
+   307 = D405			VSCROL	= $D405
+   308 = D407			PMBASE	= $D407
+   309 = D409			CHBASE	= $D409
+   310 = D40A			WSYNC	= $D40A
+   311 = D40B			VCOUNT	= $D40B
+   312 = D40C			PENH	= $D40C
+   313 = D40D			PENV	= $D40D
+   314 = D40E			NMIEN	= $D40E
+   315
+   316 				.endl							; UNIT ATARI
+   317
+   318 				; ------------------------------------------------------------
+   319
+   320 20C3			.local	CRT						; UNIT
+   321
+   322 				; ------------------------------------------------------------
+   323
+   324 = 2167			TEXTATTR	= DATAORIGIN+$000B
+   325 = D01F			CONSOL	= $D01F
+   326 = 0000			CN_START_SELECT_OPTION	= $00
+   327 = 0001			CN_SELECT_OPTION	= $01
+   328 = 0002			CN_START_OPTION	= $02
+   329 = 0003			CN_OPTION	= $03
+   330 = 0004			CN_START_SELECT	= $04
+   331 = 0005			CN_SELECT	= $05
+   332 = 0006			CN_START	= $06
+   333 = 0007			CN_NONE	= $07
+   334 = 0000			BW40	= $00
+   335 = 0001			CO40	= $01
+   336 = 0002			BW80	= $02
+   337 = 0003			CO80	= $03
+   338 = 0007			MONO	= $07
+   339 = 0001			C40	= $01
+   340 = 0003			C80	= $03
+   341 = 0000			BLACK	= $00
+   342 = 0001			BLUE	= $01
+   343 = 0002			GREEN	= $02
+   344 = 0003			CYAN	= $03
+   345 = 0004			RED	= $04
+   346 = 0005			MAGENTA	= $05
+   347 = 0006			BROWN	= $06
+   348 = 0007			LIGHTGRAY	= $07
+   349 = 0008			DARKGRAY	= $08
+   350 = 0009			LIGHTBLUE	= $09
+   351 = 000A			LIGHTGREEN	= $0A
+   352 = 000B			LIGHTCYAN	= $0B
+   353 = 000C			LIGHTRED	= $0C
+   354 = 000D			LIGHTMAGENTA	= $0D
+   355 = 000E			YELLOW	= $0E
+   356 = 000F			WHITE	= $0F
+   357 = 0080			BLINK	= $80
+   358
+   359 				.endl							; UNIT CRT
+   360
+   361 				; ------------------------------------------------------------
+   362
+   363 20C3			.local	TYPES						; UNIT
+   364
+   365 				; ------------------------------------------------------------
+   366
+   367 				.endl							; UNIT TYPES
+   368
+   369 				; ------------------------------------------------------------
    370
-   371 				.endl							; UNIT CRT
+   371 20C3			.local	GRAPH						; UNIT
    372
-   373 				; ------------------------------------------------------------
+   373 20C3			.local	INITGRAPH_0068					; PROCEDURE | OVERLOAD
    374
-   375 2079			.local	TYPES						; UNIT
+   375 				; ------------------------------------------------------------
    376
-   377 				; ------------------------------------------------------------
-   378
-   379 				.endl							; UNIT TYPES
-   380
-   381 				; ------------------------------------------------------------
-   382
-   383 2079			.local	GRAPH						; UNIT
+   377 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+   378 				; as Pointer
+   379 20C3 B5 98 8D 85 21		mva :STACKORIGIN,x MODE
+   380 20C8 CA				dex
+   381
+   382 				; ---------------------  ASM Block 060  ---------------------
+   383
    384
-   385 2079			.local	INITGRAPH_0064					; PROCEDURE | OVERLOAD
+   385 20C9 8A 48			txa:pha
    386
-   387 				; ------------------------------------------------------------
-   388
-   389 				; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-   390 				; as Pointer
-   391 2079 B5 98 8D 6D 21		mva :STACKORIGIN,x MODE
-   392 207E CA				dex						; sub bx, 1
-   393
-   394 				; optimize OK (GRAPH), line = 73
-   395
-   396 207F A9 00 8D 58 21		mva #$00 GRAPHRESULT
+   387 20CB AD 85 21			lda mode
+   388 20CE 8D 62 21			sta MAIN.SYSTEM.GraphMode
+   389 20D1 29 0F			and #$0f
+   390 20D3 A8				tay
+   391
+   392 20D4 A2 60			ldx #$60		; 6*16
+   393 20D6 AD 85 21			lda mode		; %00010000 with text window
+   394 20D9 29 10			and #$10
+   395 20DB 49 10			eor #$10
+   396 20DD 09 02			ora #2			; read
    397
-   398 				; optimize OK (GRAPH), line = 75
+   398 					.nowarn @GRAPHICS
+   398 20DF 20 31 20		 JSR @GRAPHICS
    399
-   400 2084 AD 6D 21 8D 4A 21		mva MODE SYSTEM.SCREENMODE
+   400 20E2 8C 70 21			sty GraphResult
    401
-   402 				; ---------------------  ASM Block 074  ---------------------
-   403
-   404
-   405 208A 8A 48			txa:pha
+   402
+   403 					.ifdef MAIN.@DEFINES.ROMOFF
+   404 					inc portb
+   405 					.endif
    406
-   407 208C A9 2C 8D 4D 20		mva #$2c @putchar.vbxe
+   407 = EE6D			tlshc	equ $ee6d
    408
-   409 2091 AD 6D 21			lda mode
-   410 2094 29 0F			and #$0f
-   411 2096 A8				tay
-   412
-   413 2097 A2 60			ldx #$60	; 6*16
-   414 2099 AD 6D 21			lda mode	; %00010000 with text window
-   415 209C 29 10			and #$10
-   416 209E 49 10			eor #$10
-   417 20A0 09 02			ora #2		; read
-   418
-   419 					.nowarn @graphics
-   419 20A2 20 1E 20		 JSR @GRAPHICS
-   420 					
-   421 					
-   422 = EE6D			tlshc	equ $ee6d
+   409 20E5 A6 57			ldx dindex
+   410 20E7 BC 6D EE			ldy tlshc,x
+   411 20EA A9 05			lda #5
+   412 20EC 0A			shift	asl @
+   413 20ED 88				dey
+   414 20EE D0 FC			bne shift
+   415
+   416 20F0 8D 84 21			sta SCANLINE_WIDTH
+   417
+   418 				; Fox/TQA
+   419
+   420 = 0057			dindex	equ $57
+   421 = EE7D			tmccn	equ $ee7d
+   422 = EE8D			tmrcn	equ $ee8d
    423
-   424 20A5 A6 57			ldx dindex
-   425 20A7 BC 6D EE			ldy tlshc,x
-   426 20AA A9 05			lda #5
-   427 20AC 0A			shift	asl @
-   428 20AD 88				dey
-   429 20AE D0 FC			bne shift
+   424 20F3 A6 57			ldx dindex
+   425 20F5 BD 7D EE			lda tmccn,x
+   426 20F8 BC 8D EE			ldy tmrcn,x
+   427 20FB A2 00			ldx #0
+   428 20FD C9 40			cmp #<320
+   429 20FF D0 01 E8			sne:inx
    430
-   431 20B0 8D 6C 21			sta SCANLINE_WIDTH
-   432 					
+   431 				; X:A = horizontal resolution
+   432 				; Y = vertical resolution
    433
-   434 				; Fox/TQA
+   434 2102 20 6B 20			@SCREENSIZE
    435
-   436 = 0057			dindex	equ $57
-   437 = EE7D			tmccn	equ $ee7d
-   438 = EE8D			tmrcn	equ $ee8d
+   436 					.ifdef MAIN.@DEFINES.ROMOFF
+   437 					dec portb
+   438 					.endif
    439
-   440 20B3 A6 57			ldx dindex
-   441 20B5 BD 7D EE			lda tmccn,x
-   442 20B8 BC 8D EE			ldy tmrcn,x
-   443 20BB A2 00			ldx #0
-   444 20BD C9 40			cmp #<320
-   445 20BF D0 01 E8			sne:inx
-   446 				    
-   447 				; X:A = horizontal resolution
-   448 				; Y = vertical resolution
+   440 2105 68 AA			pla:tax
+   441
+   442
+   443 				; optimize OK (GRAPH), line = 132
+   444
+   445 2107 A5 58 8D 82 21		mva ATARI.SAVMSC VIDEORAM
+   446 210C A5 59 8D 83 21		mva ATARI.SAVMSC+1 VIDEORAM+1
+   447
+   448 				; ------------------------------------------------------------
    449
-   450 20C2 8D 44 21			sta MAIN.SYSTEM.ScreenWidth
-   451 20C5 8E 45 21			stx MAIN.SYSTEM.ScreenWidth+1
-   452 					
-   453 20C8 38 E9 01			sub #1
-   454 20CB 8D 52 21			sta WIN_RIGHT
-   455 20CE 8A				txa
-   456 20CF E9 00			sbc #0
-   457 20D1 8D 53 21			sta WIN_RIGHT+1
-   458 					
-   459 20D4 8C 46 21			sty MAIN.SYSTEM.ScreenHeight
-   460 20D7 A9 00			lda #0
-   461 20D9 8D 47 21			sta MAIN.SYSTEM.ScreenHeight+1
-   462 					
-   463 20DC 8D 50 21			sta WIN_LEFT
-   464 20DF 8D 51 21			sta WIN_LEFT+1
-   465 20E2 8D 54 21			sta WIN_TOP
-   466 20E5 8D 55 21			sta WIN_TOP+1
+   450 = 2185			MODE	= DATAORIGIN+$0029
+   451
+   452 = 2185			@VarData	= MODE
+   453 = 0001			@VarDataSize	= 1
+   454
+   455 2111			@exit
+   456 					.ifdef @new
+   457 					lda <@VarData
+   458 					sta :ztmp
+   459 					lda >@VarData
+   460 					ldy #@VarDataSize-1
+   461 					jmp @FreeMem
+   462 					eif
+   463 2111 60				rts						; ret
+   464 				.endl
+   465
+   466 				; ------------------------------------------------------------
    467
-   468 20E8 8D 57 21			sta WIN_BOTTOM+1	
-   469 20EB 88				dey
-   470 20EC 8C 56 21			sty WIN_BOTTOM
-   471
-   472 20EF 68 AA			pla:tax
-   473
-   474
-   475 				; ------------------------------------------------------------
-   476
-   477 = 216D			MODE	= DATAORIGIN+$0029
-   478
-   479 = 216D			@VarData	= MODE
-   480 = 0001			@VarDataSize	= 1
-   481
-   482 20F1			@exit
-   483 					.ifdef @new
-   484 					@FreeMem #@VarData #@VarDataSize
-   485 					eif
-   486 20F1 60				rts						; ret
-   487 				.endl
-   488
-   489 				; ------------------------------------------------------------
-   490
-   491 = FFFFFF80		CURRENTDRIVER	= $FFFFFF80
-   492 = 0000			DETECT	= $0000
-   493 = 0001			CGA	= $0001
-   494 = 0002			MCGA	= $0002
-   495 = 0003			EGA	= $0003
-   496 = 0004			EGA64	= $0004
-   497 = 0005			EGAMONO	= $0005
-   498 = 0006			LOWRES	= $0006
-   499 = 0007			HERCMONO	= $0007
-   500 = 0009			VGA	= $0009
-   501 = 000A			VESA	= $000A
-   502 = 000B			D1BIT	= $000B
-   503 = 000C			D2BIT	= $000C
-   504 = 000D			D4BIT	= $000D
-   505 = 000E			D6BIT	= $000E
-   506 = 000F			D8BIT	= $000F
-   507 = 0010			D12BIT	= $0010
-   508 = 0018			M640X400	= $0018
-   509 = 0018			M640X480	= $0018
-   510 = 0000			GROK	= $0000
-   511 = FFFFFFFF		GRNOINITGRAPH	= $FFFFFFFF
-   512 = FFFFFFFE		GRNOTDETECTED	= $FFFFFFFE
-   513 = FFFFFFFD		GRFILENOTFOUND	= $FFFFFFFD
-   514 = FFFFFFFC		GRINVALIDDRIVER	= $FFFFFFFC
-   515 = FFFFFFFB		GRNOLOADMEM	= $FFFFFFFB
-   516 = FFFFFFFA		GRNOSCANMEM	= $FFFFFFFA
-   517 = FFFFFFF9		GRNOFLOODMEM	= $FFFFFFF9
-   518 = FFFFFFF8		GRFONTNOTFOUND	= $FFFFFFF8
-   519 = FFFFFFF7		GRNOFONTMEM	= $FFFFFFF7
-   520 = FFFFFFF6		GRINVALIDMODE	= $FFFFFFF6
-   521 = FFFFFFF5		GRERROR	= $FFFFFFF5
-   522 = FFFFFFF4		GRIOERROR	= $FFFFFFF4
-   523 = FFFFFFF3		GRINVALIDFONT	= $FFFFFFF3
-   524 = FFFFFFF2		GRINVALIDFONTNUM	= $FFFFFFF2
-   525 = FFFFFFEE		GRINVALIDVERSION	= $FFFFFFEE
-   526 = 0000			CGAC0	= $0000
-   527 = 0001			CGAC1	= $0001
-   528 = 0002			CGAC2	= $0002
-   529 = 0003			CGAC3	= $0003
-   530 = 0004			CGAHI	= $0004
-   531 = 0000			MCGAC0	= $0000
-   532 = 0001			MCGAC1	= $0001
-   533 = 0002			MCGAC2	= $0002
-   534 = 0003			MCGAC3	= $0003
-   535 = 0004			MCGAMED	= $0004
-   536 = 0005			MCGAHI	= $0005
-   537 = 0000			EGALO	= $0000
-   538 = 0001			EGAHI	= $0001
-   539 = 0000			EGA64LO	= $0000
-   540 = 0001			EGA64HI	= $0001
-   541 = 0003			EGAMONOHI	= $0003
-   542 = 000A			VGALO	= $000A
-   543 = 001F			VGAMED	= $001F
-   544 = 0018			VGAHI	= $0018
-   545 = 2150			WIN_LEFT	= DATAORIGIN+$000C
-   546 = 2152			WIN_RIGHT	= DATAORIGIN+$000E
-   547 = 2154			WIN_TOP	= DATAORIGIN+$0010
-   548 = 2156			WIN_BOTTOM	= DATAORIGIN+$0012
-   549 = 2158			GRAPHRESULT	= DATAORIGIN+$0014
-   550 = 2159			GETCOLOR	= DATAORIGIN+$0015
-   551 = 215A			adr.LASTARCCOORDS	= DATAORIGIN+$0016
-   552 20F2			.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-   553 = 215A			LASTARCCOORDS.X	= DATAORIGIN+$0016
-   554 = 215C			LASTARCCOORDS.Y	= DATAORIGIN+$0018
-   555 = 215E			LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
-   556 = 2160			LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
-   557 = 2162			LASTARCCOORDS.XEND	= DATAORIGIN+$001E
-   558 = 2164			LASTARCCOORDS.YEND	= DATAORIGIN+$0020
-   559 = 2166			CURRENTX	= DATAORIGIN+$0022
-   560 = 2168			CURRENTY	= DATAORIGIN+$0024
-   561 = 216A			VIDEORAM	= DATAORIGIN+$0026
-   562 = 216C			SCANLINE_WIDTH	= DATAORIGIN+$0028
+   468 = 0080			CURRENTDRIVER	= $80
+   469 = 0000			DETECT	= $00
+   470 = 0001			CGA	= $01
+   471 = 0002			MCGA	= $02
+   472 = 0003			EGA	= $03
+   473 = 0004			EGA64	= $04
+   474 = 0005			EGAMONO	= $05
+   475 = 0006			LOWRES	= $06
+   476 = 0007			HERCMONO	= $07
+   477 = 0009			VGA	= $09
+   478 = 000A			VESA	= $0A
+   479 = 000B			D1BIT	= $0B
+   480 = 000C			D2BIT	= $0C
+   481 = 000D			D4BIT	= $0D
+   482 = 000E			D6BIT	= $0E
+   483 = 000F			D8BIT	= $0F
+   484 = 0010			D12BIT	= $10
+   485 = 0018			M640X400	= $18
+   486 = 0018			M640X480	= $18
+   487 = 0001			GROK	= $01
+   488 = 00FF			GRNOINITGRAPH	= $FF
+   489 = 00FE			GRNOTDETECTED	= $FE
+   490 = 00FD			GRFILENOTFOUND	= $FD
+   491 = 00FC			GRINVALIDDRIVER	= $FC
+   492 = 00FB			GRNOLOADMEM	= $FB
+   493 = 00FA			GRNOSCANMEM	= $FA
+   494 = 00F9			GRNOFLOODMEM	= $F9
+   495 = 00F8			GRFONTNOTFOUND	= $F8
+   496 = 00F7			GRNOFONTMEM	= $F7
+   497 = 00F6			GRINVALIDMODE	= $F6
+   498 = 00F5			GRERROR	= $F5
+   499 = 00F4			GRIOERROR	= $F4
+   500 = 00F3			GRINVALIDFONT	= $F3
+   501 = 00F2			GRINVALIDFONTNUM	= $F2
+   502 = 00EE			GRINVALIDVERSION	= $EE
+   503 = 0000			CGAC0	= $00
+   504 = 0001			CGAC1	= $01
+   505 = 0002			CGAC2	= $02
+   506 = 0003			CGAC3	= $03
+   507 = 0004			CGAHI	= $04
+   508 = 0000			MCGAC0	= $00
+   509 = 0001			MCGAC1	= $01
+   510 = 0002			MCGAC2	= $02
+   511 = 0003			MCGAC3	= $03
+   512 = 0004			MCGAMED	= $04
+   513 = 0005			MCGAHI	= $05
+   514 = 0000			EGALO	= $00
+   515 = 0001			EGAHI	= $01
+   516 = 0000			EGA64LO	= $00
+   517 = 0001			EGA64HI	= $01
+   518 = 0003			EGAMONOHI	= $03
+   519 = 000A			VGALO	= $0A
+   520 = 001F			VGAMED	= $1F
+   521 = 0018			VGAHI	= $18
+   522 = 2168			WIN_LEFT	= DATAORIGIN+$000C
+   523 = 216A			WIN_RIGHT	= DATAORIGIN+$000E
+   524 = 216C			WIN_TOP	= DATAORIGIN+$0010
+   525 = 216E			WIN_BOTTOM	= DATAORIGIN+$0012
+   526 = 2170			GRAPHRESULT	= DATAORIGIN+$0014
+   527 = 2171			GETCOLOR	= DATAORIGIN+$0015
+   528 = 2172			adr.LASTARCCOORDS	= DATAORIGIN+$0016
+   529 2112			.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
+   530 = 2172			LASTARCCOORDS.X	= DATAORIGIN+$0016
+   531 = 2174			LASTARCCOORDS.Y	= DATAORIGIN+$0018
+   532 = 2176			LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
+   533 = 2178			LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
+   534 = 217A			LASTARCCOORDS.XEND	= DATAORIGIN+$001E
+   535 = 217C			LASTARCCOORDS.YEND	= DATAORIGIN+$0020
+   536 = 217E			CURRENTX	= DATAORIGIN+$0022
+   537 = 2180			CURRENTY	= DATAORIGIN+$0024
+   538 = 2182			VIDEORAM	= DATAORIGIN+$0026
+   539 = 2184			SCANLINE_WIDTH	= DATAORIGIN+$0028
+   540
+   541 = 2112 72 21		LASTARCCOORDS
+   541 				.endl							; UNIT GRAPH
+   542
+   543 2114			.local	MAINPROC					; PROCEDURE
+   544
+   545 				; optimize OK (examples\dlidemo.pas), line = 27
+   546
+   547 2114 AD 58 21 8D 30 02		mva DL SDLSTL
+   548 211A AD 59 21 8D 31 02		mva DL+1 SDLSTL+1
+   549
+   550 				; optimize OK (examples\dlidemo.pas), line = 28
+   551
+   552 2120 AD 5A 21 8D 00 02		mva DLI VDSLST
+   553 2126 AD 5B 21 8D 01 02		mva DLI+1 VDSLST+1
+   554
+   555 				; optimize OK (examples\dlidemo.pas), line = 29
+   556
+   557 212C A9 C0 8D 0E D4		mva #$C0 NMIEN
+   558
+   559 				; --- WhileProlog
+   560 2131			l_00D0
+   561
+   562 				; optimize OK (examples\dlidemo.pas), line = 30
    563
-   564 = 20F2 5A 21		LASTARCCOORDS
-   564 				.endl							; UNIT GRAPH
-   565
-   566 20F4			.local	MAINPROC					; PROCEDURE
+   564 2131 AD FC 02			lda CH
+   565 2134 C9 FF			cmp #$FF
+   566 2136 F0 F9			jeq l_00D0
    567
-   568 				; optimize OK (examples\dlidemo.pas), line = 27
-   569
-   570 20F4 AD 40 21 8D 30 02		mva DL SDLSTL
-   571 20FA AD 41 21 8D 31 02		mva DL+1 SDLSTL+1
-   572
-   573 				; optimize OK (examples\dlidemo.pas), line = 28
-   574
-   575 2100 AD 42 21 8D 00 02		mva DLI VDSLST
-   576 2106 AD 43 21 8D 01 02		mva DLI+1 VDSLST+1
-   577
-   578 				; optimize OK (examples\dlidemo.pas), line = 29
-   579
-   580 210C A9 C0 8D 0E D4		mva #$C0 NMIEN
-   581
-   582 				; optimize OK (examples\dlidemo.pas), line = 30
+   568 				; optimize FAIL ('GRAPH.INITGRAPH_0068', examples\dlidemo.pas), line = 32
+   569 2138 E8				inx
+   570 2139 A9 00 95 98			mva #$00 :STACKORIGIN,x
+   571 213D 20 C3 20			jsr GRAPH.INITGRAPH_0068
+   572 2140			@exit
+   573 					.ifdef @new
+   574 					lda <@VarData
+   575 					sta :ztmp
+   576 					lda >@VarData
+   577 					ldy #@VarDataSize-1
+   578 					jmp @FreeMem
+   579 					eif
+   580 2140 60				rts						; ret
+   581 				.endl
+   582 2141			l_0007
    583
-   584 2111 A9 FF 8D FC 02		mva #$FF CH
-   585
-   586 				; --- WhileProlog
-   587 2116			l_00C1
+   584 				; optimize FAIL ('MAINPROC', examples\dlidemo.pas), line = 36
+   585 2141 20 14 21			jsr MAINPROC
+   586
+   587 				; ------------------------------------------------------------
    588
-   589 				; optimize OK (examples\dlidemo.pas), line = 31
-   590
-   591 2116 AD FC 02			lda CH
-   592 2119 C9 FF			cmp #$FF
-   593 211B D0 03			jne l_00D0
-   594 211D 4C 16 21			jmp l_00C1
-   595 2120			l_00D0
-   596
-   597 				; optimize FAIL ('GRAPH.INITGRAPH_0064', examples\dlidemo.pas), line = 33
-   598 2120 E8				inx
-   599 2121 A9 00 95 98			mva #$00 :STACKORIGIN,x
-   600 2125 20 79 20			jsr GRAPH.INITGRAPH_0064
-   601 2128			@exit
-   602 					.ifdef @new
-   603 					@FreeMem #@VarData #@VarDataSize
-   604 					eif
-   605 2128 60				rts						; ret
-   606 				.endl
-   607 2129			l_0014
+   589 = 2186			adr.DL	= DATAORIGIN+$002A
+   590 2144			.var DL	= adr.DL .word
+   591 = 219C			adr.DLI	= DATAORIGIN+$0040
+   592 2144			.var DLI	= adr.DLI .word
+   593 = 02FC			CH	= $02FC
+   594 = D40E			NMIEN	= $D40E
+   595 = 0200			VDSLST	= $0200
+   596 = 0230			SDLSTL	= $0230
+   597 2144			@exit
+   598
+   599 2144 A2 00		@halt	ldx #0
+   600 2146 9A				txs
+   601 					.ifdef MAIN.@DEFINES.ROMOFF
+   602 					inc portb
+   603 					.endif
+   604
+   605 2147 60				rts
+   606
+   607 				; ------------------------------------------------------------
    608
-   609 				; optimize FAIL ('MAINPROC', examples\dlidemo.pas), line = 37
-   610 2129 20 F4 20			jsr MAINPROC
-   611
-   612 				; ------------------------------------------------------------
-   613
-   614 = 216E			adr.DL	= DATAORIGIN+$002A
-   615 212C			.var DL	= adr.DL .word
-   616 = 2184			adr.DLI	= DATAORIGIN+$0040
-   617 212C			.var DLI	= adr.DLI .word
-   618 = 02FC			CH	= $02FC
-   619 = D40E			NMIEN	= $D40E
-   620 = 0200			VDSLST	= $0200
-   621 = 0230			SDLSTL	= $0230
-   622 212C			@exit
-   623
-   624 212C A2 00		@halt	ldx #0
-   625 212E 9A				txs
-   626
-   627 212F 60				rts
-   628
-   629 				; ------------------------------------------------------------
-   630
-   631 2130 00 00 00 00 00 00 + IOCB@COPY	:16 brk
-   632
-   633 				; ------------------------------------------------------------
-   634
-   635 2140			.local	@DEFINES
-   636 2140			ATARI
-   637 				.endl
-   638
-   639 = 2140 6E 21		DL
-   639 = 2142 84 21		DLI
-   639 				.endl							; MAIN
-   640
-   641 				; ------------------------------------------------------------
-   642 				; ------------------------------------------------------------
-   643
-   644 				.macro	UNITINITIALIZATION
-   645 				
-   646 					.ifdef MAIN.SYSTEM.@UnitInit
-   647 					jsr MAIN.SYSTEM.@UnitInit
-   648 					eif
-   649 				
-   650 					.ifdef MAIN.DOS.@UnitInit
-   651 					jsr MAIN.DOS.@UnitInit
-   652 					eif
-   653 				
-   654 					.ifdef MAIN.STRUTILS.@UnitInit
-   655 					jsr MAIN.STRUTILS.@UnitInit
-   656 					eif
-   657 				
-   658 					.ifdef MAIN.SYSUTILS.@UnitInit
-   659 					jsr MAIN.SYSUTILS.@UnitInit
-   660 					eif
-   661 				
-   662 					.ifdef MAIN.ATARI.@UnitInit
-   663 					jsr MAIN.ATARI.@UnitInit
-   664 					eif
-   665 				
-   666 					.ifdef MAIN.CRT.@UnitInit
-   667 					jsr MAIN.CRT.@UnitInit
-   668 					eif
-   669 				
-   670 					.ifdef MAIN.TYPES.@UnitInit
-   671 					jsr MAIN.TYPES.@UnitInit
-   672 					eif
-   673 				
-   674 					.ifdef MAIN.GRAPH.@UnitInit
-   675 					jsr MAIN.GRAPH.@UnitInit
-   676 					eif
-   677 				.endm
-   678
-   679 				; ------------------------------------------------------------
-   680
-   681 					ift .SIZEOF(MAIN.SYSTEM) > 0
-   682 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-   682 				SYSTEM: $2075..$2078
-   683 					eif
-   684
-   685 					ift .SIZEOF(MAIN.DOS) > 0
-   686 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-   687 					eif
-   688
-   689 					ift .SIZEOF(MAIN.STRUTILS) > 0
-   690 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-   691 					eif
-   692
-   693 					ift .SIZEOF(MAIN.SYSUTILS) > 0
-   694 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-   695 					eif
-   696
-   697 					ift .SIZEOF(MAIN.ATARI) > 0
-   698 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
-   699 					eif
-   700
-   701 					ift .SIZEOF(MAIN.CRT) > 0
-   702 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-   703 					eif
-   704
-   705 					ift .SIZEOF(MAIN.TYPES) > 0
-   706 					.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
-   707 					eif
-   708
-   709 					ift .SIZEOF(MAIN.GRAPH) > 0
-   710 					.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
-   710 				GRAPH: $2079..$20F3
-   711 					eif
-   712
-   713 					.print 'CODE: ',CODEORIGIN,'..',*-1
-   713 				CODE: $2000..$2143
-   714
-   715 				; ------------------------------------------------------------
-   716
-   717 2144			DATAORIGIN
-   718 2144 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17 $00 $00 $00 $00 $00
-   719 215C 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $70 $70 $70 $42 $00 $40
-   720 2174 02 02 02 02 F0 02 + .by  $02 $02 $02 $02 $F0 $02 $02 $02  $02 $02 $70 $70 $70 $41 $00 $20  $48 $A9 $DE $8D $0A $D4 $8D $18
-   721 218C D0 68 40		.by  $D0 $68 $40
-   722
-   723 = 004B			VARINITSIZE	= *-DATAORIGIN
-   724 = 004B			VARDATASIZE	= 75
-   725
-   726 = 218F			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
-   727
-   728 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-   728 				DATA: $2144..$218F
-   729
-   730 02E0-02E1> 60 20			run START
-   731
-   732 				; ------------------------------------------------------------
-   733
-   734 				.macro	STATICDATA
-   735 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00
-   736 				.endm
-   737
-   738 					end
+   609 2148 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+   610
+   611 				; ------------------------------------------------------------
+   612
+   613 2158			.local	@DEFINES
+   614 2158			ATARI
+   615 				.endl
+   616
+   617 = 2158 86 21		DL
+   617 = 215A 9C 21		DLI
+   617 				.endl							; MAIN
+   618
+   619 				; ------------------------------------------------------------
+   620 				; ------------------------------------------------------------
+   621
+   622 				.macro	UNITINITIALIZATION
+   623 				
+   624 					.ifdef MAIN.SYSTEM.@UnitInit
+   625 					jsr MAIN.SYSTEM.@UnitInit
+   626 					eif
+   627 				
+   628 					.ifdef MAIN.ATARI.@UnitInit
+   629 					jsr MAIN.ATARI.@UnitInit
+   630 					eif
+   631 				
+   632 					.ifdef MAIN.CRT.@UnitInit
+   633 					jsr MAIN.CRT.@UnitInit
+   634 					eif
+   635 				
+   636 					.ifdef MAIN.TYPES.@UnitInit
+   637 					jsr MAIN.TYPES.@UnitInit
+   638 					eif
+   639 				
+   640 					.ifdef MAIN.GRAPH.@UnitInit
+   641 					jsr MAIN.GRAPH.@UnitInit
+   642 					eif
+   643 				.endm
+   644
+   645 				; ------------------------------------------------------------
+   646
+   647 					ift .SIZEOF(MAIN.SYSTEM) > 0
+   648 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+   648 				SYSTEM: $20BF..$20C2
+   649 					eif
+   650
+   651 					ift .SIZEOF(MAIN.ATARI) > 0
+   652 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+   653 					eif
+   654
+   655 					ift .SIZEOF(MAIN.CRT) > 0
+   656 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+   657 					eif
+   658
+   659 					ift .SIZEOF(MAIN.TYPES) > 0
+   660 					.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
+   661 					eif
+   662
+   663 					ift .SIZEOF(MAIN.GRAPH) > 0
+   664 					.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
+   664 				GRAPH: $20C3..$2113
+   665 					eif
+   666
+   667 					.print 'CODE: ',CODEORIGIN,'..',*-1
+   667 				CODE: $2000..$215B
+   668
+   669 				; ------------------------------------------------------------
+   670
+   671 215C			DATAORIGIN
+   672 215C 28 00 18 00 2D 0C + .by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17 $00 $00 $00 $00 $00
+   673 2174 00 00 00 00 00 00 + .by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $70 $70 $70 $42 $00 $40
+   674 218C 02 02 02 02 F0 02 + .by  $02 $02 $02 $02 $F0 $02 $02 $02  $02 $02 $70 $70 $70 $41 $00 $20  $48 $A9 $DE $8D $0A $D4 $8D $18
+   675 21A4 D0 68 40		.by  $D0 $68 $40
+   676
+   677 = 004B			VARINITSIZE	= *-DATAORIGIN
+   678 = 004B			VARDATASIZE	= 75
+   679
+   680 = 21A7			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+   681
+   682 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+   682 				DATA: $215C..$21A7
+   683
+   684 02E0-02E1> 99 20			run START
+   685
+   686 				; ------------------------------------------------------------
+   687
+   688 				.macro	STATICDATA
+   689 				.endm
+   690
+   691 					end
