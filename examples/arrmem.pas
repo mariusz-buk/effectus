@@ -4,11 +4,10 @@ program arrmemPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using BYTE ARRAY as direct memory
 // assignment
 var
@@ -56,7 +55,7 @@ begin  // 1
   Writeln(mem);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

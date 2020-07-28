@@ -4,11 +4,10 @@ program arraysetPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using ARRAY predeclared values with
 // BYTE ARRAY and CARD ARRAY
 var
@@ -26,24 +25,24 @@ begin  // 6
   Writeln('ARRAYS DEMONSTRATION');
   Writeln('');
   Writeln('BYTE ARRAY VALUES:');
-  for  I:=0 TO 3 do begin
+ FOR I:=0 TO 3 do begin
   Write(BYTES[I]);
-  if I<3 then begin
+  if  I<3  then begin
   Write(',');
   end;  // if
-  end;  // for
+  end;
   Writeln('');
   Writeln('');
   Writeln('CARD ARRAY VALUES:');
-  for  I:=0 TO 3 do begin
+ FOR I:=0 TO 3 do begin
   Write(CARDS[I]);
-  if I<3 then begin
+  if  I<3  then begin
   Write(',');
   end;  // if
-  end;  // for
+  end;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

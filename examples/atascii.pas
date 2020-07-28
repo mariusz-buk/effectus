@@ -4,11 +4,10 @@ program atasciiPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Printing ATASCII characters
 
 procedure MAINProc;
@@ -42,13 +41,13 @@ begin  // 2
   arr[2] := 50;
   arr[3] := 67;
   arr[4] := 52;
-  for  n:=2 TO 4 do begin
+ FOR n:=2 TO 4 do begin
   Write(Chr(44));
   Write(ARR[N]);
-  end;  // for
+  end;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

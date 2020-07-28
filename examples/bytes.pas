@@ -4,11 +4,10 @@ program bytesPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // BYTE ARRAY demo
 var
   key : byte;
@@ -26,15 +25,15 @@ begin  // 1
   num[2] := 155;
   num[3] := 246;
   num[4] := 170;
-  for  i:=0 TO 4 do begin
+ FOR i:=0 TO 4 do begin
   Write('Element ');
   Write(i);
   Write('=');
   Writeln(num[i]);
-  end;  // for
+  end;
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

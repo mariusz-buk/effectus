@@ -4,11 +4,10 @@ program arrmemcPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using CARD ARRAY as direct memory
 // assignment
 
@@ -25,9 +24,9 @@ begin  // 2
   arr[2] := 5100;
   arr[3] := 63000;
   Write('', eol, 'Array values:', eol, '');
-  for  i:=0 to 3 do begin
+ FOR i:=0 to 3 do begin
   Writeln(arr[i]);
-  end;  // for
+  end;
   Write('', eol, 'Array values in descending order:', eol, '');
   mem := DPeek($8006);
   Writeln(mem);
@@ -39,7 +38,7 @@ begin  // 2
   Writeln(mem);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;
