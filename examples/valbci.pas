@@ -4,11 +4,10 @@ program valbciPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // String to number conversion demo
 // using ValB, ValC and ValI functions
 
@@ -27,7 +26,7 @@ begin  // 2
   Writeln(I);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

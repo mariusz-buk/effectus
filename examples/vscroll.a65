@@ -148,7 +148,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_007D
+	jmp l_001D
 
 ; ------------------------------------------------------------
 
@@ -319,46 +319,6 @@ NMIEN	= $D40E
 
 .local	CRT						; UNIT
 
-.local	READKEY						; FUNCTION | ASSEMBLER
-
-; ---------------------  ASM Block 049  ---------------------
-
-	txa:pha
-
-	@GetKey
-
-	sta Result
-
-	pla:tax
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-RESULT	= DATAORIGIN+$000C
-
-@VarData	= RESULT
-@VarDataSize	= 1
-
-	rts						; ret
-.endl
-
 ; ------------------------------------------------------------
 
 TEXTATTR	= DATAORIGIN+$000B
@@ -400,84 +360,99 @@ BLINK	= $80
 
 ; ------------------------------------------------------------
 
-.local	DOS						; UNIT
+.local	TYPES						; UNIT
 
 ; ------------------------------------------------------------
 
-PALNTSC	= $D014
-
-.endl							; UNIT DOS
+.endl							; UNIT TYPES
 
 ; ------------------------------------------------------------
 
-.local	STRUTILS					; UNIT
+.local	GRAPH						; UNIT
 
-; ------------------------------------------------------------
-
-.endl							; UNIT STRUTILS
-
-; ------------------------------------------------------------
-
-.local	SYSUTILS					; UNIT
-
-; ------------------------------------------------------------
-
-FAREADONLY	= $01
-FAHIDDEN	= $02
-FASYSFILE	= $04
-FAVOLUMEID	= $08
-FADIRECTORY	= $10
-FAARCHIVE	= $20
-FAANYFILE	= $3F
-
-.endl							; UNIT SYSUTILS
-
-; ------------------------------------------------------------
-
-.local	CIO						; UNIT
-
-.local	GET						; FUNCTION | ASSEMBLER
+.local	INITGRAPH_007E					; PROCEDURE | OVERLOAD
 
 ; ------------------------------------------------------------
 
 ; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
 ; as Pointer
-	mva :STACKORIGIN,x CHN
+	mva :STACKORIGIN,x MODE
 	dex
 
-; ---------------------  ASM Block 080  ---------------------
+; ---------------------  ASM Block 060  ---------------------
+
 
 	txa:pha
 
-	lda chn
-	:4 asl @
-	tax
+	lda mode
+	sta MAIN.SYSTEM.GraphMode
+	and #$0f
+	tay
 
-	lda #7		;get char command
-	sta iccmd,x
+	ldx #$60		; 6*16
+	lda mode		; %00010000 with text window
+	and #$10
+	eor #$10
+	ora #2			; read
 
-	lda #$00	;zero out the unused
-	sta icbufl,x	;store in accumulator
-	sta icbufh,x	;...after CIOV jump
+	.nowarn @GRAPHICS
 
-	m@call	ciov
+	sty GraphResult
 
-	sty MAIN.SYSTEM.IOResult
 
-	sta Result
+	.ifdef MAIN.@DEFINES.ROMOFF
+	inc portb
+	.endif
+
+tlshc	equ $ee6d
+
+	ldx dindex
+	ldy tlshc,x
+	lda #5
+shift	asl @
+	dey
+	bne shift
+
+	sta SCANLINE_WIDTH
+
+; Fox/TQA
+
+dindex	equ $57
+tmccn	equ $ee7d
+tmrcn	equ $ee8d
+
+	ldx dindex
+	lda tmccn,x
+	ldy tmrcn,x
+	ldx #0
+	cmp #<320
+	sne:inx
+
+; X:A = horizontal resolution
+; Y = vertical resolution
+
+	@SCREENSIZE
+
+	.ifdef MAIN.@DEFINES.ROMOFF
+	dec portb
+	.endif
 
 	pla:tax
 
-@exit
+
+; optimize OK (GRAPH), line = 132
+
+	mva ATARI.SAVMSC VIDEORAM
+	mva ATARI.SAVMSC+1 VIDEORAM+1
 
 ; ------------------------------------------------------------
 
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
+MODE	= DATAORIGIN+$0029
 
-	inx
-	mva RESULT :STACKORIGIN,x
+@VarData	= MODE
+@VarDataSize	= 1
 
+@exit
 	.ifdef @new
 	lda <@VarData
 	sta :ztmp
@@ -485,103 +460,200 @@ FAANYFILE	= $3F
 	ldy #@VarDataSize-1
 	jmp @FreeMem
 	eif
-
-; ------------------------------------------------------------
-
-CHN	= DATAORIGIN+$000D
-RESULT	= DATAORIGIN+$000E
-
-@VarData	= CHN
-@VarDataSize	= 2
-
 	rts						; ret
 .endl
 
 ; ------------------------------------------------------------
 
-.endl							; UNIT CIO
+CURRENTDRIVER	= $80
+DETECT	= $00
+CGA	= $01
+MCGA	= $02
+EGA	= $03
+EGA64	= $04
+EGAMONO	= $05
+LOWRES	= $06
+HERCMONO	= $07
+VGA	= $09
+VESA	= $0A
+D1BIT	= $0B
+D2BIT	= $0C
+D4BIT	= $0D
+D6BIT	= $0E
+D8BIT	= $0F
+D12BIT	= $10
+M640X400	= $18
+M640X480	= $18
+GROK	= $01
+GRNOINITGRAPH	= $FF
+GRNOTDETECTED	= $FE
+GRFILENOTFOUND	= $FD
+GRINVALIDDRIVER	= $FC
+GRNOLOADMEM	= $FB
+GRNOSCANMEM	= $FA
+GRNOFLOODMEM	= $F9
+GRFONTNOTFOUND	= $F8
+GRNOFONTMEM	= $F7
+GRINVALIDMODE	= $F6
+GRERROR	= $F5
+GRIOERROR	= $F4
+GRINVALIDFONT	= $F3
+GRINVALIDFONTNUM	= $F2
+GRINVALIDVERSION	= $EE
+CGAC0	= $00
+CGAC1	= $01
+CGAC2	= $02
+CGAC3	= $03
+CGAHI	= $04
+MCGAC0	= $00
+MCGAC1	= $01
+MCGAC2	= $02
+MCGAC3	= $03
+MCGAMED	= $04
+MCGAHI	= $05
+EGALO	= $00
+EGAHI	= $01
+EGA64LO	= $00
+EGA64HI	= $01
+EGAMONOHI	= $03
+VGALO	= $0A
+VGAMED	= $1F
+VGAHI	= $18
+WIN_LEFT	= DATAORIGIN+$000C
+WIN_RIGHT	= DATAORIGIN+$000E
+WIN_TOP	= DATAORIGIN+$0010
+WIN_BOTTOM	= DATAORIGIN+$0012
+GRAPHRESULT	= DATAORIGIN+$0014
+GETCOLOR	= DATAORIGIN+$0015
+adr.LASTARCCOORDS	= DATAORIGIN+$0016
+.var LASTARCCOORDS	= adr.LASTARCCOORDS .word
+LASTARCCOORDS.X	= DATAORIGIN+$0016
+LASTARCCOORDS.Y	= DATAORIGIN+$0018
+LASTARCCOORDS.XSTART	= DATAORIGIN+$001A
+LASTARCCOORDS.YSTART	= DATAORIGIN+$001C
+LASTARCCOORDS.XEND	= DATAORIGIN+$001E
+LASTARCCOORDS.YEND	= DATAORIGIN+$0020
+CURRENTX	= DATAORIGIN+$0022
+CURRENTY	= DATAORIGIN+$0024
+VIDEORAM	= DATAORIGIN+$0026
+SCANLINE_WIDTH	= DATAORIGIN+$0028
+
+.endl							; UNIT GRAPH
+
+.local	WAITPROC					; PROCEDURE | ASSEMBLER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x F
+	dex
+
+; ---------------------  ASM Block 075  ---------------------
+
+
+  lda F
+    .by $18 $65 $14 $C5 $14 $D0 $FC $60 
+  
+
+; ------------------------------------------------------------
+
+F	= DATAORIGIN+$0134
+
+@VarData	= F
+@VarDataSize	= 1
+
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\type.pas), line = 26
-	@print #$7D
+; optimize OK (examples\vscroll.pas), line = 28
 
-; optimize FAIL (100, examples\type.pas), line = 27
-	@printSTRING #CODEORIGIN+$000D
-	@printEOL
+	mva #$0F I
 
-; optimize FAIL (100, examples\type.pas), line = 28
-	@printSTRING #CODEORIGIN+$0020
-	@printEOL
+; optimize OK (examples\vscroll.pas), line = 29
 
-; optimize FAIL (100, examples\type.pas), line = 29
-	@printSTRING #CODEORIGIN+$0040
-	@printEOL
+	mva DL SDLSTL
+	mva DL+1 SDLSTL+1
 
-; optimize OK (examples\type.pas), line = 30
+; --- WhileProlog
+	jmp l_00E4
+l_00E5
 
-	mva #$0C DATA.DAY
+; --- WhileProlog
+	jmp l_00E7
+l_00E8
 
-; optimize OK (examples\type.pas), line = 31
+; optimize FAIL (0, examples\vscroll.pas), line = 32
+	dec I
 
-	mva #$04 DATA.MONTH
+; optimize OK (examples\vscroll.pas), line = 33
 
-; optimize OK (examples\type.pas), line = 32
+	mva I VSCROL
 
-	mva #$B7 DATA.YEAR
-	mva #$07 DATA.YEAR+1
-
-; optimize OK (examples\type.pas), line = 33
-
-	mva #$B6 DATA.HEIGHT
-
-; optimize OK (examples\type.pas), line = 34
-
-	mva DATA.HEIGHT WEIGHTDATA
-
-; optimize FAIL (100, examples\type.pas), line = 35
-	@printSTRING #CODEORIGIN+$0042
-	@printEOL
-
-; optimize FAIL (100, examples\type.pas), line = 36
-	@printSTRING #CODEORIGIN+$0051
-	@printEOL
-
-; optimize FAIL (100, examples\type.pas), line = 37
-	@printSTRING #CODEORIGIN+$003F
-	@print #$9B
-	@printSTRING #CODEORIGIN+$0060
-	lda DATA.DAY
-	jsr @printBYTE._a
-	@print #$2E
-	lda DATA.MONTH
-	jsr @printBYTE._a
-	@print #$2E
-	lda DATA.YEAR
-	ldy DATA.YEAR+1
-	jsr @printWORD._ay
-	@printSTRING #CODEORIGIN+$003F
-	@print #$9B
-	@printSTRING #CODEORIGIN+$003F
-
-; optimize FAIL (100, examples\type.pas), line = 38
-	@printSTRING #CODEORIGIN+$006C
-
-; optimize FAIL (100, examples\type.pas), line = 39
-	lda WEIGHTDATA
-	jsr @printBYTE._a
-	@printEOL
-
-; optimize FAIL ('CIO.GET', examples\type.pas), line = 40
+; optimize FAIL ('WAITPROC', examples\vscroll.pas), line = 34
 	inx
-	mva #$07 :STACKORIGIN,x
-	jsr CIO.GET
-	mva :STACKORIGIN,x KEY
-	dex
+	mva #$03 :STACKORIGIN,x
+	jsr WAITPROC
+l_00E7
 
-	jsr CRT.READKEY					; call Entry
+; optimize OK (examples\vscroll.pas), line = 31
 
-	dex
+	lda I
+	jne l_00E8
+
+; optimize FAIL ('WAITPROC', examples\vscroll.pas), line = 36
+	inx
+	mva #$32 :STACKORIGIN,x
+	jsr WAITPROC
+
+; --- WhileProlog
+	jmp l_0104
+l_0105
+
+; optimize FAIL (0, examples\vscroll.pas), line = 38
+	inc I
+
+; optimize OK (examples\vscroll.pas), line = 39
+
+	mva I VSCROL
+
+; optimize FAIL ('WAITPROC', examples\vscroll.pas), line = 40
+	inx
+	mva #$02 :STACKORIGIN,x
+	jsr WAITPROC
+l_0104
+
+; optimize OK (examples\vscroll.pas), line = 37
+
+	lda I
+	cmp #$0F
+	jcc l_0105
+l_00E4
+
+; optimize OK (examples\vscroll.pas), line = 30
+
+	lda CH
+	cmp #$FF
+	jeq l_00E5
+
+; optimize FAIL ('GRAPH.INITGRAPH_007E', examples\vscroll.pas), line = 43
+	inx
+	mva #$00 :STACKORIGIN,x
+	jsr GRAPH.INITGRAPH_007E
+
+; ------------------------------------------------------------
+
+I	= $E0
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -592,23 +664,20 @@ RESULT	= DATAORIGIN+$000E
 	eif
 	rts						; ret
 .endl
-l_007D
+l_001D
 
-; optimize FAIL ('MAINPROC', examples\type.pas), line = 45
+; optimize FAIL ('MAINPROC', examples\vscroll.pas), line = 47
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-adr.STRBUFFER	= DATAORIGIN+$000F
-.var STRBUFFER	= adr.STRBUFFER .word
-adr.DATA	= DATAORIGIN+$010F
-.var DATA	= adr.DATA .word
-DATA.DAY	= DATAORIGIN+$010F
-DATA.MONTH	= DATAORIGIN+$0110
-DATA.YEAR	= DATAORIGIN+$0111
-DATA.HEIGHT	= DATAORIGIN+$0113
-WEIGHTDATA	= DATAORIGIN+$0114
-KEY	= DATAORIGIN+$0115
+adr.TEXT	= DATAORIGIN+$002A
+.var TEXT	= adr.TEXT .word
+adr.DL	= DATAORIGIN+$012A
+.var DL	= adr.DL .word
+CH	= $02FC
+VSCROL	= $D405
+SDLSTL	= $0230
 @exit
 
 @halt	ldx #0
@@ -648,20 +717,12 @@ ATARI
 	jsr MAIN.CRT.@UnitInit
 	eif
 
-	.ifdef MAIN.DOS.@UnitInit
-	jsr MAIN.DOS.@UnitInit
+	.ifdef MAIN.TYPES.@UnitInit
+	jsr MAIN.TYPES.@UnitInit
 	eif
 
-	.ifdef MAIN.STRUTILS.@UnitInit
-	jsr MAIN.STRUTILS.@UnitInit
-	eif
-
-	.ifdef MAIN.SYSUTILS.@UnitInit
-	jsr MAIN.SYSUTILS.@UnitInit
-	eif
-
-	.ifdef MAIN.CIO.@UnitInit
-	jsr MAIN.CIO.@UnitInit
+	.ifdef MAIN.GRAPH.@UnitInit
+	jsr MAIN.GRAPH.@UnitInit
 	eif
 .endm
 
@@ -679,20 +740,12 @@ ATARI
 	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
 	eif
 
-	ift .SIZEOF(MAIN.DOS) > 0
-	.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+	ift .SIZEOF(MAIN.TYPES) > 0
+	.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
 	eif
 
-	ift .SIZEOF(MAIN.STRUTILS) > 0
-	.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-	eif
-
-	ift .SIZEOF(MAIN.SYSUTILS) > 0
-	.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-	eif
-
-	ift .SIZEOF(MAIN.CIO) > 0
-	.print 'CIO: ',MAIN.CIO,'..',MAIN.CIO+.SIZEOF(MAIN.CIO)-1
+	ift .SIZEOF(MAIN.GRAPH) > 0
+	.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
 	eif
 
 	.print 'CODE: ',CODEORIGIN,'..',*-1
@@ -700,10 +753,22 @@ ATARI
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $27 $00  $00 $00 $17 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $14 $4E $4E $4E $65 $66
+.by  $66 $65 $63 $74 $75 $73 $40 $72  $75 $6C $65 $7A $4E $4E $4E $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $70 $70 $70 $70 $67 $01  $20 $41
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 278
+VARDATASIZE	= 309
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -714,11 +779,7 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $11 $45 $66  $66 $65 $63 $74 $75 $73 $20 $65
-.by  $78 $61 $6D $70 $6C $65 $3A $00  $1E $54 $59 $50 $45 $20 $64 $65  $63 $6C $61 $72 $61 $74 $69 $6F
-.by  $6E $20 $64 $65 $6D $6F $6E $73  $74 $72 $61 $74 $69 $6F $6E $00  $00 $00 $0D $50 $65 $72 $73 $6F
-.by  $6E $61 $6C $20 $64 $61 $74 $61  $00 $0D $2D $2D $2D $2D $2D $2D  $2D $2D $2D $2D $2D $2D $2D $00
-.by  $0A $42 $69 $72 $74 $68 $64 $61  $79 $3A $20 $00 $08 $48 $65 $69  $67 $68 $74 $3A $20 $00
+.by  $14 $4E $4E $4E $65 $66 $66 $65  $63 $74 $75 $73 $40 $72 $75 $6C  $65 $7A $4E $4E $4E $00
 .endm
 
 	end
