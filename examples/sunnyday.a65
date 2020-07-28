@@ -148,7 +148,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_0131
+	jmp l_0014
 
 ; ------------------------------------------------------------
 
@@ -181,6 +181,53 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 A	= edx
 VALUE	= ecx
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
+
+.local	MOVE_0056					; PROCEDURE | ASSEMBLER | OVERLOAD | REGISTER
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x COUNT
+	mva :STACKORIGIN+STACKWIDTH,x COUNT+1
+	dex
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x DEST
+	mva :STACKORIGIN+STACKWIDTH,x DEST+1
+	dex
+
+; ------------------------------------------------------------
+
+; Generate Assignment for WORD / SMALLINT / SHORTREAL / POINTER
+; as Pointer
+	mva :STACKORIGIN,x SOURCE
+	mva :STACKORIGIN+STACKWIDTH,x SOURCE+1
+	dex
+
+; ---------------------  ASM Block 031  ---------------------
+
+	jsr @move
+
+
+; ------------------------------------------------------------
+
+SOURCE	= edx
+DEST	= ecx
+COUNT	= eax
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -357,84 +404,28 @@ NMIEN	= $D40E
 
 .local	CRT						; UNIT
 
-.local	SOUND						; PROCEDURE | ASSEMBLER
+.local	READKEY						; FUNCTION | ASSEMBLER
 
-; ------------------------------------------------------------
+; ---------------------  ASM Block 049  ---------------------
 
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x VOL
-	dex
+	txa:pha
 
-; ------------------------------------------------------------
+	@GetKey
 
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x DIST
-	dex
+	sta Result
 
-; ------------------------------------------------------------
-
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x FREQ
-	dex
-
-; ------------------------------------------------------------
-
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x CHAN
-	dex
-
-; ---------------------  ASM Block 058  ---------------------
-
-	lda Chan
-	and #7
-
-	ldy #$10
-	cmp #4
-	scs
-	ldy #$00
-	sty npokey
-
-	and #3
-
-	asl @
-	add #0
-npokey	equ *-1
-	tay
-
-	lda #$00
-	sta audctl
-	lda #$03
-	sta skctl
-
-	lda Freq
-	sta audf1,y
-
-	lda Vol
-	and #$0F
-	sta _t
-
-	lda Dist	; -> bit 7-6-5
-	:4 asl @
-	ora #0
-_t	equ *-1
-	sta audc1,y
-
-
-; ------------------------------------------------------------
-
-CHAN	= DATAORIGIN+$000C
-FREQ	= DATAORIGIN+$000D
-DIST	= DATAORIGIN+$000E
-VOL	= DATAORIGIN+$000F
-
-@VarData	= CHAN
-@VarDataSize	= 4
+	pla:tax
 
 @exit
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx
+	mva RESULT :STACKORIGIN,x
+
 	.ifdef @new
 	lda <@VarData
 	sta :ztmp
@@ -442,6 +433,14 @@ VOL	= DATAORIGIN+$000F
 	ldy #@VarDataSize-1
 	jmp @FreeMem
 	eif
+
+; ------------------------------------------------------------
+
+RESULT	= DATAORIGIN+$000C
+
+@VarData	= RESULT
+@VarDataSize	= 1
+
 	rts						; ret
 .endl
 
@@ -486,6 +485,40 @@ BLINK	= $80
 
 ; ------------------------------------------------------------
 
+.local	DOS						; UNIT
+
+; ------------------------------------------------------------
+
+PALNTSC	= $D014
+
+.endl							; UNIT DOS
+
+; ------------------------------------------------------------
+
+.local	STRUTILS					; UNIT
+
+; ------------------------------------------------------------
+
+.endl							; UNIT STRUTILS
+
+; ------------------------------------------------------------
+
+.local	SYSUTILS					; UNIT
+
+; ------------------------------------------------------------
+
+FAREADONLY	= $01
+FAHIDDEN	= $02
+FASYSFILE	= $04
+FAVOLUMEID	= $08
+FADIRECTORY	= $10
+FAARCHIVE	= $20
+FAANYFILE	= $3F
+
+.endl							; UNIT SYSUTILS
+
+; ------------------------------------------------------------
+
 .local	TYPES						; UNIT
 
 ; ------------------------------------------------------------
@@ -495,6 +528,99 @@ BLINK	= $80
 ; ------------------------------------------------------------
 
 .local	GRAPH						; UNIT
+
+.local	INITGRAPH_00B7					; PROCEDURE | OVERLOAD
+
+; ------------------------------------------------------------
+
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x MODE
+	dex
+
+; ---------------------  ASM Block 078  ---------------------
+
+
+	txa:pha
+
+	lda mode
+	sta MAIN.SYSTEM.GraphMode
+	and #$0f
+	tay
+
+	ldx #$60		; 6*16
+	lda mode		; %00010000 with text window
+	and #$10
+	eor #$10
+	ora #2			; read
+
+	.nowarn @GRAPHICS
+
+	sty GraphResult
+
+
+	.ifdef MAIN.@DEFINES.ROMOFF
+	inc portb
+	.endif
+
+tlshc	equ $ee6d
+
+	ldx dindex
+	ldy tlshc,x
+	lda #5
+shift	asl @
+	dey
+	bne shift
+
+	sta SCANLINE_WIDTH
+
+; Fox/TQA
+
+dindex	equ $57
+tmccn	equ $ee7d
+tmrcn	equ $ee8d
+
+	ldx dindex
+	lda tmccn,x
+	ldy tmrcn,x
+	ldx #0
+	cmp #<320
+	sne:inx
+
+; X:A = horizontal resolution
+; Y = vertical resolution
+
+	@SCREENSIZE
+
+	.ifdef MAIN.@DEFINES.ROMOFF
+	dec portb
+	.endif
+
+	pla:tax
+
+
+; optimize OK (GRAPH), line = 132
+
+	mva ATARI.SAVMSC VIDEORAM
+	mva ATARI.SAVMSC+1 VIDEORAM+1
+
+; ------------------------------------------------------------
+
+MODE	= DATAORIGIN+$002A
+
+@VarData	= MODE
+@VarDataSize	= 1
+
+@exit
+	.ifdef @new
+	lda <@VarData
+	sta :ztmp
+	lda >@VarData
+	ldy #@VarDataSize-1
+	jmp @FreeMem
+	eif
+	rts						; ret
+.endl
 
 ; ------------------------------------------------------------
 
@@ -552,42 +678,73 @@ EGAMONOHI	= $03
 VGALO	= $0A
 VGAMED	= $1F
 VGAHI	= $18
-WIN_LEFT	= DATAORIGIN+$0010
-WIN_RIGHT	= DATAORIGIN+$0012
-WIN_TOP	= DATAORIGIN+$0014
-WIN_BOTTOM	= DATAORIGIN+$0016
-GRAPHRESULT	= DATAORIGIN+$0018
-GETCOLOR	= DATAORIGIN+$0019
-adr.LASTARCCOORDS	= DATAORIGIN+$001A
+WIN_LEFT	= DATAORIGIN+$000D
+WIN_RIGHT	= DATAORIGIN+$000F
+WIN_TOP	= DATAORIGIN+$0011
+WIN_BOTTOM	= DATAORIGIN+$0013
+GRAPHRESULT	= DATAORIGIN+$0015
+GETCOLOR	= DATAORIGIN+$0016
+adr.LASTARCCOORDS	= DATAORIGIN+$0017
 .var LASTARCCOORDS	= adr.LASTARCCOORDS .word
-LASTARCCOORDS.X	= DATAORIGIN+$001A
-LASTARCCOORDS.Y	= DATAORIGIN+$001C
-LASTARCCOORDS.XSTART	= DATAORIGIN+$001E
-LASTARCCOORDS.YSTART	= DATAORIGIN+$0020
-LASTARCCOORDS.XEND	= DATAORIGIN+$0022
-LASTARCCOORDS.YEND	= DATAORIGIN+$0024
-CURRENTX	= DATAORIGIN+$0026
-CURRENTY	= DATAORIGIN+$0028
-VIDEORAM	= DATAORIGIN+$002A
-SCANLINE_WIDTH	= DATAORIGIN+$002C
+LASTARCCOORDS.X	= DATAORIGIN+$0017
+LASTARCCOORDS.Y	= DATAORIGIN+$0019
+LASTARCCOORDS.XSTART	= DATAORIGIN+$001B
+LASTARCCOORDS.YSTART	= DATAORIGIN+$001D
+LASTARCCOORDS.XEND	= DATAORIGIN+$001F
+LASTARCCOORDS.YEND	= DATAORIGIN+$0021
+CURRENTX	= DATAORIGIN+$0023
+CURRENTY	= DATAORIGIN+$0025
+VIDEORAM	= DATAORIGIN+$0027
+SCANLINE_WIDTH	= DATAORIGIN+$0029
 
 .endl							; UNIT GRAPH
 
-.local	WAITFORKEYPROC					; PROCEDURE
+; ------------------------------------------------------------
 
-; --- WhileProlog
-l_01F4
+.local	CIO						; UNIT
 
-; optimize OK (examples\sounds.pas), line = 17
+.local	GET						; FUNCTION | ASSEMBLER
 
-	lda CH
-	cmp #$FF
-	jeq l_01F4
+; ------------------------------------------------------------
 
-; optimize OK (examples\sounds.pas), line = 19
+; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+	mva :STACKORIGIN,x CHN
+	dex
 
-	mva #$FF CH
+; ---------------------  ASM Block 095  ---------------------
+
+	txa:pha
+
+	lda chn
+	:4 asl @
+	tax
+
+	lda #7		;get char command
+	sta iccmd,x
+
+	lda #$00	;zero out the unused
+	sta icbufl,x	;store in accumulator
+	sta icbufh,x	;...after CIOV jump
+
+	m@call	ciov
+
+	sty MAIN.SYSTEM.IOResult
+
+	sta Result
+
+	pla:tax
+
 @exit
+
+; ------------------------------------------------------------
+
+; Push BYTE / CHAR / SHORTINT / BOOLEAN
+; as Pointer
+
+	inx
+	mva RESULT :STACKORIGIN,x
+
 	.ifdef @new
 	lda <@VarData
 	sta :ztmp
@@ -595,214 +752,75 @@ l_01F4
 	ldy #@VarDataSize-1
 	jmp @FreeMem
 	eif
+
+; ------------------------------------------------------------
+
+CHN	= DATAORIGIN+$002B
+RESULT	= DATAORIGIN+$002C
+
+@VarData	= CHN
+@VarDataSize	= 2
+
 	rts						; ret
 .endl
 
-.local	SPACEKEYPROC					; PROCEDURE
+; ------------------------------------------------------------
 
-; --- WhileProlog
-l_020B
-
-; optimize OK (examples\sounds.pas), line = 24
-
-	lda CH
-	cmp #$21
-	jne l_020B
-
-; optimize OK (examples\sounds.pas), line = 26
-
-	mva #$FF CH
-@exit
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-	rts						; ret
-.endl
+.endl							; UNIT CIO
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\sounds.pas), line = 31
-	@print #$7D
+; optimize FAIL ('GRAPH.INITGRAPH_00B7', examples\sunnyday.pas), line = 25
+	inx
+	mva #$13 :STACKORIGIN,x
+	jsr GRAPH.INITGRAPH_00B7
 
-; optimize OK (examples\sounds.pas), line = 32
+; optimize OK (examples\sunnyday.pas), line = 26
 
+	lda PICDATA
+	sta :edx
+	lda PICDATA+1
+	sta :edx+1
+	lda SCREEN
+	sta :ecx
+	lda SCREEN+1
+	sta :ecx+1
+	lda #$F0
+	sta :eax
 	lda #$00
-	sta $0052
+	sta :eax+1
+	jsr @move
 
-; optimize OK (examples\sounds.pas), line = 33
+; optimize OK (examples\sunnyday.pas), line = 27
 
+	lda adr.COLORS+$00
+	sta $02C8
+
+; optimize OK (examples\sunnyday.pas), line = 28
+
+	lda adr.COLORS+$01
+	sta $02C4
+
+; optimize OK (examples\sunnyday.pas), line = 29
+
+	lda adr.COLORS+$02
+	sta $02C5
+
+; optimize OK (examples\sunnyday.pas), line = 30
+
+	lda adr.COLORS+$03
 	sta $02C6
 
-; optimize FAIL (100, examples\sounds.pas), line = 34
-	@printSTRING #CODEORIGIN+$0000
-	@printEOL
-
-; optimize FAIL (100, examples\sounds.pas), line = 35
-	@printSTRING #CODEORIGIN+$0013
-	@printEOL
-
-; optimize FAIL (100, examples\sounds.pas), line = 36
-	@printSTRING #CODEORIGIN+$0028
-	@printEOL
-
-; optimize FAIL (100, examples\sounds.pas), line = 37
-	@printSTRING #CODEORIGIN+$002A
-	@printEOL
-
-; optimize FAIL ('SPACEKEYPROC', examples\sounds.pas), line = 38
-	jsr SPACEKEYPROC
-
-; optimize OK (examples\sounds.pas), line = 39
-
-	mva #$32 COL
-
-; optimize FAIL ('CRT.SOUND', examples\sounds.pas), line = 40
+; optimize FAIL ('CIO.GET', examples\sunnyday.pas), line = 32
 	inx
-	mva #$00 :STACKORIGIN,x
-	inx
-	mva #$64 :STACKORIGIN,x
-	inx
-	mva #$0A :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	jsr CRT.SOUND
+	mva #$07 :STACKORIGIN,x
+	jsr CIO.GET
+	mva :STACKORIGIN,x CH
+	dex
 
-; optimize FAIL (100, examples\sounds.pas), line = 41
-	@printSTRING #CODEORIGIN+$004D
-	@printEOL
+	jsr CRT.READKEY					; call Entry
 
-; optimize FAIL ('SPACEKEYPROC', examples\sounds.pas), line = 42
-	jsr SPACEKEYPROC
-
-; optimize OK (examples\sounds.pas), line = 43
-
-	mva #$64 COL
-
-; optimize FAIL ('CRT.SOUND', examples\sounds.pas), line = 44
-	inx
-	mva #$01 :STACKORIGIN,x
-	inx
-	mva #$8C :STACKORIGIN,x
-	inx
-	mva #$0C :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	jsr CRT.SOUND
-
-; optimize FAIL (100, examples\sounds.pas), line = 45
-	@printSTRING #CODEORIGIN+$0071
-	@printEOL
-
-; optimize FAIL ('SPACEKEYPROC', examples\sounds.pas), line = 46
-	jsr SPACEKEYPROC
-
-; optimize OK (examples\sounds.pas), line = 47
-
-	mva #$96 COL
-
-; optimize FAIL ('CRT.SOUND', examples\sounds.pas), line = 48
-	inx
-	mva #$02 :STACKORIGIN,x
-	inx
-	mva #$C8 :STACKORIGIN,x
-	inx
-	mva #$0E :STACKORIGIN,x
-	inx
-	mva #$06 :STACKORIGIN,x
-	jsr CRT.SOUND
-
-; optimize FAIL (100, examples\sounds.pas), line = 49
-	@printSTRING #CODEORIGIN+$0094
-	@printEOL
-
-; optimize FAIL ('SPACEKEYPROC', examples\sounds.pas), line = 50
-	jsr SPACEKEYPROC
-
-; optimize OK (examples\sounds.pas), line = 51
-
-	mva #$B4 COL
-
-; optimize FAIL ('CRT.SOUND', examples\sounds.pas), line = 52
-	inx
-	mva #$03 :STACKORIGIN,x
-	inx
-	mva #$46 :STACKORIGIN,x
-	inx
-	mva #$0A :STACKORIGIN,x
-	inx
-	mva #$04 :STACKORIGIN,x
-	jsr CRT.SOUND
-
-; optimize FAIL (100, examples\sounds.pas), line = 53
-	@printSTRING #CODEORIGIN+$0027
-	@printEOL
-
-; optimize FAIL (100, examples\sounds.pas), line = 54
-	@printSTRING #CODEORIGIN+$00B8
-	@printEOL
-
-; optimize FAIL (100, examples\sounds.pas), line = 55
-	@printSTRING #CODEORIGIN+$00DE
-	@printEOL
-
-; optimize FAIL (100, examples\sounds.pas), line = 56
-	@printSTRING #CODEORIGIN+$0104
-	@printEOL
-
-; optimize FAIL ('WAITFORKEYPROC', examples\sounds.pas), line = 57
-	jsr WAITFORKEYPROC
-
-; optimize OK (examples\sounds.pas), line = 58
-
-	mva #$F0 COL
-
-; optimize FAIL ('CRT.SOUND', examples\sounds.pas), line = 59
-	inx
-	mva #$00 :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	inx
-	mva #$00 :STACKORIGIN,x
-	jsr CRT.SOUND
-
-; optimize FAIL ('CRT.SOUND', examples\sounds.pas), line = 60
-	inx
-	mva #$01 :STACKORIGIN,x
-	inx
-	mva #$00 :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	jsr CRT.SOUND
-
-; optimize FAIL ('CRT.SOUND', examples\sounds.pas), line = 61
-	inx
-	mva #$02 :STACKORIGIN,x
-	inx
-	mva #$00 :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	jsr CRT.SOUND
-
-; optimize FAIL ('CRT.SOUND', examples\sounds.pas), line = 62
-	inx
-	mva #$03 :STACKORIGIN,x
-	inx
-	mva #$00 :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	inx
-	sta :STACKORIGIN,x
-	jsr CRT.SOUND
+	dex
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -813,15 +831,21 @@ l_020B
 	eif
 	rts						; ret
 .endl
-l_0131
+l_0014
 
-; optimize FAIL ('MAINPROC', examples\sounds.pas), line = 66
+; optimize FAIL ('MAINPROC', examples\sunnyday.pas), line = 37
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-CH	= $02FC
-COL	= $02C6
+adr.STRBUFFER	= DATAORIGIN+$002D
+.var STRBUFFER	= adr.STRBUFFER .word
+adr.PICDATA	= DATAORIGIN+$012D
+.var PICDATA	= adr.PICDATA .word
+adr.COLORS	= DATAORIGIN+$021D
+.var COLORS	= adr.COLORS .word
+SCREEN	= $58
+CH	= DATAORIGIN+$0221
 @exit
 
 @halt	ldx #0
@@ -861,12 +885,28 @@ ATARI
 	jsr MAIN.CRT.@UnitInit
 	eif
 
+	.ifdef MAIN.DOS.@UnitInit
+	jsr MAIN.DOS.@UnitInit
+	eif
+
+	.ifdef MAIN.STRUTILS.@UnitInit
+	jsr MAIN.STRUTILS.@UnitInit
+	eif
+
+	.ifdef MAIN.SYSUTILS.@UnitInit
+	jsr MAIN.SYSUTILS.@UnitInit
+	eif
+
 	.ifdef MAIN.TYPES.@UnitInit
 	jsr MAIN.TYPES.@UnitInit
 	eif
 
 	.ifdef MAIN.GRAPH.@UnitInit
 	jsr MAIN.GRAPH.@UnitInit
+	eif
+
+	.ifdef MAIN.CIO.@UnitInit
+	jsr MAIN.CIO.@UnitInit
 	eif
 .endm
 
@@ -884,6 +924,18 @@ ATARI
 	.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
 	eif
 
+	ift .SIZEOF(MAIN.DOS) > 0
+	.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+	eif
+
+	ift .SIZEOF(MAIN.STRUTILS) > 0
+	.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
+	eif
+
+	ift .SIZEOF(MAIN.SYSUTILS) > 0
+	.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
+	eif
+
 	ift .SIZEOF(MAIN.TYPES) > 0
 	.print 'TYPES: ',MAIN.TYPES,'..',MAIN.TYPES+.SIZEOF(MAIN.TYPES)-1
 	eif
@@ -892,15 +944,41 @@ ATARI
 	.print 'GRAPH: ',MAIN.GRAPH,'..',MAIN.GRAPH+.SIZEOF(MAIN.GRAPH)-1
 	eif
 
+	ift .SIZEOF(MAIN.CIO) > 0
+	.print 'CIO: ',MAIN.CIO,'..',MAIN.CIO+.SIZEOF(MAIN.CIO)-1
+	eif
+
 	.print 'CODE: ',CODEORIGIN,'..',*-1
 
 ; ------------------------------------------------------------
 
 DATAORIGIN
-.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $27 $00 $00 $00 $17
+.by  $28 $00 $18 $00 $2D $0C $00 $00  $00 $00 $00 $00 $00 $00 $00 $27  $00 $00 $00 $17 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $00 $00 $00 $00  $00 $00 $00 $00 $30 $03 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $0C $0C  $00 $00 $00 $00 $00 $00 $00 $03  $03 $F0 $30 $00 $02 $AA $00 $00
+.by  $00 $00 $CF $FC $C0 $00 $0A $AA  $80 $00 $00 $00 $3C $CF $00 $00  $2A $66 $60 $00 $00 $03 $FF $FF
+.by  $F0 $00 $A9 $AA $A8 $00 $00 $00  $33 $F3 $00 $00 $A9 $A9 $A8 $00  $00 $00 $CC $0C $C0 $00 $AA $99
+.by  $68 $00 $00 $03 $03 $F0 $30 $00  $A6 $AA $68 $00 $00 $00 $0C $0C  $00 $00 $A9 $A6 $A8 $00 $00 $00
+.by  $30 $03 $00 $00 $2A $A6 $60 $00  $00 $00 $00 $00 $00 $00 $0A $9A  $80 $00 $00 $00 $00 $00 $00 $00
+.by  $02 $AA $00 $00 $00 $00 $00 $00  $00 $00 $00 $54 $00 $00 $00 $00  $00 $00 $00 $00 $00 $54 $00 $00
+.by  $00 $00 $00 $00 $00 $00 $00 $54  $00 $00 $00 $00 $00 $00 $00 $00  $00 $54 $00 $00 $00 $00 $00 $00
+.by  $00 $00 $00 $54 $00 $00 $00 $00  $00 $00 $00 $00 $00 $54 $00 $00  $00 $00 $00 $00 $00 $00 $00 $54
+.by  $00 $00 $00 $00 $00 $00 $00 $00  $01 $55 $00 $00 $00 $00 $00 $00  $00 $00 $05 $55 $40 $00 $00 $00
+.by  $00 $00 $00 $AA $AA $AA $AA $AA  $AA $AA $AA $AA $AA $94 $E0 $C0  $EC
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 45
+VARDATASIZE	= 546
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -911,19 +989,7 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $11 $45 $66 $66 $65 $63 $74 $75  $73 $20 $65 $78 $61 $6D $70 $6C  $65 $3A $00 $13 $53 $6F $75 $6E
-.by  $64 $20 $64 $65 $6D $6F $6E $73  $74 $72 $61 $74 $69 $6F $6E $00  $00 $00 $21 $50 $72 $65 $73 $73
-.by  $20 $73 $70 $61 $63 $65 $20 $66  $6F $72 $20 $66 $69 $72 $73 $74  $20 $73 $2E $20 $63 $68 $61 $6E
-.by  $6E $65 $6C $21 $00 $22 $50 $72  $65 $73 $73 $20 $73 $70 $61 $63  $65 $20 $66 $6F $72 $20 $73 $65
-.by  $63 $6F $6E $64 $20 $73 $2E $20  $63 $68 $61 $6E $6E $65 $6C $21  $00 $21 $50 $72 $65 $73 $73 $20
-.by  $73 $70 $61 $63 $65 $20 $66 $6F  $72 $20 $74 $68 $69 $72 $64 $20  $73 $2E $20 $63 $68 $61 $6E $6E
-.by  $65 $6C $21 $00 $22 $50 $72 $65  $73 $73 $20 $73 $70 $61 $63 $65  $20 $66 $6F $72 $20 $66 $6F $75
-.by  $72 $74 $68 $20 $73 $2E $20 $63  $68 $61 $6E $6E $65 $6C $21 $00  $24 $2A $2A $2A $2A $2A $2A $2A
-.by  $2A $2A $2A $2A $2A $2A $2A $2B  $2A $2A $2A $2A $2A $2A $2A $2A  $2A $2A $2A $2A $2A $2A $2A $2A
-.by  $2A $2A $2A $2A $2A $00 $24 $50  $72 $65 $73 $73 $20 $61 $6E $79  $20 $6B $65 $79 $20 $74 $6F $20
-.by  $73 $68 $75 $74 $20 $6F $66 $66  $20 $74 $68 $65 $20 $73 $6F $75  $6E $64 $21 $00 $24 $2A $2A $2A
-.by  $2A $2A $2A $2A $2A $2A $2A $2A  $2A $2A $2A $2A $2B $2A $2A $2A  $2A $2A $2A $2A $2A $2A $2A $2A
-.by  $2A $2A $2A $2A $2A $2A $2A $2A  $2A $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00
 .endm
 
 	end

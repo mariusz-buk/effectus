@@ -4,11 +4,10 @@ program strvalPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Number to string conversion using
 // StrB, StrI and StrC procedures
 // 
@@ -55,7 +54,7 @@ begin  // 1
   Writeln(num3);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

@@ -4,11 +4,10 @@ program strmanPrg;
 uses
   Crt, SySutils, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Using string manipulation PROCedures
 // SCopy, ScopyS and SAssign
 // 
@@ -39,7 +38,7 @@ begin  // 2
   Writeln(STR01);
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

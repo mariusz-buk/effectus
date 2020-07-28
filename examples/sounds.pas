@@ -5,7 +5,7 @@ uses
   Crt, Graph;
 
 // Effectus example
-// -------------------------------------
+// ----------------
 // Sound demo
 // (using Sound and SndRst procedures)
 var
@@ -15,16 +15,16 @@ var
 procedure WAITFORKEYProc;
 begin  // 1
  WHILE CH=255 do begin
-  end;  // while
+  end;
   CH := 255;
-end;  // 4
+end;
 
 procedure SPACEKEYProc;
 begin  // 6
  WHILE CH<>33 do begin
-  end;  // while
+  end;
   CH := 255;
-end;  // 4
+end;
 
 procedure MAINProc;
 begin  // 6
@@ -60,7 +60,7 @@ begin  // 6
   Sound(1, 0, 0, 0);
   Sound(2, 0, 0, 0);
   Sound(3, 0, 0, 0);
-end;  // 4
+end;
 
 begin
   MAINProc;

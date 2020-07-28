@@ -148,7 +148,7 @@ VADR	= DATAORIGIN+VARINITSIZE
 
 .local	MAIN						; PROCEDURE
 
-	jmp l_002C
+	jmp l_002A
 
 ; ------------------------------------------------------------
 
@@ -319,46 +319,6 @@ NMIEN	= $D40E
 
 .local	CRT						; UNIT
 
-.local	READKEY						; FUNCTION | ASSEMBLER
-
-; ---------------------  ASM Block 049  ---------------------
-
-	txa:pha
-
-	@GetKey
-
-	sta Result
-
-	pla:tax
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-RESULT	= DATAORIGIN+$000C
-
-@VarData	= RESULT
-@VarDataSize	= 1
-
-	rts						; ret
-.endl
-
 ; ------------------------------------------------------------
 
 TEXTATTR	= DATAORIGIN+$000B
@@ -434,271 +394,100 @@ FAANYFILE	= $3F
 
 ; ------------------------------------------------------------
 
-.local	CIO						; UNIT
-
-.local	GET						; FUNCTION | ASSEMBLER
+.local	JOYSTICK					; UNIT
 
 ; ------------------------------------------------------------
 
-; Generate Assignment for BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-	mva :STACKORIGIN,x CHN
-	dex
+JOY_NONE	= $0F
+JOY_UP	= $0E
+JOY_DOWN	= $0D
+JOY_LEFT	= $0B
+JOY_LEFT_UP	= $0A
+JOY_LEFT_DOWN	= $09
+JOY_RIGHT	= $07
+JOY_RIGHT_UP	= $06
+JOY_RIGHT_DOWN	= $05
+JOY_1	= $0278
+JOY_2	= $0279
+adr.STICK	= $0278
+.var STICK	= adr.STICK .word
+STICK0	= $0278
+STICK1	= $0279
+adr.STRIG	= $0284
+.var STRIG	= adr.STRIG .word
+STRIG0	= $0284
+STRIG1	= $0285
+adr.PADDL	= $0270
+.var PADDL	= adr.PADDL .word
+PADDL0	= $0270
+PADDL1	= $0271
+PADDL2	= $0272
+PADDL3	= $0273
+PADDL4	= $0274
+PADDL5	= $0275
+PADDL6	= $0276
+PADDL7	= $0277
+adr.PTRIG	= $027C
+.var PTRIG	= adr.PTRIG .word
+PTRIG0	= $027C
+PTRIG1	= $027D
+PTRIG2	= $027E
+PTRIG3	= $027F
+PTRIG4	= $0280
+PTRIG5	= $0281
+PTRIG6	= $0282
+PTRIG7	= $0283
 
-; ---------------------  ASM Block 080  ---------------------
+.endl							; UNIT JOYSTICK
 
-	txa:pha
+.local	MAINPROC					; PROCEDURE
 
-	lda chn
-	:4 asl @
-	tax
+; optimize FAIL (100, examples\stick.pas), line = 17
+	@print #$7D
 
-	lda #7		;get char command
-	sta iccmd,x
+; optimize OK (examples\stick.pas), line = 18
 
-	lda #$00	;zero out the unused
-	sta icbufl,x	;store in accumulator
-	sta icbufh,x	;...after CIOV jump
-
-	m@call	ciov
-
-	sty MAIN.SYSTEM.IOResult
-
-	sta Result
-
-	pla:tax
-
-@exit
-
-; ------------------------------------------------------------
-
-; Push BYTE / CHAR / SHORTINT / BOOLEAN
-; as Pointer
-
-	inx
-	mva RESULT :STACKORIGIN,x
-
-	.ifdef @new
-	lda <@VarData
-	sta :ztmp
-	lda >@VarData
-	ldy #@VarDataSize-1
-	jmp @FreeMem
-	eif
-
-; ------------------------------------------------------------
-
-CHN	= DATAORIGIN+$000D
-RESULT	= DATAORIGIN+$000E
-
-@VarData	= CHN
-@VarDataSize	= 2
-
-	rts						; ret
-.endl
-
-; ------------------------------------------------------------
-
-.endl							; UNIT CIO
-
-.local	SIEVEPROC					; PROCEDURE
-
-; optimize OK (examples\sieve.pas), line = 25
-
-	mva #$00 SDMCTL
-
-; optimize OK (examples\sieve.pas), line = 26
-
-	sta RTCLOK
-
-; optimize OK (examples\sieve.pas), line = 27
-
-	sta COUNT
-	sta COUNT+1
-; --- For
-
-; optimize OK (examples\sieve.pas), line = 28
-
-	sta I
-	sta I+1
-
-; optimize OK (examples\sieve.pas), line = 28
-
-l_00CB
-; --- ForToDoCondition
-
-; optimize OK (examples\sieve.pas), line = 28
-
-	lda I+1
-	cmp #$1F
-	bne @+
-	lda I
-	cmp #$FF
-@
-	jcs l_00D7
-
-; optimize OK (examples\sieve.pas), line = 29
-
-	lda FLAGS
-	add I
-	tay
-	lda FLAGS+1
-	adc I+1
-	sta :bp+1
-	lda #$54
-	sta (:bp),y
-
-; --- ForToDoEpilog
-	inc I
-	jne l_00CB
-	inc I+1
-	jne l_00CB
-l_00D7
-; --- For
-
-; optimize OK (examples\sieve.pas), line = 31
-
-	mva #$00 I
-	sta I+1
-
-; optimize OK (examples\sieve.pas), line = 31
-
-l_00EB
-; --- ForToDoCondition
-
-; optimize OK (examples\sieve.pas), line = 31
-
-	lda I+1
-	cmp #$1F
-	bne @+
-	lda I
-	cmp #$FF
-@
-	jcs l_00F7
-
-; optimize OK (examples\sieve.pas), line = 32
-
-	lda FLAGS
-	add I
-	tay
-	lda FLAGS+1
-	adc I+1
-	sta :bp+1
-	lda (:bp),y
-	cmp #$54
-	jne l_010B
-
-; optimize OK (examples\sieve.pas), line = 33
-
-	lda I
-	add I
-	sta :STACKORIGIN+9
-	lda I+1
-	adc I+1
-	sta PRIME+1
-	lda :STACKORIGIN+9
-	add #$03
-	sta PRIME
-	scc
-	inc PRIME+1
-
-; optimize OK (examples\sieve.pas), line = 34
-
-	lda I
-	add PRIME
-	sta K
-	lda I+1
-	adc PRIME+1
+	mva #$01 FIRE
 
 ; --- WhileProlog
-	jmp l_0126
-l_0127
+	jmp l_00B5
+l_00B6
 
-; optimize OK (examples\sieve.pas), line = 36
+; optimize OK (examples\stick.pas), line = 20
 
-	lda FLAGS
-	add K
-	tay
-	lda FLAGS+1
-	adc K+1
-	sta :bp+1
-	lda #$46
-	sta (:bp),y
+	ldy #$00
+	lda JOYSTICK.adr.STICK,y
+	sta B
 
-; optimize OK (examples\sieve.pas), line = 37
+; optimize FAIL (100, examples\stick.pas), line = 21
+	lda B
+	jsr @printBYTE._a
+	@printEOL
 
-	lda K
-	add PRIME
-	sta K
-	lda K+1
-	adc PRIME+1
-l_0126
-	sta K+1
+; optimize OK (examples\stick.pas), line = 22
 
-; optimize OK (examples\sieve.pas), line = 35
+	ldy #$00
+	lda JOYSTICK.adr.STRIG,y
+	sta FIRE
+l_00B5
 
-	cmp #$1F
-	bne @+
-	lda K
-	cmp #$FF
-@
-	jcc l_0127
+; optimize OK (examples\stick.pas), line = 19
 
-; optimize FAIL (0, examples\sieve.pas), line = 39
-	inc COUNT
-	sne
-	inc COUNT+1
-l_010B
+	lda FIRE
+	jne l_00B6
 
-; --- ForToDoEpilog
-	inc I
-	jne l_00EB
-	inc I+1
-	jne l_00EB
-l_00F7
-
-; optimize OK (examples\sieve.pas), line = 42
-
-	mva RTCLOK TIME
-	mva #$00 TIME+1
-
-; optimize OK (examples\sieve.pas), line = 43
-
-	mva #$22 SDMCTL
-
-; optimize FAIL (100, examples\sieve.pas), line = 44
+; optimize FAIL (100, examples\stick.pas), line = 24
 	@printSTRING #CODEORIGIN+$000D
-	@print #$9B
-	@print #$20
-	lda COUNT
-	ldy COUNT+1
-	jsr @printWORD._ay
-	@printSTRING #CODEORIGIN+$000F
-
-; optimize FAIL (100, examples\sieve.pas), line = 45
-	@printSTRING #CODEORIGIN+$000C
-	@print #$9B
-	@print #$20
-	lda TIME
-	ldy TIME+1
-	jsr @printWORD._ay
-	@printSTRING #CODEORIGIN+$001B
-
-; optimize FAIL ('CIO.GET', examples\sieve.pas), line = 46
-	inx
-	mva #$07 :STACKORIGIN,x
-	jsr CIO.GET
-	mva :STACKORIGIN,x KEY
-	dex
-
-	jsr CRT.READKEY					; call Entry
-
-	dex
+	@printEOL
 
 ; ------------------------------------------------------------
 
-@FORTMP_00C8	= $1FFE
-@FORTMP_00E8	= $1FFE
+B	= DATAORIGIN+$000C
+FIRE	= DATAORIGIN+$000D
+
+@VarData	= B
+@VarDataSize	= 2
+
 @exit
 	.ifdef @new
 	lda <@VarData
@@ -709,25 +498,13 @@ l_00F7
 	eif
 	rts						; ret
 .endl
-l_002C
+l_002A
 
-; optimize FAIL ('SIEVEPROC', examples\sieve.pas), line = 51
-	jsr SIEVEPROC
+; optimize FAIL ('MAINPROC', examples\stick.pas), line = 28
+	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-adr.STRBUFFER	= DATAORIGIN+$000F
-.var STRBUFFER	= adr.STRBUFFER .word
-RTCLOK	= $14
-SDMCTL	= $022F
-adr.FLAGS	= DATAORIGIN+$010F
-.var FLAGS	= adr.FLAGS .word
-COUNT	= DATAORIGIN+$210E
-I	= DATAORIGIN+$2110
-K	= DATAORIGIN+$2112
-PRIME	= DATAORIGIN+$2114
-TIME	= DATAORIGIN+$2116
-KEY	= DATAORIGIN+$2118
 @exit
 
 @halt	ldx #0
@@ -779,8 +556,8 @@ ATARI
 	jsr MAIN.SYSUTILS.@UnitInit
 	eif
 
-	.ifdef MAIN.CIO.@UnitInit
-	jsr MAIN.CIO.@UnitInit
+	.ifdef MAIN.JOYSTICK.@UnitInit
+	jsr MAIN.JOYSTICK.@UnitInit
 	eif
 .endm
 
@@ -810,8 +587,8 @@ ATARI
 	.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
 	eif
 
-	ift .SIZEOF(MAIN.CIO) > 0
-	.print 'CIO: ',MAIN.CIO,'..',MAIN.CIO+.SIZEOF(MAIN.CIO)-1
+	ift .SIZEOF(MAIN.JOYSTICK) > 0
+	.print 'JOYSTICK: ',MAIN.JOYSTICK,'..',MAIN.JOYSTICK+.SIZEOF(MAIN.JOYSTICK)-1
 	eif
 
 	.print 'CODE: ',CODEORIGIN,'..',*-1
@@ -822,7 +599,7 @@ DATAORIGIN
 .by  $28 $00 $18 $00 $2D $0C
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 8473
+VARDATASIZE	= 14
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 
@@ -833,8 +610,8 @@ PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 ; ------------------------------------------------------------
 
 .macro	STATICDATA
-.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $00 $00 $0A  $20 $50 $52 $49 $4D $45 $53 $20
-.by  $49 $4E $00 $08 $20 $4A $49 $46  $46 $49 $45 $53 $00
+.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $14 $54 $52  $49 $47 $47 $45 $52 $20 $57 $41
+.by  $53 $20 $50 $52 $45 $53 $53 $45  $44 $21 $00
 .endm
 
 	end
