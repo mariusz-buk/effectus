@@ -1,3 +1,7 @@
+; Effectus example
+; ----------------
+; Fill screen demo
+
 BYTE RTCLOCK=20, ; addr of sys timer
      SAVMSCL=88, ; lsb of screen addr
      SAVMSCH=89, ; msb

@@ -5,9 +5,9 @@ uses
   Crt, Graph;
 
 // Effectus example
-// -------------------------------------
-// Graphics demo
-// (using Fill procedure)
+// ----------------
+// Using Fill procedure in
+// graphics mode 7
 
 procedure MAINProc;
 begin  // 6
@@ -35,8 +35,8 @@ begin  // 6
   Write(Chr(125));
   Writeln('FILL TEST');
   repeat
-  until 0 = 1;
-end;  // 4
+  until false;
+end;
 
 begin
   MAINProc;

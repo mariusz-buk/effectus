@@ -1,5 +1,5 @@
 ; Effectus example
-;-------------------------------------
+; ----------------
 ; Using custom/local FUNCtion
 
 CARD FUNC Sum(CARD nn1, nn2)
@@ -32,7 +32,11 @@ PrintCE(n3)
 
 PutE()
 PrintE("Press trigger")
-WHILE Strig(0)=1 DO OD
+WHILE STRIG(0)=1 DO OD
+PrintE("Trigger pressed")
+PrintE("Program finished!")
+
+DO UNTIL STRIG(0)=0 OD
 PrintE("Trigger pressed")
 PrintE("Program finished!")
 

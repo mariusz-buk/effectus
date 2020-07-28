@@ -4,11 +4,10 @@ program inline_asmPrg;
 uses
   Crt, SySutils, Graph, CIO;
 
-
 var
   strBuffer : string;
 // Effectus example
-// -------------------------------------
+// ----------------
 // Inline machine language demo
 
 procedure MAINProc;
@@ -53,7 +52,7 @@ begin  // 2
   };
   key := Get(7);
   ReadKey;
-end;  // 4
+end;
 
 begin
   MAINProc;

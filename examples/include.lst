@@ -395,14 +395,14 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    487
    488 2119			.local	WAITFORKEYPROC					; PROCEDURE
    489
-   490 				; optimize OK (examples\include.pas), line = 16
+   490 				; optimize OK (examples\include.pas), line = 18
    491
    492 2119 A9 FF 8D FC 02		mva #$FF CH
    493
    494 				; --- WhileProlog
    495 211E			l_013F
    496
-   497 				; optimize OK (examples\include.pas), line = 17
+   497 				; optimize OK (examples\include.pas), line = 19
    498
    499 211E AD FC 02			lda CH
    500 2121 C9 FF			cmp #$FF
@@ -420,7 +420,7 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    512
    513 2126			.local	PRINTTEXTPROC					; PROCEDURE
    514
-   515 				; optimize FAIL (100, examples\include.pas), line = 23
+   515 				; optimize FAIL (100, examples\include.pas), line = 25
    516 					@printSTRING #CODEORIGIN+$0000
    516 				 LDY> CODEORIGIN+$0000\ LDA< CODEORIGIN+$0000\ JSR @PRINTSTRING
    516 2126 A0 20		 LDY> CODEORIGIN+$0000
@@ -440,12 +440,12 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    528
    529 2131			.local	CHANGECOLORPROC					; PROCEDURE
    530
-   531 				; optimize OK (examples\include.pas), line = 28
+   531 				; optimize OK (examples\include.pas), line = 30
    532
    533 2131 A9 32			lda #$32
    534 2133 8D C6 02			sta $02C6
    535
-   536 				; optimize OK (examples\include.pas), line = 29
+   536 				; optimize OK (examples\include.pas), line = 31
    537
    538 2136 A9 A0			lda #$A0
    539 2138 8D C8 02			sta $02C8
@@ -462,13 +462,13 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    550
    551 213C			.local	MAINPROC					; PROCEDURE
    552
-   553 				; optimize FAIL (100, examples\include.pas), line = 34
+   553 				; optimize FAIL (100, examples\include.pas), line = 36
    554 					@print #$7D
    554 				 LDY# $7D\ JSR @PRINT
    554 213C A0 7D		 LDY# $7D
    554 213E 20 96 20		 JSR @PRINT
    555
-   556 				; optimize FAIL (100, examples\include.pas), line = 35
+   556 				; optimize FAIL (100, examples\include.pas), line = 37
    557 					@printSTRING #CODEORIGIN+$000D
    557 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
    557 2141 A0 20		 LDY> CODEORIGIN+$000D
@@ -476,7 +476,7 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    557 2145 20 9F 20		 JSR @PRINTSTRING
    558 2148 20 91 20			@printEOL
    559
-   560 				; optimize FAIL (100, examples\include.pas), line = 36
+   560 				; optimize FAIL (100, examples\include.pas), line = 38
    561 					@printSTRING #CODEORIGIN+$0020
    561 				 LDY> CODEORIGIN+$0020\ LDA< CODEORIGIN+$0020\ JSR @PRINTSTRING
    561 214B A0 20		 LDY> CODEORIGIN+$0020
@@ -484,7 +484,7 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    561 214F 20 9F 20		 JSR @PRINTSTRING
    562 2152 20 91 20			@printEOL
    563
-   564 				; optimize FAIL (100, examples\include.pas), line = 37
+   564 				; optimize FAIL (100, examples\include.pas), line = 39
    565 					@printSTRING #CODEORIGIN+$0037
    565 				 LDY> CODEORIGIN+$0037\ LDA< CODEORIGIN+$0037\ JSR @PRINTSTRING
    565 2155 A0 20		 LDY> CODEORIGIN+$0037
@@ -492,7 +492,7 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    565 2159 20 9F 20		 JSR @PRINTSTRING
    566 215C 20 91 20			@printEOL
    567
-   568 				; optimize FAIL (100, examples\include.pas), line = 38
+   568 				; optimize FAIL (100, examples\include.pas), line = 40
    569 					@printSTRING #CODEORIGIN+$0039
    569 				 LDY> CODEORIGIN+$0039\ LDA< CODEORIGIN+$0039\ JSR @PRINTSTRING
    569 215F A0 20		 LDY> CODEORIGIN+$0039
@@ -500,10 +500,10 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    569 2163 20 9F 20		 JSR @PRINTSTRING
    570 2166 20 91 20			@printEOL
    571
-   572 				; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 39
+   572 				; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 41
    573 2169 20 19 21			jsr WAITFORKEYPROC
    574
-   575 				; optimize FAIL (100, examples\include.pas), line = 40
+   575 				; optimize FAIL (100, examples\include.pas), line = 42
    576 					@printSTRING #CODEORIGIN+$0036
    576 				 LDY> CODEORIGIN+$0036\ LDA< CODEORIGIN+$0036\ JSR @PRINTSTRING
    576 216C A0 20		 LDY> CODEORIGIN+$0036
@@ -511,10 +511,10 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    576 2170 20 9F 20		 JSR @PRINTSTRING
    577 2173 20 91 20			@printEOL
    578
-   579 				; optimize FAIL ('PRINTTEXTPROC', examples\include.pas), line = 41
+   579 				; optimize FAIL ('PRINTTEXTPROC', examples\include.pas), line = 43
    580 2176 20 26 21			jsr PRINTTEXTPROC
    581
-   582 				; optimize FAIL (100, examples\include.pas), line = 42
+   582 				; optimize FAIL (100, examples\include.pas), line = 44
    583 					@printSTRING #CODEORIGIN+$0036
    583 				 LDY> CODEORIGIN+$0036\ LDA< CODEORIGIN+$0036\ JSR @PRINTSTRING
    583 2179 A0 20		 LDY> CODEORIGIN+$0036
@@ -522,7 +522,7 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    583 217D 20 9F 20		 JSR @PRINTSTRING
    584 2180 20 91 20			@printEOL
    585
-   586 				; optimize FAIL (100, examples\include.pas), line = 43
+   586 				; optimize FAIL (100, examples\include.pas), line = 45
    587 					@printSTRING #CODEORIGIN+$005E
    587 				 LDY> CODEORIGIN+$005E\ LDA< CODEORIGIN+$005E\ JSR @PRINTSTRING
    587 2183 A0 20		 LDY> CODEORIGIN+$005E
@@ -530,13 +530,13 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    587 2187 20 9F 20		 JSR @PRINTSTRING
    588 218A 20 91 20			@printEOL
    589
-   590 				; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 44
+   590 				; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 46
    591 218D 20 19 21			jsr WAITFORKEYPROC
    592
-   593 				; optimize FAIL ('CHANGECOLORPROC', examples\include.pas), line = 45
+   593 				; optimize FAIL ('CHANGECOLORPROC', examples\include.pas), line = 47
    594 2190 20 31 21			jsr CHANGECOLORPROC
    595
-   596 				; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 46
+   596 				; optimize FAIL ('WAITFORKEYPROC', examples\include.pas), line = 48
    597 2193 20 19 21			jsr WAITFORKEYPROC
    598 2196			@exit
    599 					.ifdef @new
@@ -550,7 +550,7 @@ Macro: UNITINITIALIZATION [Source: include.a65]
    607 				.endl
    608 2197			l_0085
    609
-   610 				; optimize FAIL ('MAINPROC', examples\include.pas), line = 50
+   610 				; optimize FAIL ('MAINPROC', examples\include.pas), line = 52
    611 2197 20 3C 21			jsr MAINPROC
    612
    613 				; ------------------------------------------------------------
