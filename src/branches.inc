@@ -41,8 +41,8 @@
         branchPtr.ifThenCode := '  if ';
         branchPtr.isIfThenNext := false;
         branchPtr.isEndIfNext := false;
-        branchPtr.isElseNext := false;
-        branchPtr.isElseIfNext := false;
+        //branchPtr.isElseNext := false;
+        //branchPtr.isElseIfNext := false;
       end
       else if (UpperCase(temp) = 'THEN') and branchPtr.isIfThenNext then begin
         branchPtr.ifThenCode += ' then begin';
@@ -58,6 +58,7 @@
         code.Add(branchPtr.ifThenCode);
         branchPtr.ifThenCode := '';
         branchPtr.isEndIfNext := true;
+        //branchPtr.isElseNext := true;
       end
       else if UpperCase(temp) = 'ELSEIF' then begin
         branchPtr.isIfThen := true;
@@ -65,8 +66,9 @@
         branchPtr.ifThenCode := '  end' + LineEnding + '  else if ';
         branchPtr.isIfThenNext := false;
         branchPtr.isEndIfNext := false;
-        branchPtr.isElseNext := false;
-        branchPtr.isElseIfNext := false;
+        //branchPtr.isElseNext := false;
+        //branchPtr.isElseIfNext := false;
+        //branchPtr.isElseNext := true;
       end
       else if UpperCase(Trim(temp)) = 'FI' then begin
         code.Add('  end;  // if');
@@ -74,18 +76,23 @@
         branchPtr.isIfThenNext := false;
         branchPtr.isEndIfNext := false;
         branchPtr.ifThenCode := '';
+        //branchPtr.isElseNext := false;
       end
       // FOR branch
       else if UpperCase(temp) = 'FOR' then begin
+        branchPtr.isUndefRepeat := false;
         branchList.Add('FOR');
         branchPtr.Count := branchList.Count;
-        branchPtr.isFor := true;        
+        branchPtr.isFor := true;
+        //writeln('FOR branch ', branchPtr.Count);
       end
       // WHILE branch
       else if UpperCase(temp) = 'WHILE' then begin
+        branchPtr.isUndefRepeat := false;
         branchList.Add('WHILE');
         branchPtr.Count := branchList.Count;
-        branchPtr.isWhile := true;        
+        branchPtr.isWhile := true;
+        //writeln('WHILE branch', branchPtr.Count);
       end
       // FOR branch DO
       else if branchPtr.isFor and (UpperCase(temp) = 'DO') then begin
@@ -98,6 +105,16 @@
       // WHILE branch DO
       else if branchPtr.isWhile and (UpperCase(temp) = 'DO') then begin
         branchPtr.isWhile := false;
+
+        //writeln('branchPtr.whileCode = ', branchPtr.whileCode);
+        //temp01 := Extract(2, UpperCase(branchPtr.whileCode), 'WHILE ');
+        SplitStr(UpperCase(branchPtr.whileCode), 'WHILE ', aList);
+        //writeln('alist[0] = ', alist[0]);
+        //writeln('alist[1] = ', alist[1]);
+
+        if vars.IndexOfName(aList[1]) >= 0 then begin
+          branchPtr.whileCode += ' > 0';
+        end;
         branchPtr.whileCode += ' do begin';
         code.Add(branchPtr.whileCode);
         branchPtr.whileCode := '';
@@ -109,25 +126,36 @@
       //else if branchPtr.isForOdNext and (UpperCase(temp) = 'OD') then begin
       else if UpperCase(temp) = 'OD' then begin
         Dec(branchPtr.Count);
+        temp02 := branchList[branchPtr.Count] + ' ' + IntToStr(branchPtr.Count); 
         if branchList[branchPtr.Count] = 'FOR' then
           code.Add('  end;')
         else if branchList[branchPtr.Count] = 'WHILE' then
           code.Add('  end;')
-        else if branchList[branchPtr.Count] = 'REPEAT' then begin
+        else if (branchList[branchPtr.Count] = 'REPEAT') and
+                branchPtr.isUntil then
+        begin
           if branchPtr.untilCode <> '' then begin
             code.Add(branchPtr.untilCode + ';');
             branchPtr.untilCode := '';
-          end
-          else begin
-            code.Add('  until false;');
           end;
           branchPtr.isUntil := false;
+        end
+        else begin
+          if branchPtr.isUndefRepeat then
+            code.Add('  until false;')
+          else
+            code.Add('  end;');
         end;
+        branchPtr.isUndefRepeat := true;
+      end
+      else if (UpperCase(temp) = 'ODFOR') or (UpperCase(temp) = 'ODWHILE') then begin
+        code.Add('  end;');
       end
       // DO OD branch (repeat ... until ...)
       else if (UpperCase(temp) = 'DO') then begin
         branchList.Add('REPEAT');
         branchPtr.Count := branchList.Count;
         code.Add('  repeat');
+        //writeln('REPEAT branch', branchPtr.Count);
       end
     end

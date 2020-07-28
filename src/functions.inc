@@ -38,9 +38,8 @@
        begin
          FuncInIfCond(procName, temp, params2);
        end
-       else begin
        // Function is not in IF condition block
-
+       else begin
          // doubled delimiter - to be sure ;)
          temp := ',' + procName + ',';
 
@@ -50,7 +49,7 @@
          temp02 := '  ' + _MARKER + '(' + funcVar + ');';
          // STICK, STRIG, PADDLE, PTRIG
          temp03 := '  ' + funcVar + ' := ' + _MARKER + '[' + params2 + '];';
-         // ReplaceKey function works on _REPLACMENT array
+         // ReplaceKey function works on _REPLACEMENT array
          temp04 := ReplaceKey(_MARKER, procName);
 
          if Pos(temp, ',RAND,PEEK,PEEKC,VALB,VALC,VALI,GETD,INPUTBD,INPUTCD,INPUTID,') > 0 then
@@ -94,7 +93,7 @@
              else begin
                params2 := '1'
              end;
-             temp := '  ' + funcVar + ' := ' + params2 + ';  // a5';
+             temp := '  ' + funcVar + ' := ' + params2 + ';';
              code.Add(temp);
            end;
          end;

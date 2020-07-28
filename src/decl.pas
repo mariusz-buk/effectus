@@ -39,7 +39,7 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.5.2 Beta';  // Effectus version
+  VERSION = '0.5.2';  // Effectus version
 
 type
   // Program flag variables
@@ -114,23 +114,22 @@ type
   TBranchPtr = record
     isIfThen : boolean;
     isIfThenNext : boolean;
-    isElseNext : boolean;
-    isElseIfNext : boolean;
     isEndIfNext : boolean;
     isIfThenInProgress : boolean;
     isFuncInIf : boolean;
+    isUndefRepeat : boolean;
 
     isFor : boolean;     // FOR branch
     isWhile : boolean;   // WHILE branch
     isRepeat : boolean;  // DO branch
     isUntil : boolean;   // UNTIL condition
-    
+
     ifThenCode : string;
     //ifTempCode : string;
     forCode : string;
     whileCode : string;
     untilCode : string;
-    
+
     Count : word;
   end;
 
@@ -168,7 +167,7 @@ var
   optBinExt,
   meditMADS_log_dir : string;
   actionFilename : string = '';
-  isInfo : Boolean = False;  // Information about variables, procedures and functions
+
   myProcs, myFuncs : TStringList;
   oper : TStringList;
 
@@ -189,6 +188,12 @@ var
   tempProc : string;
   filePath : string;
 
+  isPas : boolean = false;
+  isAsm : boolean = false;
+
+  // Information about variables, PROCedures and FUNCtions
+  isInfo : Boolean = False;
+
 const
   _VAR_SCALAR     = '0';
   _VAR_MEM_ADDR   = '1';
@@ -199,38 +204,43 @@ const
   _VAR_SCALAR_DEFAULT = '6';
   _VAR_TYPE_REC   = '7';
   
-  _MARKER = '<<x>>';  
+  _MARKER = '<<x>>';
 
   _CMP_OPER : array [0..4] of string = ('=', '>', '<', '>=', '<=');
 
   _MP_DEVICE_SYSUTILS: array [0..8] of string =
     ('OPEN', 'CLOSE', 'PUTD', 'PRINTD', 'PRINTBD', 'PRINTCD', 'PRINTID', 'GETD', 'INPUTSD');
   _MP_STICK: array [0..3] of string =
-    ('STICK','STRIG','PADDLE','PTRIG');
+    ('STICK', 'STRIG', 'PADDLE', 'PTRIG');
   _MP_GRAPHICS: array [0..4] of string =
-    ('GRAPHICS','PLOT','DRAWTO','COLOR','FILL');
+    ('GRAPHICS', 'PLOT', 'DRAWTO', 'COLOR', 'FILL');
   _MP_SYSUTILS: array [0..5] of string =
-       ('STRB','STRC','STRI','VALB','VALC','VALI');
+    ('STRB', 'STRC', 'STRI', 'VALB', 'VALC', 'VALI');
 
   _REPLACEMENT : array [0..16, 0..1] of string = (
-    ('RAND','Random'),
-    ('PEEK','Peek'),
-    ('PEEKC','DPeek'),
-    ('VALB','StrToInt'),
-    ('VALC','StrToInt'),
-    ('VALI','StrToInt'),
-    ('INPUTBD','Get'),
-    ('INPUTCD','Get'),
-    ('INPUTID','Get'),
-    ('GETD','Get'),
-    ('STICK','stick'),
-    ('STRIG','strig'),
-    ('PADDLE','paddl'),
-    ('PTRIG','ptrig'),
-    ('INPUTB','Readln'),
-    ('INPUTC','Readln'),
-    ('INPUTI','Readln')
+    ('RAND', 'Random'),
+    ('PEEK', 'Peek'),
+    ('PEEKC', 'DPeek'),
+    ('VALB', 'StrToInt'),
+    ('VALC', 'StrToInt'),
+    ('VALI', 'StrToInt'),
+    ('INPUTBD', 'Get'),
+    ('INPUTCD', 'Get'),
+    ('INPUTID', 'Get'),
+    ('GETD', 'Get'),
+    ('STICK', 'stick'),
+    ('STRIG', 'strig'),
+    ('PADDLE', 'paddl'),
+    ('PTRIG', 'ptrig'),
+    ('INPUTB', 'Readln'),
+    ('INPUTC', 'Readln'),
+    ('INPUTI', 'Readln')
   );
+
+  _ASM_OPCODE : array[0..3] of string[10] =
+    ('lda', 'ldx', 'ldy', 'mva');
+  _ACTION_ZERO_PAGE : array[3..15] of string[3] =
+    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af');
 
 procedure Init;
 procedure CreateLists;
@@ -282,6 +292,10 @@ begin
   keywords.Add('UNTIL=1');
   keywords.Add('DO=1');
   keywords.Add('OD=1');
+  // Non-standard end branch statements
+  keywords.Add('ODWHILE=1');
+  keywords.Add('ODFOR=1');
+  //keywords.Add('ODREPEAT=1');
 
   // Data types
   dataTypes.Add('BYTE=1');
@@ -449,8 +463,6 @@ begin
   procParams.Add('InputCD=1;2');
   procParams.Add('InputID=1;2');
   procParams.Add('SCompare=2;1;1');
-
-  //ProcBuf.CaseSensitive := False;
 end;
 
 {------------------------------------------------------------------------------

@@ -431,6 +431,8 @@ begin
   prgPtr.isCheckVar := false;
   prgPtr.isStartBegin := false;
   varCnt := 0;
+  isPas := false;
+  isAsm := false;
 end;
 
 {------------------------------------------------------------------------------
@@ -438,16 +440,12 @@ end;
  -----------------------------------------------------------------------------}
 procedure Src(line : string; lineNum : LongInt);
 var
-  asmOpcode : array[0..3] of string[10] =
-    ('lda', 'ldx', 'ldy', 'mva');
-  actionVar : array[3..15] of string[3] =
-    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af');
   paramsAsm : string = '';
   asmOpcodeCnt : byte = 0;
   asmcnt : byte = 0;
   k, i, j : byte;
   offset : integer;
-  temp, temp01, temp02, temp03, temp04, temp05, temp06 : string;
+  temp, temp01, temp02, temp03, temp04, temp05 : string;
   procName : string;
   paramCnt : byte;
   params2 : string;
@@ -471,11 +469,10 @@ begin
       code.Add('  break;');
       Exit;
     end;
-
     // Branch and condition logic
     {$i branches.inc}
   end
-  // Check for variable assignment statement
+  // Check for variable assignment
   else if (Pos('=', temp) > 0) and
           not branchPtr.isIfThenInProgress and
           not branchPtr.isFor and
@@ -575,8 +572,6 @@ begin
             // SCREEN := pointer(SAVMSC);
             if VarValue(2, vars.IndexOfName(aList[0]), _VAR_BYTE_ARRAY) and (temp02 = '') then
             begin
-              //code.Add('  ' + aList[0] + ' := pointer(word(@' + aList[0] + ') ' +
-              //         temp[1] + ' ' + params2 + ');  // 1');
               if temp[1] = '+' then
                 code.Add('  Inc(' + aList[0] + ', ' + params2 + ');')
               else if temp[1] = '-' then
@@ -605,7 +600,7 @@ begin
                 end;
                 else begin
                   code.Add('  ' + aList[0] + ' := ' + aList[0] + ' ' +
-                           temp[1] + ' ' + params2 + ';  // a1');
+                           temp[1] + ' ' + params2 + ';');
                 end;
               end;
             end;
@@ -717,7 +712,7 @@ begin
                       VarValue(2, vars.IndexOfName(temp03), _VAR_CARD_ARRAY)) then
                   begin
                     paramsEx[i] := ReplaceStr(paramsEx[i], '(', '[');
-                    paramsEx[i] := ReplaceStr(paramsEx[i], ')', ']');  // (* 2 *)
+                    paramsEx[i] := ReplaceStr(paramsEx[i], ')', ']');
                   end;
                 end;
                 temp04 += paramsEx[i];
@@ -736,7 +731,7 @@ begin
              (params[1][1] = '@') then
           begin
             varPtr.isPointerAddress := true;
-            code.Add('  ' + params[0] + ' := ' + params[1] + ';  // a2');
+            code.Add('  ' + params[0] + ' := ' + params[1] + ';');
           end
           //n2 = n1 /// n2 := word(@n1);
           else if (vars.IndexOfName(temp02) >= 0) and
@@ -807,7 +802,7 @@ begin
               end
               // Normal assignment
               else begin
-                code.Add('  ' + params[0] + ' := ' + params[1] + ';  // a3');
+                code.Add('  ' + params[0] + ' := ' + params[1] + ';');
               end;
             end;
           end;
@@ -834,12 +829,12 @@ begin
         begin
           if asmOpcodeCnt > 2 then begin
             asmOpcodeCnt := 3;
-            paramsAsm += '  ' + asmOpcode[asmOpcodeCnt] + ' ' + vars.Names[i] +
-                         ' $' + actionVar[asmcnt + 3] + LineEnding;
+            paramsAsm += '  ' + _ASM_OPCODE[asmOpcodeCnt] + ' ' + vars.Names[i] +
+                         ' $' + _ACTION_ZERO_PAGE[asmcnt + 3] + LineEnding;
             Inc(asmcnt);
           end
           else begin
-            paramsAsm += '  ' + asmOpcode[asmOpcodeCnt] + ' ' + vars.Names[i] + LineEnding;
+            paramsAsm += '  ' + _ASM_OPCODE[asmOpcodeCnt] + ' ' + vars.Names[i] + LineEnding;
           end;
           Inc(asmOpcodeCnt);
         end;
@@ -870,7 +865,7 @@ begin
         procML.isAsm := false;
         procML.strAsm := '';
         if prgPtr.isFuncAsm then begin
-          code.Add('end;  // 1');
+          code.Add('end;');
           ResetVar;
         end;
       end;
@@ -901,7 +896,7 @@ begin
 
     if prgPtr.isFuncAsm then begin
       //if varPtr.isFunc then code.Add('  result := 10;');
-      code.Add('end;  // 2');
+      code.Add('end;');
     end;
 
     prgPtr.isProc := false;
@@ -948,7 +943,7 @@ begin
   begin
     params2 := ExtractText(line, '(', ')');
     Code.add('  result := ' + params2 + ';');
-    Code.add('end;  // 3');
+    Code.add('end;');
     ResetVar;
     op.Free;
     Exit;
@@ -966,7 +961,7 @@ begin
       branchPtr.ifThenCode := '';
     end
     else begin
-      code.Add('end;  // 4' + LineEnding);
+      code.Add('end;' + LineEnding);
     end;
     ResetVar;
     op.Free;
@@ -978,9 +973,11 @@ begin
     temp := CheckEOF(temp);
     // In case only one command exists in while condition then it must be checked automatically
     // if condition is true (f.e. i > 0)
-    if vars.IndexOfName(temp) >= 0 then begin
-      temp += ' > 0'
-    end;
+    //if (vars.IndexOfName(temp) >= 0) //and
+       //not IsArrayElementInString(_CMP_OPER, temp) then
+    //then begin    
+    //  temp += ' > 0 (* > 0 ' + temp + ' *)';
+    //end;
     branchPtr.whileCode += ' ' + temp;
   end;
 
@@ -1048,7 +1045,7 @@ begin
   end;
 
   if branchPtr.isFor then begin
-    branchPtr.forCode += ' ' + temp;    
+    branchPtr.forCode += ' ' + temp;
   end;
 
   if branchPtr.isUntil then begin
@@ -1096,7 +1093,7 @@ begin
     else begin
       if (temp[1] <> '(') then begin
         temp := ReplaceStr(temp, '(', '[');
-        temp := ReplaceStr(temp, ')', ']');  // (
+        temp := ReplaceStr(temp, ')', ']');
       end;
     end;
     temp := ReplaceStr(temp, '{AND}', ' AND ');
@@ -1194,7 +1191,7 @@ begin
       varCnt := High(varList);
       for j := 0 to varCnt do begin
         paramTypes += paramsx;
-        temp02 := varList[j];  //Extract(2, varList[j], ' ', []);
+        temp02 := varList[j];
         temp += temp02 + ' : ' + varPtr.dataType;
         vars.Add(temp02 + '=' + varPtr.dataType + ';2;0;0;' + prgPtr.strProcLocalName + ';0;0');
         temp += '; ';
@@ -1216,10 +1213,6 @@ var
   procName : string;
   params : string;
   found : integer;
-  asmOpcode : array[0..3] of string[10] =
-    ('lda', 'ldx', 'ldy', 'mva');
-  actionVar : array[3..15] of string[3] =
-    ('a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af');
   paramsAsm : string = '';
   asmOpcodeCnt : byte = 0;
   asmcnt : byte = 0;
@@ -1276,7 +1269,7 @@ begin
       paramCntx := 0;
 
       if prgPtr.isStartBegin then begin
-        code.add('end;  // e1')
+        code.add('end;')
       end;
 
       if varPtr.isFunc then begin
@@ -1307,7 +1300,7 @@ begin
         code.Add('    jsr ' + prgPtr.strAsmDecl);
         code.Add('    rts');
         code.Add('  };');
-        code.Add('end;  // 5');
+        code.Add('end;');
       end;
     end
     // PROCedure with parameters
@@ -1331,7 +1324,7 @@ begin
       //code.Add('procedure ' + prgPtr.procParams + ');');
 
       if prgPtr.isStartBegin then begin
-        code.add('end;  // e2')
+        code.add('end;')
       end;
 
       if varPtr.isFunc then begin
@@ -1358,18 +1351,19 @@ begin
 //       if prgPtr.isFuncAsm then begin
 //         //code.Add('asm');
 //       end
-      if prgPtr.isProcBegin and not prgPtr.isFuncAsm then begin
-        code.Add('begin  // 5');
-        prgPtr.isStartBegin := true;
-      end
-      else if prgPtr.isProcAddr then begin
+      //if prgPtr.isProcBegin and not prgPtr.isFuncAsm then begin
+        //code.Add('begin  // 5');
+      //  prgPtr.isStartBegin := true;
+      //end
+      //else
+      if prgPtr.isProcAddr then begin
         code.Add('begin');
         code.Add('  asm {');
         code.Add('    jsr ' + prgPtr.strAsmDecl);
         // + ExtractDelimited(2, myProcs.ValueFromIndex[myProcs.IndexOfName(procName)], [';']));
         code.Add('    rts');
         code.Add('  };');
-        code.Add('end;  // 6');
+        code.Add('end;');
       end;
     end;
     procParams.Add(procName + '=' + IntToStr(paramCntx) + paramTypes);
@@ -1398,24 +1392,18 @@ begin
           //if VarValue(5, i, UpperCase(prgPtr.strProcLocalName)) then begin
           if asmOpcodeCnt > 2 then begin
             asmOpcodeCnt := 3;
-            paramsAsm += '  ' + asmOpcode[asmOpcodeCnt] + ' ' + vars.Names[i] +
-                         ' $' + actionVar[asmcnt + 3] + LineEnding;
+            paramsAsm += '  ' + _ASM_OPCODE[asmOpcodeCnt] + ' ' + vars.Names[i] +
+                         ' $' + _ACTION_ZERO_PAGE[asmcnt + 3] + LineEnding;
             Inc(asmcnt);
           end
           else begin
-            paramsAsm += '  ' + asmOpcode[asmOpcodeCnt] + ' ' + vars.Names[i] + LineEnding;
+            paramsAsm += '  ' + _ASM_OPCODE[asmOpcodeCnt] + ' ' + vars.Names[i] + LineEnding;
           end;
           Inc(asmOpcodeCnt);
         end;
       end;
       procML.strAsm := '  asm' + LineEnding +
                        '  {' + LineEnding +
-//                        '  mva CURSOR $a3'#13#10 +
-//                        '  mva BACK $a4'#13#10 +
-//                        '  mva BORDER $a5'#13#10 +
-//                        '  lda X'#13#10 +
-//                        '  ldx Y'#13#10 +
-//                        '  ldy UPDOWN'#13#10 +
                        paramsAsm +
                        '    .by ';
     end
@@ -1440,7 +1428,7 @@ begin
         procML.isAsm := false;
         procML.strAsm := '';
         if prgPtr.isFuncAsm then begin
-          code.Add('end;  // 7');
+          code.Add('end;');
           ResetVar;
         end;
       end;
@@ -1786,31 +1774,25 @@ begin
   code.Add('program ' + prgName + 'Prg;' + LineEnding);
   code.Add('uses');
 
-  if devicePtr.isSySutils then begin
+  if devicePtr.isSySutils then
     strUnits += ', SySutils';
-  end;
 
-  if devicePtr.isGraphics then begin
+  if devicePtr.isGraphics then
     strUnits += ', Graph';
-  end;
 
-  if devicePtr.isDevice then begin
+  if devicePtr.isDevice then
     strUnits += ', CIO';
-  end;
 
-  if devicePtr.isStick then begin
+  if devicePtr.isStick then
     strUnits += ', Joystick';
-  end;
 
   code.Add('  Crt' + strUnits + ';' + LineEnding);
 
-  if devicePtr.isDevice then begin
-    code.Add(LineEnding + 'var');
-  end;
+  if devicePtr.isDevice then
+    code.Add('var');
 
-  if devicePtr.isDevice then begin
+  if devicePtr.isDevice then
     code.Add('  strBuffer : string;');
-  end;
 
   // Data type declaration initialization
   varPtr.isVar := false;
@@ -1848,13 +1830,23 @@ begin
   branchPtr.isWhile := false;
   branchPtr.isUntil := false;
   branchPtr.untilCode := '';
+  branchPtr.isUndefRepeat := true;
   //branchPtr.ifTempCode := '';
   branchPtr.Count := 0;
+
+  isPas := false;
+  isAsm := false;
 
   operators := TStringArray.Create(
     '+', '-', '{DIV}', '*', '{MOD}', '{AND}', '{OR}', '{XOR}', '{LSH}', '{RSH}');
 
   for i := 0 to effCode.Count - 1 do begin
+    //writeln('effCode[i] = ', effCode[i]);
+    //readln;
+
+    // Extra, non-standard directives PAS {} and ASM {}
+    {$i extra.inc}
+
     temp := Trim(effCode[i]);
     if temp = '' then continue;
 
@@ -1866,9 +1858,8 @@ begin
     end;
 
 //     effCode[i] := StringReplace(effCode[i], '  ', ' ', [rfReplaceAll]);
-    for j := 2 to 255 do begin
+    for j := 2 to 255 do
       effCode[i] := ReplaceStr(effCode[i], StringOfChar(' ', j), ' ');
-    end;
 
     effCode[i] := ReplaceStr(effCode[i], ' (', '(');
     effCode[i] := ReplaceStr(effCode[i], '( ', '(');
@@ -1911,9 +1902,8 @@ begin
          and (Pos(';', temp) > Pos('"', temp)) then
       begin
       end
-      else begin
+      else
         effCode[i] := Extract(1, effCode[i], ';');
-      end;
     end;
 
     effCode[i] := ReplaceStr(effCode[i], ', ', ',');
@@ -1942,9 +1932,8 @@ begin
         end
         else begin
           // PROC statement is processed
-          if prgPtr.isProc then begin
-            ProcBlock(a[j]);
-          end
+          if prgPtr.isProc then
+            ProcBlock(a[j])
           // Other blocks of code are processed
           else begin
             if a[j] <> '' then begin
