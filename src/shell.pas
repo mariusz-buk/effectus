@@ -54,6 +54,9 @@ var
 begin
   if ParamCount = 0 then begin
     TextColor(LightCyan);
+{$ifdef MORPHOS}
+    WriteLn('Effectus ' + VERSION + ' (MorphOS platform console version)');
+{$else}
 {$ifdef DARWIN}
     WriteLn('Effectus ' + VERSION + ' (MacOS platform console version)');
 {$else}
@@ -62,6 +65,7 @@ begin
 {$else}
     WriteLn('Effectus ' + VERSION + ' (x86_64-win64 64-bit Windows platform console version)');
     //WriteLn('Effectus ' + VERSION + ' (i386-win32 32-bit Windows platform console version)');
+{$endif}
 {$endif}
 {$endif}
     WriteLn('Action! language parser to native binary code for Atari 8-bit home computers');
