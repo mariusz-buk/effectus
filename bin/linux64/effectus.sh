@@ -1,30 +1,29 @@
 #!/bin/bash
-EFFECTUS_HOME="$HOME/Effectus"
+
+mp="$HOME/Programs/effectus/bin/linux64/mp"
+mads="$HOME/Programs/effectus/bin/linux64/mads"
+base="$HOME/Programs/effectus/base"
+effectus="$HOME/Programs/effectus/bin/linux64/effectus"
 
 if [ -z "$1" ]; then
   echo -e "\nPlease call '$0 <argument>' to run this command!\n"
   exit 1
 fi
 
-"${EFFECTUS_HOME}"/effectus -t $1
+$effectus -t $1
 
 name=${1::-4}
-filePAS="${name}.pas"
-fileAsm="${name}.a65"
 
-
-if [ -f $filePAS ]; then
+if [ -f $name.pas ]; then
   [ ! -d "output" ] && mkdir output
-  mv $filePAS output/
-  cd output
-  "${EFFECTUS_HOME}"/mp $filePAS -o
+  mv $name.pas output/
+  $mp output/$name.pas -o
 else
   exit 1
 fi
 
-if [ -f $fileAsm ]; then
-  "${EFFECTUS_HOME}"/mads $fileAsm -x -i:"${EFFECTUS_HOME}"/base -o:$name.xex
-  cd ..
+if [ -f output/$name.a65 ]; then
+  $mads output/$name.a65 -x -i:$base -o:output/$name.xex
 else
   exit 1
 fi
