@@ -22,7 +22,7 @@ My special thanks and credits go to:
 - Tomasz Biela (Tebe), author of Mad Pascal and Mad Assembler (Mads). He made this all possible!
 - Zbyti, who helps me with developing, fixing bugs, Linux distribution compilation and providing
   me with many listing examples and benchmark test examples. And laughs... :)
-- Mariusz Buk for hosting original project on GitHub with MacOs compilation 
+- Mariusz Buk for hosting original project on GitHub with MacOs compilation
 - All others not mentioned here, who help me with suggestions, testing, etc.
 
 ------------------
@@ -150,7 +150,7 @@ Inline machine language
     $A5 $A3 $8D 85 0  ; COLUMN FOR TEXT
     $A5 $A4 $8D 84 0  ; ROW FOR TEXT
     $60]
-    
+
 You can send parameters to machine language routines. The compiler stores parameters using
 A, X and Y registers, then zero-page addresses from $A3 to $AF are used.
 
@@ -178,8 +178,8 @@ Extra, non-standard statements
 ------------------------------
 
 - PAS {} code block for using Mad Pascal code directly inside Effectus source code listing.
-  
-  Example:  
+
+  Example:
     PAS {
       repeat until keypressed;
       for i := 0 to 14 do begin
@@ -236,7 +236,7 @@ Available options:
   -i   Information about declared variables, PROCedures, FUNCtions and DEFINE constants
   -o:  Binary file extension
   -c   Clear summarized log file
-  -t   Effectus only translate source to Mad Pascal
+  -t   Effectus only translates the source to Mad Pascal
   -z   Variable zero page address
   -zb  BYTE variable zero page address
   -zw  CARD (word) variable zero page address
