@@ -781,37 +781,37 @@ RESULT	= DATAORIGIN+$0017
 
 .local	SAYYOPROC					; PROCEDURE
 
-; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 19
+; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 23
 	inx
 	mva #$FF :STACKORIGIN,x
 	jsr SYSTEM.RANDOM_0052
 	mva :STACKORIGIN,x RND01
 	dex
 
-; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 20
+; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 24
 	inx
 	mva #$FF :STACKORIGIN,x
 	jsr SYSTEM.RANDOM_0052
 	mva :STACKORIGIN,x RND02
 	dex
 
-; optimize FAIL (100, examples\sayyo.pas), line = 21
+; optimize FAIL (100, examples\sayyo.pas), line = 25
 	@printSTRING #CODEORIGIN+$000D
 
-; optimize OK (examples\sayyo.pas), line = 22
+; optimize OK (examples\sayyo.pas), line = 26
 
 	lda RND01
 	sta $02C6
 
-; optimize OK (examples\sayyo.pas), line = 23
+; optimize OK (examples\sayyo.pas), line = 27
 
 	lda RND02
 	sta $02C8
 
 ; ------------------------------------------------------------
 
-RND01	= DATAORIGIN+$0118
-RND02	= DATAORIGIN+$0119
+RND01	= DATAORIGIN+$0119
+RND02	= DATAORIGIN+$011A
 
 @VarData	= RND01
 @VarDataSize	= 2
@@ -829,7 +829,7 @@ RND02	= DATAORIGIN+$0119
 
 .local	MAINPROC					; PROCEDURE
 
-; optimize FAIL (100, examples\sayyo.pas), line = 31
+; optimize FAIL (100, examples\sayyo.pas), line = 35
 	@printSTRING #CODEORIGIN+$0013
 	@printEOL
 
@@ -845,32 +845,32 @@ RND02	= DATAORIGIN+$0119
 ; --- RepeatUntilProlog
 l_011E
 
-; optimize FAIL ('CRT.KEYPRESSED', examples\sayyo.pas), line = 38
+; optimize FAIL ('CRT.KEYPRESSED', examples\sayyo.pas), line = 42
 	jsr CRT.KEYPRESSED
 	dex
 	lda :STACKORIGIN+1,x
 	jeq l_011E
 ; --- For
 
-; optimize OK (examples\sayyo.pas), line = 39
+; optimize OK (examples\sayyo.pas), line = 43
 
 	mva #$00 I
 
-; optimize OK (examples\sayyo.pas), line = 39
+; optimize OK (examples\sayyo.pas), line = 43
 
 l_012C
 ; --- ForToDoCondition
 
-; optimize OK (examples\sayyo.pas), line = 39
+; optimize OK (examples\sayyo.pas), line = 43
 
 	lda I
 	cmp #$0F
 	jcs l_013A
 
-; optimize FAIL ('SAYYOPROC', examples\sayyo.pas), line = 40
+; optimize FAIL ('SAYYOPROC', examples\sayyo.pas), line = 44
 	jsr SAYYOPROC
 
-; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 41
+; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 45
 	inx
 	mva #$03 :STACKORIGIN,x
 	jsr SYSTEM.RANDOM_0052
@@ -886,7 +886,7 @@ l_012C
 	mva #$08 :STACKORIGIN,x
 	jsr CRT.SOUND
 
-; optimize FAIL ('CRT.DELAY', examples\sayyo.pas), line = 42
+; optimize FAIL ('CRT.DELAY', examples\sayyo.pas), line = 46
 	inx
 	mva #$78 :STACKORIGIN,x
 	mva #$00 :STACKORIGIN+STACKWIDTH,x
@@ -897,17 +897,17 @@ l_012C
 	jne l_012C
 l_013A
 
-; optimize OK (examples\sayyo.pas), line = 44
+; optimize OK (examples\sayyo.pas), line = 48
 
 	lda #$50
 	sta $02C6
 
-; optimize OK (examples\sayyo.pas), line = 44
+; optimize OK (examples\sayyo.pas), line = 48
 
 	lda #$86
 	sta $02C8
 
-; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 45
+; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 49
 	inx
 	mva #$00 :STACKORIGIN,x
 	inx
@@ -918,7 +918,7 @@ l_013A
 	mva #$00 :STACKORIGIN,x
 	jsr CRT.SOUND
 
-; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 45
+; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 49
 	inx
 	mva #$01 :STACKORIGIN,x
 	inx
@@ -929,7 +929,7 @@ l_013A
 	sta :STACKORIGIN,x
 	jsr CRT.SOUND
 
-; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 46
+; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 50
 	inx
 	mva #$02 :STACKORIGIN,x
 	inx
@@ -940,7 +940,7 @@ l_013A
 	sta :STACKORIGIN,x
 	jsr CRT.SOUND
 
-; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 46
+; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 50
 	inx
 	mva #$03 :STACKORIGIN,x
 	inx
@@ -951,7 +951,7 @@ l_013A
 	sta :STACKORIGIN,x
 	jsr CRT.SOUND
 
-; optimize FAIL (100, examples\sayyo.pas), line = 47
+; optimize FAIL (100, examples\sayyo.pas), line = 51
 	@printSTRING #CODEORIGIN+$0031
 	@printEOL
 
@@ -959,7 +959,7 @@ l_013A
 
 	dex
 
-; optimize FAIL ('CIO.GET', examples\sayyo.pas), line = 50
+; optimize FAIL ('CIO.GET', examples\sayyo.pas), line = 54
 	inx
 	mva #$07 :STACKORIGIN,x
 	jsr CIO.GET
@@ -972,8 +972,8 @@ l_013A
 
 ; ------------------------------------------------------------
 
-CH	= DATAORIGIN+$011A
-I	= DATAORIGIN+$011B
+CH	= DATAORIGIN+$011B
+I	= DATAORIGIN+$011C
 @FORTMP_0129	= $0E
 
 @VarData	= CH
@@ -991,12 +991,13 @@ I	= DATAORIGIN+$011B
 .endl
 l_0052
 
-; optimize FAIL ('MAINPROC', examples\sayyo.pas), line = 55
+; optimize FAIL ('MAINPROC', examples\sayyo.pas), line = 59
 	jsr MAINPROC
 
 ; ------------------------------------------------------------
 
-adr.STRBUFFER	= DATAORIGIN+$0018
+ISPASASM	= DATAORIGIN+$0018
+adr.STRBUFFER	= DATAORIGIN+$0019
 .var STRBUFFER	= adr.STRBUFFER .word
 @exit
 
@@ -1092,7 +1093,7 @@ DATAORIGIN
 .by  $28 $00 $18 $00 $2D $0C
 
 VARINITSIZE	= *-DATAORIGIN
-VARDATASIZE	= 284
+VARDATASIZE	= 285
 
 PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
 

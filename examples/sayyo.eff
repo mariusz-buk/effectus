@@ -2,6 +2,7 @@
 ; ----------------
 ; Using Mad Pascal and Mad Assembler
 ; directly inside Effectus code listing
+; with PAS {} and ASM {} code block
 
 PROC SayYo()
 BYTE rnd01, rnd02

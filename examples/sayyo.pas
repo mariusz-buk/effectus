@@ -5,16 +5,20 @@ uses
   Crt, SySutils, CIO;
 
 var
+  isPasAsm : boolean;
+
+var
   strBuffer : string;
 // Effectus example
 // ----------------
 // Using Mad Pascal and Mad Assembler
 // directly inside Effectus code listing
+// with PAS {} and ASM {} code block
 
 procedure SAYYOProc;
 var
-  rnd01 : byte;
-  rnd02 : byte;
+  rnd01 : byte;  // rnd01_byte_array
+  rnd02 : byte;  // rnd02_byte_array
 begin  // 2
   rnd01 := Random(255);
   rnd02 := Random(255);
@@ -25,8 +29,8 @@ end;
 
 procedure MAINProc;
 var
-  ch : byte;
-  i : byte;
+  ch : byte;  // ch_byte_array
+  i : byte;  // i_byte_array
 begin  // 1
   Writeln('Press any key for greetings!');
   asm {
