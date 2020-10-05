@@ -30,7 +30,6 @@
   You should have received a copy of the GNU General Public License along with this program.
   If not, see <http://www.gnu.org/licenses/>.
 }
-
        //writeln('procName = ', procName);
 
        if procName = 'PRINT' then begin
@@ -93,9 +92,9 @@
        end
        else if procName = 'POSITION' then begin
          params := params2.Split(',');
-         if High(params) > 0 then begin
+         if High(params) > 0 then
            temp := '  GotoXY(' + params[0] + ' + 1, ' + params[1] + ' + 1);';
-         end;
+
          code.Add(temp);
        end
        else if procName = 'POKE' then begin
@@ -121,9 +120,8 @@
                end;
                params2 += 'pointer(' + params[j] + '),';
              end
-             else begin
+             else
                params2 += params[j];
-             end;
            end;
          end;
          temp := '  FillChar(' + params2 + ', 0);';
@@ -139,13 +137,12 @@
              //params[j] := '@' + params[j];
              //params[0] := 'pointer(' + params[0] + ')';
            end
-           else begin
+           else
              params[0] := 'pointer(' + params[0] + ')';
-           end;
          end
-         else begin
+         else
            params[0] := 'pointer(' + params[0] + ')';
-         end;
+
          params[1] := Trim(params[1]);
          params[2] := Trim(params[2]);
          params2 := params[0] + ', ' + params[1] + ', ' + params[2];
@@ -285,12 +282,11 @@
            end
            else if Pos('{percentEff}', paramsEx[i]) > 0 then begin
              SplitStr(paramsEx[i], '{percentEff}', aList);
-             if aList.Count = 1 then begin
-               temp02 += ', ' + QuotedStr('%');
-             end
-             else if aList.Count > 1 then begin
+             if aList.Count = 1 then
+               temp02 += ', ' + QuotedStr('%')
+             else if aList.Count > 1 then
                temp02 += ', ' + QuotedStr('%' + aList[1]);
-             end;
+
              //temp02 := QuotedStr(Extract(1, temp, '%', []));
              //temp02 += ', ' + QuotedStr('%') + QuotedStr(Copy(paramsEx[i], 1, 11));
            end
@@ -457,7 +453,6 @@
        else begin
          if params2 = '' then
            code.Add('  ' + procName + 'Proc;')
-         else begin
+         else
            code.Add('  ' + procName + 'Proc(' + params2 + ');');
-         end;
        end;

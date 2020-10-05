@@ -12,6 +12,7 @@ Not yet supported
 
 Bug issues
 ----------
+ (note that these are just temporary issues which will be resolved in time)
 
 - Declared strings have to be of non-standard type temporarily called SBYTE ARRAY because of
   the way Action! handles bytes. Effectus will have to immitate it like Action! does,
@@ -21,7 +22,7 @@ Bug issues
 - Pointers are not yet fully supported
 - BYTE/CARD ARRAY declaration structure has to follow some rules to be compiled correctly
   
-  Proper syntax (characters "=" and "[" must be on the same line):
+  Correct syntax (characters "=", "[" and data (or part of data) must be on the same line):
     BYTE ARRAY ndl=[112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
     
     BYTE ARRAY CLRS=[64 66 68 70 72 74
@@ -32,6 +33,23 @@ Bug issues
   Wrong syntax:
     BYTE ARRAY ndl=
       [112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156]
+
+    BYTE ARRAY ndl=[
+      112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156
+    ]
+
+  Note!
+  Also ending ] bracket must end with some data before it
+
+  Correct syntax:
+    BYTE ARRAY ndl=[112 112 112 66 64 156
+      2 2 2 2 2 2 2 2 2 2 2 2 2
+      2 2 2 2 2 2 2 2 86 216 159 65 32 156]
+    
+  Wrong syntax:
+    BYTE ARRAY ndl=[
+      112 112 112 66 64 156 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 86 216 159 65 32 156
+    ]
 
 - TYPE declaration structure has to follow some rules to be compiled correctly
 

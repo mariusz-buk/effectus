@@ -39,7 +39,7 @@ Uses
   SySUtils, Classes;
 
 const
-  VERSION = '0.5.2';  // Effectus version
+  VERSION = '0.5.3';  // Effectus version
 
 type
   // Program flag variables
@@ -87,10 +87,11 @@ type
     arrayDataType : string;
     isArrayDataType : boolean;
     isByteArray : boolean;      // Is BYTE ARRAY with predefined values?
-    byteArray : string;         // BYTE ARRAY predefined values storage
     isCardArray : boolean;      // Is CARD ARRAY with predefined values?
-    cardArray : string;         // CARD ARRAY predefined values storage
+    byteCardArray : string;     // BYTE ARRAY and CARD ARRAY storage holder of predefined values
     isByteArrayNoSpace : boolean;
+    cntByteCardArray : word;
+    tempArray : string;
 
     pointerDataType : string;
     isPointerDataType : boolean;
@@ -101,10 +102,6 @@ type
     typeDataTypeVar : string;
     isTypeRecVarLast : boolean;
     typeRecVarCnt : byte;
-    //typeVarName : string;
-
-    // Temporary storage
-    str01, str02 : string;
 
     isDefine : boolean;
     isFunc : boolean;
@@ -125,7 +122,6 @@ type
     isUntil : boolean;   // UNTIL condition
 
     ifThenCode : string;
-    //ifTempCode : string;
     forCode : string;
     whileCode : string;
     untilCode : string;
@@ -145,11 +141,11 @@ type
 var
   procs, funcs : TStringList;
   keywords : TStringList;
-  vars : TStringList;
+  vars : TStringList;        // Declared variables list
   ProcParams : TStringList;  // PROCedure parameters
-  dataTypes : TStringList;
-  code : TStringList;
-  effCode : TStringList;
+  dataTypes : TStringList;   // Data type list
+  code : TStringList;        // Generated code
+  effCode : TStringList;     // Effectus original listing code
   isClearLog : boolean = false;
 
   isVarFastMode : boolean = false;
@@ -190,9 +186,13 @@ var
 
   isPas : boolean = false;
   isAsm : boolean = false;
+  isAsmPasDirective : boolean;
 
   // Information about variables, PROCedures and FUNCtions
-  isInfo : Boolean = False;
+  isInfo : boolean = False;
+
+  predVarList : TStringList;
+  cntPredVarList : byte = 0;
 
 const
   _VAR_SCALAR     = '0';
@@ -216,6 +216,8 @@ const
     ('GRAPHICS', 'PLOT', 'DRAWTO', 'COLOR', 'FILL');
   _MP_SYSUTILS: array [0..5] of string =
     ('STRB', 'STRC', 'STRI', 'VALB', 'VALC', 'VALI');
+  _ASM_PAS_DIRECTIVE: array [0..1] of string =
+    ('ASM{', 'PAS{');
 
   _REPLACEMENT : array [0..16, 0..1] of string = (
     ('RAND', 'Random'),
@@ -267,6 +269,7 @@ begin
   defineList.Clear;
   aList.Clear;
   branchList.Clear;
+  predVarList.Clear;
 
   // Action! keywords
   keywords.Add('MODULE=0');
@@ -485,6 +488,7 @@ begin
   oper := TStringlist.create;
   aList := TStringlist.create;
   branchList := TStringlist.create;
+  predVarList := TStringlist.create;
 end;
 
 {------------------------------------------------------------------------------
@@ -507,6 +511,7 @@ begin
   oper.Free;
   aList.Free;
   branchList.Free;
+  predVarList.Free;
 end;
 
 end.

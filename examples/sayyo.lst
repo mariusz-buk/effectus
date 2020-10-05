@@ -17,7 +17,7 @@ mads 2.1.0 build 8 (23 Dec 19)
    113 					fmulinit
    114 					eif
    115
-   116 = 0116			VLEN	= VARDATASIZE-VARINITSIZE
+   116 = 0117			VLEN	= VARDATASIZE-VARINITSIZE
    117 = 23AF			VADR	= DATAORIGIN+VARINITSIZE
    118
    119 					ift VADR > $BFFF
@@ -30,7 +30,7 @@ mads 2.1.0 build 8 (23 Dec 19)
    126 					@fill #VADR #VLEN #0
    126 				 MWA #VADR @FILL.PTR1\ MWA #VLEN @FILL.PTR3\ MVA #0 @FILL.PTR2\ JSR @FILL
    126 210B A9 AF 85 88 A9 23 +  MWA #VADR @FILL.PTR1
-   126 2113 A9 16 85 8C A9 01 +  MWA #VLEN @FILL.PTR3
+   126 2113 A9 17 85 8C A9 01 +  MWA #VLEN @FILL.PTR3
    126 211B A9 00 85 84		 MVA #0 @FILL.PTR2
    126 211F 20 6E 20		 JSR @FILL
    127 					eif
@@ -39,7 +39,7 @@ mads 2.1.0 build 8 (23 Dec 19)
    130 					icl 'atari\romoff.asm'
    131 					.endif
    132
-   133 2122 A9 C5 85 82 A9 24 + 	mwa #PROGRAMSTACK psptr
+   133 2122 A9 C6 85 82 A9 24 + 	mwa #PROGRAMSTACK psptr
    134
    135 212A A2 0F			ldx #$0f					; DOS II+/D ParamStr
    136 212C BD 40 03 9D 97 23 + 	mva:rpl $340,x MAIN.IOCB@COPY,x-
@@ -697,43 +697,43 @@ Source: sayyo.a65
    781
    782 2289			.local	SAYYOPROC					; PROCEDURE
    783
-   784 				; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 19
+   784 				; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 23
    785 2289 E8				inx
    786 228A A9 FF 95 98			mva #$FF :STACKORIGIN,x
    787 228E 20 44 21			jsr SYSTEM.RANDOM_0052
-   788 2291 B5 98 8D C1 24		mva :STACKORIGIN,x RND01
+   788 2291 B5 98 8D C2 24		mva :STACKORIGIN,x RND01
    789 2296 CA				dex
    790
-   791 				; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 20
+   791 				; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 24
    792 2297 E8				inx
    793 2298 A9 FF 95 98			mva #$FF :STACKORIGIN,x
    794 229C 20 44 21			jsr SYSTEM.RANDOM_0052
-   795 229F B5 98 8D C2 24		mva :STACKORIGIN,x RND02
+   795 229F B5 98 8D C3 24		mva :STACKORIGIN,x RND02
    796 22A4 CA				dex
    797
-   798 				; optimize FAIL (100, examples\sayyo.pas), line = 21
+   798 				; optimize FAIL (100, examples\sayyo.pas), line = 25
    799 					@printSTRING #CODEORIGIN+$000D
    799 				 LDY> CODEORIGIN+$000D\ LDA< CODEORIGIN+$000D\ JSR @PRINTSTRING
    799 22A5 A0 20		 LDY> CODEORIGIN+$000D
    799 22A7 A9 0D		 LDA< CODEORIGIN+$000D
    799 22A9 20 D8 20		 JSR @PRINTSTRING
    800
-   801 				; optimize OK (examples\sayyo.pas), line = 22
+   801 				; optimize OK (examples\sayyo.pas), line = 26
    802
-   803 22AC AD C1 24			lda RND01
+   803 22AC AD C2 24			lda RND01
    804 22AF 8D C6 02			sta $02C6
    805
-   806 				; optimize OK (examples\sayyo.pas), line = 23
+   806 				; optimize OK (examples\sayyo.pas), line = 27
    807
-   808 22B2 AD C2 24			lda RND02
+   808 22B2 AD C3 24			lda RND02
    809 22B5 8D C8 02			sta $02C8
    810
    811 				; ------------------------------------------------------------
    812
-   813 = 24C1			RND01	= DATAORIGIN+$0118
-   814 = 24C2			RND02	= DATAORIGIN+$0119
+   813 = 24C2			RND01	= DATAORIGIN+$0119
+   814 = 24C3			RND02	= DATAORIGIN+$011A
    815
-   816 = 24C1			@VarData	= RND01
+   816 = 24C2			@VarData	= RND01
    817 = 0002			@VarDataSize	= 2
    818
    819 22B8			@exit
@@ -749,7 +749,7 @@ Source: sayyo.a65
    829
    830 22B9			.local	MAINPROC					; PROCEDURE
    831
-   832 				; optimize FAIL (100, examples\sayyo.pas), line = 31
+   832 				; optimize FAIL (100, examples\sayyo.pas), line = 35
    833 					@printSTRING #CODEORIGIN+$0013
    833 				 LDY> CODEORIGIN+$0013\ LDA< CODEORIGIN+$0013\ JSR @PRINTSTRING
    833 22B9 A0 20		 LDY> CODEORIGIN+$0013
@@ -769,32 +769,32 @@ Source: sayyo.a65
    845 				; --- RepeatUntilProlog
    846 22CD			l_011E
    847
-   848 				; optimize FAIL ('CRT.KEYPRESSED', examples\sayyo.pas), line = 38
+   848 				; optimize FAIL ('CRT.KEYPRESSED', examples\sayyo.pas), line = 42
    849 22CD 20 F2 21			jsr CRT.KEYPRESSED
    850 22D0 CA				dex
    851 22D1 B5 99			lda :STACKORIGIN+1,x
    852 22D3 F0 F8			jeq l_011E
    853 				; --- For
    854
-   855 				; optimize OK (examples\sayyo.pas), line = 39
+   855 				; optimize OK (examples\sayyo.pas), line = 43
    856
-   857 22D5 A9 00 8D C4 24		mva #$00 I
+   857 22D5 A9 00 8D C5 24		mva #$00 I
    858
-   859 				; optimize OK (examples\sayyo.pas), line = 39
+   859 				; optimize OK (examples\sayyo.pas), line = 43
    860
    861 22DA			l_012C
    862 				; --- ForToDoCondition
    863
-   864 				; optimize OK (examples\sayyo.pas), line = 39
+   864 				; optimize OK (examples\sayyo.pas), line = 43
    865
-   866 22DA AD C4 24			lda I
+   866 22DA AD C5 24			lda I
    867 22DD C9 0F			cmp #$0F
    868 22DF B0 38			jcs l_013A
    869
-   870 				; optimize FAIL ('SAYYOPROC', examples\sayyo.pas), line = 40
+   870 				; optimize FAIL ('SAYYOPROC', examples\sayyo.pas), line = 44
    871 22E1 20 89 22			jsr SAYYOPROC
    872
-   873 				; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 41
+   873 				; optimize FAIL ('SYSTEM.RANDOM_0052', examples\sayyo.pas), line = 45
    874 22E4 E8				inx
    875 22E5 A9 03 95 98			mva #$03 :STACKORIGIN,x
    876 22E9 20 44 21			jsr SYSTEM.RANDOM_0052
@@ -810,28 +810,28 @@ Source: sayyo.a65
    886 2301 A9 08 95 98			mva #$08 :STACKORIGIN,x
    887 2305 20 06 22			jsr CRT.SOUND
    888
-   889 				; optimize FAIL ('CRT.DELAY', examples\sayyo.pas), line = 42
+   889 				; optimize FAIL ('CRT.DELAY', examples\sayyo.pas), line = 46
    890 2308 E8				inx
    891 2309 A9 78 95 98			mva #$78 :STACKORIGIN,x
    892 230D A9 00 95 A8			mva #$00 :STACKORIGIN+STACKWIDTH,x
    893 2311 20 8E 21			jsr CRT.DELAY
    894
    895 				; --- ForToDoEpilog
-   896 2314 EE C4 24			inc I						; inc ptr byte [CounterAddress]
+   896 2314 EE C5 24			inc I						; inc ptr byte [CounterAddress]
    897 2317 D0 C1			jne l_012C
    898 2319			l_013A
    899
-   900 				; optimize OK (examples\sayyo.pas), line = 44
+   900 				; optimize OK (examples\sayyo.pas), line = 48
    901
    902 2319 A9 50			lda #$50
    903 231B 8D C6 02			sta $02C6
    904
-   905 				; optimize OK (examples\sayyo.pas), line = 44
+   905 				; optimize OK (examples\sayyo.pas), line = 48
    906
    907 231E A9 86			lda #$86
    908 2320 8D C8 02			sta $02C8
    909
-   910 				; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 45
+   910 				; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 49
    911 2323 E8				inx
    912 2324 A9 00 95 98			mva #$00 :STACKORIGIN,x
    913 2328 E8				inx
@@ -842,7 +842,7 @@ Source: sayyo.a65
    918 232F A9 00 95 98			mva #$00 :STACKORIGIN,x
    919 2333 20 06 22			jsr CRT.SOUND
    920
-   921 				; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 45
+   921 				; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 49
    922 2336 E8				inx
    923 2337 A9 01 95 98			mva #$01 :STACKORIGIN,x
    924 233B E8				inx
@@ -853,7 +853,7 @@ Source: sayyo.a65
    929 2344 95 98			sta :STACKORIGIN,x
    930 2346 20 06 22			jsr CRT.SOUND
    931
-   932 				; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 46
+   932 				; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 50
    933 2349 E8				inx
    934 234A A9 02 95 98			mva #$02 :STACKORIGIN,x
    935 234E E8				inx
@@ -864,7 +864,7 @@ Source: sayyo.a65
    940 2357 95 98			sta :STACKORIGIN,x
    941 2359 20 06 22			jsr CRT.SOUND
    942
-   943 				; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 46
+   943 				; optimize FAIL ('CRT.SOUND', examples\sayyo.pas), line = 50
    944 235C E8				inx
    945 235D A9 03 95 98			mva #$03 :STACKORIGIN,x
    946 2361 E8				inx
@@ -875,7 +875,7 @@ Source: sayyo.a65
    951 236A 95 98			sta :STACKORIGIN,x
    952 236C 20 06 22			jsr CRT.SOUND
    953
-   954 				; optimize FAIL (100, examples\sayyo.pas), line = 47
+   954 				; optimize FAIL (100, examples\sayyo.pas), line = 51
    955 					@printSTRING #CODEORIGIN+$0031
    955 				 LDY> CODEORIGIN+$0031\ LDA< CODEORIGIN+$0031\ JSR @PRINTSTRING
    955 236F A0 20		 LDY> CODEORIGIN+$0031
@@ -887,11 +887,11 @@ Source: sayyo.a65
    959
    960 237C CA				dex
    961
-   962 				; optimize FAIL ('CIO.GET', examples\sayyo.pas), line = 50
+   962 				; optimize FAIL ('CIO.GET', examples\sayyo.pas), line = 54
    963 237D E8				inx
    964 237E A9 07 95 98			mva #$07 :STACKORIGIN,x
    965 2382 20 5A 22			jsr CIO.GET
-   966 2385 B5 98 8D C3 24		mva :STACKORIGIN,x CH
+   966 2385 B5 98 8D C4 24		mva :STACKORIGIN,x CH
    967 238A CA				dex
    968
    969 238B 20 7D 21			jsr CRT.READKEY					; call Entry
@@ -900,11 +900,11 @@ Source: sayyo.a65
    972
    973 				; ------------------------------------------------------------
    974
-   975 = 24C3			CH	= DATAORIGIN+$011A
-   976 = 24C4			I	= DATAORIGIN+$011B
+   975 = 24C4			CH	= DATAORIGIN+$011B
+   976 = 24C5			I	= DATAORIGIN+$011C
    977 = 000E			@FORTMP_0129	= $0E
    978
-   979 = 24C3			@VarData	= CH
+   979 = 24C4			@VarData	= CH
    980 = 0002			@VarDataSize	= 2
    981
    982 238F			@exit
@@ -919,128 +919,129 @@ Source: sayyo.a65
    991 				.endl
    992 2390			l_0052
    993
-   994 				; optimize FAIL ('MAINPROC', examples\sayyo.pas), line = 55
+   994 				; optimize FAIL ('MAINPROC', examples\sayyo.pas), line = 59
    995 2390 20 B9 22			jsr MAINPROC
    996
    997 				; ------------------------------------------------------------
    998
-   999 = 23C1			adr.STRBUFFER	= DATAORIGIN+$0018
-  1000 2393			.var STRBUFFER	= adr.STRBUFFER .word
-  1001 2393			@exit
-  1002
-  1003 2393 A2 00		@halt	ldx #0
-  1004 2395 9A				txs
-  1005 					.ifdef MAIN.@DEFINES.ROMOFF
-  1006 					inc portb
-  1007 					.endif
-  1008
-  1009 2396 60				rts
-  1010
-  1011 				; ------------------------------------------------------------
-  1012
-  1013 2397 00 00 00 00 00 00 + IOCB@COPY	:16 brk
-  1014
-  1015 				; ------------------------------------------------------------
-  1016
-  1017 23A7			.local	@DEFINES
-  1018 23A7			ATARI
-  1019 				.endl
-  1020
-  1021 = 23A7 C1 23		STRBUFFER
-  1021 				.endl							; MAIN
-  1022
-  1023 				; ------------------------------------------------------------
+   999 = 23C1			ISPASASM	= DATAORIGIN+$0018
+  1000 = 23C2			adr.STRBUFFER	= DATAORIGIN+$0019
+  1001 2393			.var STRBUFFER	= adr.STRBUFFER .word
+  1002 2393			@exit
+  1003
+  1004 2393 A2 00		@halt	ldx #0
+  1005 2395 9A				txs
+  1006 					.ifdef MAIN.@DEFINES.ROMOFF
+  1007 					inc portb
+  1008 					.endif
+  1009
+  1010 2396 60				rts
+  1011
+  1012 				; ------------------------------------------------------------
+  1013
+  1014 2397 00 00 00 00 00 00 + IOCB@COPY	:16 brk
+  1015
+  1016 				; ------------------------------------------------------------
+  1017
+  1018 23A7			.local	@DEFINES
+  1019 23A7			ATARI
+  1020 				.endl
+  1021
+  1022 = 23A7 C2 23		STRBUFFER
+  1022 				.endl							; MAIN
+  1023
   1024 				; ------------------------------------------------------------
-  1025
-  1026 				.macro	UNITINITIALIZATION
-  1027 				
-  1028 					.ifdef MAIN.SYSTEM.@UnitInit
-  1029 					jsr MAIN.SYSTEM.@UnitInit
-  1030 					eif
-  1031 				
-  1032 					.ifdef MAIN.ATARI.@UnitInit
-  1033 					jsr MAIN.ATARI.@UnitInit
-  1034 					eif
-  1035 				
-  1036 					.ifdef MAIN.CRT.@UnitInit
-  1037 					jsr MAIN.CRT.@UnitInit
-  1038 					eif
-  1039 				
-  1040 					.ifdef MAIN.DOS.@UnitInit
-  1041 					jsr MAIN.DOS.@UnitInit
-  1042 					eif
-  1043 				
-  1044 					.ifdef MAIN.STRUTILS.@UnitInit
-  1045 					jsr MAIN.STRUTILS.@UnitInit
-  1046 					eif
-  1047 				
-  1048 					.ifdef MAIN.SYSUTILS.@UnitInit
-  1049 					jsr MAIN.SYSUTILS.@UnitInit
-  1050 					eif
-  1051 				
-  1052 					.ifdef MAIN.CIO.@UnitInit
-  1053 					jsr MAIN.CIO.@UnitInit
-  1054 					eif
-  1055 				.endm
-  1056
-  1057 				; ------------------------------------------------------------
-  1058
-  1059 					ift .SIZEOF(MAIN.SYSTEM) > 0
-  1060 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
-  1060 				SYSTEM: $2144..$217C
-  1061 					eif
-  1062
-  1063 					ift .SIZEOF(MAIN.ATARI) > 0
-  1064 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
-  1065 					eif
-  1066
-  1067 					ift .SIZEOF(MAIN.CRT) > 0
-  1068 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
-  1068 				CRT: $217D..$2259
-  1069 					eif
-  1070
-  1071 					ift .SIZEOF(MAIN.DOS) > 0
-  1072 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
-  1073 					eif
-  1074
-  1075 					ift .SIZEOF(MAIN.STRUTILS) > 0
-  1076 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
-  1077 					eif
-  1078
-  1079 					ift .SIZEOF(MAIN.SYSUTILS) > 0
-  1080 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
-  1081 					eif
-  1082
-  1083 					ift .SIZEOF(MAIN.CIO) > 0
-  1084 					.print 'CIO: ',MAIN.CIO,'..',MAIN.CIO+.SIZEOF(MAIN.CIO)-1
-  1084 				CIO: $225A..$2288
-  1085 					eif
-  1086
-  1087 					.print 'CODE: ',CODEORIGIN,'..',*-1
-  1087 				CODE: $2000..$23A8
-  1088
-  1089 				; ------------------------------------------------------------
-  1090
-  1091 23A9			DATAORIGIN
-  1092 23A9 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
-  1093
-  1094 = 0006			VARINITSIZE	= *-DATAORIGIN
-  1095 = 011C			VARDATASIZE	= 284
-  1096
-  1097 = 24C5			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
-  1098
-  1099 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
-  1099 				DATA: $23A9..$24C5
-  1100
-  1101 02E0-02E1> 07 21			run START
-  1102
-  1103 				; ------------------------------------------------------------
-  1104
-  1105 				.macro	STATICDATA
-  1106 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $04 $59 $4F  $21 $20 $00 $1C $50 $72 $65 $73
-  1107 				.by  $73 $20 $61 $6E $79 $20 $6B $65  $79 $20 $66 $6F $72 $20 $67 $72  $65 $65 $74 $69 $6E $67 $73 $21
-  1108 				.by  $00 $18 $9B $9B $50 $72 $65 $73  $73 $20 $61 $6E $79 $20 $6B $65  $79 $20 $74 $6F $20 $65 $78 $69
-  1109 				.by  $74 $21 $00
-  1110 				.endm
-  1111
-  1112 					end
+  1025 				; ------------------------------------------------------------
+  1026
+  1027 				.macro	UNITINITIALIZATION
+  1028 				
+  1029 					.ifdef MAIN.SYSTEM.@UnitInit
+  1030 					jsr MAIN.SYSTEM.@UnitInit
+  1031 					eif
+  1032 				
+  1033 					.ifdef MAIN.ATARI.@UnitInit
+  1034 					jsr MAIN.ATARI.@UnitInit
+  1035 					eif
+  1036 				
+  1037 					.ifdef MAIN.CRT.@UnitInit
+  1038 					jsr MAIN.CRT.@UnitInit
+  1039 					eif
+  1040 				
+  1041 					.ifdef MAIN.DOS.@UnitInit
+  1042 					jsr MAIN.DOS.@UnitInit
+  1043 					eif
+  1044 				
+  1045 					.ifdef MAIN.STRUTILS.@UnitInit
+  1046 					jsr MAIN.STRUTILS.@UnitInit
+  1047 					eif
+  1048 				
+  1049 					.ifdef MAIN.SYSUTILS.@UnitInit
+  1050 					jsr MAIN.SYSUTILS.@UnitInit
+  1051 					eif
+  1052 				
+  1053 					.ifdef MAIN.CIO.@UnitInit
+  1054 					jsr MAIN.CIO.@UnitInit
+  1055 					eif
+  1056 				.endm
+  1057
+  1058 				; ------------------------------------------------------------
+  1059
+  1060 					ift .SIZEOF(MAIN.SYSTEM) > 0
+  1061 					.print 'SYSTEM: ',MAIN.SYSTEM,'..',MAIN.SYSTEM+.SIZEOF(MAIN.SYSTEM)-1
+  1061 				SYSTEM: $2144..$217C
+  1062 					eif
+  1063
+  1064 					ift .SIZEOF(MAIN.ATARI) > 0
+  1065 					.print 'ATARI: ',MAIN.ATARI,'..',MAIN.ATARI+.SIZEOF(MAIN.ATARI)-1
+  1066 					eif
+  1067
+  1068 					ift .SIZEOF(MAIN.CRT) > 0
+  1069 					.print 'CRT: ',MAIN.CRT,'..',MAIN.CRT+.SIZEOF(MAIN.CRT)-1
+  1069 				CRT: $217D..$2259
+  1070 					eif
+  1071
+  1072 					ift .SIZEOF(MAIN.DOS) > 0
+  1073 					.print 'DOS: ',MAIN.DOS,'..',MAIN.DOS+.SIZEOF(MAIN.DOS)-1
+  1074 					eif
+  1075
+  1076 					ift .SIZEOF(MAIN.STRUTILS) > 0
+  1077 					.print 'STRUTILS: ',MAIN.STRUTILS,'..',MAIN.STRUTILS+.SIZEOF(MAIN.STRUTILS)-1
+  1078 					eif
+  1079
+  1080 					ift .SIZEOF(MAIN.SYSUTILS) > 0
+  1081 					.print 'SYSUTILS: ',MAIN.SYSUTILS,'..',MAIN.SYSUTILS+.SIZEOF(MAIN.SYSUTILS)-1
+  1082 					eif
+  1083
+  1084 					ift .SIZEOF(MAIN.CIO) > 0
+  1085 					.print 'CIO: ',MAIN.CIO,'..',MAIN.CIO+.SIZEOF(MAIN.CIO)-1
+  1085 				CIO: $225A..$2288
+  1086 					eif
+  1087
+  1088 					.print 'CODE: ',CODEORIGIN,'..',*-1
+  1088 				CODE: $2000..$23A8
+  1089
+  1090 				; ------------------------------------------------------------
+  1091
+  1092 23A9			DATAORIGIN
+  1093 23A9 28 00 18 00 2D 0C	.by  $28 $00 $18 $00 $2D $0C
+  1094
+  1095 = 0006			VARINITSIZE	= *-DATAORIGIN
+  1096 = 011D			VARDATASIZE	= 285
+  1097
+  1098 = 24C6			PROGRAMSTACK	= DATAORIGIN+VARDATASIZE
+  1099
+  1100 					.print 'DATA: ',DATAORIGIN,'..',PROGRAMSTACK
+  1100 				DATA: $23A9..$24C6
+  1101
+  1102 02E0-02E1> 07 21			run START
+  1103
+  1104 				; ------------------------------------------------------------
+  1105
+  1106 				.macro	STATICDATA
+  1107 				.by  $04 $54 $52 $55 $45 $00 $05 $46  $41 $4C $53 $45 $00 $04 $59 $4F  $21 $20 $00 $1C $50 $72 $65 $73
+  1108 				.by  $73 $20 $61 $6E $79 $20 $6B $65  $79 $20 $66 $6F $72 $20 $67 $72  $65 $65 $74 $69 $6E $67 $73 $21
+  1109 				.by  $00 $18 $9B $9B $50 $72 $65 $73  $73 $20 $61 $6E $79 $20 $6B $65  $79 $20 $74 $6F $20 $65 $78 $69
+  1110 				.by  $74 $21 $00
+  1111 				.endm
+  1112
+  1113 					end

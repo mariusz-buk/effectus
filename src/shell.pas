@@ -123,14 +123,13 @@ begin
     if ParamStr(i)[1] <> '-' then begin
       actionFilename := ParamStr(i);
       // Check for eff extension of Effectus source code listing file
-      if Pos('.', LowerCase(actionFilename)) = 0 then begin
+      if Pos('.', LowerCase(actionFilename)) = 0 then
         actionFilename += '.eff';
-      end;
+
       prgName := ExtractFilenameWithoutExt(actionFilename);
     end
-    else if LeftStr(ParamStr(i), 3) = '-o:' then begin
-      optBinExt := RightStr(ParamStr(i), Length(ParamStr(i)) - 3);
-    end
+    else if LeftStr(ParamStr(i), 3) = '-o:' then
+      optBinExt := RightStr(ParamStr(i), Length(ParamStr(i)) - 3)
     else if LeftStr(ParamStr(i), 2) = '-i' then
       isInfo := true
     else if LeftStr(ParamStr(i), 2) = '-c' then
@@ -144,15 +143,14 @@ begin
        isWordFastMode := true
     else if LeftStr(ParamStr(i), 3) = '-zp' then
        isPointerFastMode := true
-    else begin
+    else
       Writeln(ParamStr(i) + ': Unknown parameter!');
-    end;
   end;
 end;
 
-{------------------------------------------------------------------------------
+{----------------------------------------------------------------------------------------
  Description: Parse and compile Action! listing code to Mad Pascal and Mad Assembler code
- -----------------------------------------------------------------------------}
+ ----------------------------------------------------------------------------------------}
 function Compile(filename : string) : boolean;
 var
   AProcess : TProcess;
@@ -186,13 +184,12 @@ begin
   AStringList.LoadFromStream(AProcess.Output);
 
   // Check for errors created by Mad Pascal caused by Effectus source code listing
-  for i := 0 to AStringList.Count - 1 do begin
+  for i := 0 to AStringList.Count - 1 do
     //isPasError := AStringList.IndexOf('Error:') >= 0;
     if Pos('Error:', AStringList[i]) > 0 then begin
       isPasError := true;
       break;
     end;
-  end;
 
   AStringList.Insert(0, 'Filename: ' + filename);
   AStringList.Insert(1, FormatDateTime('c', Now));
@@ -259,9 +256,8 @@ begin
     WriteLn('Variable name        | Data type      | Description     | Owner (PROC/FUNC)');
     WriteLn('------------------------------------------------------------------------------');
     for i := 0 to vars.Count - 1 do begin
-      if ExtractDelimited(2, vars.ValueFromIndex[i], [';']) = '2' then begin
+      if ExtractDelimited(2, vars.ValueFromIndex[i], [';']) = '2' then
         continue;
-      end;
 
       dataType := UpperCase(ExtractDelimited(1, vars.ValueFromIndex[i], [';']));
       dataTypeExt := ExtractDelimited(2, vars.ValueFromIndex[i], [';']);
@@ -269,15 +265,13 @@ begin
 
       // TYPE variable
       temp := ExtractDelimited(6, vars.ValueFromIndex[i], [';']);
-      if temp <> '0' then begin
-        varItem += ' (TYPE ' + temp + ')';
-      end
+      if temp <> '0' then
+        varItem += ' (TYPE ' + temp + ')'
       // Variable with default value
       else begin
         temp := ExtractDelimited(3, vars.ValueFromIndex[i], [';']);
-        if (temp <> '0') and (dataTypeExt <> '4') and (dataTypeExt <> '5') then begin
+        if (temp <> '0') and (dataTypeExt <> '4') and (dataTypeExt <> '5') then
           varItem += ' (' + temp + ')';
-        end;
       end;
 
       // Data type information
@@ -285,9 +279,8 @@ begin
         dataType := 'CARD'
       else if LowerCase(dataType) = 'integer' then
         dataType := 'INT'
-      else if dataType = 'string' then begin
+      else if dataType = 'string' then
         dataType := 'SBYTE ARRAY';
-      end;
 
       // Data type extra information
       if dataTypeExt = '1' then
@@ -310,9 +303,8 @@ begin
         dataType := 'TYPE';
         dataTypeExt := 'Type';
       end
-      else begin
+      else
         dataTypeExt := 'Scalar variable';
-      end;
 
       Writeln(PadRight(varItem, 20),
         ' | ', PadRight(dataType, 14),
@@ -326,9 +318,8 @@ begin
     WriteLn(LineEnding + 'PROCedures');
     //WriteLn('Name           | Parameters');
     WriteLn('-----------------');
-    for i := 0 to myProcs.Count - 1 do begin
+    for i := 0 to myProcs.Count - 1 do
       Writeln(PadRight(myProcs.Names[i], 14));
-    end;
   end;
 
   // FUNCtions
@@ -336,9 +327,8 @@ begin
     WriteLn(LineEnding + 'FUNCtions' + LineEnding);
     //WriteLn('Name           | Parameters');
     WriteLn('-----------------');
-    for i := 0 to myFuncs.Count - 1 do begin
+    for i := 0 to myFuncs.Count - 1 do
       Writeln(PadRight(myFuncs.Names[i], 14));
-    end;
   end;
 
   // DEFINE constants
@@ -375,9 +365,8 @@ begin
     if temp = '' then continue;
 
     // Check comments
-    if temp[1] = ';' then begin
-      continue;
-    end;
+    if temp[1] = ';' then continue;
+
     // Find DEFINE constants as substitutes for real statement values
     // Parse each command or statement delimited by space ignoring words inside "" pair
     A := temp.Split(' ', '"', '"');
@@ -397,9 +386,8 @@ begin
           if a[j][Length(a[j])] = ',' then begin
             varPtr.isDefine := true;
             //writeln('a[j] , ', a[j]);
-          end else begin
+          end else
             varPtr.isDefine := false;
-          end;
         end;
       end;
     end;
@@ -459,7 +447,6 @@ begin
       end;
     end;
   end;
-  //Writeln(' Done!');
 end;
 
 {------------------------------------------------------------------------------
@@ -471,6 +458,7 @@ var
   tempxy : TStringList;
   includeFile : TStringList;
   A : TStringArray;
+  temp : string;
 begin
   tempxy := TStringlist.create;
   includeFile := TStringlist.create;
@@ -497,15 +485,17 @@ begin
       prgPtr.isByteBuffer := false;
       varPtr.isDefine := false;
       //Write('1. pass... ');
-      for i := 0 to tempxy.Count - 1 do begin
-        // Extra, non-standard directives
-        //{$i extra.inc}
-      
+      for i := 0 to tempxy.Count - 1 do begin      
         tempxy.strings[i] := Trim(tempxy.strings[i]);
         tempxy.strings[i] := ReplaceStr(tempxy.strings[i], 'MODULE', '');
 
         // Remove character with Ascii code 9 from Action! listing lines
         tempxy.strings[i] := ReplaceStr(tempxy.strings[i], Chr(9), '');
+        
+        temp := Strip(tempxy.strings[i], ' ');
+        if (Pos('PAS{', UpperCase(temp)) > 0) or (Pos('ASM{', UpperCase(temp)) > 0) then begin
+           effCode.add('  isPasAsm := true;');
+        end;
 
         // Check for INCLUDE file
         if Pos('INCLUDE ', UpperCase(tempxy.strings[i])) = 1 then begin
@@ -542,9 +532,8 @@ begin
                 effCode.Add(includeFile.strings[j]);
               end;
             end
-            else begin
+            else
               writeln('INCLUDE file ' + filePath + a[1] + ' not found!');
-            end;
           end;
         end
         else begin
@@ -561,13 +550,16 @@ begin
             devicePtr.isDevice := true;
             devicePtr.isSySutils := true;
           end;
+          
           if IsArrayElementInString(_MP_STICK, tempxy.strings[i]) then
                devicePtr.isStick := true;
           if IsArrayElementInString(_MP_GRAPHICS, tempxy.strings[i]) then
                devicePtr.isGraphics := true;
           if IsArrayElementInString(_MP_SYSUTILS, tempxy.strings[i]) then
                devicePtr.isSySutils := true;
-        end;
+          if IsArrayElementInString(_ASM_PAS_DIRECTIVE, temp) then
+               isAsmPasDirective := true;
+        end;        
       end;
       //WriteLn(' Done!');
       CheckDefine;

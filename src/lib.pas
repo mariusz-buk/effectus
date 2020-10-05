@@ -84,6 +84,9 @@ begin
   end;
 end;
 
+{------------------------------------------------------------------------------
+ Description: Compare input value with the vars value at position valuePos by the index
+ -----------------------------------------------------------------------------}
 function VarValue(valuePos, index : byte; compareValue : string) : boolean;
 begin
   if ExtractDelimited(valuePos, vars.ValueFromIndex[index], [';']) = compareValue then
